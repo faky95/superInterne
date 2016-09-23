@@ -1,0 +1,44 @@
+# This file is a "template" of what your parameters.yml file should look like
+parameters:
+
+    ids:
+    
+    pas:
+        Hebdomadaire: 1
+        Quinzaine: 2
+        Mensuelle: 3
+        Bimestrielle: 4
+        Trimestrielle: 5
+        Quadrimestrielle: 6
+        Semestrielle: 7
+        Annuelle: 8
+        Journaliere: 9
+
+    states:
+        
+        type_relance:
+            alert_animateur: 1
+            alert_depassement: 2
+            alert_intervalle: 3
+            
+        ACT_DEMANDE_ABANDON: 21
+        ACT_TRAITEMENT: 26
+        ACT_FIN_EXECUTION: 29
+        
+        SIGN_NOUVELLE: 1
+        SIGN_VALIDE: 2
+        SIGN_INVALIDE: 3
+        SIGN_ABANDON: 4
+        SIGN_TRAITEMENT: 5
+        SIGN_TRAIT_EFFICACE: 6
+        SIGN_TRAIT_NON_EFFICACE: 7
+    types:
+        creation:         1
+        avancement:       2
+        demande_report:   3
+        demande_abandon:  4
+        demande_solde:    5 
+
+    instance:
+        remontee_ci: 55
+        basiques_reseau: 139

@@ -1,0 +1,91 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block title %}
+   | Page de connexion{{ parent() }}
+{% endblock %}
+
+{% block fos_user_content %}
+<body class="loginPage">
+    <div class="container">
+        <div id="header">
+        	<nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+		                <a class="navbar-brand" href="dashboard.html">Super</a>
+		                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+		                    <span class="sr-only">Toggle navigation</span>
+		                    <span class="icon16 icomoon-icon-arrow-4"></span>
+		                </button>
+		            </div>
+		     </nav>
+        </div><!-- End #header -->
+    </div><!-- End .container -->    
+    <div class="container">
+        <div class="loginContainer">
+            <form action="{{ path("fos_user_resetting_send_email") }}"  method="post" class="form-horizontal" action="dashboard.html" id="loginForm" role="form" >
+            	<div class="form-group">
+                    	<label class="col-lg-12 control-label" for="username">Veuillez saisir votre adresse email</label>
+                    	<div class="col-lg-12">
+                        	<input id="username" type="text" name="username" class="form-control" placeholder="Entrez votre email ..." required="required" />
+                        	<span class="icon16 icomoon-icon-user right gray marginR10"></span>
+                    	</div>
+                </div><!-- End .form-group  -->
+                <div align="center" style="margin-bottom: 5px;">
+                	<button type="submit" class="btn btn-warning " id="_submit" name="_submit" value="{{ 'resetting.request.submit'|trans }}">Réinitialiser mot de passe</button>
+                </div><!-- End .form-group  -->
+            </form>
+        </div>
+    </div><!-- End .container -->
+    <!-- Le javascript
+    ================================================== -->
+    <script  type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap/bootstrap.js') }}"></script>  
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/validate/jquery.validate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/uniform/jquery.uniform.min.js') }}"></script>
+
+     <script type="text/javascript">
+        // document ready function
+        $(document).ready(function() {
+            //------------- Options for Supr - admin tempalte -------------//
+            var supr_Options = {
+                rtl:false//activate rtl version with true
+            }
+            //rtl version
+            if(supr_Options.rtl) {
+                localStorage.setItem('rtl', 1);
+                $('#bootstrap').attr('href', 'css/bootstrap/bootstrap.rtl.min.css');
+                $('#bootstrap-responsive').attr('href', 'css/bootstrap/bootstrap-responsive.rtl.min.css');
+                $('body').addClass('rtl');
+                $('#sidebar').attr('id', 'sidebar-right');
+                $('#sidebarbg').attr('id', 'sidebarbg-right');
+                $('.collapseBtn').addClass('rightbar').removeClass('leftbar');
+                $('#content').attr('id', 'content-one')
+            } else {localStorage.setItem('rtl', 0);}
+            
+            $("input, textarea, select").not('.nostyle').uniform();
+            $("#loginForm").validate({
+                rules: {
+                    username: {
+                        required: true,
+                        minlength: 4
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6
+                    }  
+                },
+                messages: {
+                    username: {
+                        required: "Fill me please",
+                        minlength: "My name is bigger"
+                    },
+                    password: {
+                        required: "Please provide a password",
+                        minlength: "My password is more that 6 chars"
+                    }
+                }   
+            });
+        });
+    </script> 
+{% endblock fos_user_content %}

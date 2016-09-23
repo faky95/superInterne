@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta http-equiv="X-Frame-Options" content="deny">
+	    <title>Super{% block title %} {% endblock %}</title>
+		{% block stylesheets %}
+		
+		{% endblock %}
+		    <meta name="author" content="SuggeElson" />
+		    <meta name="description" content="Supr admin template - new premium responsive admin template. This template is designed to help you build the site administration without losing valuable time.Template contains all the important functions which must have one backend system.Build on great twitter boostrap framework" />
+		    <meta name="keywords" content="admin, admin template, admin theme, responsive, responsive admin, responsive admin template, responsive theme, themeforest, 960 grid system, grid, grid theme, liquid, masonry, jquery, administration, administration template, administration theme, mobile, touch , responsive layout, boostrap, twitter boostrap" />
+		    <meta name="application-name" content="Supr admin template" />
+		
+		    <!-- Mobile Specific Metas -->
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		    <!-- Force IE9 to render in normal mode -->
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		    <!-- Le styles -->
+		    <!-- Use new way for google web fonts 
+		    http://www.smashingmagazine.com/2012/07/11/avoiding-faux-weights-styles-google-web-fonts -->
+		    <!-- Headings 
+		    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css' /> 
+		    <!--[if lt IE 9]>
+		    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet" type="text/css" />
+		    <link href="http://fonts.googleapis.com/css?family=Open+Sans:700" rel="stylesheet" type="text/css" />
+		    <link href="http://fonts.googleapis.com/css?family=Droid+Sans:400" rel="stylesheet" type="text/css" />
+		    <link href="http://fonts.googleapis.com/css?family=Droid+Sans:700" rel="stylesheet" type="text/css" />
+		    <![endif]-->
+		    
+		    <!-- Core stylesheets do not remove -->
+		    <link id="bootstrap" href="{{ asset('bundles/orangemain/css/bootstrap/bootstrap.css') }}" rel="stylesheet" type="text/css" />
+{# 		    <link id="bootstrap" href="{{ asset('bundles/orangemain/css/bootstrap/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />#}
+		    <link href="{{ asset('bundles/orangemain/css/bootstrap/bootstrap-theme.css') }}" rel="stylesheet" type="text/css" />
+		    <link href="{{ asset('bundles/orangemain/css/supr-theme/jquery.ui.supr.css') }}" rel="stylesheet" type="text/css"/>
+		    <link href="{{ asset('bundles/orangemain/css/icons.css') }}" rel="stylesheet" type="text/css" />
+		    <link href="{{ asset('bundles/orangemain/plugins/forms/color-picker/color-picker.css') }}" type="text/css" rel="stylesheet" />
+		        
+		    <!-- Plugins stylesheets -->
+		    <link href="{{ asset('bundles/orangemain/plugins/misc/qtip/jquery.qtip.css') }}" rel="stylesheet" type="text/css" />
+		    <link href="{{ asset('bundles/orangemain/plugins/forms/uniform/uniform.default.css') }}" type="text/css" rel="stylesheet" />
+		    <link href="{{ asset('bundles/orangemain/plugins/forms/select2/select2.min.css') }}" type="text/css" rel="stylesheet" />
+		    <link href="{{ asset('bundles/orangemain/plugins/forms/validate/validate.css')}}" type="text/css" rel="stylesheet" />
+		    <link href="{{ asset('bundles/orangemain/plugins/misc/fullcalendar/fullcalendar.css') }}" rel="stylesheet" type="text/css" />
+		    <link href="{{ asset('bundles/orangemain/plugins/pnotify/jquery.pnotify.default.css') }}" rel="stylesheet" type="text/css" />
+		    <link href="{{ asset('bundles/orangemain/plugins/misc/search/tipuesearch.css') }}" type="text/css" rel="stylesheet" />
+		    
+		    <link href="{{ asset('bundles/orangemain/js/colorpicker/spectrum.css') }}" type="text/css" rel="stylesheet" />
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-1.10.2.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-ui.js') }}"></script>
+		    <link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/jquery.dataTables.css') }}" type="text/css" rel="stylesheet" />
+    		<link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/TableTools.css') }}" type="text/css" rel="stylesheet" />
+    		<link href="{{ asset('bundles/orangemain/plugins/forms/togglebutton/toggle-buttons.css') }}" type="text/css" rel="stylesheet" />
+    		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/modal.css') }}" type="text/css" media="screen" />
+    		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/main.css') }}" type="text/css" media="screen" />
+    	
+{# 		    <link rel="stylesheet" href="{{ asset('bundles/avalertify/toastr/css/toastr.css') }}" type="text/css">#}
+		    <!-- Main stylesheets -->
+		    <link href="{{ asset('bundles/orangemain/css/main.css') }}" rel="stylesheet" type="text/css" /> 
+			
+		    <!-- Custom stylesheets ( Put your own changes here ) -->
+		    <link href="{{ asset('bundles/orangemain/css/custom.css') }}" rel="stylesheet" type="text/css" /> 
+			
+		    <!--[if IE 8]><link href="css/ie8.css" rel="stylesheet" type="text/css" /><![endif]-->
+		    
+		    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
+		    <!--[if lt IE 9]>
+		      <script type="text/javascript" src="js/libs/excanvas.min.js"></script>
+		      <script type="text/javascript" src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		      <script type="text/javascript" src="js/libs/respond.min.js"></script>
+		    <![endif]-->
+		    
+		    <!-- Le fav and touch icons -->
+		    <link rel="icon" type="image/x-icon" href="{{ asset('bundles/orangemain/images/favicon.ico') }}" />
+		    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="{{ asset('bundles/orangemain/images/apple-touch-icon-144-precomposed.png') }}" />
+		    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="{{ asset('bundles/orangemain/images/apple-touch-icon-114-precomposed.png') }}" />
+		    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="{{ asset(' bundles/orangemain/images/apple-touch-icon-72-precomposed.png') }}" />
+		    <link rel="apple-touch-icon-precomposed" href="{{ asset('bundles/orangemain/images/apple-touch-icon-57-precomposed.png') }}" />
+		    
+		    <!-- Windows8 touch icon ( http://www.buildmypinnedsite.com/ )-->
+		    <meta name="application-name" content="Super"/> 
+		    <meta name="msapplication-TileColor" content="#3399cc"/> 
+		
+		    <!-- Load modernizr first -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/libs/modernizr.js') }}"></script>   
+		 </head>
+	 <body>
+	     <div style="display: none;">
+			<div id="loading-modal">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal"><span class="icon12 minia-icon-close"></span></button>
+					<h4 align="left">
+						<span>Traitement en cours ...</span>
+					</h4>
+				</div>
+				<div class="panel-body">
+					<div style="height: 100px">
+						<img style="margin-top: 15px;margin-left:30px;" width="80" src="{{ asset('bundles/orangemain/images/fv.gif') }}" />
+					</div>
+				</div>
+				<div class="footer form-actions">
+					<div class="col-lg-offset-8 col-lg-4"><a href="#" class="btn btn-die" data-dismiss="modal">Fermer</a></div>
+				</div>
+			</div>
+		</div>
+		 {% block body %}
+    		<!-- Modal -->
+				    {%- block modal -%}
+				     		<div style="min-width: 500px; " align="center" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+						   </div>
+				   {%- endblock modal -%}
+		 <!-- loading animation -->
+	    <div id="qLoverlay"></div>
+	    <div id="qLbar"></div>
+        
+       	<!-- header -->
+       	
+	    <div id="header">
+	        <nav class="navbar navbar-default" role="navigation">
+	            <div class="navbar-header">
+	                <a class="navbar-brand" href="{{ path('dashboard') }}">SUPER</a>
+	            </div> 
+	            <div class="collapse navbar-collapse navbar-ex1-collapse">
+	                <ul class="nav navbar-nav">
+	                    <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                            <span class="icomoon-icon-plus"></span><span class="txt"> Ajouter</span>
+	                            <b class="caret"></b>
+	                        </a>
+	                        <ul class="dropdown-menu">
+	                            <li class="menu">
+	                                <ul>
+	                                	{% if has_rights('ROLE_ANIMATEUR') or has_rights('ROLE_ADMIN') %}
+	                                    	 <li><a href="{{ path('nouvelle_action') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action</a></li>
+	                                    	 <li><a href="{{ path('actioncyclique_new') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action cyclique</a></li>
+	                                    {% endif %}
+										{% if has_rights('ROLE_ADMIN') %}
+	                                   		 <li><a href="{{ path('fos_user_registration_register') }}"><span class="icon16 entypo-icon-users"></span>Utilisateur</a></li>
+	                                   		 <li><a href="{{ path('nouvelle_structure') }}"><span class="icon16 icomoon-icon-grid"></span>Structures</a></li>
+	                                   		 <li><a href="{{ path('nouvelle_instance') }}"><span class="icon16 icomoon-icon-office"></span>Instance</a></li>
+	                                   		 <li><a href="{{ path('nouveau_groupe') }}"><span class="icon16 icomoon-icon-people"></span>Groupe</a></li>
+	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_type_action')}}"><span class="icon16 icomoon-icon-people"></span>un type action</a></li>
+	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine')}}"><span class="icon16 icomoon-icon-earth"></span>un domaine</a></li>
+											 <li><a href="{{ path('nouvelle_formule') }}"><span class="icon16 silk-icon-plus"></span>Formule</a></li>
+	                                    {% endif %}
+	                                	{% if has_rights('ROLE_SUPER_ADMIN') %}
+	                                		 <li><a href="{{ path('nouvel_espace')}}"><span class="icon16 icomoon-icon-office"></span>Espace</a></li>
+	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_bu')}}"><span class="icon16 icomoon-icon-office"></span>une BU</a></li>
+	                                   	{% endif %}
+	                                    {% if has_rights('ROLE_SOURCE') %}
+		                                    {% if app.user.structure.buPrincipal.signalisation == 1 %}
+		                                    	 <li><a href="{{ path('nouvelle_signalisation') }}"><span class="icon16 icomoon-icon-wand-2"></span>Signalisation</a></li>
+		                                   	{% endif %}
+	                                    {% endif %}
+	                                </ul>
+	                            </li>
+	                        </ul>
+	                    </li>
+	                </ul>
+	                <ul class="nav navbar-right usernav">
+	                    <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown">
+	                            <img src="{{ asset('bundles/orangemain/images/user.png') }}" alt="" class="image" /> 
+	                            <span class="txt">{{ app.user }}</span>
+{# 	                            <b class="caret"></b>#}
+	                        </a>
+{# 	                        <ul class="dropdown-menu">#}
+{# 	                            <li class="menu">#}
+{# 	                                <ul>#}
+{# 	                                	<!--<li><a href="#"><span class="icon16 icomoon-icon-bubble-2"></span>Infos personnelles</a></li>#}
+{# 	                                    <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('fos_user_profile_edit')}}"><span class="icon16 icomoon-icon-user"></span>Edition profil</a></li>-->#}
+{# 	                                    <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('fos_user_change_password')}}"><span class="icon16 icomoon-icon-key"></span>Changement mot de passe</a></li>#}
+{# 	                                </ul>#}
+{# 	                            </li>#}
+{# 	                        </ul>#}
+	                    </li>
+	                    {% if is_granted("ROLE_PREVIOUS_ADMIN") %}
+	                    	<li><a href="{{ path('dashboard') }}?_want_to_be_this_user=_exit"><span class="icon16 icomoon-icon-exit"></span><span class="txt"> Déconnexion</span></a></li>
+	                    {% else %}
+	                    	<li><a href="{{ path('fos_user_security_logout') }}"><span class="icon16 icomoon-icon-exit"></span><span class="txt"> Déconnexion</span></a></li>
+	                    {% endif %}
+	                </ul>
+	            </div><!-- /.nav-collapse -->
+	        </nav><!-- /navbar --> 
+	    </div>
+	    <!-- End #header -->
+	        <div id="wrapper">
+	        <!--Responsive navigation button-->  
+		        <div class="resBtn">
+		            <a href="#"><span class="icon16 minia-icon-list-3"></span></a>
+		        </div>
+		    
+			    {% include 'OrangeMainBundle:Include:menu.html.twig' %}
+			    
+		    	<div id="content" class="clearfix">
+	            	 <div class="contentwrapper"><!--Content wrapper-->
+	            		 <!-- Build page from here: -->
+		                 {% block big_buttons %}
+{# 		                 	{% include('OrangeMainBundle:Include:headwidget.html.twig') %}#}
+		                 {% endblock %}
+						 
+						 {% block content %}
+						 	
+						 {% endblock %}
+					 </div>
+				</div>
+				
+		                 
+						 {% block alertify %}
+{# 							{{ app.session|alertify|raw }}#}
+						 {% endblock %}
+				<!-- Changement de mot de passe -->
+				
+				
+				<!-- Modal -->
+				<div id="changePasswordDialog" class="modal fide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+				      <!-- Modal content-->
+				      	<div class="modal-content">
+						       <div class="modal-header">
+							        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+							        <h4 class="modal-title" id="exampleModalLabel">Changement de mot de passe</h4>
+						       </div>
+						       <form id="changePassword" novalidate="novalidate" action="{{ path('fos_user_change_password') }}" method="POST" class="fos_user_change_password">
+							   		{{ render(controller('FOSUserBundle:ChangePassword:changePassword')) }}
+							   </form>
+						</div>
+					</div>
+				</div>
+			 </div> <!-- End Wrapper -->
+		 	 
+		 	 
+		 {% block javascripts %}
+		<!-- Le javascript
+		    ================================================== -->
+		    <!-- Important plugins put in all pages -->
+	     	<script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap-modal.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-ui.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-migrate-1.2.1.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap/bootstrap.js') }}"></script>  
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery.mousewheel.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/libs/jRespond.min.js') }}"></script>
+		    
+		    <!-- Charts plugins -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.grow.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.pie.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.resize.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.tooltip_0.4.4.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/flot/jquery.flot.orderBars.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/sparkline/jquery.sparkline.min.js') }}"></script><!-- Sparkline plugin -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/charts/knob/jquery.knob.js') }}"></script><!-- Circular sliders and stats -->
+			
+		    <!-- Misc plugins -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/misc/qtip/jquery.qtip.min.js') }}"></script><!-- Custom tooltip plugin -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/misc/totop/jquery.ui.totop.min.js') }}"></script> <!-- Back to top plugin -->
+		    
+		    <!-- Search plugin -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/misc/search/tipuesearch_set.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/misc/search/tipuesearch_data.js') }}"></script><!-- JSON for searched results -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/misc/search/tipuesearch.js') }}"></script>
+			
+		    <!-- Form plugins -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/uniform/jquery.uniform.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/select2/select2.min.js')}}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/validate/jquery.validate.min.js')}}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/wizard/jquery.bbq.js')}}"></script>
+	   		<script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/wizard/jquery.form.js')}}"></script>
+	    	<script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/wizard/jquery.form.wizard.js')}}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/elastic/jquery.elastic.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/inputlimiter/jquery.inputlimiter.1.3.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/maskedinput/jquery.maskedinput-1.3.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/togglebutton/jquery.toggle.buttons.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/globalize/globalize.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/color-picker/colorpicker.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/timeentry/jquery.timeentry.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/dualselect/jquery.dualListBox-1.3.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/tiny_mce/tinymce.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/placeholder/jquery.placeholder.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/pnotify/jquery.pnotify.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/supr-theme/jquery-ui-timepicker-addon.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/supr-theme/jquery-ui-sliderAccess.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/supr-theme/jquery-ui-1.8.22.custom.min.js') }}"></script>
+		    
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/colorpicker/spectrum.js') }}"></script>
+		    
+		    <!-- Table plugins -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/tables/dataTables/jquery.dataTables.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/tables/dataTables/TableTools.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/tables/dataTables/ZeroClipboard.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap-checkbox.js') }}"></script>
+		    
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap-checkbox.js') }}"></script>
+		    
+		    <!-- Init plugins -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/main.js') }}"></script><!-- Core js functions -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/forms.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/datatable.js') }}"></script><!-- Init plugins only for page -->
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/form-validation.js')}}"></script><!-- Init plugins only for page -->
+		    
+{# 		    <script type="text/javascript" src="{{ asset('bundles/avalertify/toastr/js/toastr.js') }}"></script>#}
+		   
+		    <!-- Charts -->
+{# 		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/charts/highcharts.js') }}"></script>#}
+			<script type="text/javascript" src="{{ asset('bundles/orangemain/js/charts/highstock.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('bundles/orangemain/js/charts/highcharts-more.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('bundles/orangemain/js/charts/highcharts-exporting.js') }}"></script>
+			
+			<script type="text/javascript" src="{{ asset('bundles/orangemain/js/utils.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('bundles/orangequickmaking/js/jquery.form.min.js') }}"></script>
+			<script type="text/javascript" src="{{ asset('bundles/orangequickmaking/js/utils.js') }}"></script>
+			
+		 	{% endblock %}
+		 	
+		 	<!-- Changement de passe -->
+		 	<script type="text/javascript">
+		 	$('#changePassword').on('submit', function(e) {
+				e.preventDefault();
+				var form = $(this);
+// 				var modalHeader = $('.modal-header h5');
+// 				manageLoader(modalHeader);
+				$.ajax({
+			        url: form.attr('action'),
+			        type: 'POST',
+			        data: form.serialize(),
+			        timeout: 20000,
+			        success: 
+			            function(data, status, xhr) {
+				             	if(data.result == 'success') {
+				             		$('#changePasswordDialog').modal('hide');
+// 					    			modalHeader.find('img').remove();
+// 					             	$.jGrowl('Mot de passe changé avec succés !', {theme: 'growl-success' });
+					            } else {
+					            	form.html(data);
+// 					            	modalHeader.find('img').remove();
+						        }
+			           },
+			        error: 
+			            function(xhr, status, error) {
+			            	//on desactive le loader 
+			             	$('#changePasswordDialog').modal('hide');
+// 			    			modalHeader.find('img').remove();
+// 			             	$.jGrowl('Des erreurs sont apparues lors de l\'enregistrement des informations. Veuillez rééssayer !', {theme: 'growl-error', sticky: true, closerTemplate: '<div>Fermer tout</div>' });
+			            }
+			      });
+			});
+		 	
+			</script>
+		 	{% block pagescript %}
+		 	{% endblock %}
+		 	
+		 	<script type="text/javascript">
+			 	$(document).ready(function() {
+				  $("select").select2();
+				});
+		 	</script>
+		 	
+		 	<script type="text/javascript">
+		 	function alertAfterModalError(thrownError, xhr) {
+				//$("#myModal").modal("hide");
+				response = {type:"warning", title:"Erreur", text:"Une erreur inattendue s'est produite durant le traitement !!"};
+				closeAndNotify(response);
+			} 
+				{% set functionAfterShowModal %}
+						activateModals();
+				{% endset %}
+				{{ addEventActionLink('myModal', "", functionAfterShowModal) }}
+				{% set functionOnComplet %}
+					todoOnCompleteWithError();
+				{% endset %}
+				{{ formModalSubmit('#myModal', '#loading-modal',functionOnComplet) }} // permet de recharger la page du modal
+				addEventActionLink();
+				</script>
+				<script type="text/javascript">
+				$('body').on("click",".modal-backdrop", function() {
+			 		$("#myModal").modal("hide");
+				});
+			</script>
+{# 			<script type="text/javascript">#}
+{# 				$(function(){#}
+{# 				    $(".mychosen").chosen();#}
+{# 				});#}
+{# 			    // document ready function#}
+{# 				    $(document).ready(function() {#}
+{# 				    	$(':checkbox').checkboxpicker(); #}
+{# 				        $("#tags").select2({#}
+{# 				            tags:["red", "green", "blue", "orange"]#}
+{# 				        });#}
+						
+{# 				        $('.iToggle-button').toggleButtons({#}
+{# 				            width: 70,#}
+{# 				            label: {#}
+{# 				                enabled: "<span class='icon16 icomoon-icon-checkmark white'></span>",#}
+{# 				                disabled: "<span class='icon16 icomoon-icon-close white marginL10'></span>"#}
+{# 				            }#}
+{# 				        });#}
+{# 				    });//End document ready functions#}
+{# 			</script>#}
+		 {% endblock %}
+	 </body>
+</html>

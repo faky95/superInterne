@@ -1,0 +1,248 @@
+#Services
+services:
+    logger.log:
+        class: Orange\MainBundle\Service\Logger
+        tags:
+            - { name: monolog.logger, channel: info } 
+    orange.annotation_listener:
+        class: Orange\QuickMakingBundle\EventListener\AnnotationListener
+        arguments: ["@service_container"]
+        tags:
+            - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
+
+    orangemain_utilisateur.registration.form.type:
+        class: Orange\MainBundle\Form\RegistrationFormType 
+        arguments: ["%fos_user.model.user.class%"] 
+        tags: 
+            - { name: form.type, alias: orange_user_registration }
+            
+    orangemain_utilisateur.profile.form.type:
+        class: Orange\MainBundle\Form\ProfileFormType
+        arguments: ["%fos_user.model.user.class%"]
+        tags: 
+            - { name: form.type, alias: orange_user_profile }
+            
+    twig.extension.intl:
+        class: Twig_Extensions_Extension_Intl
+        tags:
+            - { name: twig.extension }
+            
+    twig.extension.orange.main.security:
+        class: Orange\MainBundle\Twig\SecurityExtension
+        arguments: ["@security.context"] 
+        tags:
+            - {name: twig.extension }
+            
+    orange.extension:
+        class:        Orange\MainBundle\Twig\OrangeExtension
+        arguments: ["@service_container", "%ids%", "%states%", "%types%"]
+        tags:
+            - {name: twig.extension }
+    
+    twig.extension.orange_main.block:
+        class:        Orange\QuickMakingBundle\Twig\BlockExtension
+        arguments: ["@orange_main.block"]
+        tags:
+            - {name: twig.extension }
+    
+    orange_main.block:
+        class:        Orange\QuickMakingBundle\Service\Block
+        arguments: ["@twig"]
+    
+    twig.extension.orange_quickMaking.modal:
+        class: Orange\QuickMakingBundle\Twig\ModalExtension
+        arguments: ["@twig"]
+        tags:
+            - {name: twig.extension }
+            
+    orange.main.statistique_criteria:
+        class: Orange\MainBundle\Criteria\StatistiqueCriteria
+        arguments: ["@security.context"]
+
+    orange_main.actions:
+        class: Orange\MainBundle\Service\Actions
+        arguments: ["@twig", "@router", "%states%", "@security.context", "@doctrine.orm.entity_manager"]
+         
+#    my.listener:
+#        class: Orange\MainBundle\Listener\SuperListener
+#        arguments: ["@service_container"]
+#        tags:
+#            - { name: doctrine.event_listener, event: postPersist, connection: default }
+            
+    listener:
+        class: Orange\MainBundle\Listener\RedirectListener
+        arguments: ["@router"]
+            
+    orange_main.reload:
+        class: Orange\MainBundle\Form\ReloadType
+        tags:
+            - { name: form.type, alias: orange_mainbundle_reloadtype }
+            
+    orange.main.mailer:
+        class: Orange\MainBundle\Service\Mailer
+        arguments: ["@mailer", "@templating"]
+        
+    orange.validator.action:                             
+        class: Orange\MainBundle\Validator\Constraints\ActionDateValidator   
+        tags:
+            - { name: validator.constraint_validator, alias: action_date }
+
+    orange.validator.signalisation:                             
+        class: Orange\MainBundle\Validator\Constraints\SignalisationDateValidator   
+        tags:
+            - { name: validator.constraint_validator, alias: signalisation_date }
+
+    orange.validator.cyclique:                             
+        class: Orange\MainBundle\Validator\Constraints\CycliquePeriodiciteValidator   
+        tags:
+            - { name: validator.constraint_validator, alias: cyclique_periodicite }
+            
+    form_errors:
+        class: Orange\MainBundle\Service\FormErrors
+        
+    orange.main.mapping:
+        class: Orange\MainBundle\Service\Mapping
+        arguments: ["@service_container"]
+
+    orange.main.extraction:
+        class: Orange\MainBundle\Service\Extraction
+
+    orange.main.envoi:
+        class: Orange\MainBundle\Service\Envois
+        arguments: ["%pas%", "@doctrine.orm.entity_manager"]
+        
+    orange_main.registration.form.type:
+        class: Orange\MainBundle\Form\RegistrationFormType 
+        arguments: ["%fos_user.model.user.class%"] 
+        tags: 
+            - { name: form.type, alias: orange_main_registration }
+
+    orange.main.loader: 
+        class: Orange\MainBundle\Service\Loader
+        arguments: ["@service_container", "%kernel.root_dir%/../web/", "%ids%", "%states%"]
+        
+    # Security voters
+    security.access.action_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\ActionVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
+    security.access.signalisation_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\SignalisationVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
+    security.access.structure_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\StructureVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
+    security.access.instance_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\InstanceVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
+    security.access.utilisateur_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\UtilisateurVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
+    orange.main.calcul:
+        class: Orange\MainBundle\Service\Calcul
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+
+    orange.main.data:
+        class: Orange\MainBundle\Service\Data
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        
+    orange.main.reporting:
+        class: Orange\MainBundle\Service\Reporting
+        
+        
+    orange.main.change_statut:
+        class: Orange\MainBundle\Service\ChangeStatut
+        arguments: ["@doctrine.orm.entity_manager"]
+    orange.force_passupdate:
+        class: Orange\MainBundle\EvenListener\PassUpdateListener
+        arguments: ["@router", "@security.context", "@session", "@service_container"]
+        tags:
+           - { name: kernel.event_listener, event: kernel.request, method: onCheckExpired, priority: 1 }
+    
+    orange.main.statistique_criteria:
+        class: Orange\MainBundle\Criteria\StatistiqueCriteria
+        arguments: ["@security.context"]
+        
+    orange.main.signalisation_criteria:
+        class: Orange\MainBundle\Criteria\SignalisationCriteria
+        arguments: ["@security.context", "@doctrine.orm.entity_manager"]
+        
+    orange.main.setStructure:
+        class: Orange\MainBundle\Service\StructureAction
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        
+    orange.main.updateStructure:
+        class: Orange\MainBundle\Service\UpdateStructure
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        
+    orange.main.dataStats:
+        class: Orange\MainBundle\Service\MappingStatistique
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        
+    app.exception_controller:
+        class: Orange\MainBundle\Controller\ExceptionController
+        arguments: ["@twig", "%kernel.debug%", "@orange.main.mailer"]
+        
+    orange_main.action_manager:
+        class: Orange\MainBundle\Model\ActionManager
+        arguments: ["@doctrine.orm.entity_manager","@service_container", "@security.context"]
+    
+    orange_main.signalisation_manager:
+        class: Orange\MainBundle\Model\SignalisationManager
+        arguments: ["@doctrine.orm.entity_manager","@service_container", "@security.context"]
+
+    orange_main.action_listener:
+        class: Orange\MainBundle\Listener\ActionListener
+        tags:
+            - {name: kernel.event_subscriber }
+        arguments: ["%states%", "@service_container", "@orange.main.mailer"]
+    
+    orange_main.signalisation_listener:
+        class: Orange\MainBundle\Listener\SignalisationListener
+        tags:
+            - {name: kernel.event_subscriber }
+        arguments: ["%states%", "@service_container", "@orange.main.mailer"]
+        
+    orange_main.action_event:
+        class: Orange\MainBundle\Event\ActionEvent
+        public : true
+        arguments: ["@security.context", "@orange_main.action_manager"]
+        
+    orange_main.signalisation_event:
+        class: Orange\MainBundle\Event\SignalisationEvent
+        public : true
+        arguments: ["@security.context", "@orange_main.signalisation_manager"]
+        
+    my_service.logger:
+        class:     Symfony\Bridge\Monolog\Logger
+        arguments: [app]
+        calls:
+            - [pushHandler, [@my_service.logger_handler]]
+    
+    my_service.logger_handler:
+        class:     Monolog\Handler\StreamHandler       
+        arguments: [%kernel.logs_dir%/%kernel.environment%.admin.log, 200]
+        
+    orange_main.action_correct:
+        class: Orange\MainBundle\Service\ActionCorrect
+        public : true
+        arguments: ["@security.context", "@doctrine.orm.entity_manager", "@orange.main.mailer"]

@@ -1,0 +1,54 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block title %}
+    | Page de connexion{{ parent() }}
+{% endblock %}
+
+{% block fos_user_content %}
+<body class="loginPage">
+    <div class="container">
+        <div id="header">
+        	<nav class="navbar navbar-default" role="navigation">
+                <div class="navbar-header">
+		                <a class="navbar-brand" href="dashboard.html">Super</a>
+		                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+		                    <span class="sr-only">Toggle navigation</span>
+		                    <span class="icon16 icomoon-icon-arrow-4"></span>
+		                </button>
+		            </div>
+		     </nav>
+        </div><!-- End #header -->
+    </div><!-- End .container -->    
+    <div class="container">
+        <div class="loginContainer">  
+            <form action="{{ path('fos_user_resetting_reset', {'token': token}) }}" {{ form_enctype(form) }} method="POST" class="fos_user_resetting_reset">
+            {{ form_row(form._token) }}
+            	<div class="form-group">
+                    	<label class="col-lg-12 control-label" >Nouveau mot de passe</label>
+                    	<div class="col-lg-12">
+                        	<input type="password" name="{{ form.plainPassword.first.vars.full_name }}" placeholder="Nouveau mot de passe" />
+                        	<span class="icon16 icomoon-icon-lock right gray marginR10"></span>
+                    	</div>
+                </div><!-- End .form-group  -->
+                <div class="form-group">
+                    	<label class="col-lg-12 control-label" >Confirmer</label>
+                    	<div class="col-lg-12">
+                        	<input type="password" name="{{ form.plainPassword.second.vars.full_name }}" placeholder="Confirmation" />
+                        	<span class="icon16 icomoon-icon-lock right gray marginR10"></span>
+                    	</div>
+                </div><!-- End .form-group  -->
+                <div align="center" style="margin-bottom: 5px;">
+                	<button type="submit" class="btn btn-warning submitLink" id="_submit" name="_submit" call="refreshAfterSuccess" value="{{ 'resetting.reset.submit'|trans }}">Modifier le mot de passe</button>
+                </div><!-- End .form-group  -->
+            </form>
+        </div>
+    </div><!-- End .container -->
+    <!-- Le javascript
+    ================================================== -->
+    <script  type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/bootstrap/bootstrap.js') }}"></script>  
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/validate/jquery.validate.min.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('bundles/orangemain/plugins/forms/uniform/jquery.uniform.min.js') }}"></script>
+{% endblock fos_user_content %}

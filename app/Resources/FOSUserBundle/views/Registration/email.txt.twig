@@ -1,0 +1,17 @@
+{% trans_default_domain 'FOSUserBundle' %}
+{% block subject %}
+{% autoescape true %}
+Création d'un utilisateur
+{% endautoescape %}
+{% endblock %}
+{% block body_text %}
+{% endblock %}
+{% block body_html %}
+<div style="font-size: 14px">
+Bonjour {{ user.prenom ~ ' ' ~ user.nom }}<br>
+Vous avez été ajouté à l'application <strong>SUPER</strong><br><br>
+Vous pouvez vous connecter avec votre compte windows.
+Vous pouvez accédez a l'application à partir d' <a href={{ confirmationUrl }}>ici</a><br><br>
+Cordialement,
+</div>
+{% endblock %}

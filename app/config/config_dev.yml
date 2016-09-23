@@ -1,0 +1,49 @@
+imports:
+    - { resource: config.yml }
+
+framework:
+    router:
+        resource: "%kernel.root_dir%/config/routing_dev.yml"
+        strict_requirements: true
+    profiler: { only_exceptions: false }
+
+web_profiler:
+    toolbar: "%debug_toolbar%"
+    intercept_redirects: "%debug_redirects%"
+
+# monolog configuration
+monolog:
+    handlers:
+        main_error:
+            type:           fingers_crossed
+            action_level:   debug
+            handler:        streamed_error
+        streamed_error:
+            type:           rotating_file
+            max_files:      15
+            path:           "%kernel.logs_dir%/%kernel.environment%.log"
+            level:          info
+
+#monolog:
+#    handlers:
+#        main:
+#            type:   stream
+#            path:   "%kernel.logs_dir%/%kernel.environment%.log"
+#            level:  debug
+#        console:
+#            type:   console
+#            bubble: false
+        # uncomment to get logging in your browser
+        # you may have to allow bigger header sizes in your Web server configuration
+        #firephp:
+        #    type:   firephp
+        #    level:  info
+        #chromephp:
+        #    type:   chromephp
+        #    level:  info
+
+assetic:
+    use_controller: "%use_assetic_controller%"
+
+swiftmailer:
+    delivery_address: abdouaziz.ndaw@orange-sonatel.com  

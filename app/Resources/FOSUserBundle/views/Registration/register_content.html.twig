@@ -1,0 +1,57 @@
+{# {% trans_default_domain 'FOSUserBundle' %}#}
+
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+<div class="row">
+    <div class="col-lg-12">
+    	<div class="row">
+			<div class="col-lg-4">
+				 <a href="{{ path('les_utilisateurs') }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span> Liste des utilisateurs</button></a> 
+				 <div class="marginB10"></div>
+			</div><!-- End .span4 -->
+		</div>
+    	<div class="panel panel-default">
+	         <div class="panel-heading">
+				<h4> 
+					<span>Ajout d'un utilisateur</span>
+				</h4>
+	        </div>
+	        <div class="panel-body with-footer">
+		        <form novalidate="novalidate" action="{{ path('fos_user_registration_register') }}" method = "post"  class="form-horizontal" role="form">
+			        	<div class="form-group">
+			                {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+			                {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+			            </div>
+			            <div class="form-group">
+			                {{ form_widget(form.matricule, {'attr': {'class': 'form-control'}}) }}
+			                {{ form_widget(form.telephone, {'attr': {'class': 'mask-phoneInt form-control'}}) }}
+			            </div>
+			            <div class="form-group">
+			                {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+	 		                {{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+			            </div>
+			            <div class="form-group">
+							{{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
+			            <div class="col-lg-4" style="display: none;">
+			             <label class="col-lg-2 control-label" for="username">Mot de passe:</label>
+			                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', value: '6j4z3YSm'}}) }}<br>
+			                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', value: '6j4z3YSm'}}) }}
+				        </div>
+			            </div>
+			            <div class="form-group">
+			            	{{ form_widget(form.manager, {'attr': {'class': 'nostyle'}}) }}
+			            	{{ form_widget(form.isAdmin, {'attr': {'class': 'nostyle'}}) }}
+			            </div><!-- End .form-group  -->
+					{{ form_widget(form._token) }}
+		            <div class="form-group form-actions">
+		                <div class="col-lg-offset-2">
+		                    <button type="save" class="btn btn-warning marginR10 orangebg" >Enregistrer</button>
+		                    <button type="save_and_add" class="btn btn-warning marginR10 orangebg" >Enregistrer et ajouter</button>
+		                    <button type="reset" class="btn btn-default">Annuler</button>
+		                </div>
+		            </div><!-- End .form-group  -->
+		         </div>
+		        </form>
+	        </div>
+        </div>
+    </div><!-- End .span12 -->
+</div><!-- End .row -->
