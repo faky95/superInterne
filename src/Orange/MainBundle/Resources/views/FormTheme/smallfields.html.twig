@@ -1,0 +1,107 @@
+{% block form_errors %}
+    {% spaceless %}
+        {% if errors|length > 0 %}
+            {% for error in errors %}
+                <span style="color: red" class="hint">{{
+                    error.messagePluralization is null
+                        ? error.messageTemplate|trans(error.messageParameters, 'validators')
+                        : error.messageTemplate|transchoice(error.messagePluralization, error.messageParameters, 'validators')
+                }}
+                </span>
+            {% endfor %}
+        {% endif %}
+    {% endspaceless %}
+{% endblock form_errors %}
+
+{% block form_errors_class %}
+    {% spaceless %}
+		{% if errors is not empty %} {{ (errors|length > 0) ? 'error' : 'success' }} {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block form_widget_simple %}
+    {% set type = type|default('text') %}
+     	<input type="{{ type }}" {{ block('widget_attributes') }} {% if errors is not empty %} class="required error" {% endif %} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    {{ form_errors(form) }}
+{% endblock form_widget_simple %}
+
+
+{% block form_display %}
+    {% spaceless %}
+		{% if 'display' in attr|keys %} style="{{ 'style' in attr|keys ? attr.style : '' }}; display: {{ attr.display }}" {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block form_label %}
+ 	<label class="col-lg-3 control-label">{{ label|trans({}, translation_domain) }}
+ 	 	{% if required %}
+	        <span style="color: red">*</span>
+	    {% endif %}
+ 	</label>
+{% endblock %}
+
+
+{% block email_widget %}
+	{{ block('text_widget') }}
+{% endblock %} 
+
+
+
+{% block text_widget %}
+<div class="form-group">
+	{{ block('form_label') }}
+	<div class="col-lg-9 {{ block('form_errors_class') }}">
+		{% set type = type|default('text') %} {{ block('form_widget_simple') }}
+	</div>
+</div>
+{% endblock %}
+
+{% block entity_widget %}
+<div class="form-group">
+	{{ form_label(form) }}
+	<div class="col-lg-9 {{ block('form_errors_class') }}">
+		{{ form_widget(form ) }}
+		{{ form_errors(form) }}
+	</div>
+</div>
+{% endblock entity_widget %}
+
+{% block textarea_widget %}
+       {% spaceless %}
+       <div class="form-group">
+             {{ form_label(form) }}
+			<div class="col-lg-9 {{ block('form_errors_class') }}">
+             <textarea  style="height:100px;" class=" {{ 'class' in attr|keys ? attr.class : '' }}" {% if errors is not empty %} class="required error" {% endif %} {{ block('widget_attributes')}}> {{ value }} </textarea>
+			 {{ form_errors(form) }}
+			</div>
+       </div>
+       {% endspaceless %}
+{% endblock %}
+
+{% block date_widget %}
+	{% spaceless %}
+	<div class="form-group">
+		{{ form_label(form) }}
+		<div class="col-lg-9">
+			<input type="text" class="form-control datepicker" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+		</div>
+	</div>
+	{% endspaceless %} 
+{% endblock %}
+
+{% block choice_widget_expanded %}
+{% spaceless %}
+<div class="form-group">
+	<div class="col-lg-9">
+	{% for child in form %}
+	    <label class="{{ (multiple ? 'checkbox' : 'radio') }}">
+	        {{ form_widget(child, {'attr': {'class': attr.widget_class|default('')}}) }}
+	        {{ child.vars.label|trans({}, translation_domain) }}
+	    </label>&nbsp;&nbsp;
+	{% endfor %}
+	</div>
+</div>
+{% endspaceless %}
+{% endblock choice_widget_expanded %}
+
+

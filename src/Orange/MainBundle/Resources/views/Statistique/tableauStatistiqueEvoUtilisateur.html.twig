@@ -1,0 +1,115 @@
+<ul id="myTab4" class="nav nav-tabs">
+                        {% set tst1=0 %}
+                                    {% if has_rights('ROLE_ADMIN') %}
+                                        <li class="dropdown">
+			                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">General <b class="caret"></b></a>
+			                                        <ul class="dropdown-menu">
+			                                              {% set i=0 %}
+							                              {% for cle,lib in statsEvAd.structure %} 
+							                              		{% set i=i+1 %}
+							                                    <li><a href="#tabEvAdAc-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+							                                     {% set tst1=1 %}
+							                             {% endfor %}
+			                                        </ul>
+			                             </li>
+                                     {% endif %}
+                                     {% if has_rights('ROLE_ANIMATEUR') %}
+                                         <li class="dropdown">
+			                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes instances<b class="caret"></b></a>
+			                                        <ul class="dropdown-menu">
+			                                              {% set i=0 %}
+							                              {% for cle,lib in statsEvAn.instance %} 
+							                              		{% set i=i+1 %}
+							                                    <li><a href="#tabEvAnAc-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+							                                     {% set tst1=1 %}
+							                             {% endfor %}
+			                                        </ul>
+			                             </li>
+                                     {% endif %}
+                                    <li  class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} ">
+                                        <a href="#porteeEv" data-toggle="tab">Actions Portées</a>
+                                    </li>
+                                     <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} ">
+                                        <a href="#contribEv" data-toggle="tab">Actions  Contribution</a>
+                                    </li>
+                                     {% if has_rights('ROLE_MANAGER') %}
+                                        <li class="dropdown">
+			                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes Collaborateurs <b class="caret"></b></a>
+			                                        <ul class="dropdown-menu">
+			                                              {% set i=0 %}
+							                              {% for cle,lib in statsEvM.structure %} 
+							                              		{% set i=i+1 %}
+							                                    <li><a href="#tabEvManAc-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+							                                     {% set tst1=1 %}
+							                             {% endfor %}
+			                                        </ul>
+			                             </li>
+                                     {% endif %}
+</ul>
+       
+<div class="tab-content" style="overflow-y: hidden;">
+      {% set tst1=0 %}
+           {% if has_rights('ROLE_ADMIN') %}
+           	  {% if statsEvAd is defined and statsEvAd is not empty %}
+		           	 {% set i=0 %}
+					 {% for cle, stat in statsEvAd.structure %}
+								{% set i=i+1 %}
+								<div class="tab-pane fade " id="tabEvAdAc-{{ i }}">
+									{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+								</div>
+					{% endfor %}
+	           	{% else %}
+					<div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune information disponible  ....
+					</div>
+				{% endif %}
+           {% endif %}
+   {% if has_rights('ROLE_ANIMATEUR') %}
+   			  {% if statsEvAn is defined and statsEvAn is not empty %}
+		           	 {% set i=0 %}
+					 {% for cle, stat in statsEvAn.instance %}
+								{% set i=i+1 %}
+								<div class="tab-pane fade " id="tabEvAnAc-{{ i }}">
+									{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+								</div>
+					{% endfor %}
+	           	{% else %}
+					<div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune information disponible  ....
+					</div>
+				{% endif %}          
+   {% endif %}              
+           <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="porteeEv">
+                          {% if statsEvP is  defined and statsEvP is not empty %}
+              				{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': statsEvP , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+                          {% else %}
+                                      <div class="alert alert-warning">
+                          				 <strong>Infos!</strong> Aucune action en portée ...
+                       				 </div>
+                          {% endif %}
+                     </div>
+                      <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="contribEv">
+                       {% if statsEvC is not empty %}
+                      		{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': statsEvC , 'statut':statut, 'type': "one", 'nbTaux':nbTaux}  %}
+                       {% else %}
+                                      <div class="alert alert-warning">
+			                          <strong>Infos!</strong> Aucune action en contribution ...
+			                        </div>
+                       {% endif %}
+                     </div>
+                       {% if has_rights('ROLE_MANAGER') %}
+                      {% if statsEvM is defined and statsEvM is not empty %}
+		           	 {% set i=0 %}
+					 {% for cle, stat in statsEvM.structure %}
+								{% set i=i+1 %}
+								<div class="tab-pane fade " id="tabEvManAc-{{ i }}">
+									{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+								</div>
+					{% endfor %}
+	           	{% else %}
+					<div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune information disponible  ....
+					</div>
+				{% endif %}
+                       {% endif %}
+          

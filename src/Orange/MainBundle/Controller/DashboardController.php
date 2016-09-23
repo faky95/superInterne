@@ -1,0 +1,119 @@
+<?php
+namespace Orange\MainBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Orange\MainBundle\Entity\Action;
+use Orange\MainBundle\Entity\Utilisateur;
+use Orange\QuickMakingBundle\Annotation\QMLogger;
+/**
+ * Controlleur du Tableau de bord
+ * @author tmp_savi2790
+ *
+ */
+class DashboardController extends Controller {
+	
+	CONST NBSEM=53;
+	
+	/**
+	 * Tableau de bord 
+	 * 
+	 * @Route("/", name="dashboard")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function dashboardAction() {
+		$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Statistique');
+		$user=$this->getUser();
+		$bu=$user->getStructure()->getBuPrincipal();
+		$reqEvP=$rep->getStatsUserBySemaine($user, 1, null);
+		$res = $this->container->get('orange.main.calcul')->cumul($reqEvP);
+		$colors = $this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->listColorOfBu($bu);
+		$dataEvP = $this->container->get('orange.main.calcul')->stats($bu, $res);
+		$statsEvP = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($dataEvP, 'semaine');
+		$graphe=array();
+		foreach($statsEvP['taux'] as $key=>$value) {
+			$graphe[$key]=array();
+		}
+		foreach ($statsEvP['semaine'] as $key=>$values) {
+			$i=0;
+			foreach ($values['data'] as $cle=>$val){
+				if(isset($graphe[$cle]))
+					$graphe[$cle][]=$val;
+			}
+		}
+		$semaines=array();
+		for ($i=1;$i<=Date("W");$i++)
+			$semaines[$i-1]=$i;
+		return array(
+				'semaines'=>$semaines,
+				'graphe'=>$graphe,
+				'couleurs'=>$colors
+		);
+	}
+	/**
+	 * @Route("/testst", name="test")
+	*/
+	public function testAction(){
+		return(array());
+	} 
+	
+	/**
+	 * @Method("GET")
+	 *  @Template()
+	 */
+	public function tauxRealisationAction(){
+		$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
+		$actionTotal=$rep->getTotalAction();
+		$actionRealiseeDelai=$rep->getActionRealiseeDansLesDelais();
+ 		$actionRealiseeDelai=$rep->getActionRealiseeDansLesDelais();
+		$actionRealisee=$rep->getActionRealisee();
+		if($actionTotal!=0){
+		$tauxRealisationGlobaleDelais=number_format(($actionRealiseeDelai/$actionTotal)*100,2);
+		$tauxRealisationGlobale=number_format(($actionRealisee/$actionTotal)*100,2); 
+		}else{
+			$tauxRealisationGlobaleDelais=0;
+			$tauxRealisationGlobale=0;
+		}
+		return  array(
+			 	'tauxRealisationGlobaleDelais'=>$tauxRealisationGlobaleDelais,
+				'tauxRealisationGlobale'=>$tauxRealisationGlobale,
+				'actionRealiseeDelai'=>$actionRealiseeDelai,
+				'actionRealisee'=>$actionRealisee, 
+				'actionRealiseeDelai'=>$actionRealiseeDelai,
+				'actionTotal'=>$actionTotal
+				
+		);
+	}
+	/**
+	 * @Method("GET")
+	 * @Template()
+	 * @Route("/testgf", name="testgf")
+	 * 
+	 */
+	public function statistiqueGeneralAction(){
+		$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
+		$map=array();
+		if($this->getUser()->hasRole(Utilisateur::ROLE_ADMIN))
+			$role=Utilisateur::ROLE_ADMIN;
+		elseif($this->getUser()->hasRole(Utilisateur::ROLE_ANIMATEUR))
+			$role=Utilisateur::ROLE_ANIMATEUR;
+		elseif ($this->getUser()->hasRole(Utilisateur::ROLE_RAPPORTEUR))
+		   $role=Utilisateur::ROLE_RAPPORTEUR;
+		elseif($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)){
+			$role=Utilisateur::ROLE_MANAGER;
+		}else{
+			$role=Utilisateur::ROLE_PORTEUR;
+		}
+		$rq=$rep->listAllElementsGeneral($role);
+// 		var_dump($rq);exit;
+		$map= $this->container->get('orange.main.dataStats')->transformRequeteToSimpleNull($rq);
+		return array(
+				'req'=>$map,
+		);
+	}
+	
+	
+}

@@ -1,0 +1,39 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Modification de statut</span>
+	</h4>
+</div>
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('changer_statut', {entity_id: action.id}) }}" method="post" {{ form_enctype(form) }} role="form">
+	<div class="panel-body">
+		{{ form_row(form.statutChange,  {'attr': {'class': 'form-control statut'}}) }}
+		<div class="form-group dateFin">
+			{{ form_row(form.dateFinExecut,  {'attr': {'class': 'datepicker'}}) }}
+		</div>
+		{{ form_row(form._token) }}
+		<!-- End .form-group  -->
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+		{{ form_widget(form.save,{attr: {'data-target': '#myModal', 'call': 'redirectModalToUrl', 'class':'btn btn-warning submitLink'}} ) }}
+			{{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+ 	$(document).ready(function() {
+ 		$(".dateFin").hide();
+	 // $("select").select2();
+	  $(".statut").change(function(){
+		 if($(this).val()=="29"){
+			$(".dateFin").show();
+		 }
+		 else{
+				$(".dateFin").hide();
+			 }
+	  });
+	});
+ 	</script>

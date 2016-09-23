@@ -1,0 +1,30 @@
+<h3 style="color: #ff6600">SUPER::Suivi des Performances</h3>
+Bonjour ,<br><br>
+Vous êtes invités à prendre en charge les signalisations de votre instancee <strong style="color: #ff6600;">{{ instance }}</strong>
+<br>
+<br><br>
+<table border="1" width="100%">
+  <tr>
+    <th>Référence</th>
+    <th>Libellé</th>
+    <th>Constateur</th>
+    <th>Date Constat</th>
+    <th>Source</th>
+    <th>Date de signalisation</th>
+  </tr>
+{% for sign in signs %}
+	<tr>
+		<td><a style="color: #ff6600; text-decoration: none" href="{{ url('details_signalisation', { 'id': sign['id']}) }}">{{ sign['reference'] }}</a></td>
+		<td>{{ sign['libelle'] }}</td>
+		<td>{{ sign['constateur'] }}</td>
+		<td>{{ sign['dateConstat'] }}</td>
+		<td>{{ sign['source'] }}</td>
+		<td>{{ sign['date'] }}</td>
+	</tr>
+{% endfor %}
+</table>
+<br>
+<br><br>
+Merci.
+<hr>
+Pour accéder à l'application, <a style="color: #ff6600;" href="{{ accueil_url }}">cliquer ici </a></strong>.

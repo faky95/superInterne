@@ -1,0 +1,40 @@
+{% extends '::base.html.twig' %}
+
+{# {% form_theme edit_form 'OrangeMainBundle:FormTheme:fields.html.twig' %}#}
+
+{% block content -%}
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Ajout BU</span>
+			    </h4>
+			</div>
+			<div class="panel-body">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_bu', {id:entity.id}) }}" method="post" role="form">
+			    	<div class="form-group">
+	                {{ form_row(edit_form.libelle,  {'attr': {'class': 'form-control'}}) }}
+	                </div>
+	                <div class="form-group">
+	                {{ form_row(edit_form.niveauValidation,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+	                </div>
+	                <div class="form-group">
+	                {{ form_row(edit_form.structureInDashboard,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+	                </div>
+	                {{ form_widget(edit_form._token) }}
+			        <div class="form-group">
+			        	<div class="col-lg-offset-3 col-lg-9">
+							    {{ form_widget(edit_form.add) }}
+							    {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  --> 
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% endblock %}
+
+{% block pagescript %}
+{% endblock %}

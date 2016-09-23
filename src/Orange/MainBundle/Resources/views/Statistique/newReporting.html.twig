@@ -1,0 +1,70 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %}Automatisation de reporting{% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Création de reporting</span>
+			    </h4>
+			</div>
+			<div class="panel-body">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_reporting_stat') }}" method="post" role="form">
+					{{ form_row(form.libelle, {'attr': {'class': 'form-control'}}) }}
+					{{ form_row(form.pas, {'attr': {'class': 'nostyle form-control pas'}}) }}
+					{{ form_row(form.dayOfMonth, {'attr': {'class': 'nostyle form-control month'}}) }}
+					{{ form_row(form.dayOfWeek, {'attr': {'class': 'nostyle form-control week'}}) }}
+					{{ form_row(form.iteration, {'attr': {'class': 'form-control semaine'}}) }}
+					<div style="display: none;">
+						{{ form_row(form.arrayType) }}
+						{{ form_row(form.requete) }}
+						{{ form_row(form.parameter) }}
+						{{ form_row(form.query) }}
+						{{ form_row(form.param) }}
+						{{ form_row(form.typeReporting) }}
+					</div>
+					{{ form_row(form.destinataire, {'attr': {'class': 'select2 form-control'}}) }}
+					{{ form_row(form._token) }}	
+		            <div class="form-group">
+						<div class="col-lg-offset-3 col-lg-9">
+						    {{ form_widget(form.add) }}
+						    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  -->   
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+{# 	{{ render(controller('OrangeMainBundle:Structure:liste')) }}#}
+</div>
+<script type="text/javascript">
+ 	$(document).ready(function() {
+	 // $("select").select2();
+	  $(".pas").change(function(){
+		 if($(this).val()=="3"){
+			$(".week").parent().parent().hide();
+			 $(".month").parent().parent().show();
+			$(".semaine").parent().parent().hide();
+		 }else if($(this).val()=="1"){
+			$(".week").parent().parent().show();
+			 $(".month").parent().parent().hide();
+			$(".semaine").parent().parent().hide();
+		 }else if($(this).val()=="9"){
+				$(".week").parent().parent().hide();
+				 $(".month").parent().parent().hide();
+				$(".semaine").parent().parent().hide();
+		 }else{
+		 $(".week").parent().parent().show();
+		 $(".month").parent().parent().hide();
+		 $(".semaine").parent().parent().show();
+		}
+	  });
+	});
+ 	</script>
+{% endblock %}

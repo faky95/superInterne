@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+{% block content -%}
+
+                <!-- Build page from here: -->
+                <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Liste des structures {% endblock %}</h3>                    
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                    	<div class="row">
+							<div class="col-lg-8">
+								 <a href="#" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un utilisateur</button></a>
+								 <a href="#" target="_blank"><button class="btn btn-success"><span class="icon16 icomoon-icon-download white"></span> Importer des utilisateurs </button></a> 
+								 <div class="marginB10"></div>
+							</div><!-- End .span4 -->
+						 </div>
+                        <div class="panel panel-default gradient invoice">
+                            <div class="panel-heading clearfix">
+                                <h4 class="left">
+                                    <span>Details Structure</span>
+                                </h4>
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libelle: <strong class="red">{{ entity }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Type: <strong class="red">{{ entity.typeStructure }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>BU Principale : <strong class="red">{{ entity.buPrincipal }}</strong></li>
+                                    </ul>
+                                </div>
+                                
+                                <div class="you col-lg-12 col-md-6 col-sm-6">                        
+									<div class="panel panel-default">
+									    <div class="panel-heading" style="background:#FFFFFF">
+									        <h4>
+									            <span class="icon16 icomoon-icon-list-2 "></span>
+									            <span class="red">Liste des rapporteurs</span>
+									        </h4>
+									        <a href="#" class="minimize">Minimize</a>
+									    </div>
+									    <div class="panel-body noPad">
+									        <table class="table table-bordered">
+									        	{% if entity.rapporteurs is defined and entity.rapporteurs is not empty %}
+										            <thead>
+										              <tr style="background:#FFFFFF" align="center">
+										                <td><strong>Rapporteur</strong></td>
+										              </tr>
+										            </thead>
+										            <tbody>
+										            	{% for rapporteur in entity.rapporteurs %}
+											            	<tr bgcolor="#FFFFFF">
+												                <td width="450px" style="text-align: justify">{{ rapporteur }}</td>
+												            </tr>
+												        {% endfor %}
+										            </tbody>
+										        {% else %}
+										            <tbody>
+											            <tr>
+												            <td>
+												            	La structure n'a pas de rapporteur.
+												            </td>
+											            <tr>
+										            </tbody>
+										    	{% endif %}
+									        </table>
+									    </div>
+									</div><!-- End .panel -->
+								</div><!-- End .span12 -->
+                            </div>
+                        </div><!-- End .panel -->
+
+                    </div>
+
+                </div><!-- End .row -->
+{% endblock %}
+{% block pagescript %}
+	{% include 'OrangeMainBundle:ModalScript:confirm.html.twig' %}
+{% endblock %}

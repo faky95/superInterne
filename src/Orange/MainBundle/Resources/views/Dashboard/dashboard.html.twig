@@ -1,0 +1,189 @@
+{% extends '::base.html.twig' %}
+
+{% block breadcrumb %} 
+	<li class="active">Dashboard</li>
+{% endblock %}
+
+{% block content %}
+        <!--Body content-->
+        		 <!--Body content-->
+        		 <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Tableau de bord {% endblock %}</h3>                    
+				</div>
+				<!-- End .heading-->
+        		 {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_ANIMATEUR') or has_rights('ROLE_SOURCE')  or has_rights('ROLE_PORTEUR') %}
+        		 <div class="row">
+                    <div class="col-lg-8">
+                        <div class="panel panel-default chart gradient">
+                            <div class="panel-heading">
+                                <h4>
+                                    <span class="icon16 icomoon-icon-bars"></span>
+                                    <span>Suivi hebdomadaire des actions </span>
+                                </h4>
+                                <a href="#" class="minimize">Reduire</a>
+                            </div>
+                            <div class="panel-body" style=" padding-bottom:0;">
+                                 <div id="linechart"></div> 
+                            </div>
+                        </div><!-- End .panel -->
+                    </div><!-- End .span8 -->
+                    {% if app.user.structure.buPrincipal.signalisation ==1  %}
+                     <div class="col-lg-4">
+                        <div class="panel panel-default gradient">
+                                     {{ render(controller('OrangeMainBundle:Statistique:statSignalisation')) }}
+                        </div><!-- End .panel -->  
+                    </div><!-- End .span4 -->
+                    {% else %}
+                    		<div class="col-lg-4">
+  								{{ render(controller('OrangeMainBundle:Dashboard:statistiqueGeneral')) }}
+  							 </div><!-- End .panel -->  
+                     {% endif %}
+				</div>
+                    <!-- End .span4 -->
+                    {% else %}
+                    <div class="row">
+                    {%  if app.user.structure.buPrincipal.signalisation == 1 %}
+                    <div class="col-lg-12">
+                    {% else %}
+                    <div class="col-lg-8">
+                    {% endif %}
+                        <div class="panel panel-default chart gradient">
+                            <div class="panel-heading">
+                                <h4>
+                                    <span class="icon16 icomoon-icon-bars"></span>
+                                    <span>Suivi hebdomadaire des actions </span>
+                                </h4>
+                                <a href="#" class="minimize">Reduire</a>
+                            </div>
+                            <div class="panel-body" style=" padding-bottom:0;">
+                                 <div id="linechart"></div> 
+                            </div>
+                        </div><!-- End .panel -->
+                    </div><!-- End .span8 -->  </div><!-- End .row -->
+                    {% endif %}
+              
+                
+                <div class="row">
+                 {% if app.user.structure.buPrincipal.signalisation == 1 %}
+                    <div class="col-lg-8">
+                  {% else %}
+                  <div class="col-lg-12">
+                  {% endif %}
+                                    <ul id="myTab0" class="nav nav-pills monTab">
+		                               <li class="active"><a href="#statique" data-toggle="tab">Statique</a></li>
+		                               <li><a href="#evolutive" data-toggle="tab">Evolutive</a></li>
+		                            </ul>
+                                
+                                <div class="tab-content" style="padding: 0; overflow-y:hidden;">
+                                    <div id="statique" class="tab-pane fade in active" >
+									         {{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueUtilisateur')) }}
+                                    </div>
+                                    <div id="evolutive" class="tab-pane fade in " >
+									        {{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueEvoUtilisateur')) }}
+                                    </div>
+                                    
+                                </div>
+                        </div><!-- End .span8 -->
+                      </div>
+                       {% if app.user.structure.buPrincipal.signalisation == 1 %}
+					<div class="col-lg-4">
+  						{{ render(controller('OrangeMainBundle:Dashboard:statistiqueGeneral')) }}
+                     </div><!-- End .span4 -->
+                     {% endif %}
+                </div><!-- End .row -->
+            </div><!-- End contentwrapper -->
+        </div><!-- End #content -->
+{% endblock %}
+{% block pagescript %}
+ <script>   
+	 $(function () {
+			var series = [];
+			var arrSemaine = [];
+			var color = [];
+			{% for col in couleurs %}
+				color[{{ loop.index0 }}] = '{{ col.couleur }}';
+			{% endfor %}
+			
+			{% for sem in semaines %}
+					arrSemaine[{{ loop.index0 }}] = {{ sem }};
+			{% endfor %}
+
+			{% for libelle, stats in graphe %}
+				series[{{ loop.index0 }}] = new Object();
+				series[{{ loop.index0 }}].name = '{{ libelle|escape('js') }}';
+			{% endfor %}
+			
+			{% for i,datas in graphe %}
+				series[{{ loop.index0 }}].data = [];
+				{%  for data in datas  %}
+						series[{{ loop.parent.loop.index0 }}].data.push({{ data }});
+				{% endfor %}
+			{% endfor %}
+		
+		    $('#linechart').highcharts({
+		    	colors: color,
+		        title: {
+		            text: 'Suivi de mes actions portées ',
+		            x: -20 //center
+		        },
+		        lang: {
+		        	downloadJPEG: 'Télécharger sous image JPEG',
+		        	downloadPNG: 'Télécharger sous image PNG',
+		        	downloadSVG: 'Télécharger sous image SVG',
+		        	downloadPDF: 'Télécharger sous document PDF',
+		        	printChart: 'Imprimer le graphe',
+		        	contextButtonTitle: 'Télécharger le graphe'
+		    	},
+		        subtitle: {
+		            text: '',
+		            x: -20
+		        },
+		        xAxis: {
+		       		title: {
+			                text: '<b>Semaines</b>'
+			            },
+		            categories: arrSemaine,
+		            tickPixelInterval: 300
+		            
+		        },
+		        credits: {
+						enabled : false 	
+		        },
+		        scrollbar: {
+		        	enabled: true
+		        },
+		        yAxis: {
+		            title: {
+		                text: '<b>Taux de réalisations des actions  <span style="color:#ff6600; font-weight:bold; font-size:15px;"> (%)</span></b>'
+		            },
+		            plotLines: [{
+		                value: 0,
+		                width: 1,
+		                color: '#5cb85c'
+		            }],
+		            minRange:  0,
+		            labels:{
+		                formatter: function(){
+		                  if(this.value >= 0){
+		                    return this.value;
+		                  }
+		                }
+		              }
+		        },
+		        tooltip: {
+		            valueSuffix: '%'
+		        },
+		        legend: {
+		            layout: 'horizontal',
+		            align: 'center',
+		            verticalAlign: 'bottom',
+		            borderWidth: 0
+		        },
+		        series: series
+		    });
+		});
+		</script>
+		
+		
+{% endblock %}

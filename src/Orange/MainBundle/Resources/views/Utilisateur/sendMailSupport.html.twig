@@ -1,0 +1,6 @@
+L'utilisateur <span style="color: red; font-weight:bold;"> {{ app.user.getPorteur }} </span>
+<br/>a rencontré l'erreur suivant :
+<a href="{{ app.request.getSchemeAndHttpHost() ~ asset("upload/bugs/" ~ dossier ~ "/" ~ file) }}">Afficher l'erreur </a>
+<br /> en essayant d'accéder au lien suivant:
+<a href="{{  link }}">Accéder au lien </a>
+<br/>à la date du: <span style="color: red; font-weight:bold;"> {{ "now"|date("d/m /Y") }} </span>

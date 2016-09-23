@@ -1,0 +1,131 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Détail d'une instance {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+    <div class="col-lg-12">
+         <div class="panel panel-default gradient invoice">
+             <div class="panel-heading clearfix">
+  				<h4 class="left">
+      				<span class="red">détails sur l'instance </strong></span>
+                </h4>
+             </div>
+			<div class="panel-body row" style="margin-left:0; margin-right:0;">
+			     <div class="you col-lg-6 col-md-6 col-sm-6" >
+			        <ul class="list-unstyled">
+			            <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ entity.libelle }}</strong></li>
+			            <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Couleur : <strong class="red">{{ entity.couleur  }}</strong></li>
+			            <li><span class="icon16 icomoon-icon-arrow-right-3"></span>typeInstance : <strong class="red">{{ entity.typeInstance }}</strong></li>
+			        </ul>
+			     </div>    
+			     <div class="you col-lg-6 col-md-6 col-sm-6" >
+			    	<ul class="list-unstyled">
+			    		 <li><h3 class="red">Description</h3></li>
+						 <p style="text-align: justify;">{{ entity.description }}</p>  
+			    	</ul>
+			    </div>
+			    <div class="you col-lg-12 col-md-6 col-sm-6">
+{# 			    	<div class="row">#}
+{# 						<div class="col-lg-8">#}
+{# 							 <a href="#" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un animateur </button></a>#}
+{# 							 <a href="#" target="_blank"><button class="btn btn-success"><span class="icon16 icomoon-icon-download white"></span> Importer des animateurs </button></a> #}
+{# 							 <div class="marginB10"></div>#}
+{# 						</div><!-- End .span4 -->#}
+{# 					 </div>                        #}
+					<div class="panel panel-default">
+					    <div class="panel-heading" style="background:#FFFFFF">
+					        <h4>
+					            <span class="icon16 icomoon-icon-list-2 "></span>
+					            <span class="red">Liste des animateurs</span>
+					        </h4>
+					        <a href="#" class="minimize">Minimize</a>
+					    </div>
+					    <div class="panel-body noPad">
+					        <table class="table table-bordered">
+					         {% if entity.animateur is defined and entity.animateur is not empty %}
+					            <thead>
+					              <tr style="background:#FFFFFF" align="center">
+					                <td><strong>Animateur</strong></td>
+					                <td><strong>Date d'affectation</strong></td>
+					              </tr>
+					            </thead>
+					            <tbody>
+					            	{% for animateur in entity.animateur %}
+						            	<tr bgcolor="#FFFFFF">
+							                <td width="450px" style="text-align: justify">{{ animateur }}</td>
+							                <td style="text-align: justify">{{ animateur.dateAffectation| localizeddate('full', 'none') }}</td>
+							            </tr>
+							        {% endfor %}
+					            </tbody>
+					        {% else %}
+					            <tbody>
+						            <tr>
+							            <td>
+							            	L'instance n'a pas d'animateur.
+							            </td>
+						            <tr>
+					            </tbody>
+					    	{% endif %}
+					        </table>
+					    </div>
+					</div><!-- End .panel -->
+				</div><!-- End .span12 -->
+				
+{# 				<!-- Liste des actions de l'instance  -->#}
+{#                 <div class="you col-lg-12 col-md-6 col-sm-6">                        #}
+{# 					<div class="panel panel-default">#}
+{# 						<div class="row">#}
+{# 							<div class="col-lg-8">#}
+{# 								 <a href="#" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>#}
+{# 								 <a href="#" target="_blank"><button class="btn btn-success"><span class="icon16 icomoon-icon-download white"></span> Importer des actions </button></a> #}
+{# 								 <div class="marginB10"></div>#}
+{# 							</div><!-- End .span4 -->#}
+{# 					 	</div>#}
+{# 					    <div class="panel-heading" style="background:#FFFFFF">#}
+{# 					        <h4>#}
+{# 					            <span class="icon16 icomoon-icon-list-2 "></span>#}
+{# 					            <span class="red">Liste des actions</span>#}
+{# 					        </h4>#}
+{# 					        <a href="#" class="minimize">Minimize</a>#}
+{# 					    </div>#}
+{# 					    <div class="panel-body noPad">#}
+{# 					        <table class="table table-bordered">#}
+{# 					        	{% if entity.action is defined and entity.action is not empty %}#}
+{# 						            <thead>#}
+{# 						              <tr style="background:#FFFFFF" align="center">#}
+{# 						                <td><strong>Action</strong></td>#}
+{# 						                <td><strong>Porteur</strong></td>#}
+{# 						                <td><strong>Date de création</strong></td>#}
+{# 						              </tr>#}
+{# 						            </thead>#}
+{# 						            <tbody>#}
+{# 						            	{% for action in entity.action %}#}
+{# 							            	<tr bgcolor="#FFFFFF">#}
+{# 								                <td width="250px" style="text-align: justify">{{ action.libelle }}</td>#}
+{# 								                <td style="text-align: justify">{{ action.porteur }}</td>#}
+{# 								                <td style="text-align: justify">{{ action.dateAction| localizeddate('full', 'none') }}</td>#}
+{# 								            </tr>#}
+{# 								        {% endfor %}#}
+{# 						            </tbody>#}
+{# 						         {% else %}#}
+{# 						            <tbody>#}
+{# 							            <tr>#}
+{# 								            <td>#}
+{# 								            	L'instance n'a pas d'actions.#}
+{# 								            </td>#}
+{# 							            <tr>#}
+{# 						            </tbody>#}
+{# 					    		{% endif %}#}
+{# 					        </table>#}
+{# 					    </div>#}
+{# 					</div><!-- End .panel -->#}
+{# 				</div><!-- End .span12 -->#}
+			</div>
+         </div><!-- End .panel -->
+     </div>
+</div><!-- End .row -->
+{% endblock %}

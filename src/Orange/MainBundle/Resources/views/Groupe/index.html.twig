@@ -1,0 +1,45 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+  <!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Liste des groupes {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+	<div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default gradient">
+                                <div class="panel-heading">
+                                    <h4>
+                                        <span>Liste des Groupes</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body noPad clearfix">
+                                    <table id="groupeTable" cellpadding="0" cellspacing="0" border="0" class=" display table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Groupe</th>
+											    <th>Email</th>
+											    <th>Description</th>
+											    <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        	<tr>
+                                        		<td colspan="4">Chargement des donnees ...</td>
+                                        	</tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                
+                            </div><!-- End .panel -->
+
+                        </div><!-- End .span12 -->
+
+</div><!-- End .row -->    
+ {% endblock %}
+{% block pagescript %}
+{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'groupeTable', url: path('liste_des_groupes') } %}
+{% endblock %}

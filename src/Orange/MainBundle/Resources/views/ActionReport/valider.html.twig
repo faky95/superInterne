@@ -1,0 +1,21 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Valider le report</span>
+	</h4>
+</div>
+<form class="form-horizontal" action="{{ path('validation_report', {action_id: entity.id, validation: 'VALIDER'? }) }}" method="POST" novalidate="novalidate" role="form">
+	<div class="panel-body">
+		<p>Vous êtes sur le point de valider le report d'échéance demandé par le porteur.</p>
+		<!-- End .form-group  -->
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-2 col-lg-9">
+			<a href="#" data-target="#myModal" class="btn btn-success submitLink" call="redirectModalToUrl">Confirmer</a>
+			<a href="#" class="btn btn-primary" data-dismiss="modal">Fermer</a>
+		</div>
+	</div>
+</form>

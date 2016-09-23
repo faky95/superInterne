@@ -1,0 +1,31 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+    <h1>TypeAction</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ entity.type }}</td>
+            </tr>
+            <tr>
+                <th>Couleur</th>
+                <td>{{ entity.couleur }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('les_types_action') }}">
+            Back to the list
+        </a>
+    </li>
+   
+</ul>
+{% endblock %}

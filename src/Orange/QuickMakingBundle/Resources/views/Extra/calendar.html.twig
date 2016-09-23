@@ -1,0 +1,6 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	calendarOptions['events']	= "{{ url }}";
+	oCalendar = $("{{ '#' ~ idCalendar }}").fullCalendar(calendarOptions);
+});
+</script>

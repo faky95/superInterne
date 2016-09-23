@@ -1,0 +1,178 @@
+{% extends '::base.html.twig' %}
+
+
+{% block content %}
+
+<div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="panel panel-default">
+
+                                <div class="panel-heading">
+
+                                    <h4>
+                                        <span class="icon16   icomoon-icon-book "></span>
+                                        <span>Manuel pour le chargement des utilisateurs</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                    <li class="big col-lg-6">
+										<h3>Contraintes sur le fichier de chargement</h3>
+										<span>Le fichier de chargement est structuré de la manière suivante:</span>
+										<ul>
+											<li>1 ère colonne: Le matricule de l'agent</li>
+											<li>2 ème colonne: Le prenom de l'agent</li>
+											<li>3 ème colonne: Le nom de l'agent</li>
+											<li>4 ère colonne: L'e-mail de l'agent</li>
+											<li>5 ème colonne: Le login de l'agent</li>
+											<li>6 ème colonne: Le mobile de l'agent</li>
+											<li>7 ère colonne: La structure directement rattachée à l'agent</li>
+											<li>8 ème colonne: Chef de structure qui a la valeur 1 si l'agent est le chef de sa structure, sinon sa valeur est à 0</li>
+											<li>9 ère colonne: La direction de la structure </li>
+										</ul>
+									</li>
+                                	<li class="big col-lg-6">
+										<h3>Contraintes sur le chargement</h3>
+										<ul>
+											<li>La structure doit exister . </li>
+											<li>Le matricule doit etre unique pour chaque utilisateur.</li>
+											<li>Le login doit etre unique pour chaque utilisateur.</li>
+											<li>L'email doit etre unique pour chaque utilisateur.</li>
+										</ul>
+									</li>
+									
+                                </div>
+
+                            </div><!-- End .panel -->
+
+                        </div><!-- End .span4 -->
+
+                    </div><!-- End .row -->
+                   <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4>
+                                        <span class="icon16 entypo-icon-download "></span>
+                                        <span>Importation utilisateur</span>
+                                    </h4>
+                               </div>
+                               		
+                                     <form method="post" action="{{ path('importer_utilisateur') }}" {{ form_enctype(form) }}>
+                                       <div class="panel-body">
+                                       <p  class="right" style="color:red;">   
+                               		      NB : Le format du fichier doit être .txt ou .csv avec séparateur point-virgule.
+                               			</p>
+										{% include 'OrangeMainBundle:Extra:customFormFile.html.twig' with {'fileField': form.file} %}
+										{{ form_row(form._token) }}
+										</div>
+									    <div class="form-actions">
+											<div class="col-lg-offset-3 col-lg-9">  
+											    <a class="btn btn-success" href="{{ asset('upload/canevas/utilisateur.csv') }}">Télécharger le modèle</a>
+											    {{ form_widget(form.add) }}
+											     {{ form_widget(form.cancel) }}
+											</div>
+										</div><!-- End .form-actions  -->  
+										
+									</form>
+                                </div>
+
+                            </div><!-- End .panel -->
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

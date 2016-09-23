@@ -1,0 +1,86 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+    <!-- Build page from here: -->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+
+                            <div class="panel-heading clearfix">
+
+                                <h4 class="left">
+                                    <span>Details Chantier</span>
+                                </h4>
+                                <div class="print">
+                                    <a href="{{ path('edition_chantier', {'id':entity.id}) }}" class="tip" title="Modifier le chantier"><span class="icon24 icomoon-icon-pencil-3"></span></a>
+                                </div>
+                                  
+
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libelle: <strong class="red">{{ entity.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Projet: <strong class="red">{{ entity.projet }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Instancet: <strong class="red">{{ entity.instance }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date: <strong class="red">{{ entity.dateCreation|date("d/m/Y")  }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="client col-lg-6 col-md-6 col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li><h3 class="red">Description</h3>
+                                        <p style="text-align: justify;">{{ entity.description }}</p></li>
+
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+								  <h4 class="left">
+                                    <span>Membres</span>
+                                </h4>
+                                <table class="responsive table table-bordered">
+                                    <thead>
+                                      <tr>
+                                        <th>Nom</th>
+                                        <th>Date D'affectation</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                       {% set message='' %}
+		                                    {% for user in entity.membreChantier %}
+		                                       <tr>
+		                                        <td>{{ user.utilisateur }}</td>
+		                                        <td>{{ user.dateaffectation|date("d/m/Y") }}</td> 
+		                                        <td>
+		                                       <a class="confirmModal" href="{{ path('ajout_chef', { 'id': entity.id, 'user_id': user.utilisateur.id }) }}"      class="tip"
+		                                     	     {% if(user.isChef==0) %}
+		                                     	     {% set message = 'Voulez vous l\' ajouter aux chefs de chantier ?' %}
+		                                     	      title="Ajouter aux chefs" ><span class="icon12  icomoon-icon-user-plus"></span>
+		                                     	     {% else %} 
+		                                     	     {% set message = 'Voulez vous l\' enlever des chefs de chantier ?' %}
+		                                     	     title="Enlever des Chefs" ><span class="icon12 icomoon-icon-user-minus"></span>
+		                                     	     {% endif %} 
+		                                     	   </a> 
+		                                        <a href="#" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
+		                                        </td>
+		                                      </tr>
+		                                    {% endfor %} 
+                                    </tbody>
+                                </table>
+
+                            </div>
+							{% include 'OrangeMainBundle:Modal:confirm.html.twig' with {'id':'dialog-confirm', 'content': message  } %}	
+                            
+                        </div><!-- End .panel -->
+
+                    </div>
+
+                </div><!-- End .row -->
+                
+{% endblock %}
+
+
+{% block pagescript %}
+	{% include 'OrangeMainBundle:ModalScript:confirm.html.twig' %}
+{% endblock %}
+		 	

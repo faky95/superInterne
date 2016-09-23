@@ -1,0 +1,26 @@
+<script type="text/javascript">
+$(document).ready(function() {
+    var theHREF;
+    $( "#dialog-desactiver" ).dialog({
+        resizable: false,
+        height:150,
+        width:500,
+        autoOpen: false,
+        modal: true,
+        buttons: {
+            "Confirmer": function() {
+                $( this ).dialog( "close" );
+                window.location.href = theHREF;
+            },
+            "Annuler": function() {
+                $( this ).dialog( "close" );
+            }
+        }
+    }).css("font-size", "15px");
+    $("a.desactiverModal").click(function(e) {
+        e.preventDefault();
+        theHREF = $(this).attr("href");
+        $("#dialog-desactiver").dialog("open");
+    });
+});
+</script>

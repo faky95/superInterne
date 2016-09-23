@@ -1,0 +1,27 @@
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-clock"></span>
+       	<span>Demande de report</span>
+	</h4>
+</div>
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('actionreport_create', {'action_id': action_id}) }}" {{ form_enctype(form) }} method="post" role="form">
+	<div class="panel-body">
+		<div class="form-group">
+			{{ form_widget(form.date,  {'attr': {'class': 'datepicker'}}) }}
+		</div>
+		{{ form_row(form.description,  {'attr': {'class': 'nostyle'}}) }}
+		{{ form_row(form._token) }}
+		<!-- End .form-group  -->
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+			{{ form_widget(form.enregistrer,{attr: {'data-target': '#myModal', 'call': 'redirectModalToUrl', 'class':'btn btn-warning submitLink'}} ) }}
+			<a href="#" class="btn btn-die" data-dismiss="modal">Fermer</a>
+		</div>
+	</div>
+</form>

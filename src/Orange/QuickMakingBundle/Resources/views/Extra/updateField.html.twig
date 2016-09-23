@@ -1,0 +1,26 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#{{ parent.vars.id }}").change(function(e) {
+        var Id =  $(this).val();
+		
+        {% if codeBefore is defined %}
+    		{{codeBefore }}
+   		{% endif %}
+
+   		var field = $("#{{ fieldId }}");
+   		
+        if(Id) {
+	        $.post("{{ url }}", { "{{ key }}": Id },  
+	    		function(result) {
+			        field.val(result);
+ 					{% if codeAfter is defined %}
+    					{{codeAfter }}
+    				{% endif %}
+		    });
+        } else {
+        	field.val('');
+        }
+    });
+	$("#{{ parent.vars.id }}").change();
+});
+</script>

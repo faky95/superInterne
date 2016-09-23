@@ -1,0 +1,53 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Liste des Bus {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+<div class="col-lg-12">
+	<div class="row">
+		<div class="col-lg-8">
+			 <a href="#" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un Bu </button></a>
+			 <a href="#" target="_blank"><button class="btn btn-success"><span class="icon16 icomoon-icon-download white"></span> Importer des Bus </button></a> 
+			 <div class="marginB10"></div>
+		</div><!-- End .span4 -->
+	</div>
+    <div class="panel panel-default gradient">
+        <div class="panel-heading">
+            <h4>
+                <span>Liste des BUs</span>
+            </h4>
+        </div>
+        <div class="panel-body noPad clearfix">
+            <table id="buTable" cellpadding="0" cellspacing="0" border="0" class=" display table table-bordered" width="100%">
+                <thead>
+                    <tr>
+						<th>BU</th>
+						<th>Validation automatique</th>
+						<th>Demande de report</th>
+						<th width="120px">Actions</th>
+                    </tr>
+                </thead>
+                <tr>
+                	<td colspan="3">Chargement des donnees...</td>
+                </tr>
+                <tbody>
+                	
+                </tbody>
+            </table>
+        </div>
+    </div><!-- End .panel -->
+
+</div><!-- End .span12 -->
+
+	</div><!-- End .row --> 
+ {% endblock %}
+{% block pagescript %}
+
+{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'buTable', url: path('liste_des_bus'), nosorting: {0:1} } %}
+{% endblock %}

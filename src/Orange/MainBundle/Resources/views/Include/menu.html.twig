@@ -1,0 +1,28 @@
+        <!--Left Sidebar collapse button-->  
+        <div class="collapseBtn leftbar">
+             <a href="#" class="tipR" title="Hide Left Sidebar"><span class="icon12 minia-icon-layout"></span></a>
+        </div>
+        <!--Sidebar background-->
+        <div id="sidebarbg"></div>
+		<!--Sidebar background-->
+		<div id="sidebar">
+		<div class="shortcuts">
+                <ul>
+                    <li><a href="#" class="tip" oldtitle="Support section" title="" data-hasqtip="true" aria-describedby="qtip-0"><span class="icon24 icomoon-icon-support"></span></a></li>
+                    <li><a href="#" class="tip" oldtitle="Database backup" title="" data-hasqtip="true" aria-describedby="qtip-1"><span class="icon24 icomoon-icon-database"></span></a></li>
+                    <li><a href="#" class="tip" oldtitle="Sales statistics" title="" data-hasqtip="true"><span class="icon24 icomoon-icon-pie-2"></span></a></li>
+                    <li><a href="#" class="tip" oldtitle="Write post" title="" data-hasqtip="true"><span class="icon24 icomoon-icon-pencil"></span></a></li>
+                </ul>
+            </div>
+            <div class="sidenav">
+                <div class="sidebar-widget" style="margin: 0 0 0 0;">
+                    <h5 class="title" style="margin-bottom:0">menu principal</h5>
+                </div><!-- End .sidenav-widget -->
+
+                <div class="mainnav">
+                     	{{ knp_menu_render('OrangeMainBundle:Builder:main', {'template': 'OrangeMainBundle:Default:knp_menu.html.twig'}) }}
+                </div>
+            </div><!-- End sidenav -->
+{#             {{ render(controller('OrangeMainBundle:Dashboard:tauxRealisation')) }}#}
+        </div>
+        <!-- End #sidebar -->

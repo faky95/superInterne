@@ -1,0 +1,49 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-rotate-2"></span>
+       	<span>Automatisation Reporting</span>
+	</h4>
+</div>
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_reporting') }}" method="post" role="form">
+	<div class="panel-body">
+		{{ form_row(form.pas, {'attr': {'class': 'form-control pas'}}) }}
+		{{ form_row(form.dayOfMonth, {'attr': {'class': 'form-control month'}}) }}
+		{{ form_row(form.dayOfWeek, {'attr': {'class': 'form-control week'}}) }}
+		{{ form_row(form.iteration, {'attr': {'class': 'form-control semaine'}}) }}
+		<div style="display: none;">
+			{{ form_row(form.requete) }}
+			{{ form_row(form.parameter) }}
+		</div>
+		{{ form_row(form.destinataire, {'attr': {'class': 'form-control'}}) }}
+		{{ form_row(form._token) }}
+    </div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+			{{ form_widget(form.add,{attr: {'data-target': '#myModal', 'call': 'redirectMooodalToUrl', 'class':'btn btn-warning submitLink' }} ) }}
+		    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+		</div>
+	</div><!-- End .form-group  -->
+</form>
+<script type="text/javascript">
+ 	$(document).ready(function() {
+	  $("select").select2();
+	  $(".pas").change(function(){
+		 if($(this).val()=="3"){
+			$(".week").parent().parent().hide();
+			 $(".month").parent().parent().show();
+			$(".semaine").parent().parent().hide();
+		 }else if($(this).val()=="1"){
+			$(".week").parent().parent().show();
+			 $(".month").parent().parent().hide();
+			$(".semaine").parent().parent().hide();
+		 }else{
+			 $(".week").parent().parent().show();
+			 $(".month").parent().parent().hide();
+			 $(".semaine").parent().parent().show();
+		}
+	  });
+	});
+ 	</script>

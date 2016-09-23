@@ -1,0 +1,111 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'OrangeMainBundle:FormTheme:fieldsFiltre.html.twig' %}
+
+{% block content -%}
+{# inbdexgfbv #}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Liste de mes actions {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+   <div class="col-lg-12">
+    	<div class="row">
+			<div class="col-lg-8">
+				 <a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
+				 <div class="marginB10"></div>
+			</div><!-- End .span4 -->
+		</div>
+    	<div class="panel panel-default">
+	        <div class="panel-heading">
+				<h4> 
+					<span class="icon16 icomoon-icon-filter-2"></span>
+					<span>Filtrer les actions </span>
+				</h4>
+				<a href="#minimize" class="maximize" style="display: inline;">Minimize</a>
+	        </div>
+	        <div class="panel-body" style="display: none;">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('mes_actions') }}" method="post">
+					<div class="form-group">
+						{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
+						{{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					</div>
+					<div class="form-group">
+						{{ form_widget(form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					</div>
+					<div class="form-group">
+						{{ form_widget(form.priorite,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						{{ form_widget(form.statut,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					</div>
+					<div class="form-group">
+						{{ form_widget(form.fromDebut) }}
+						{{ form_widget(form.toDebut) }}
+					</div>
+					<div class="form-group">
+						{{ form_widget(form.fromInitial) }}
+						{{ form_widget(form.toInitial) }}
+					</div>
+					<div class="form-group">
+						{{ form_widget(form.fromCloture) }}
+						{{ form_widget(form.toCloture) }}
+					</div>
+	                	{{ form_widget(form._token) }}
+			        <div class="form-group">
+			        	<div class="col-lg-offset-2 col-lg-9">
+							{{ form_widget(form.filtrer) }}
+						</div>
+					</div><!-- End .form-group  -->  
+				</form>
+	        </div>
+        </div>
+    </div><!-- End .span12 -->
+</div><!-- End .row -->
+					
+<div class="row">
+	<div class="col-lg-12">
+	    <div class="panel panel-default gradient">
+			<div class="panel-heading">
+				<h4>
+				   	<span class="icon16 brocco-icon-grid"></span>
+				    <span>Liste de mes Actions</span>
+				    <div style="float: right"><a href="#" title="filtrer"><span class="icon16  icomoon-icon-filter"></span></a></div>
+				</h4>
+			</div>
+			<div class="panel-body noPad clearfix">
+			    <table id="actionTable" cellpadding="0" cellspacing="0" border="0" class=" display table table-bordered" width="100%">
+			        <thead>
+			            <tr>
+			               <th>Priorité</th>
+						   <th width="60px">Référence</th>
+			               <th width="200px">Instance</th>
+			               <th>Action</th>
+						   <th width="200px">Porteur</th>
+						   <th width="100px">Statut</th>
+						   <th width="120px">Actions</th>
+			            </tr>
+			        </thead>
+			        <tbody>
+			        	<tr>
+			        		<td colspan="7">Chargement des donnees ...</td>
+			        	</tr>
+			        </tbody>
+			    </table>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span12 -->
+</div><!-- End .row --> 
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('a[href="#maximize"]').click();
+	});
+</script>
+
+{% endblock %}
+
+{% block pagescript %}
+	{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_de_mes_actions'), nosorting: {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6} } %}
+{% endblock %}

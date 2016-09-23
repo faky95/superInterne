@@ -1,0 +1,104 @@
+
+<div id="header">
+	        <nav class="navbar navbar-default" role="navigation">
+	            <div class="navbar-header">
+	                <a class="navbar-brand" href="{{ path('dashboard') }}">SUPER&nbsp;&nbsp;<span class="slogan">Suivi des performances</span></a>
+	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+	                    <span class="sr-only">Toggle navigation</span>
+	                    <span class="icon16 icomoon-icon-arrow-4"></span>
+	                </button>
+	            </div> 
+	            <div class="collapse navbar-collapse navbar-ex1-collapse">
+	                <ul class="nav navbar-right usernav">
+	               <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                            <span class="icon16 icomoon-icon-cog"></span><span class="txt"> Ajout Rapide</span>
+	                            <b class="caret"></b>
+	                        </a>
+	                        <ul class="dropdown-menu">
+	                            <li class="menu">
+	                                <ul>
+	                                	{% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN')  %}
+	                                   		 <li><a href="{{ path('nouvelle_action') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_SUPER_ADMIN') %}
+	                                    	<li><a href="{{ path('nouveau_projet') }}"><span class="icon16 wpzoom-suitcase"></span>Projet</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN')  %}
+	                                   	   <li><a href="{{ path('nouveau_domaine') }}"><span class="icon16 icomoon-icon-image-2"></span>Domaine</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_SUPER_ADMIN') %}
+	                                    <li><a href="{{ path('fos_user_registration_register') }}"><span class="icon16 entypo-icon-users"></span>Utilisateur</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_SUPER_ADMIN') %}
+	                                    <li><a href="{{ path('les_structures') }}"><span class="icon16 icomoon-icon-office"></span>Structures</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN')  %}
+	                                    <li><a href="{{ path('nouvelle_instance') }}"><span class="icon16 icomoon-icon-people"></span>Instance</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN') %}
+	                                    <li><a href="{{ path('nouveau_groupe') }}"><span class="icon16 icomoon-icon-people"></span>Groupe</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_SUPER_ADMIN') %}
+	                                    <li><a href="{{ path('nouveau_bu') }}"><span class="icon16 icomoon-icon-office"></span>BU</a></li>
+	                                    {% endif %}
+	                                    {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN') %}
+	                                   		 <li><a href="{{ path('nouvelle_signalisation') }}"><span class="icon16 cut-icon-alert"></span>Signalisation</a></li>
+	                                    {% endif %}
+	                                    <li><a href="{{ path('nouvelle_action') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action Perso</a></li>
+	                                </ul>
+	                            </li>
+	                        </ul>
+	                    </li>
+	                    <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+	                            <span class="icon16 icomoon-icon-bell"></span><span class="notification">3</span>
+	                        </a>
+	                        <ul class="dropdown-menu">
+	                            <li class="menu">
+	                                <ul class="notif">
+	                                    <li class="header"><strong>Notifications</strong> (3) items</li>
+	                                    <li>
+	                                        <a href="#">
+	                                            <span class="icon"><span class="icon16 icomoon-icon-user-plus"></span></span>
+	                                            <span class="event">1 User is registred</span>
+	                                        </a>
+	                                    </li>
+	                                    <li>
+	                                        <a href="#">
+	                                            <span class="icon"><span class="icon16 icomoon-icon-bubble-3"></span></span>
+	                                            <span class="event">Jony add 1 comment</span>
+	                                        </a>
+	                                    </li>
+	                                    <li>
+	                                        <a href="#">
+	                                            <span class="icon"><span class="icon16 icomoon-icon-new"></span></span>
+	                                            <span class="event">admin Julia added post with a long description</span>
+	                                        </a>
+	                                    </li>
+	                                    <li class="view-all"><a href="#">View all notifications <span class="icon16 icomoon-icon-arrow-right-8"></span></a></li>
+	                                </ul>
+	                            </li>
+	                        </ul>
+	                    </li>
+	                    <li class="dropdown">
+	                        <a href="#" class="dropdown-toggle avatar" data-toggle="dropdown">
+	                            <img src="images/avatar.jpg" alt="" class="image" /> 
+	                            <span class="txt">admin@supr.com</span>
+	                            <b class="caret"></b>
+	                        </a>
+	                        <ul class="dropdown-menu">
+	                            <li class="menu">
+	                                <ul>
+	                                    <li style="width: 200px"><a href="#"><span class="icon16 icomoon-icon-zoom-in-2"></span>Afficher mon profil</a></li>
+	                                    <li style="width: 200px"><a href="#"><span class="icon16 icomoon-icon-wrench-2"></span>Modifier mon profil</a></li>
+	                                    <li style="width: 200px" data-toggle="modal" data-target="#changePasswordDialog"><a href="#"><span class="icon16 icomoon-icon-key"></span>Changer le mot de passe</a></li>
+	                                </ul>
+	                            </li>
+	                        </ul>
+	                    </li>
+	                    <li><a href="{{ path('fos_user_security_logout') }}"><span class="icon16 icomoon-icon-exit"></span><span class="txt"> Logout</span></a></li>
+                </ul>
+            </div><!-- /.nav-collapse -->
+        </nav><!-- /navbar --> 
+</div><!-- End #header -->

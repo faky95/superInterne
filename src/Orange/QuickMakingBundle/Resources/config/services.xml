@@ -1,0 +1,40 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+    	<parameter key="doctrine.orm.entity_manager.class">Orange\QuickMakingBundle\Model\EntityManager</parameter>
+    	<parameter key="doctrine.class">Orange\QuickMakingBundle\Doctrine\Registry</parameter>
+	</parameters>
+	
+    <services>
+        <service id="twig.extension.orange_main.jquery" class="Orange\QuickMakingBundle\Twig\JQueryExtension" public="false">
+            <tag name="twig.extension" alias="orange_main_jquery" />
+        </service>
+
+        <!-- service LogsListener For loggs on database -->
+        <service id="orange_quickmaking.listener_entity" class="Orange\QuickMakingBundle\EventListener\LogsListener" public="false">
+            <tag name="doctrine.event_listener" event="preUpdate" connection="default"/>
+            <tag name="doctrine.event_listener" event="postFlush" connection="default"/>
+            <argument type="service" id="service_container" />
+        </service>
+        <!-- end service LogsListener For loggs on database -->
+        
+        <!-- services for Logs with monolog -->
+        <service id="logger.log" class="Orange\QuickMakingBundle\Service\Logger" public="true">
+        </service>
+        
+        <service id="orange.annotation_listener" class="Orange\QuickMakingBundle\EventListener\AnnotationListener" public="true">
+            <tag name="kernel.event_listener" event="kernel.controller" method ="onKernelController" />
+            <argument type="service" id="service_container" />
+        </service>
+        
+        <service id="orange.quick_making_formatter" class="Orange\QuickMakingBundle\Service\LogsFormatterFile" public="true">
+        </service>        
+        <!-- end services for Logs with monolog  -->
+        
+        
+    </services>
+</container>

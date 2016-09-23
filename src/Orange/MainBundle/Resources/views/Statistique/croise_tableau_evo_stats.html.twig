@@ -1,0 +1,76 @@
+{% if type=="structure" %}
+{% set rspan=statut|length-nbTaux %}
+	<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
+						<tr>
+																<thead>
+						                                           <th style="padding: 7px 14px;"></th>
+						                                               <th>Statut</th>
+						                                              {% for  semaine in semaines %}
+																			<th style="padding: 7px 14px;">{{ semaine }}</th>
+																		{% endfor %}
+						                                        </thead>
+						</tr>
+						{% for cle, stat in stats.structure %}
+						 	<tr>
+						 	 <td rowspan="12">{{ cle }}</td>
+							{% for key, st in statut %}
+								 	<tr	 class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
+								 		{% if loop.index < rspan %}
+							 				<td  style=" font-weight:bold; " >{{ st }}</td>
+							 				{% for value in stat.semaine %}
+							 					<td >{{ value.data[key] }}</td> 
+								 			{% endfor %}
+								 		{% elseif loop.index == rspan %}
+								 		  	<td  style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+							 				{% for value in stat.semaine %}
+							 					<td style=" text-align:center; font-weight:bold;  color:#ff6600;"" >{{ value.data[key] }}</td> 
+								 			{% endfor %}
+								 		  {% else %}
+								 			<td style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+							 				{% for value in stat.semaine %}
+							 					<td style=" text-align:center; font-weight:bold; color:#ff6600;"">{{ value.data[key]~'%' }}</td> 
+								 			{% endfor %}
+								 		{% endif %}
+								 	</tr>
+								{% endfor %}
+						 	</tr>
+						{% endfor %}
+					</table>
+{% else %}
+<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
+					<tr>
+															<thead>
+					                                           <th style="padding: 7px 14px;"></th>
+					                                               <th>Statut</th>
+					                                              {% for  semaine in semaines %}
+																		<th style="padding: 7px 14px;">{{ semaine }}</th>
+																	{% endfor %}
+					                                        </thead>
+					</tr>
+					{% for cle, stat in stats.instance %}
+					 	<tr>
+					 	 <td rowspan="12">{{ cle }}</td>
+						{% for key, st in statut %}
+							 	<tr	 class="{% if loop.index<9 %}even{% else %} odd{% endif %}">
+							 		{% if loop.index < 9 %}
+						 				<td  style=" font-weight:bold; " >{{ st }}</td>
+						 				{% for value in stat.semaine %}
+						 					<td >{{ value.data[key] }}</td> 
+							 			{% endfor %}
+							 		{% elseif loop.index == 9 %}
+							 		  	<td  style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+						 				{% for value in stat.semaine %}
+						 					<td style=" text-align:center; font-weight:bold;  color:#ff6600;"" >{{ value.data[key] }}</td> 
+							 			{% endfor %}
+							 		  {% else %}
+							 			<td style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+						 				{% for value in stat.semaine %}
+						 					<td style=" text-align:center; font-weight:bold; color:#ff6600;"">{{ value.data[key]~'%' }}</td> 
+							 			{% endfor %}
+							 		{% endif %}
+							 	</tr>
+							{% endfor %}
+					 	</tr>
+					{% endfor %}
+				</table>
+{% endif %}

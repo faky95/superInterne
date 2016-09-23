@@ -1,0 +1,31 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#{{ parent.vars.id }}").change(function(e) {
+        var Id =  $(this).val();
+        {% if codeBefore is defined %}{{ codeBefore }}{% endif %}
+        if(Id) {
+	        $.post("{{ url }}", { "{{ key }}": Id },  
+	    		function(results) {
+			        var sub = $("#{{ child.vars.id }}");
+			        sub.empty();
+			        $.each(results , function(key, value) { 
+				        var opt = $("<option></option>");
+				       	if(value.hasOwnProperty('selected')) {
+					       	opt.attr('selected', 'selected');
+					  	}
+			            sub.append(opt.attr("value", value.id).text(value.libelle));
+			        });
+			        console.debug(sub);
+			        {% if functionAfter is defined %}
+			        	{{functionAfter }}(sub);
+				    {% else %}
+				    	sub.val({{ child.vars.value }});
+				    {% endif %}
+		    });
+        } else {
+        	$("#{{ child.vars.id }}").empty();
+        }
+    });
+	$("#{{ parent.vars.id }}").change();
+});
+</script>

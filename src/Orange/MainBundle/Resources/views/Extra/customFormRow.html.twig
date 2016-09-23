@@ -1,0 +1,15 @@
+{# {% form_theme form 'EvalFourQredicBundle::errorFormRow.html.twig' %} #}
+
+<div class="field fullwidth">
+        {% set data_icon = (data_icon is not defined) ? {} : {'data-icon': data_icon} %}
+        {% set disabled = (disabled is not defined) ? {} : {'disabled': disabled} %}
+        {# Gestion des class #}
+        {% set class = ((class is defined) ? class : null) ~ ((form_errors(widgetField) is empty) ? null : ' tooltip custom_error') %}
+        {% set class = (class is not defined) ? {} : {'class': class} %}
+        {# gestion des tooltips #}
+        {% set tooltip = (form_errors(widgetField) is empty) ? ((tooltip is defined) ? tooltip|e : null) : form_errors(widgetField) %}        
+        {% set tooltip = (tooltip is not defined) ? {} : {'data-position': 'se', 'original-title': tooltip} %}
+        {# afficher le résultat #}
+        {{ form_label(widgetField) }} {% if miniLoader is defined %} <span class="mini-loader"></span>{% endif %}
+        {{ form_widget(widgetField, {'attr': tooltip|merge(data_icon)|merge(disabled)|merge(class) }) }}
+</div>

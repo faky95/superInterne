@@ -1,0 +1,22 @@
+{% block status_utilisateur_etat %}
+	<span title="Supprimer l'ERQ" class="date badge badge-{{ entity.enabled ? 'success' : 'danger' }} tip">{{ entity.enabled ? 'Actif' : 'Inactif' }}</span>
+{% endblock status_utilisateur_etat %}
+
+{% block status_action_etat %}
+	{% set statut = entity|get_statut %}
+	<span style="background-color: {{ statut ? statut.couleur : null }};border-radius: 4px 4px;padding: 0 5px;">{{ statut }}</span>
+{% endblock status_action_etat %}
+
+{% block status_document_type %}
+	{% if entity.type==types.creation %}
+	    <span class="icon16 icomoon-icon-plus tip" title="Création" class="tip" style="display: inline;"></span>
+	{% elseif entity.type==types.avancement %}
+	    <span class="icon16 icomoon-icon-arrow-right-5 tip" title="Avancement" style="display: inline;"></span>
+	{% elseif entity.type==types.demande_report %}
+	    <span class="icon16 icomoon-icon-clock tip" title="Demande de report" style="display: inline;"></span>
+	{% elseif entity.type==types.demande_abandon %}
+	    <span class="icon16 icomoon-icon-blocked tip" title="Demande d'abandon" style="display: inline;"></span>
+	{% elseif entity.type==types.demande_solde %}
+	    <span class="icon16 icomoon-icon-checkmark tip" title="Demande de solde" style="display: inline;"></span>
+	{% endif %}
+{% endblock status_document_type %}

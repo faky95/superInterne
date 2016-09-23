@@ -1,0 +1,30 @@
+{% if (with_script is defined) and (with_script==0) %}{% else %}<script type="text/javascript">{% endif %}
+$(document).ready(function() {
+	var options = {{ options|raw }};
+	options['allowAdd'] = true;
+	console.debug(options['data']);
+	$({{ ("'" ~ content ~ "'")|raw }}).sheepIt(options);
+	
+	setTimeout(function() {
+		{% for form in embeddedForm if form.vars.valid==false %}
+			{% if error_fields is defined %}
+				{% for key, field in error_fields %}
+				{% if (field is iterable) and (form[key].get('prototype') is defined) %}
+					{% for subform in form[key] %}
+						{% for subfield in field %}
+							$('{{ form_errors(subform[subfield])|replace({'\n': '', '\r': ''})|raw }}').insertBefore('[name="{{ '%s[%s]'|format(subform.vars.full_name, subfield) }}"]');
+						{% endfor %}
+					{% endfor %}
+				{% elseif (field is iterable) and (form[key].get('prototype') is not defined) %}
+					{% for subfield in field %}
+						$('{{ form_errors(form[key][subfield])|replace({'\n': '', '\r': ''})|raw }}').insertBefore('[name="{{ '%s[%s]'|format(form[key].vars.full_name, subfield) }}"]');
+					{% endfor %}
+				{% else %}
+					$('{{ form_errors(form[field])|replace({'\n': '', '\r': ''})|raw }}').insertBefore('[name="{{ '%s[%s]'|format(form.vars.full_name, field) }}"]');
+				{% endif %}
+				{% endfor %}
+			{% endif %}			
+		{% endfor %}
+	}, 3000);
+});
+{% if (with_script is defined) and (with_script==0) %}{% else %}</script>{% endif %}

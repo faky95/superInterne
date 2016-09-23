@@ -1,0 +1,213 @@
+{% extends '::base.html.twig' %}
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+{% block content %}
+ <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Vue statique sur les statistiques {% endblock %}</h3>                    
+				</div>
+				<ul class="nav nav-pills monTab">
+					<li {% if role==4 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 4 }) }}">Mes Stats</a></li>
+					{% if has_rights('ROLE_ADMIN') %}
+						<li {% if role==0 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 0 }) }}">Générale</a></li>
+					{% endif %}
+					{% if has_rights('ROLE_MANAGER') %}
+					<li {% if role==2 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 2 }) }}">Mes Collaborateurs</a></li>
+					{% endif %}
+					{% if has_rights('ROLE_ANIMATEUR') %}
+                    <li {% if role==1 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 1 }) }}">Mes instances</a></li>
+                    {% endif %}
+					{% if has_rights('ROLE_RAPPORTEUR') %}
+                    <li {% if role==3 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 3 }) }}">Mes structures</a></li>
+                    {% endif %}
+               </ul>
+                <div style="margin-top: 0px;">
+			         <div class="panel panel-default">
+					        <div class="panel-heading"> 
+								<h4> 
+									<span class="icon16 icomoon-icon-filter-2"></span>
+									<span>Filtres </span>
+								</h4>
+								<a href="#minimize" class="minimize" style="display: inline;">Minimize</a>
+									        </div>
+									        <div class="panel-body">
+									        
+                             <form novalidate="novalidate" class="form-horizontal" action="{{ path('statistique_generale', {'role': role }) }}" method="post">
+									<div class="form-group">
+									{% if role!=4 %}
+										{{ form_widget(form.porteur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+									{% endif %}
+										{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+									</div>
+									<div class="form-group">
+										{{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+									</div>
+									<div class="form-group">
+									{% if role!=4 %}
+										{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+									{% endif %}
+										{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%', 'help' : 'Choisissez les instances à afficher'}}) }}
+									</div>
+									<div class="form-group">
+							        	<div class="col-lg-offset-2 col-lg-9">
+											{{ form_widget(form.filtrer) }}
+										</div>
+									</div><!-- End .form-group  -->  
+							</form>
+						</div>
+					</div>
+				</div>
+               <ul id="myListTab0" class="nav nav-tabs pattern">
+               {% set test=0 %}
+               {% set report='' %}
+                                    <li class="dropdown tableau">
+                                    	 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tableau <b class="caret"></b></a>
+	                                        <ul class="dropdown-menu">
+	                                        	<li ><a  name="instance"  href="#tabInst" data-toggle="tab"> Par instance</a></li>
+												{%  if role>=0 and role <=3  %}
+	                                        		<li  ><a name="structure" href="#tabStr" data-toggle="tab"> Par structure</a></li>
+												{% endif %}	   
+												{%  if role==0 or role==3 %}                                     		
+	                                        		<li><a name="croise" href="#tabCroise" data-toggle="tab"> Croisé </a></li>
+	                                        	{% endif %}
+	                                        </ul>
+                                    </li>
+                                    {% if role == 2 %}
+                                  	  <li><a href="#tabS" data-toggle="tab">Graphe</a></li>
+                                    {% endif %}
+                                    {% if role == 1 or role==4 %}
+                                  	  <li><a href="#tabI" data-toggle="tab">Graphe</a></li>
+                                    {% endif %}
+                                     {%  if role==0 or role ==3  %}
+	                                <li class="dropdown">
+	                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphe <b class="caret"></b></a>
+	                                        <ul class="dropdown-menu">
+	                                              {% set i=0 %}
+					                              {% for cle,ligne in tabCroise.structure %} 
+					                              		{% set i=i+1 %}
+					                                    <li><a href="#tab{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+					                                     {% set tst1=1 %}
+					                             {% endfor %}
+	                                        </ul>
+	                                 </li>
+	                                 {% endif %}
+     <form class="panel-form right" style="margin: 5px;" id="section_repo">
+         <a id="extraire" href="{{ path('vue_statique') }}" class="btn btn-success btn-sm">   Extraire</a>
+         <a id="reporting_aut" href="{{ path('nouveau_reporting',{type: 0}) }}" class="btn btn-warning btn-sm">Reporting automatisé</a>
+    </form>
+                                </ul>
+
+                 <div class="tab-content" style="padding: 0; overflow-y:hidden;">
+                                    <div class="tab-pane fade active in " id="tabInst">
+                             				{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByInstance , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
+                                    </div>
+                                    {%  if role>=0 and role <=3  %}
+	                                    <div class="tab-pane fade  " id="tabStr">
+	                                    		{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByStructure , 'statut':statut, 'type':'structure', 'nbTaux':nbTaux}  %}
+		                                </div>
+                                    {% endif %}
+                                    {% if role == 2 %}
+ 									<div class="tab-pane fade in " id="tabS">
+                                    	<div id="mychartByStr" class="col-lg-11"></div>  
+                                    </div>
+                                    {% endif %}
+ 									{% if role == 1 or role==4 %}
+ 									<div class="tab-pane fade in " id="tabI">
+                                    	<div id="mychartByInst" class="col-lg-11"></div>  
+                                    </div>
+                                    {% endif %}
+                                    {%  if role==0 or role ==3  %}
+                                    <div class="tab-pane fade " id="tabCroise">
+                             				<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
+											<tr>
+												<thead>
+		                                           <th style="padding: 7px 75px;"></th>
+		                                               <th style="padding: 15px 100px;">Statut</th>
+		                                              {% for instance in instances %}
+															<th style="padding: 7px 14px;">{{ instance.libelle }}</th>
+														{% endfor %}
+		                                        </thead>
+												</tr>
+												{% for cle, stat in tabCroise.structure %}
+												 	<tr>
+												 	 <td rowspan="12">{{ cle }}</td>
+													{% for key, st in statut %}
+														 	<tr	 class="{% if loop.index<9 %}even{% else %} odd{% endif %}">
+														 		{% if loop.index < 9 %}
+													 				<td  style=" font-weight:bold; " >{{ st }}</td>
+													 				{% for value in stat.instance %}
+													 					<td >{{ value.data[key] }}</td> 
+														 			{% endfor %}
+														 		{% elseif loop.index == 9 %}
+														 		  	<td  style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+													 				{% for value in stat.instance %}
+													 					<td style=" text-align:center; font-weight:bold;  color:#ff6600;"" >{{ value.data[key] }}</td> 
+														 			{% endfor %}
+														 		  {% else %}
+														 			<td style=" font-weight:bold; color:#ff6600;"">{{ st }}</td>
+													 				{% for value in stat.instance %}
+													 					<td style=" text-align:center; font-weight:bold; color:#ff6600;"">{{ value.data[key]~'%' }}</td> 
+														 			{% endfor %}
+														 		{% endif %}
+														 	</tr>
+														{% endfor %}
+												 	</tr>
+									{% endfor %}
+								</table>
+								{% endif %}
+                                    </div>
+                                      {%  if role==0 or role ==3  %}
+	                                {% set i=0 %}
+					                {% for cle,ligne in tabCroise.structure %} 
+                              		{% set i=i+1 %}
+                                        <div class="tab-pane fade  " id="tab{{ i }}">
+                                        	<div id="mychartStat-{{ i }}" class="col-lg-11"></div>
+		                                </div>
+                                     {% set tst1=1 %}
+					                {% endfor %}
+					                {% endif %}
+	                                
+                 </div>
+                        
+{% endblock %}
+{% block pagescript %}
+ {{ parent() }}
+<script type="text/javascript">
+$(document).ready(function() {
+	{% if tmp_inst == 0 %}
+		$('#extraire').attr("disabled", true);
+	{% else %}
+		$("#extraire").attr('href', "{{ path('reporting_instance') }}")
+	{% endif %}
+	$("#reporting_aut").attr('href', "{{ path('nouveau_reporting', {type: 2}) }}")
+	$("#section_repo").show();
+	$tab=$("ul#myListTab0 li.tableau ul.dropdown-menu li a");
+	$tab.on('click', function(){
+		//$li=$("ul#myListTab0 li.tableau ul.dropdown-menu li.active a ");
+		if(this.name=='instance'){
+			{% if  tmp_inst == 0 %}
+				$('#extraire').attr("disabled", true);
+			{% else %}
+				$("#extraire").attr('href', "{{ path('reporting_instance') }}")
+			{% endif %}
+			$("#reporting_aut").attr('href', "{{ path('nouveau_reporting', {type: 2}) }}")
+			$("#section_repo").show();
+		}else if(this.name=='structure'){
+			{% if tmp_struct == 0 %}
+				$('#extraire').attr("disabled", true);
+			{% else %}
+				$("#extraire").attr('href', "{{ path('reporting_instance') }}")
+			{% endif %}
+			$("#extraire").attr('href', "{{ path('reporting_structure') }}")
+			$("#reporting_aut").attr('href', "{{ path('nouveau_reporting', {type: 1}) }}")
+			$("#section_repo").show();
+		}else if(this.name=='croise'){
+			$("#section_repo").hide();
+		}
+		});
+	$("ul#myListTab0 > li:eq(1)").on('click', function(){
+		$("#section_repo").hide();
+	});
+});
+</script>
+ {% include 'OrangeMainBundle:Extra:myChart1.html.twig' with {  'graphe':graphe, 'instances' : instances, 'structures':structures }%}
+{% endblock %}

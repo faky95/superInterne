@@ -1,0 +1,38 @@
+    <div class="col-lg-6">                            
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>
+					<span class="icon16 icomoon-icon-equalizer-2"></span>
+					<span>Liste des Bus</span>
+				</h4>
+			</div>
+			<div style="height:340px; overflow-y: scroll; class="panel-body noPad">
+				         <table cellpadding="0" cellspacing="0" border="0" class="dynamicTable display table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Bu</th>
+					    						<th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        	{% for entity in entities %}
+                                            <tr class="odd gradeX">
+                                                <td align="center" width="300px">{{ entity.libelle }}</td>
+                                                <td align="center">
+                                                	<div class="controls center">
+                                                     <a href="{{ path('details_bu', { 'id': entity.id }) }}" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
+								                     <a href="{{ path('edition_bu', { 'id': entity.id }) }}" title="Modifier" class="tip"><span class="icon12 icomoon-icon-pencil"></span></a>
+								                     <a href="#" title="Supprimer bu" class="tip"><span class="icon12 icomoon-icon-remove"></span></a>                                                	</div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+				
+				
+				
+				
+				
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->  

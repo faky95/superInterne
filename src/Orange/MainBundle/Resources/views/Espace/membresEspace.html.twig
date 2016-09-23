@@ -1,0 +1,64 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Membres de l'espace: <span style=" color:#ff6600"> {{ espace.libelle }} </span> {% endblock %}</h3> 
+	{% if espace_id is not empty %}
+		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+	{% endif %}
+</div>
+                <!-- Build page from here: -->
+                <div class="row">
+				<div class="col-lg-12">
+							 <a href="{{ path('edition_espace', {'id':espace_id}) }}" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Edition espace</button></a>
+{# 				 			 <a href=""><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>importer des membres</button></a>#}
+				</div>
+                <div class="col-lg-12">
+
+                             <div class="panel-body row" style="margin-left:0; margin-right:0;">
+							<table class="responsive table table-bordered">
+                                    <thead>
+                                      <tr>
+                                        <th>Nom</th>
+                                        <th>Structure</th>
+                                        <th>Date D'affectation</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set message='' %}
+		                                    {% for user in espace.membreEspace %}
+		                                       <tr>
+		                                        <td>{{ user.utilisateur }}
+			                                        {% if(user.isGestionnaire==1) %}
+			                                       		<span class=" right badge label label-success">G</span>
+			                                        {% endif %}
+			                                        
+		                                        </td>
+		                                        <td>{{ user.utilisateur.structure }}</td>
+		                                        <td>{{ user.dateaffectation|date("d/m/Y") }}</td> 
+		                                        <td>
+		                                   
+		                                     	   <a class="btn btn-default actionLink" href="#myModal" modal-url="{{ path('ajout_gestionnaire', { 'id': espace.id, 'user_id': user.utilisateur.id }) }}" data-target="#myModal" data-toggle="modal"
+		                                     	     {% if(user.isGestionnaire==0) %}
+		                                     	     title="Ajouter aux Gestionnaires" ><span class="icon12  icomoon-icon-user-plus"></span>
+		                                     	     {% else %} 
+		                                     	     title="Enlever des Gestionnaires" ><span class="icon12 icomoon-icon-user-minus"></span>
+		                                     	     {% endif %} 
+		                                     	   </a> 
+		                                      
+		                                        <a href="{{ path('details_utilisateur_espace', { 'espace_id': espace.id, 'user_id': user.utilisateur.id }) }}" title="Afficher" ><span class="icon12 entypo-icon-eye"></span></a>
+		                                        </td>
+		                                      </tr>
+		                                    {% endfor %} 
+                                    </tbody>
+						</table>
+						</div>
+                        </div><!-- End .panel -->
+                </div><!-- End .row -->
+{% endblock %}
+{% block pagescript %}
+	{% include 'OrangeMainBundle:ModalScript:confirm.html.twig' %}
+{% endblock %}
+		 	

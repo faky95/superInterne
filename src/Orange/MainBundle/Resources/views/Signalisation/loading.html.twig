@@ -1,0 +1,72 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+				<div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="panel panel-default">
+
+                                <div class="panel-heading">
+
+                                    <h4>
+                                        <span class="icon16   icomoon-icon-book "></span>
+                                        <span>Manuel pour le chargement des signalisations</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                    <li class="big col-lg-6">
+										<h3>Contraintes sur le fichier de chargement</h3>
+										<span>Le fichier de chargement est structuré de la manière suivante:</span><br>
+										<ul>
+											<li><b>1 ère colonne: </b>Le libelle de la signalisation</li>
+											<li><b>2 ème colonne: </b>La description de la signalisation</li>
+											<li><b>3 ème colonne: </b>Le périmétre</li>
+											<li><b>4 ème colonne: </b>Le domaine</li>
+											<li><b>5 ème colonne: </b>Le type de signalisation</li>
+											<li><b>6 ème colonne: </b>La date de constat<span style="color:red"> <i>(Attention : le format de la date: JJ/MM/AAAA)</i></span></li>
+											<li><b>7 ème colonne: </b>Le constateur<span style="color:red"> <i>(Attention : il faut mettre l'email de l'agent qui a fait le constat)</i></span></li>
+											<li><b>8 ème colonne: </b>La source<span style="color:red"> <i>(Attention : il faut mettre l'email de la source)</i></span></li>
+											<li><b>9 ème colonne: </b>Le site</li>
+										</ul>
+									</li>
+                                	<li class="big col-lg-6">
+{# 										<h3>Contraintes sur le chargement</h3>#}
+{# 										<ul>#}
+{# 											<li>L'email de la source est obligatoire. </li>#}
+{# 										</ul>#}
+									</li>
+									
+                                </div>
+
+                            </div><!-- End .panel -->
+
+                        </div><!-- End .span4 -->
+
+                    </div><!-- End .row -->
+            <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4>
+                                        <span class="icon16 entypo-icon-download "></span>
+                                        <span>Importation signalisation</span>
+                                    </h4>
+                               </div>
+                               <form method="post" action="{{ path('importer_signalisation') }}" class="form-horizontal" {{ form_enctype(form) }}>
+                                   <div class="panel-body with-footer">
+										{% include 'OrangeMainBundle:Extra:customFormFile.html.twig' with {'fileField': form.file} %}
+										{{ form_row(form._token) }}
+									    <div class="form-group form-actions">
+											<div class="col-lg-offset-3 col-lg-9">  
+											    <a class="btn btn-success" href="{{ asset('upload/canevas/signalisation.csv') }}">Télécharger le modéle</a>
+											    {{ form_widget(form.add) }}
+											     {{ form_widget(form.cancel) }}
+											</div>
+										</div><!-- End .form-actions  -->  
+									</div>
+								</form>
+                            </div>
+                        </div><!-- End .panel -->
+</div>
+
+{% endblock %}

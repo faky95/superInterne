@@ -1,0 +1,26 @@
+<h3 style="color: #ff6600">SUPER::Suivi des Performances</h3>
+Bonjour ,<br><br>
+Vous êtes invités à clôturer et/ou confirmer l'abandon des actions de votre instance <strong style="color: #ff6600;">{{ instance }}</strong>
+<br>
+<br><br>
+<table border="1" width="100%">
+  <tr>
+    <th>Référence</th>
+    <th>Libellé</th>
+    <th width="100px+">Délai initial</th>
+    <th>Porteur</th>
+  </tr>
+{% for action in actions %}
+	<tr>
+		<td><a style="color: #ff6600; text-decoration: none" href="{{ url('details_action', { 'id': action['id']}) }}">{{ action['reference'] }}</a></td>
+		<td>{{ action['libelle'] }}</td>
+		<td>{{ action['delai'] }}</td>
+		<td>{{ action['porteur'] }}</td>
+	</tr>
+{% endfor %}
+</table>
+<br>
+<br><br>
+Merci.
+<hr>
+Pour accéder à l'application, <a style="color: #ff6600;" href="{{ accueil_url }}">cliquer ici </a></strong>.

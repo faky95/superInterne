@@ -1,0 +1,25 @@
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Motifs d'invalidation</span>
+	</h4>
+</div>
+
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('actionstatut_create', {action_id: action.id}) }}" method="post" role="form">
+	<div class="panel-body">
+		{{ form_row(form.commentaire)}} 
+		{{ form_widget(form._token) }}
+		<!-- End .form-group  -->
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+			{{ form_widget(form.save,{attr: {'data-target': '#myModal', 'class' : 'btn btn-success submitLink', 'call': 'redirectModalToUrl'}} ) }}
+			{{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+		</div>
+	</div>
+</form>

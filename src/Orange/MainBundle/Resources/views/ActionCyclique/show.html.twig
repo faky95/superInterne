@@ -1,0 +1,142 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+                <!-- Build page from here: -->
+                <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Détail d'une action cyclique {% endblock %}</h3>                    
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+                            <div class="panel-heading clearfix">
+                                <h4 class="left">
+                                    <span class="red">Action Cyclique<strong> référence {{ entity.action.reference }} </strong></span>
+                                </h4>
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ entity.action.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enrégistrement : <strong class="red">{{ entity.action.dateAction| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ entity.action.dateDebut| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ entity.action.dateInitial| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Animateur : 
+	                                        <strong class="red">
+	                                        	{% if app.user.id == entity.action.actionStatut[0].utilisateur.id %}
+	                                        		Vous
+	                                        	{% else %} 
+		                                        	{{ entity.action.actionStatut[0].utilisateur }}
+		                                        {% endif %}
+	                                        </strong>
+                                        </li>
+                                    </ul>
+                                 </div>    
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">        
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Type d'action : <strong class="red">{{ entity.action.typeAction  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Priorité : <strong class="red">{{ entity.action.priorite }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ entity.action.porteur  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Instance : <strong class="red">{{ entity.action.instance  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Domaine : <strong class="red">{{ entity.action.domaine }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="you col-lg-12 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">
+                                		 <li><h3 class="red">Description</h3></li>
+										 <p style="text-align: justify;">{{ entity.action.description }}</p>  
+                                	</ul>
+                                </div>
+                                {{ render(controller('OrangeMainBundle:ActionStatut:traitement', { 'action_id': entity.action.id })) }}
+                                
+                                <div class="you col-lg-12 col-md-6 col-sm-6">                        
+									<div class="panel panel-default">
+									    <div class="panel-heading" style="background:#FFFFFF">
+									        <h4>
+									            <span class="icon16 brocco-icon-clock"></span>
+									            <span class="red">Liste des occurences de cette action cyclique</span>
+									        </h4>
+									        <a href="#" class="minimize">Minimize</a>
+									    </div>
+									    <div class="panel-body noPad">
+									        <table class="table table-bordered">
+									            <thead>
+									              <tr style="background:#FFFFFF" align="center">
+									                <td><strong>Date de début</strong></td>
+									                <td><strong>Date de fin</strong></td>
+									                <td><strong>Etat</strong></td>
+									                <td><strong>Action</strong></td>
+									              </tr>
+									            </thead>
+									            <tbody>
+										            {% for tache in taches %}
+									            		{% set actionTacheKey  = tache.tacheStatut|length - 1 %}
+														{% set statutTacheCode =  tache.etatCourant %}
+ 										            	{% set tacheStatutKey  = tache.tacheStatut|length - 1 %}
+{#  													{% set statut =  tache.tacheStatut[tacheStatutKey].statut.code %}#}
+														
+														{% if statutTacheCode == 'TACHE_NON_ECHUE_SOLDER' %}
+															{% set color = '#DDFDF9' %}
+															{% set libelle = 'tâche non échue soldée' %}
+														{% elseif statutTacheCode == 'TACHE_ECHUE_NON_SOLDER' %}
+															{% set color = '#FDF1E9' %}
+															{% set libelle = 'tâche échue non soldée' %}
+														{% elseif statutTacheCode == 'TACHE_NON_ECHUE_NON_SOLDE' %}
+															{% set color = '#ECFDE9' %}
+															{% set libelle = 'tâche non échue non soldée' %}
+														{% elseif statutTacheCode == 'TACHE_FAITE' %}
+															{% set libelle = 'tâche faite' %}
+															{% set color = '#E9F1FD' %}
+														{% elseif statutTacheCode == 'TACHE_ECHUE_SOLDER' %}
+															{% set color = '#F7FEF1' %}
+															{% set libelle = 'tâche échue soldee' %}
+														{% else %}
+															{% set color = '#FFFFFF' %}
+															{% set libelle = 'non defini' %}
+														{% endif %}
+										              <tr bgcolor={{ color }}>
+										                <td width="200px">{{ tache.dateDebut| localizeddate('full', 'none') }} à  {{ tache.dateDebut|date('H:i:s') }}</td>
+										                <td width="200px">{{ tache.dateCloture| localizeddate('full', 'none') }} à  {{ tache.dateCloture|date('H:i:s') }}</td>
+										                <td width="100px">{{ libelle }}</td>
+										                <td width="200px">
+										                	{% if ( statutTacheCode == 'TACHE_NON_ECHUE_NON_SOLDE' or statutTacheCode == 'TACHE_ECHUE_NON_SOLDER' ) and has_rights('ROLE_PORTEUR') and app.user.id == entity.action.porteur.id and "now"|date('Ymd') >= tache.dateDebut|date('Ymd') %}
+									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'FAITE'})}}" title="Tâche exécutée !">
+																	<button class="btn btn-success">
+																		<span class="icon16  icomoon-icon-thumbs-up white"></span>
+																		Faite
+																	</button>
+																</a>
+															{% elseif statutTacheCode == 'TACHE_FAITE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.action.porteur.id %}
+									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'SOLDER'})}}" title="Solder cette tâche !">
+																	<button class="btn btn-success">
+																		<span class="icon16  icomoon-icon-thumbs-up white"></span>
+																		Soldé
+																	</button>
+																</a>
+																<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'NON_SOLDER'})}}" title="Ne pas solder cette tâche !">
+																	<button class="btn btn-warning">
+																		<span class="icon16  icomoon-icon-thumbs-down white"></span>
+																		Non Soldé
+																	</button>
+																</a>
+ 											                {% else %}
+ 																<p>Aucune action possible</p>
+ 															{% endif %}
+ 										                </td>
+ 										              </tr>
+ 										            {% endfor %}
+ 									            </tbody>
+ 									        </table>
+ 									    </div>
+ 									</div><!-- End .panel -->
+ 								</div><!-- End .span12 -->
+                             
+ 		                     <!-- Here controller for historique of all actions --> 
+ 			                     {{ render(controller('OrangeMainBundle:ActionStatut:historique', { 'action_id': entity.action.id })) }}
+ 	                            </div>
+                         </div><!-- End .panel -->
+                     </div>
+                 </div><!-- End .row -->
+ {% endblock %}
+		 	

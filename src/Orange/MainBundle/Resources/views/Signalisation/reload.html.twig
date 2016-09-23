@@ -1,0 +1,39 @@
+{% form_theme form 'OrangeMainBundle:FormTheme:field.html.twig' %}
+
+<div class="you col-lg-12 col-md-10 col-sm-6" >
+	<div class="panel panel-default">
+	    <div class="panel-heading" style="background:#FFFFFF">
+	        <h4>
+	        	<span class="icon16 iconic-icon-reload"></span>
+	            <span class="red">Rechargement des actions à retraiter</span>
+	        </h4>
+	        <a href="#" class="minimize">Minimize</a>
+	    </div>
+	    <div class="panel-body">
+	    	<form novalidate="novalidate" class="form-horizontal" action="{{ path('reload_actions', {signalisation_id : id}) }}" method="post" role="form">
+		    	<table cellspacing="30">
+					  <tr align="center">
+						    <td width="500px"><strong>Libellé de l'action</strong></td>
+						    <td width="500px"><strong>Porteur de l'action</strong></td>
+						    <td width="300px"><strong>Recharger l'action</strong></td>
+					  </tr>
+					  {% for single_form in form.isReload %}
+					  <tr align="center">
+						    <td>{{ form_widget(single_form.libelle, {'attr': {'class':'form-control'}}) }}</td>
+						    <td>{{ form_widget(single_form.porteur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}</td>
+						    <td>{{ form_widget(single_form.isReload, {'attr': {'class': 'nostyle'}}) }}</td>
+					 </tr>
+					 <tr>
+					 	<td height="10px"></td>
+					 </tr>
+					  {% endfor %}
+					  		{{ form(form._token) }} 
+				</table>
+				<div class="form-group" style="margin-left: 15px">
+	                    	<button type="submit" class="btn btn-success marginR10 orangebg" ><span class="icon16 iconic-icon-reload white"></span>Recharger</button>
+	                    	<button class="btn btn-danger marginR10 orangebg" ><span class="icon16 brocco-icon-cancel white"></span>Annuler</button>
+	        	</div><!-- End .form-group  -->
+	        </form>
+	    </div>
+	</div><!-- End .panel -->
+</div><!-- End .col-lg-12 -->

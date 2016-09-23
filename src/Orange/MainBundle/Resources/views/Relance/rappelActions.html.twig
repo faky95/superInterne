@@ -1,0 +1,28 @@
+<h3 style="color: #ff6600">SUPER::Suivi des Performances</h3>
+Bonjour {{ porteur }},<br><br>
+
+<span style="color: green;">Ceci est un mail de rappel d'actions.</span><br><br>
+<br>
+<table border="1" width="100%">
+  <tr>
+  	<th>Rappel N°</th>
+    <th>Référence</th>
+    <th>Libellé</th>
+    <th width="100px+">Délai initial</th>
+    <th>Echéances</th>
+  </tr>
+{% for action in actions %}
+	<tr>
+		<th>{{ loop.index }}</th>
+		<td><a style="color: #ff6600; text-decoration: none" href="{{ url('details_action', { 'id': action['id']}) }}">{{ action['reference'] }}</a></td>
+		<td>{{ action['libelle'] }}</td>
+		<td>{{ action['delai'] }}</td>
+		<td>Jour J {{ action['jours'] }}</td>
+	</tr>
+{% endfor %}
+</table>
+<br>
+<br><br>
+Merci.
+<hr>
+Pour accéder à l'application, <a style="color: #ff6600;" href="{{ accueil_url }}">cliquer ici </a></strong>.

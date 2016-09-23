@@ -1,0 +1,56 @@
+{% extends '::base.html.twig' %}
+
+{% block body -%}
+    <h1>ParametrageBu</h1>
+
+    <table class="record_properties">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ entity.id }}</td>
+            </tr>
+            <tr>
+                <th>Hasvalidation</th>
+                <td>{{ entity.hasValidation }}</td>
+            </tr>
+            <tr>
+                <th>Hassignalisation</th>
+                <td>{{ entity.hasSignalisation }}</td>
+            </tr>
+            <tr>
+                <th>Affichagestats</th>
+                <td>{{ entity.affichageStats }}</td>
+            </tr>
+            <tr>
+                <th>Couleur</th>
+                <td>{{ entity.couleur }}</td>
+            </tr>
+            <tr>
+                <th>Logoimage</th>
+                <td>{{ entity.logoImage }}</td>
+            </tr>
+            <tr>
+                <th>Logotexte</th>
+                <td>{{ entity.logoTexte }}</td>
+            </tr>
+            <tr>
+                <th>Isimage</th>
+                <td>{{ entity.isImage }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+        <ul class="record_actions">
+    <li>
+        <a href="{{ path('parametragebu') }}">
+            Back to the list
+        </a>
+    </li>
+    <li>
+        <a href="{{ path('parametragebu_edit', { 'id': entity.id }) }}">
+            Edit
+        </a>
+    </li>
+    <li>{{ form(delete_form) }}</li>
+</ul>
+{% endblock %}

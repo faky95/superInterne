@@ -1,0 +1,25 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#{{ parent.vars.id }}").change(function() {
+        var Id =  $(this).val();
+        if(Id) {
+	        $.post("{{ url }}", { "{{ key }}": Id }, 
+	    		function(results) {
+			        var sub = $("#{{ child.vars.id }}");
+			        sub.empty();
+			        $.each(results , function(key, value) { 
+			            sub.append($("<option></option>").attr("value", value.id).text(value.libelle));
+			        });
+			        {% if functionAfter is defined %}
+			        	{{functionAfter }}(sub, {{ child.vars.value ? child.vars.value : 'null' }});
+				    {% else %}
+				    	sub.val({{ child.vars.value }});
+				    {% endif %}
+		    });
+        } else {
+        	$("#{{ child.vars.id }}").empty();
+        }
+    });
+	$("#{{ parent.vars.id }}").change();
+});
+</script>

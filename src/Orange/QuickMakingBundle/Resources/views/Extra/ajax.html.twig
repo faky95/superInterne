@@ -1,0 +1,14 @@
+<script type="text/javascript">
+$.ajax({
+    url: {{ actionUrl }} ,
+    type: '{{ method is defined ? method : 'GET' }}',
+    {% if data is defined %}
+    data : {{ data }},
+    {% endif %}
+    timeout: {{ timeout is defined ? timeout : 10000}},
+    success: 
+        {{ successCallback }},
+    error: 
+    	{{ errorCallback }},
+});
+</script>

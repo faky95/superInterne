@@ -1,0 +1,39 @@
+{% extends '::base.html.twig' %}
+{% block body %}
+<body class="errorPage">
+    <div class="container-fluid">
+
+        <div class="errorContainer">
+        	 <div class="page-header">
+	        	{% if status_code == 403 %}
+	                <h1 class="center" style="color: #ff6600;">Super <small>Accés refusé</small></h1>
+	            </div>
+            	<h2 class="center">Veuillez contacter votre administrateur!</h2>
+	            {% elseif status_code == 405 or status_code == 404 %}
+	                <h1 class="center" style="color: #ff6600;">Super <small></small></h1>
+	            	</div>
+	
+		            <h3 class="center">La page que vous recherchez est introuvable. Cela peut être du à plusieurs raisons</h3>
+						<ul>
+							<li>Elle n'a jamais existé.</li>
+							<li>Elle a été supprimée par l'administrateur pour une certaine raison.</li>
+							<li>Vous avez saisi une adresse incorrecte.</li>
+						</ul>
+				{% elseif status_code == 500 or status_code == 503 %}
+	                <h2 class="center" style="color: #ff6600;">Super <small>Erreur de traitement</small></h2>
+	            </div>
+            	<h2 class="center">Une erreur inattendue s'est produite.<br>
+            	Merci de réessayer encore, si le probléme persiste<br> veuillez contacter l'administrateur.
+            	</h2>
+	            {% endif %}
+	            
+	            <div class="center">
+	                <a href="javascript: history.go(-1)" class="btn btn-default" style="margin-right:10px;"><span class="icon16 icomoon-icon-arrow-left-10"></span>Précédant</a>
+	                <a href="{{ path('dashboard') }}" class="btn btn-default"><span class="icon16 icomoon-icon-screen"></span>Accueil</a>
+	            </div>
+
+        </div>
+
+    </div><!-- End .container -->
+</body>
+{% endblock %}

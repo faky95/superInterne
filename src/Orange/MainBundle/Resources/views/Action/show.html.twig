@@ -1,0 +1,116 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+                <!-- Build page from here: -->
+                <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Détails de l'action {% endblock %}</h3> 
+					{% if  espace_id is not empty %}  
+						 	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+					{% endif %} 
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+                            <div class="panel-heading clearfix">
+                                <h4 class="left">
+                                    <span class="red">Action <strong> référence {{ action.reference }} </strong></span>
+                                </h4>
+{#                                 <h4 class="right">#}
+{#                                 	<div style="float: right"><a href="{{ path('edition_action', {'id':action.id}) }}" class="tip" title="Modifier l'action"><span class="icomoon-icon-pencil-4"></span></a></div>#}
+{#                             	</h4>#}
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ action.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement : <strong class="red">{{ action.dateAction| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ action.dateDebut| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| localizeddate('full', 'none')  }}</strong></li>
+                                        
+                                    </ul>
+                                 </div>    
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">        
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Type d'action : <strong class="red">{{ action.typeAction  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Priorité : <strong class="red">{{ action.priorite }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ action.porteur  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Instance : <strong class="red">{{ action.instance  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Domaine : <strong class="red">{{ action.domaine }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="you col-lg-12 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">
+                                		 <li><h3 class="red">Description</h3></li>
+										 <p style="text-align: justify;">{{ action.description }}</p>  
+                                	</ul>
+                                	{% if action.actionCyclique is not empty %}
+							    		<p><em>Cette action est une action cyclique, vous pouvez consulter les détails sur cette action.</em></p>
+								    	<div class="form-group">
+											<a target="_blank" href="{{ path('actioncyclique_show', {'id': action.actionCyclique[0].id}) }}" title="Demande d'abandon">
+												<button class="btn btn-success">
+													<span class="icon16 icomoon-icon-zoom-in white"></span>
+													Détails sur l'action cyclique
+												</button>
+											</a>
+										</div>
+							    	{% endif %}
+                                </div>
+                                {% if action.document|length %}
+		                        <div class="you col-lg-12 col-md-6">
+		                            <div class="todo">
+		                                <h4 class="red">Les ERQs{#<a href="#" class="icon tip" title="Ajouter un ERQ"><span class="icon16 icomoon-icon-plus"></span></a>#}</h4>
+		                                <ul>
+		                                    <li class="clearfix">
+		                                        <div class="txt" style="width: 95%;font-weight: bold;">
+	                                            	<span class="date" style="width: 20px;display: inline-block;">&nbsp;</span>
+		                                            <span style="width: 40%;display: inline-block;">Nom du document</span>
+	                                            	<span class="by" style="width: 25%;display: inline-block;">Auteur</span>
+		                                            <span class="date" style="width: 20%;display: inline-block;">Date d'ajout</span>
+		                                        </div>
+		                                        <div class="controls">
+		                                        </div>
+		                                    </li>
+		                                {% for document in action.document %}
+		                                    <li class="clearfix">
+		                                        <div class="txt" style="width: 95%">
+		                                            <span class="date" style="width: 20px;display: inline-block;">{{ document|show_status('type') }}</span>
+		                                            <span style="width: 40%;display: inline-block;"><a href="{{ asset(document.path) }}" download>{{ document }}</a></span>
+		                                         
+		                                            	<span class="by label label-danger" style="width: 10%;display: inline-block;">Non renseigné</span>
+		                                            	<span style="width: 15%;display: inline-block;">&nbsp;</span>
+		                                            
+		                                            <span class="date" style="width: 20%;display: inline-block;">{{ document.dateCreation | localizeddate('full', 'none') }}</span>
+		                                        </div>
+		                                        <div class="controls">
+		                                        {% if action.porteur.id==app.user.id or action|has_rights_animateur or action|has_rights_manager or has_rights('ROLE_ADMIN') %}
+		                                            <a href="#myModal" title="Supprimer l'ERQ" data-toggle="modal" data-target="#myModal" class="tip actionLink" modal-url="{{ path('supprimer_erq', {id: document.id}) }}">
+		                                            	<span class="icon12 icomoon-icon-remove"></span>
+		                                            </a>
+		                                        {% endif %}
+		                                        </div>
+		                                    </li>
+		                                {% endfor %}
+		                                </ul>
+		                            </div>
+		                        </div>
+		                        {% endif %}
+		                       
+	                             <!-- Here controller for suivi Action Traitement -->   
+	                             {{ render(controller('OrangeMainBundle:ActionStatut:traitement', { 'action_id': action.id })) }}
+	                             <!--  les avancements -->
+	                             {% include 'OrangeMainBundle:ActionAvancement:historique.html.twig' with { 'action' : action } %}
+			                     <!-- Here controller for historique of all actions --> 
+			                     {{ render(controller('OrangeMainBundle:ActionStatut:historique', { 'action_id': action.id })) }}
+                            </div>
+                        </div><!-- End .panel -->
+                    </div>
+                </div><!-- End .row -->
+{% endblock %}
+
+
+{% block pagescript %}
+
+{% endblock %}
+		 	

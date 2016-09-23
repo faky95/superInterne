@@ -1,0 +1,46 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Nouvelle priorité {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Ajouter une priorité</span>
+			    </h4>
+			</div>
+			<div class="panel-body">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_priorite') }}" method="post" role="form">
+	                <div class="form-group">
+					{{ form_widget(form.libelle,  {'attr': {'class': 'nostyle form-control'}}) }}
+					</div>
+		            <!-- Color picker  -->                      
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="picker">Couleur :</label>
+						<div class="col-lg-9">
+							<input type="text" id="color" name="{{ form.couleur.vars.full_name }}" value="#123456" class="form-control" />
+							<div class="picker"></div>
+						</div>
+					</div>
+                    <!-- End .ColorPicker  -->
+		                {{ form_row(form.description) }}
+		                {{ form_widget(form._token) }}
+			        <div class="form-group">
+						<div class="col-lg-offset-2 col-lg-9">
+						     {{ form_widget(form.add) }}
+						     {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  -->  
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% endblock %}

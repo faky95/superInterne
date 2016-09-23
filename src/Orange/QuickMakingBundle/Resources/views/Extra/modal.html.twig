@@ -1,0 +1,136 @@
+<script type="text/javascript">
+{% block add_event_action_link %}
+function addEventActionLink() {
+	functionAfterShowModal = {{ functionAfterShowModal }};
+	$(".actionLink").off("click");
+	$(".actionLink").click(function(e) {
+		if(typeof $(this).attr('call') !== 'undefined' && $(this).attr('call') !== false) {
+			calledFunction = $(this).attr('call');
+			argumentFunction = $(this).attr('argument-call');
+		} else {
+			calledFunction = null;
+		}
+	    target = $(this).attr("data-target");
+	    $.ajax({
+			type: 'get', url: $(this).attr("modal-url"),
+			beforeSend : function() {
+	    		if($('#loading-modal')) {
+	    			$(target).html($('#loading-modal').html());
+	    		}
+	    		$(target).css('display', 'block');
+	    	}, success: function(msg) {
+				if(eval('typeof ' + calledFunction)=='function') { 
+	    			eval(calledFunction + '(msg' + explodeFronStringToString(argumentFunction) + ');');
+				}
+			    $(target).html(msg);
+			}, error: function(xhr, ajaxOptions, thrownError) {
+			    alertAfterModalError(thrownError, target);
+			}, complete : function() {
+				formModalSubmit();
+	    		addEventActionLink();
+	    		afterShowModal();
+			}
+	    });
+	});
+}
+{% endblock add_event_action_link %}
+
+{% block add_event_text_transformer %}
+function addEventTextTransformer() {
+	$(".text_transformer").off("click");
+	$(".text_transformer").click(function(e) {
+	    target = $(this).attr("data-target");
+	    $.ajax({
+			type: 'post', url: $(this).attr("modal-url"),
+			data: 'value=' + $(this).val(),
+			beforeSend : function() {
+	    		if($('#loading-modal')) {
+	    			$(target).html($('#loading-modal').html());
+	    		}
+	    		$(target).css('display', 'block');
+	    	}, success: function(msg) {
+			    $(target).html(msg);
+			}, error: function(xhr, ajaxOptions, thrownError) {
+			    alertAfterModalError(thrownError);
+			}, complete : function() {
+				formModalSubmit();
+	    		addEventActionLink();
+			}
+	    });
+	});
+}
+{% endblock add_event_text_transformer %}
+
+{% block add_form_submit_modal %}
+function formModalSubmit() {
+	functionOnComplete = {{ functionOnComplete }};
+	$('.submitLink').off('click');
+	$('.submitLink').click(function(e) {
+		if(typeof $(this).attr('call') !== 'undefined' && $(this).attr('call') !== false) {
+			calledFunction = $(this).attr('call');
+			argumentFunction = $(this).attr('argument-call');
+		} else {
+			calledFunction = null;
+		}
+		if(typeof $(this).attr('datatype') !== 'undefined' && $(this).attr('datatype') !== false) {
+			dataType = $(this).attr('datatype');
+		} else {
+			dataType = 'html';
+		}
+		target = $(this).attr('data-target');
+		if(!isValidForm($(target + ' form'))) {
+			return false;
+		}
+	
+		e.preventDefault(); // prevent native submit
+	    $(target + ' form').ajaxSubmit({
+		    beforeSend : function() {
+	    		if($('#loading-modal')) {
+	    			$(target).html($('#loading-modal').html());
+	    		}
+	    		$(target).css('display', 'block');
+	    		$(target).html($({{ ("'" ~ idLoading ~ "'")|raw }}).html());
+	    	}, done : function() {
+	    		$({{ ("'" ~ idLoading ~ "'")|raw }}).css('display', 'none');
+				formModalSubmit();
+	    	}, success: function(response) {
+				if(eval('typeof ' + calledFunction)=='function') { 
+	    			eval(calledFunction + '(response' + explodeFronStringToString(argumentFunction) + ');');
+				} else {
+					$(target).html(response);
+				}
+	    	}, error: function(xhr, ajaxOptions, thrownError) {
+				if(xhr.status==303) {
+					$(target).html(xhr.responseText);
+					formModalSubmit();
+					onComplete();
+				} else {
+              		alertAfterModalError(thrownError);
+				}
+            }
+		});
+	});
+}
+{% endblock add_form_submit_modal %}
+
+{% block load_modal %}
+$.ajax({
+    type: 'get', url: {{ ("'" ~ url ~ "'")|raw }},
+    success: function(msg) {
+        $({{ ("'" ~ idModal ~"'")|raw }}).html(msg)
+    }, error: function(xhr, ajaxOptions, thrownError) {
+      alertAfterModalError(thrownError);
+	}, complete : function() {
+		formModalSubmit();
+    }
+});
+{% endblock load_modal %}
+</script>
+        	  
+{% block form_submit_modal %}
+<script type="text/javascript">formModalSubmit();</script>
+{% endblock form_submit_modal %}
+        	  
+{% block call_validation_form %}
+<script type="text/javascript"> validateForm(); </script>
+{% endblock call_validation_form %}

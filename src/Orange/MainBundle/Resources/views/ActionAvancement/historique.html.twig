@@ -1,0 +1,40 @@
+<div class="you col-lg-12 col-md-6 col-sm-6">                        
+	<div class="panel panel-default">
+	    <div class="panel-heading" style="background:#FFFFFF">
+	        <h4>
+	            <span class="icon16 brocco-icon-clock"></span>
+	            <span class="red">Avancement sur l'action</span>
+	             <div class="panel-form right">
+		        	<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouvel_avancement', {'action_id': action.id }) }}"><button class="btn btn-warning btn-xs"><span class="icon12 icomoon-icon-plus white"></span> Ajouter un avancement</button></a>
+		        </div>
+	        </h4>
+	        <a href="#" class="minimize">Minimize</a>
+	    </div>
+	    <div class="panel-body noPad">
+	        <table class="table table-bordered">
+	            <thead>
+	              <tr style="background:#FFFFFF" align="center">
+	                <td><strong>Date</strong></td>
+	                <td><strong>Avancement</strong></td>
+	                <td><strong>Auteur</strong></td>
+	              </tr>
+	            </thead>
+	            <tbody>
+	            {% if  action.avancement is not empty%}
+	            	{% for historique in action.avancement %}
+		              <tr bgcolor="#FFFFFF">
+		                <td width="250px" style="text-align: justify">{{ historique.date| localizeddate('full', 'none') }}</td>
+		                <td style="text-align: justify">{{ historique.description }}</td>
+		                <td width="250px" style="text-align: justify">{{ historique.auteur|default('inconnu') }}</td>
+		              </tr>
+		            {% endfor %}
+		         {% else %}
+		         <tr bgcolor="#FFFFFF">
+		                <td width="250px" style="text-align: justify" colspan="3">Aucun avancement pour le moment ...</td>
+		              </tr>
+		         {% endif %}
+	            </tbody>
+	        </table>
+	    </div>
+	</div><!-- End .panel -->
+</div><!-- End .span12 -->

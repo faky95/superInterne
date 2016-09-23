@@ -1,0 +1,77 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<!-- Build page from here: -->
+				<!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Détail du groupe {% endblock %}</h3>                    
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+
+                            <div class="panel-heading clearfix">
+
+                                <h4 class="left">
+                                    <span>Details Groupe</span>
+                                </h4>
+                                <div class="print">
+                                    <a href="{{ path('edition_groupe', {'id':entity.id}) }}" class="tip" title="Modifier le projet"><span class="icon24 icomoon-icon-pencil-3"></span></a>
+                                </div>
+                                  
+
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Nom: <strong class="red">{{ entity.name }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Email: <strong class="red">{{ entity.email }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Structure: <strong class="red">{{ entity.structure }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date: <strong class="red">{{ entity.createdAt|date("d/m/Y")  }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="client col-lg-6 col-md-6 col-sm-6">
+                                    <ul class="list-unstyled">
+                                    	
+                                        <li><h3 class="red">Description</h3>
+                                        <p style="text-align: justify;">{{ entity.description }}</p></li>
+
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+								  <h4 class="left">
+                                    <span>Membres</span>
+                                </h4>
+                                <table class="responsive table table-bordered">
+                                    <thead>
+                                      <tr>
+                                        <th>Nom</th>
+                                        <th>Structure</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+		                                    {% for mmb in entity.membreGroupe %}
+		                                       <tr>
+		                                        <td>{{ mmb.utilisateur }}</td>
+		                                        <td>{{ mmb.utilisateur.structure }}</td> 
+		                                        <td>
+		                                        		<a href="{{ path('details_utilisateur', {'id':mmb.utilisateur.id}) }}" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
+		                                        		<a href="#" title="Modifier" class="tip"><span class="icon12 icomoon-icon-pencil"></span></a>
+		                                        </td>
+		                                      </tr>
+		                                    {% endfor %} 
+                                    </tbody>
+                                </table>
+
+                                
+                               
+                            </div>
+
+                        </div><!-- End .panel -->
+
+                    </div>
+
+                </div><!-- End .row -->
+{% endblock %}

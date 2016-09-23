@@ -1,0 +1,87 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme edit_form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Modifier une instance {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Mofifier une instance</span>
+			    </h4>
+			</div>
+			<div class="panel-body">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_instance', { id : entity.id}) }}" method="post" role="form">
+	                <div class="form-group">
+					{{ form_widget(edit_form.libelle,  {'attr': {'class': 'nostyle form-control'}}) }}
+					{{ form_widget(edit_form.parent,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					</div>
+		            <!-- Color picker  -->                      
+					<div class="form-group">
+						<label class="col-lg-2 control-label" for="picker">Couleur :</label>
+						<div class="col-lg-9">
+							<input type="text" id="color" name="{{ edit_form.couleur.vars.full_name }}" value="#123456" class="form-control" />
+							<div class="picker"></div>
+						</div>
+					</div>
+                    <!-- End .ColorPicker  -->
+                    <div class="form-group">
+	                    {{ form_widget(edit_form.typeInstance) }}
+                    </div>
+                    <div class="form-group">
+                    	{% if is_granted('ROLE_SUPER_ADMIN') %}
+							{{ form_widget(edit_form.bu,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						{% endif %}
+                    	<div id="justforhide">
+                    	{{ form_widget(edit_form.tmp_source, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+                    	</div>
+                    </div>
+                    <div class="form-group">
+		                {{ form_widget(edit_form.tmp_animateur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+		                {{ form_widget(edit_form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+	                </div>
+	                <div class="form-group">
+		                {{ form_widget(edit_form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+		                {{ form_widget(edit_form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+	                </div>
+		                {{ form_row(edit_form.description) }}
+		                {{ form_widget(edit_form._token) }}
+			        <div class="form-group">
+						<div class="col-lg-offset-2 col-lg-9">
+						     {{ form_widget(edit_form.add) }}
+						     {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  -->  	  
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% endblock %}
+
+{% block pagescript %}
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$('#orange_mainbundle_instance_typeInstance').change(function(){
+	    if($(this).attr("value")=="2"){
+	        $("#justforhide").show();
+	    } else {
+	      	$("#justforhide").hide();
+	    }
+	});
+	$('#orange_mainbundle_instance_typeInstance').change();
+});
+</script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$('#orange_mainbundle_instance_bu').removeAttr("multiple");
+	});
+</script>
+{% endblock %}

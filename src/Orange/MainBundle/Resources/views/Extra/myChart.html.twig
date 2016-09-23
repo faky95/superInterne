@@ -1,0 +1,161 @@
+<script type="text/javascript">
+
+ // histogramme  vue animateur statique
+ $(function () {
+	 	instances=[];
+	 	series=[];
+	 	
+	 	{% for inst in instances %}
+	 		instances[{{ loop.index0 }}] = '{{ inst.libelle }}';
+		{% endfor %}
+		var i=0;
+		{% for libelle, stats in graphe %}
+					series[{{ loop.index0 }}] = new Object();
+					series[{{ loop.index0 }}].name = '{{ libelle|escape('js')  }}';
+		{% endfor %}
+    		{% for libelle, stats in graphe %}
+    		     series[{{ loop.index0 }}].data = [];
+				{%  for cle, val in stats  %}
+							series[{{ loop.parent.loop.index0 }}].data.push({{ val }});
+				{% endfor %}
+			{% endfor %}
+			myChart (instances, series,"#mychart",'');
+			
+           /// vue ev
+			var k=0;
+			
+			var arrSemaine = [];
+			{% for sem in semaines %}
+							arrSemaine[{{ loop.index0 }}] = {{ sem }};
+			{% endfor %}
+					
+				{% for  libelle,value in grapheEv   %}	
+				var series = [];
+				k++;
+				{% for lib, stats in value %}
+					series[{{ loop.index0 }}] = new Object();
+					series[{{ loop.index0 }}].name = '{{ lib|escape('js')  }}';
+				{% endfor %}
+				{% for lib, stats in value %}
+						series[{{ loop.index0 }}].data = [];
+						{%  for data in stats  %}
+								series[{{ loop.parent.loop.index0 }}].data.push({{ data }});
+						{% endfor %}
+						{% endfor %}
+					 var id='#mychartE-'+k;
+					myLineChart (arrSemaine, series,id, '');
+			{%  endfor %}
+	
+	 
+ function myChart (categories , series, id, lib) {
+	    $(id).highcharts({
+	    	colors: ['#f0ad4e', '#5cb85c'],
+	        chart: {
+	            type: 'column'
+	        },
+	    credits: {
+				enabled : false 	
+     },
+		     plotOptions: {
+		         column: {
+		             stacking: 'normal'
+		         }},
+	        title: {
+	            text: 'Suivi des actions : '+lib
+	        },
+
+	        xAxis: {
+	            categories: categories
+	        },
+	        lang: {
+	        	downloadJPEG: 'Télécharger sous image JPEG',
+	        	downloadPNG: 'Télécharger sous image PNG',
+	        	downloadSVG: 'Télécharger sous image SVG',
+	        	downloadPDF: 'Télécharger sous document PDF',
+	        	printChart: 'Exporter le graphe',
+	        	contextButtonTitle: 'Télécharger le graphe'
+	    	},
+	        yAxis: {
+	            allowDecimals: false,
+	            min: 0,
+	            title: {
+	                text: 'Nombre d\'action'
+	            }
+	        },
+
+	        tooltip: {
+	            formatter: function () {
+	                return '<b>' + this.x + '</b><br/>' +
+	                    this.series.name + ': ' + this.y +'%' ;
+	            }
+	        },
+
+	      
+
+	        series: series
+	    });
+	}
+	
+ function myLineChart(categories,series, id,lib){
+	 $(id).highcharts({
+	    	colors: ['#f0ad4e', '#5cb85c'],
+	        title: {
+	            text: 'Suivi des actions  '+lib,
+	            x: -20 //center
+	        },
+	        subtitle: {
+	            text: '',
+	            x: -20
+	        },
+	        lang: {
+	        	downloadJPEG: 'Télécharger sous image JPEG',
+	        	downloadPNG: 'Télécharger sous image PNG',
+	        	downloadSVG: 'Télécharger sous image SVG',
+	        	downloadPDF: 'Télécharger sous document PDF',
+	        	printChart: 'Imprimer le graphe',
+	        	contextButtonTitle: 'Télécharger le graphe'
+	    	},
+	        xAxis: {
+	            categories: categories,
+	            tickPixelInterval: 300
+	        },
+	        credits: {
+					enabled : false 	
+	        },
+	        scrollbar: {
+	        	enabled: false
+	        },
+	        yAxis: {
+	            title: {
+	                text: 'Taux de réalisations (Actions)',
+	                labels:{
+	                    formatter: function(){
+	                      if(this.value >= 0){
+	                        return this.value;
+	                      }
+	                    }
+	                  }
+	            },
+	            plotLines: [{
+	                value: 0,
+	                width: 1,
+	                color: '#5cb85c'
+	            }],
+	            minRange:  0
+	        },
+	        tooltip: {
+	            valueSuffix: '%'
+	        },
+	        legend: {
+	            layout: 'horizontal',
+	            align: 'center',
+	            verticalAlign: 'bottom',
+	            borderWidth: 0
+	        },
+	        series: series
+	    });
+}
+
+
+});
+</script>

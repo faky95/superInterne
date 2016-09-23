@@ -1,0 +1,39 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>{{ entity }}</span>
+	</h4>
+</div>
+<div class="modal-body">
+	<div class="paddingT15 paddingB15">
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" style="padding-left: 0;text-align: left;">
+                                    <ul class="list-unstyled">
+								    	{% for ref in references %}
+								    	 	<li><span class="icon16 icomoon-icon-arrow-right-3"></span>{{ ref.libelleStatut }} :<strong style="color: #ff6600;margin-left: 10px;">{{ ref.symbole }}</strong></li>
+								    	{% endfor %}
+					                </ul>
+                                 </div>    
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                     <strong class="red">{{ entity.numerateur }}</strong>
+                                     <hr style="margin: 5px 5px;border-width: 2px;">
+                                     <strong class="red">{{ entity.denominateur }}</strong>
+                                     <div style="padding-top: 50px;text-align: left;">
+                                     	<span style="font-weight: bold;">Afficher à l'accueil:</span> 
+                                     	{% if entity.visibilite %}
+                                     		<span style="background-color: green;color: white;font-weight: bold;padding: 5px 5px;">OUI</span>
+                                     	{% else %}
+                                     		<span style="background-color: orange;color: white;font-weight: bold;padding: 5px 5px;">NON</span>
+                                     	{% endif %}
+                                     </div>
+                                </div>
+                            </div>
+	</div>
+</div>
+<div class="modal-footer">
+	<a href="#" class="btn btn-die" data-dismiss="modal">Fermer</a>
+	<a href="{{ path('edition_formule', {'id': entity.id}) }}" class="btn btn-warning">Modifier</a>
+</div>

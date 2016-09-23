@@ -1,0 +1,9 @@
+{% block add_breadcrumb %}
+<li><span class="divider">&raquo;</span><a href="{{ url }}">{{ page }}</a></li>
+{% endblock add_breadcrumb %}
+
+{% block show_breadcrumb %}
+<ul class="breadcrumb">
+	<li><i class="icon-home"></i>Accueil</li>{{ template }}
+</ul>
+{% endblock show_breadcrumb %}

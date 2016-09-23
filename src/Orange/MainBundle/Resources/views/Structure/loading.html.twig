@@ -1,0 +1,128 @@
+{% extends '::base.html.twig' %}
+
+
+{% block content %}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Importation d'une structure {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+                        <div class="col-lg-12">
+
+                            <div class="panel panel-default">
+
+                                <div class="panel-heading">
+
+                                    <h4>
+                                        <span class="icon16   icomoon-icon-book"></span>
+                                        <span>Manuel pour le chargement des structures</span>
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                <ul>
+                                <li class="big col-lg-6">
+										<h3>Contraintes sur le fichier de chargement</h3>
+										<span>Le fichier de chargement est structuré de la manière suivante:</span>
+										<ul>
+											<li>1 ère colonne: Le libellé de la structure</li>
+											<li>2 ème colonne: La structure parente</li>
+											<li>3 ème colonne: Le type de la structure</li>
+											<li>4 ère colonne: La direction de la structure </li>
+										</ul>
+									</li>
+                                	<li class="big col-lg-6">
+										<h3>Contraintes sur le chargement</h3>
+										<ul>
+											<li>La structure parente  doit exister si la structure a cree en aura. </li>
+											<li>Le type de structure doit exister au prealable</li>
+										</ul>
+									</li>
+									</ul>
+                                </div>
+
+                            </div><!-- End .panel -->
+
+                        </div><!-- End .span4 -->
+
+                    </div><!-- End .row -->
+                   <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4>
+                                        <span class="icon16 entypo-icon-download"></span>
+                                        <span>Importation structure</span>
+                                    </h4>
+                               </div>
+                                     <form method="post" action="{{ path('importer_structure') }}" {{ form_enctype(form) }}>
+                                       <div class="panel-body">
+                                        <p  class="right" style="color:red;">   
+                               		      NB : Le format du fichier doit être .txt ou .csv avec séparateur point-virgule.
+                               			</p>
+										{% include 'OrangeMainBundle:Extra:customFormFile.html.twig' with {'fileField': form.file} %}
+										{{ form_row(form._token) }}
+										</div>
+									    <div class="form-actions">
+											<div class="col-lg-offset-3 col-lg-9">  
+											    <a class="btn btn-success" href="{{ asset('upload/canevas/structure.csv') }}">Télécharger le modèle</a>
+											    {{ form_widget(form.add) }}
+											     {{ form_widget(form.cancel) }}
+											</div>
+										</div><!-- End .form-actions  -->  
+										
+									</form>
+                                </div>
+
+                            </div><!-- End .panel -->
+
+</div>
+
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

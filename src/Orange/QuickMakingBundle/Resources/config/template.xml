@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <parameters>
+        <parameter key="orange_quick_making.user.template.security.login">FOSUserBundle:Security:login.html</parameter>
+        <parameter key="orange_quick_making.user.template.resetting.request">FOSUserBundle:Resetting:request.html</parameter>
+        <parameter key="orange_quick_making.user.template.resetting.reset">FOSUserBundle:Resetting:reset.html</parameter>
+        <parameter key="orange_quick_making.user.template.resetting.check_email">FOSUserBundle:Resetting:checkEmail.html</parameter>
+        <parameter key="orange_quick_making.user.template.resetting.password_already_requestted">FOSUserBundle:passwordAlreadyRequested.html</parameter>
+        <parameter key="orange_quick_making.user.template.change_password.change_password">FOSUserBundle:ChangePassword:ChangePassword.html</parameter>
+    </parameters>
+
+    <!-- <services>
+        <service id="fos_user.mailer.default" class="FOS\UserBundle\Mailer\Mailer" public="false">
+            <argument type="service" id="mailer" />
+            <argument type="service" id="router" />
+            <argument type="service" id="templating" />
+            <argument type="collection">
+                <argument key="confirmation.template">%fos_user.registration.confirmation.template%</argument>
+                <argument key="resetting.template">%fos_user.resetting.email.template%</argument>
+                <argument key="from_email" type="collection">
+                    <argument key="confirmation">%fos_user.registration.confirmation.from_email%</argument>
+                    <argument key="resetting">%fos_user.resetting.email.from_email%</argument>
+                </argument>
+            </argument>
+        </service>
+
+        <service id="fos_user.mailer.noop" class="FOS\UserBundle\Mailer\NoopMailer" public="false" />
+    </services> -->
+
+</container>

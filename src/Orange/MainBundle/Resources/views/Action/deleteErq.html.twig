@@ -1,0 +1,22 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Suppression de l'ERQ</span>
+	</h4>
+</div>
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('supprimer_erq', {id: entity.id}) }}" method="post" role="form">
+	<div class="panel-body">
+		<div class="form-group">
+			<label class="col-lg-8 control-label" for="picker">Voulez-vous vraiment supprimer cet ERQ?</label>
+		</div>
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+			<a href="#" data-target="#myModal" call="redirectModalToUrl" class="btn btn-danger submitLink">Confirmer</a>
+			<a href="#" class="btn btn-die" data-dismiss="modal">Fermer</a>
+		</div>
+	</div>
+</form>

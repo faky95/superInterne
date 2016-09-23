@@ -1,0 +1,23 @@
+<div class="sidebar-widget">
+                <h5 class="title">Taux de r&eacute;alisation dans les d&eacute;lais</h5>
+                <div class="content">
+                    <div class="progress progress-mini left tip" title="{{ tauxRealisationGlobaleDelais }}%">
+                      <div class="progress-bar progress-bar-danger" style="width: {{ tauxRealisationGlobaleDelais }}%;"></div>
+                    </div>
+                    <span class="percent">{{ tauxRealisationGlobaleDelais }}%</span>
+                    <div class="stat">{{ actionRealiseeDelai }} / {{ actionTotal }} actions sold&eacute;es</div>
+                </div>
+
+            </div><!-- End .sidenav-widget -->
+
+            <div class="sidebar-widget">
+                <h5 class="title">Taux de r&eacute;alisation globale</h5>
+                <div class="content">
+                    <div class="progress progress-mini left tip" title="{{ tauxRealisationGlobale }}%">
+                      <div class="progress-bar progress-bar-success" style="width: {{ tauxRealisationGlobale }}%;"></div>
+                    </div>
+                    <span class="percent">{{ tauxRealisationGlobale }}%</span>
+                    <div class="stat">{{ actionRealisee }} / {{ actionTotal }} actions sold&eacute;es</div>
+                </div>
+
+            </div><!-- End .sidenav-widget -->

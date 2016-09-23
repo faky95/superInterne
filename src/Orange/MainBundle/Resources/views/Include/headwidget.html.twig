@@ -1,0 +1,62 @@
+			<div class="row">
+                    <div class="col-lg-12">
+                        <div class="centerContent">
+                            <ul class="bigBtnIcon">
+                            	{% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN')  %}
+                            	<li>
+                                    <a href="{{ path('les_instance') }}">
+                                        <span class="icon icomoon-icon-people"></span>
+                                        <span class="txt">Instances</span>
+                                        <span class="notification blue">12</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('les_groupe') }}">
+                                        <span class="icon icomoon-icon-people"></span>
+                                        <span class="txt">Groupes</span>
+                                        <span class="notification">5</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('les_projets') }}">
+                                        <span class="icon wpzoom-suitcase"></span>
+                                        <span class="txt">Projets</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('les_actions') }}">
+                                        <span class="icon icomoon-icon-wand-2"></span>
+                                        <span class="txt">Actions</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ path('les_espaces') }}">
+                                        <span class="icon icomoon-icon-people"></span>
+                                        <span class="txt">Espaces</span>
+                                        <span class="notification">5</span>
+                                    </a>
+                                </li>
+                                
+                                 {% endif %}
+                                {% if has_rights('ROLE_SUPER_ADMIN') or has_rights('ROLE_ADMIN')   %}
+                                <li>
+                                    <a href="{{ path('les_utilisateurs') }}" title="Liste des utilisateurs" class="tipB">
+                                        <span class="icon icomoon-icon-users"></span>
+                                        <span class="txt">Utilisateurs</span>
+                                        <span class="notification green">23</span>
+                                    </a>
+                                </li>
+                                 {% endif %}
+                                {% if has_rights('ROLE_ADMIN') or has_rights('ROLE_SUPER_ADMIN') or has_rights('ROLE_ANIMATEUR') %}
+                                <li>
+                                    <a href="{{ path('les_signalisations') }}" title="Liste des signalisations" class="tipB">
+                                        <span class="icon cut-icon-alert"></span>
+                                        <span class="txt">Signalisations</span>
+                                        <span class="notification">5</span>
+                                    </a>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div><!-- End .span12 -->
+                </div><!-- End .row --><br>

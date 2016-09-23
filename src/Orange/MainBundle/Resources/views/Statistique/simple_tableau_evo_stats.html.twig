@@ -1,0 +1,89 @@
+{% if type=="one" %}
+{% set rspan=statut|length-nbTaux %}
+	<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">   
+    <tr>
+                        <thead>
+                                              
+                                                   <th>Statut</th>
+                                                  {% for key,semaine in stats.semaine %}
+                              <th style="padding: 7px 14px;">{{ key }}</th>
+                            {% endfor %}
+                                            </thead>
+    </tr>
+    {% for key, st in statut %}
+      <tr  class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
+        {% if loop.index < rspan %}
+        
+          <td >{{ st }}</td>
+          {% for value in stats.semaine %}
+            <td >{{ value.data[key] }}</td> 
+          {% endfor %}
+         {% elseif loop.index==rspan %}
+         	  <td style="font-weight:bold;color: #ff6600;">{{ st }}</td>
+          {% for value in stats.semaine %}
+            <td  style="font-weight:bold;color: #ff6600;">{{ value.data[key] }}</td> 
+          {% endfor %}
+        {% else %}
+          <td style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
+          {% for value in stats.semaine %}
+            <td style=" text-align:center; font-weight:bold;color: #ff6600;">{{ value.data[key]~'%' }}</td> 
+          {% endfor %}
+        {% endif %}
+      </tr>
+    {% endfor %} 
+  </table>
+{% elseif(type=="many-struct") %}
+{% set rspan=statut|length-nbTaux %}
+{% set numb=random(100) %}
+
+{% else %}
+{% set rspan=statut|length-nbTaux %}
+{% set numb=random(100) %}
+<ul id="tab-{{  numb  }}" class="nav nav-tabs">
+		{% set i=0 %}
+									{% for cle, stat in stats.instance %}
+									{% set i=i+1 %}
+		                               	<li class=""><a href="#tabEvInst{{ i }}-{{ numb }}" data-toggle="tab">{{ cle }}</a></li>
+		                             {% endfor %}
+		                            </ul>
+                                
+                                <div class="tab-content" style="padding: 0; overflow-y:hidden;">
+                                	{% set i=0 %}
+                                	{% for cle, stat in stats.instance %}
+										{% set i=i+1 %}
+	                                    <div id="tabEvInst{{ i }}-{{ numb }}" class="tab-pane fade in " >
+	                                    	 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">   
+												    <tr>
+												                        <thead>
+												                            <th>Statut</th>
+												                           {% for key,semaine in stat.semaine %}
+												                              <th style="padding: 7px 14px;">{{ key }}</th>
+												                            {% endfor %}
+												                        </thead>
+												    </tr>
+												    {% for key, st in statut %}
+												      <tr  class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
+												        {% if loop.index <= rspan %}
+												          <td style="font-weight:bold;">{{ st }}</td>
+												          {% for value in stat.semaine %}
+												            <td >{{ value.data[key] }}</td> 
+												          {% endfor %}
+												       {% elseif loop.index == rspan %}
+												 		  	<td  style=" font-weight:bold;">{{ st }}</td>
+											 				{% for value in stat.semaine %}
+											 					<td style="font-weight:bold; color:#ff6600;" >{{ value.data[key] }}</td> 
+												 			{% endfor %}
+										 		  		{% else %}
+												          <td style=" font-weight:bold;">{{ st }}</td>
+												          {% for value in stat.semaine %}
+												            <td style="text-align:center; font-weight:bold; color:#ff6600;">{{ value.data[key]~'%' }}</td> 
+												          {% endfor %}
+												        {% endif %}
+												      </tr>
+												    {% endfor %} 
+											</table>
+	                                    </div>
+	                                 {% endfor %}
+	                               
+	                            </div>
+{% endif %}

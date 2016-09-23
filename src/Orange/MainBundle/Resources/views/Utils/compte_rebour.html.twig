@@ -1,0 +1,36 @@
+<script type="text/javascript">
+
+function CompteARebours(dateInitial)
+{
+	var dateInitial = "{{ dateInitial }}";
+	dateInitial = new Date(dateInitial)
+    var date_actuelle = new Date(); // On déclare la date d'aujourd'hui.
+    var tps_restant = dateInitial.getTime() - date_actuelle.getTime(); // Temps restant en millisecondes
+
+    //============ CONVERSIONS
+
+    var s_restantes = tps_restant / 1000; // On convertit en secondes
+    var i_restantes = s_restantes / 60;
+    var H_restantes = i_restantes / 60;
+    var d_restants = H_restantes / 24;
+
+    s_restantes = Math.floor(s_restantes % 60); // Secondes restantes
+    i_restantes = Math.floor(i_restantes % 60); // Minutes restantes
+    H_restantes = Math.floor(H_restantes % 24); // Heures restantes
+    d_restants = Math.floor(d_restants); // Jours restants
+    //==================
+
+    texte = "Il vous reste exactement <strong>" +d_restants+ " jours</strong>, <strong>" +H_restantes+ " heures</strong>," +
+         " <strong>" +i_restantes+ " minutes</strong> et <strong>" +s_restantes+ "s</strong> pour solder cette action.";
+
+    $("#compte_a_rebour").innerHTML = texte;
+    $("#date").innerHTML = tps_restant;
+    if($("#dateCloture").length) {
+    	$("#dateCloture").innerHTML = dateCloture;
+    }
+    $("#dateActuelle").innerHTML = date_actuelle.getTime();
+}
+
+setInterval(CompteARebours, 1000);
+
+</script >

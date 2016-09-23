@@ -1,0 +1,21 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	$("#{{ parent.vars.id }}").change(function() {
+        var Id =  $(this).val();
+        if(Id) {
+	        $.post("{{ url }}", { "{{ key }}": Id }, 
+	    		function(results) {
+			        var sub = $("#{{ child.vars.id }}");
+			        sub.select2({
+			        	dataType: 'json',
+			        	data: results,
+			        	
+			        });
+		    });
+        } else {
+        	$("#{{ child.vars.id }}").empty();
+        }
+    });
+	$("#{{ parent.vars.id }}").change();
+});
+</script>

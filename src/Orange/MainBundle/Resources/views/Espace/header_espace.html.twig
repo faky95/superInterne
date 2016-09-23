@@ -1,0 +1,34 @@
+
+	<ul class="nav navbar-nav right" style="margin-right:35px;   margin-top: -1px;">
+		{% if gest == 1 %}
+			<li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Ajouter une action">
+	             <a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip cut-icon-plus-2" ></span> 
+	             <span class="notification-petit orange"></span></a>
+	        </li>
+	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Importer des actions">
+	             <a href="{{ path('importer_action_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip icomoon-icon-download" ></span> 
+	             <span class="notification-petit orange"></span></a>
+	        </li>
+			<li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Actions">
+	             <a href="{{ path('les_actions_by_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip icomoon-icon-wand-2" ></span> 
+	             <span class="notification-petit">{{ nbrTotal }}</span></a>
+	        </li> 
+	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Membres">
+	             <a href="{{ path('membre_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip entypo-icon-users"></span>
+				 <span class="notification-petit green">{{ espace.membreEspace.count }}</span></a>
+	        </li>  
+	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Domaines">
+	             <a href="{{ path('les_domaine_by_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip icomoon-icon-earth"></span>
+				 <span class="notification-petit blue">{{ espace.instance.domaine.count }}</span></a>
+	        </li>  
+	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Types">
+	             <a href="{{ path('les_types_action_by_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip brocco-icon-type"></span> 
+				 <span class="notification-petit purple">{{ espace.instance.typeAction.count }}</span></a>
+	        </li> 
+		{% else %}
+			<li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Actions">
+	             <a href="{{ path('les_actions_by_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip icomoon-icon-wand-2" ></span> 
+	             <span class="notification-petit">{{ nbr }}</span></a>
+	        </li> 
+		{% endif %}
+     </ul>

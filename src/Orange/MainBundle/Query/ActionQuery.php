@@ -1,0 +1,319 @@
+<?php
+namespace Orange\MainBundle\Query;
+
+use Orange\MainBundle\Entity\Statut;
+use Doctrine\ORM\ORMException;
+
+class ActionQuery extends BaseQuery {
+
+	public function createTable($next_id, $nbr) {
+		if($nbr == 14){
+			$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
+			CREATE TABLE IF NOT EXISTS `temp_action` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `reference` varchar(150) DEFAULT NULL,
+			  `prenoms` varchar(150) DEFAULT NULL,
+			  `email` varchar(50) NOT NULL,
+			  `instance` varchar(100) DEFAULT NULL,
+			  `contributeur` longtext COLLATE utf8_unicode_ci,
+			  `statut` varchar(40) DEFAULT NULL,
+			  `code_statut` varchar(40) DEFAULT NULL,
+			  `type_action` varchar(100) DEFAULT NULL,
+			  `domaine` varchar(50) DEFAULT NULL,
+			  `date_debut` varchar(10) DEFAULT NULL,
+			  `date_initial` varchar(10) DEFAULT NULL,
+			  `date_cloture` varchar(10) DEFAULT NULL,
+			  `libelle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+			  `description` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
+			  `priorite` varchar(45) NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=%s;", $next_id));
+			$statement->execute();
+		}else{
+			$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
+			CREATE TABLE IF NOT EXISTS `temp_action` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `prenoms` varchar(150) DEFAULT NULL,
+			  `email` varchar(50) NOT NULL,
+			  `instance` varchar(100) DEFAULT NULL,
+			  `contributeur` longtext COLLATE utf8_unicode_ci,
+			  `statut` varchar(40) DEFAULT NULL,
+			  `code_statut` varchar(40) DEFAULT NULL,
+			  `type_action` varchar(100) DEFAULT NULL,
+			  `domaine` varchar(50) DEFAULT NULL,
+			  `date_debut` varchar(10) DEFAULT NULL,
+			  `date_initial` varchar(10) DEFAULT NULL,
+			  `date_cloture` varchar(10) DEFAULT NULL,
+			  `libelle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
+			  `description` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
+			  `priorite` varchar(45) NULL,
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=%s;", $next_id));
+			$statement->execute();
+		}
+	}
+	
+	public function loadTable($fileName, $web_dir, $next_id) {
+		$newPath = $this->loadDataFile($fileName, 'action', $web_dir);
+		$erreurAction = null;
+		$handle = fopen($newPath, 'r');
+		$numberColumns = count(fgetcsv($handle, null, ';'));
+		$this->createTable($next_id, $numberColumns);
+		$index = 1;
+		while(($line = fgets($handle)) !== FALSE) {
+			$index++;
+			if(count(explode(';', $line))!=$numberColumns) {
+				$erreurAction .= sprintf("Le nombre de colonnes à la ligne %s est incorrect<br>", $index);
+			}
+		}
+		fclose($handle);
+		if($erreurAction) {
+			throw new ORMException($erreurAction);
+		}
+		/*Insertion du chargement du fichier téléchargé dans la table temporaire*/
+		if ($numberColumns == 14){
+			$this->createTable($next_id, $numberColumns);
+			$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
+			CHARACTER SET latin1
+			FIELDS TERMINATED BY  ';'
+			LINES TERMINATED BY  '\\r\\n'
+			IGNORE 1 LINES
+			(`reference`,`prenoms`, `email`,`instance`, `contributeur`,
+			`statut` ,`type_action`,`domaine`,
+			`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
+			";
+			$this->connection->prepare($query)->execute();
+		}else{
+			$this->createTable($next_id, $numberColumns);
+			$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
+			CHARACTER SET latin1
+			FIELDS TERMINATED BY  ';'
+			LINES TERMINATED BY  '\\r\\n'
+			IGNORE 1 LINES
+			(`prenoms`, `email`,`instance`, `contributeur`,
+			`statut` ,`type_action`,`domaine`,
+			`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
+			";
+			$this->connection->prepare($query)->execute();
+		}
+		 return $numberColumns;
+	}
+	/*
+	 * insert in action_has_signalisation after prise en charge
+	 */
+	public function insertActionSign($action, $sign) {
+		$query="INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`) VALUES (".$action.",".$sign.")";
+		$this->connection->prepare($query)->execute();
+	}
+	public function miseAJourEntity(){
+		$sql = "UPDATE action a, utilisateur u SET a.structure_id = u.structure_id 
+				WHERE a.porteur_id = u.id 
+					AND  a.structure_id is not null 
+					AND a.etat_courant NOT like '%ACTION_SOLDEE%'
+					AND a.etat_courant NOT like '%ABANDONNEE%'";
+		$this->connection->prepare($sql)->execute();
+	}
+	
+	public function updateId($table){
+		$sql = "SET  @num := 0;";
+		$sql .= "UPDATE $table SET id = @num := (@num+1);";
+		$sql .= "ALTER TABLE $table AUTO_INCREMENT =1;";
+		$this->connection->prepare($sql)->execute();
+	}
+	/**
+	 * @throws \Exception
+	 * @return number
+	 */
+	public function updateTable($users, $instances, $statuts, $lesMails) {
+		$etats = array('en cours','soldee','abandonnee','action nouvelle');
+		$query='';
+		$erreurAction = null;
+		$query .= "UPDATE temp_action t, utilisateur u SET t.email = u.id WHERE LOWER(TRIM(u.email)) LIKE LOWER(TRIM(t.email));";
+		$query .= "UPDATE temp_action SET contributeur = REPLACE(contributeur, ' ', '');";
+		for($i=0; $i<10;$i++) {
+			$query .= "UPDATE temp_action t, utilisateur u SET t.contributeur = REPLACE(LOWER(TRIM(t.contributeur)), LOWER(TRIM(u.email)), u.id) WHERE t.contributeur LIKE CONCAT('%', LOWER(TRIM(u.email)), '%');";
+		}
+		$query .= "UPDATE temp_action t, priorite p SET t.priorite = p.id WHERE p.libelle LIKE t.priorite;";
+		$query .= "UPDATE temp_action t INNER JOIN utilisateur u ON u.email LIKE t.email SET t.email = u.id;";
+		$query .= "UPDATE temp_action t LEFT JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = NULL WHERE p.id IS NULL;";
+		$query .= "UPDATE temp_action t INNER JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = p.id;";
+		//$query .= "UPDATE temp_action t, statut st SET t.statut = st.id WHERE t.statut LIKE st.etat;";
+		$query .= "UPDATE temp_action t, statut st SET t.code_statut = st.code WHERE LOWER(TRIM(t.statut)) LIKE LOWER(TRIM(st.etat));";
+		$query .= "UPDATE temp_action t INNER JOIN instance i ON i.libelle LIKE t.instance SET t.instance = i.id;";
+		$query .= "UPDATE temp_action t INNER JOIN domaine d ON d.libelle_domaine LIKE LOWER(TRIM(t.domaine)) INNER JOIN instance_has_domaine ihd ON ihd.domaine_id = d.id AND ihd.instance_id = t.instance SET t.domaine = d.id;";
+		$query .= "UPDATE temp_action t INNER JOIN type_action ta ON ta.type LIKE LOWER(TRIM(t.type_action))  INNER JOIN instance_has_type_action iht ON iht.type_action_id = ta.id AND iht.instance_id = t.instance SET t.type_action = ta.id;";
+		$this->connection->prepare($query)->execute();
+		/*Avant de faire l'insertion, on vérifie si tous les updates ont été faits*/
+		$resultsAction = $this->connection->fetchAll("SELECT id, contributeur , statut, code_statut, priorite, email ,type_action,  libelle, description, date_debut, date_initial, date_cloture, domaine, instance  from temp_action t");
+		$erreurAction=null;
+		for($i=0; $i<count($resultsAction);$i++) {
+			$contributeurs = explode(',', $resultsAction[$i]['contributeur']);
+			$contributeurId = null;
+			foreach($contributeurs as $contributeur) {
+				if(intval($contributeur)==0) {
+					$contributeurId = $contributeur;
+					break;
+				}
+			}
+			if(!$resultsAction[$i]['date_initial']){
+				$erreurAction .= sprintf("Le délai initial à la ligne %s n'est pas renseigné<br>", $i+2);
+			}
+			if(preg_match("/[a-z]/i", $resultsAction[$i]['date_debut'])){
+				$erreurAction .= sprintf("Le format de la date de début à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if(preg_match("/[a-z]/i", $resultsAction[$i]['date_initial'])){
+				$erreurAction .= sprintf("Le format du délai initial à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if($contributeurId) {
+				$erreurAction .= sprintf("L'e-mail du contributeur à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if(ctype_digit($resultsAction[$i]['email'])==false) {
+				$erreurAction .= sprintf("Le porteur à la ligne %s n'existe pas<br>", $i+2);
+			}
+// 			if(!empty($membres)){
+// 				if(!in_array($resultsAction[$i]['email'], $membres)) {
+// 					$erreurAction .= sprintf("Le porteur à la ligne %s n'est pas membre dans l'espace.<br>", $i+2);
+// 				}
+// 			}
+			if(ctype_digit($resultsAction[$i]['domaine'])==false) {
+				$erreurAction .= sprintf("Le domaine à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if(ctype_digit($resultsAction[$i]['instance'])==false) {
+				$erreurAction .= sprintf("L'instance à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if(ctype_digit($resultsAction[$i]['type_action'])==false) {
+				$erreurAction .= sprintf("Le type d'action à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if(is_null($resultsAction[$i]['code_statut'])) {
+				$erreurAction .= sprintf("Le statut à la ligne %s n'existe pas<br>", $i+2);
+			}
+			if($resultsAction[$i]['priorite'] && ctype_digit($resultsAction[$i]['priorite'])==false) {
+				$erreurAction .= sprintf("La priorité à la ligne %s n'existe pas<br>", $i+2);
+			}
+		}
+		if($erreurAction) {
+			throw new ORMException($erreurAction);
+			
+		}
+		$id = array();
+		foreach ($resultsAction as $value){
+			array_push($id, $value['id']);
+		}
+		return array('nbr' => count($resultsAction), 'id' => $id) ;
+		
+	}
+	/**
+	 * @param unknown $nouvelle_statut
+	 * @param \Orange\MainBundle\Entity\Utilisateur $current_user
+	 */
+	public function migrateData($nouvelle_statut, $current_user, $nl) {
+		if ($nl == 14){
+			$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`,
+   					`libelle`, `description`, `date_action`, `date_debut`,
+					`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`,
+					`animateur_id`)
+			select t.id,CONCAT(t.reference, CONCAT('-A_', t.id)), t.priorite, t.type_action,
+				  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
+				  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'),
+                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
+				  		from temp_action t;";
+		}else{
+			$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`,
+   					`libelle`, `description`, `date_action`, `date_debut`,
+					`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`,
+					`animateur_id`)
+			select t.id,CONCAT('A_', t.id), t.priorite, t.type_action,
+				  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
+				  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'),
+                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
+				  		from temp_action t;";
+		}
+		$resultsAction = $this->connection->fetchAll("SELECT id ,email , contributeur, statut , code_statut, date_initial, date_cloture from temp_action ");
+		$query1="INSERT INTO action_has_statut (`id` ,`action_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
+		if ($nl == 14){
+			$q="INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
+			select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
+			
+			$qq= "UPDATE signalisation s SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' WHERE s.id IN (select a.signalisation_id from action_has_signalisation a);";
+		}
+		$query2="";
+		$query3='';
+		$query5='';
+		$test=0;
+		for($i=0; $i<count($resultsAction);$i++) {
+			$id=$resultsAction[$i]['id'];
+			$code_statut=$resultsAction[$i]['code_statut'];
+			$statut=0; 
+			if($resultsAction[$i]['code_statut']==Statut::ACTION_EN_COURS){
+				if($resultsAction[$i]['date_initial']>\date('dd/mm/YYYY')){
+					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_ECHUE_NON_SOLDEE."' ")[0];
+					$code_statut=Statut::ACTION_ECHUE_NON_SOLDEE;
+				}else{ 
+					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_NON_ECHUE."' ")[0];
+					$code_statut=Statut::ACTION_NON_ECHUE;
+				}
+				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
+				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
+			}elseif($resultsAction[$i]['code_statut']==Statut::ACTION_SOLDEE){
+				if($resultsAction[$i]['date_initial']<$resultsAction[$i]['date_cloture']){
+					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_SOLDEE_HORS_DELAI."' ")[0];
+					$code_statut=Statut::ACTION_SOLDEE_HORS_DELAI;
+				}else{
+					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_SOLDEE_DELAI."' ")[0];
+					$code_statut=Statut::ACTION_SOLDEE_DELAI;
+				}
+				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
+				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
+			}elseif($resultsAction[$i]['code_statut']==Statut::ACTION_ABANDONNEE){
+				$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_ABANDONNEE."' ")[0];
+				$code_statut=Statut::ACTION_ABANDONNEE;
+				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
+				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
+			}else{
+				$statut=$this->connection->fetchArray("SELECT id from statut where code='".$code_statut."' ")[0];
+			}
+			if($i==0){
+				$query1 .= "(null,".($resultsAction[$i]['id']).",".$statut.",NOW() ,".$current_user->getId().", 'action import�e avec succ�s')";
+			} else {
+				$query1 .= ",(null,".($resultsAction[$i]['id']).",".$statut.",NOW() ,".$current_user->getId().", 'action import�e avec succ�s')";
+			}
+				$idsContrib=\explode(',', $resultsAction[$i]['contributeur']);
+					foreach ($idsContrib as $key=>$val){
+						if(strlen($val)>0){
+							$query2="INSERT INTO contributeur (`id` ,`action_id`,`utilisateur_id`) values";
+							$query2 .= "(null,".($resultsAction[$i]['id']).",".$val.");";
+							
+						}
+					}
+					
+		}
+		
+		$query1.=";"; 
+		$this->connection->prepare($query)->execute();
+		$this->connection->prepare($query1)->execute();
+		if($nl==14){
+			$this->connection->prepare($q)->execute();
+			$this->connection->prepare($qq)->execute();
+		}
+		if(strlen($query2)>0)
+		$this->connection->prepare($query2)->execute();
+		
+		
+		if(strlen($query3)>0){
+			$query3.=";";
+			$this->connection->prepare($query3)->execute();
+		}
+		if(strlen($query5)>0){
+			$query5.=";";
+			$this->connection->prepare($query5)->execute();
+		}
+		$query4 = "UPDATE action set priorite_id=null where priorite_id=0;";
+		$this->connection->prepare($query4)->execute();
+	}
+	
+	public function deleteTable() {
+		$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;"));
+		$statement->execute();
+	}
+	
+}

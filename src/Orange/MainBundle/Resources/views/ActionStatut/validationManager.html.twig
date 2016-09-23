@@ -1,0 +1,38 @@
+<div class="row">
+	<div class="col-lg-12">
+		<div class="form-group">
+			<p>Les parties intervenant dans les propositions ci-dessous n'ont pas
+				trouvé un accord pour le traitement de l'action. Vous êtes priés de
+				servir d'abritage.</p>
+		</div>
+	</div>
+	{% for invalidation in liste_invalidations %}
+	<div class="col-lg-6">
+		<div class="panel panel-default">
+			<div class="panel-heading" style="background: #FFFBE9">
+				<h4>
+					<span class="icon16 icomoon-icon-man"></span> 
+					<span>
+					    {% if invalidation.utilisateur.id == invalidation.action.porteur.id %} Proposition du porteur {% endif %}
+					    {% if invalidation.utilisateur.id == invalidation.action.animateur.id %} Proposition de l'animateur {% endif %}
+{# 						{% if invalidation.utilisateur.hasRole("ROLE_MANAGER") %} Proposition du manager {% endif %}#}
+						{{ invalidation.utilisateur.nom }} {{ invalidation.utilisateur.prenom }}
+					</span>
+				</h4>
+			</div>
+			<div class="panel-body">
+				<p>{{ invalidation.commentaire }}</p>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('choix_proposition', {'invalidation_id': invalidation.id})}}" title="Choisir cette proposition"><button type="submit" class="btn btn-success">Choisir cette proposition</button></a>
+				</div>
+			</div>
+		</div>
+		<!-- End .panel -->
+	</div>
+	{% endfor %}
+	
+	<!-- Invalider toutes les propositions -->
+	
+	<!-- End .span12 -->
+</div>
+<!-- End .row -->

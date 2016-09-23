@@ -1,0 +1,71 @@
+{% block form_widget_simple %}
+    {% set type = type|default('text') %}
+    	<input type="{{ type }}" {{ block('widget_attributes') }} {% if errors is not empty %} class="required error" {% endif %} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    {{ form_errors(form) }}
+{% endblock form_widget_simple %}
+
+{% block form_widget_label %}
+  {{ form_label(form) }}
+     	 	
+{% endblock form_widget_label %}
+
+{% block form_display %}
+    {% spaceless %}
+		{% if 'display' in attr|keys %} style="{{ 'style' in attr|keys ? attr.style : '' }}; display: {{ attr.display }}" {% endif %}
+    {% endspaceless %}
+{% endblock %}
+
+{% block form_label %}
+<label class="col-lg-2 control-label" >{{ label|trans({}, translation_domain) }}
+</label>
+{% endblock %}
+
+{% block text_widget %}
+{{ block('form_label') }}
+<div class="col-lg-4 {{ block('form_errors_class') }}">
+	 {% set type = type|default('text') %} {{ block('form_widget_simple') }}
+</div>
+{% endblock %}
+
+{% block choices_widget %}
+{{ block('form_label') }}
+<div class="col-lg-4 {{ block('form_errors_class') }}">
+	 {% set type = type|default('choices') %} 
+	 {{ block('form_widget_simple') }}
+<!-- </div> -->
+{% endblock %}
+
+{% block email_widget %}
+	{{ form_label(form) }}
+	<div class="col-lg-4 {{ block('form_errors_class') }}">
+		{% set type = type|default('text') %} {{ block('form_widget_simple') }}
+	</div>
+{% endblock %} 
+
+{% block entity_widget %}
+	{{ form_label(form) }}
+	<div class="col-lg-4 {{ block('form_errors_class') }}">
+		{{ form_widget(form, {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
+	{{ form_errors(form) }}
+	</div>
+{% endblock entity_widget %}
+
+{% block checkbox_widget %}
+	{{ form_label(form) }}
+    <div class="col-lg-4">
+        <div class="left marginR10">
+            {% set type = type|default('checkbox') %}
+		    <input type="{{ type }}"  {{ block('widget_attributes') }} {% if checked %}checked="checked"{% endif %} span12 {{ 'class' in attr|keys ? attr.class : '' }}" {% if value is not empty %}value="{{ value }}" {% endif %}/>
+        </div>
+    </div>
+{% endblock %}
+
+{% block date_widget %}
+	{% spaceless %}
+		{{ form_label(form) }}
+		<div class="col-lg-4">
+			<input class="form-control datepicker" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+			{{ form_errors(form) }}
+		</div>
+	{% endspaceless %} 
+{% endblock %}

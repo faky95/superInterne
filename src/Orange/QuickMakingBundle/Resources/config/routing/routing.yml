@@ -1,0 +1,22 @@
+_quick_making:
+    resource: "@OrangeQuickMakingBundle/Controller"
+    type:     annotation
+
+fos_user_security:
+    resource: "@OrangeQuickMakingBundle/Resources/config/routing/security.xml"
+
+fos_user_profile:
+    resource: "@OrangeQuickMakingBundle/Resources/config/routing/profile.xml"
+    prefix: /profile
+
+fos_user_register:
+    resource: "@OrangeQuickMakingBundle/Resources/config/routing/registration.xml"
+    prefix: /register
+
+fos_user_resetting:
+    resource: "@OrangeQuickMakingBundle/Resources/config/routing/resetting.xml"
+    prefix: /resetting
+
+fos_user_change_password:
+    resource: "@OrangeQuickMakingBundle/Resources/config/routing/change_password.xml"
+    prefix: /profile

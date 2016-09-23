@@ -1,0 +1,42 @@
+{% extends '::base.html.twig' %}
+{% block content -%}
+<div class="row">
+	
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Modification de priorité</span>
+			    </h4>
+			</div>
+			   <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                	 <form novalidate="novalidate" class="form-horizontal" action="{{ path('edition_priorite', {id : entity.id}) }}" method="post" role="form">
+						                {{ form_row(edit_form.libelle,  {'attr': {'class': 'form-control'}}) }}
+						                 <!-- Color picker  -->                      
+											<div class="form-group">
+												<label class="col-lg-2 control-label" for="picker">Couleur :</label>
+												<div class="col-lg-9">
+													<input type="text" id="color" name="{{ edit_form.couleur.vars.full_name }}" value="#123456" class="form-control" />
+													<div class="picker"></div>
+												</div>
+											</div>
+                    					<!-- End .ColorPicker  -->
+						                {{ form_row(edit_form.description) }}
+										{{ form_row(edit_form._token) }}
+							            <div class="form-group">
+											<div class="col-lg-offset-3 col-lg-9">
+											    {{ form_widget(edit_form.add) }}
+											    {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
+											</div>
+										</div><!-- End .form-group  -->   
+									</form>
+                                </div>
+               </div>
+ 			
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% endblock %}
+

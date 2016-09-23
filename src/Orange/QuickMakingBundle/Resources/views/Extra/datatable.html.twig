@@ -1,0 +1,37 @@
+<script type="text/javascript">
+$(document).ready(function() {
+	var index = {{ (index is defined) ? index : 0 }};
+	dtOptions[index] = $.extend(true, {}, dataTableOptions);
+	dtOptions[index]['sAjaxSource']	= "{{ url }}";
+	dtOptions[index]['bStateSave']	= true;
+	dtOptions[index]['bProcessing']	= true;
+	dtOptions[index]['aoColumnDefs']= new Array();
+	dtOptions[index]['columnDefs']= new Array();
+	{% if nosorting is defined %}
+		var length = dtOptions[index]['aoColumnDefs'].length;
+		dtOptions[index]['aoColumnDefs'][length] = { bSortable: false, aTargets: {{ to_array(nosorting) }} };
+	{% endif %}
+	{% if invisible is defined %}
+		var length = dtOptions[index]['columnDefs'].length;
+		dtOptions[index]['columnDefs'][length] = { visible: false, targets: {{ to_array(invisible) }} };
+	{% endif %}
+	dtOptions[index]['bServerSide']	= true;
+	fnDrawCallback = ('fnDrawCallback' in dtOptions[index]) ? dtOptions[index]['fnDrawCallback'] : function() {};
+	dtOptions[index]['fnDrawCallback'] = function() {
+		fnDrawCallback();
+		{{ (functionAfter is defined) ? functionAfter|raw : null }}
+	}
+	{% if invisible is defined %}
+	dtOptions[index]['rowCallback'] = function(row, data) {
+		{{ functionRowDraw|raw }}
+	}
+	{% endif %}
+	oTable = $({{ ('"#' ~ idTable ~ '"')|raw }}).dataTable(dtOptions[index]);
+	$("div.dataTables_filter input").off("keyup");
+	$("div.dataTables_filter input").keyup(function (e) {
+		if(e.keyCode == 13) {
+			oTable.fnFilter(this.value);
+		}
+	});
+});
+</script>

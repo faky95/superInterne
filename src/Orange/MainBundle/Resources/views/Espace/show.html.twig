@@ -1,0 +1,93 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+<div class="heading">
+	<h3>{% block page_title %} Détails espace{% endblock %}   </h3> 
+</div>
+                <!-- Build page from here: -->
+                <div class="row">
+
+                    <div class="col-lg-12">
+
+                        <div class="panel panel-default gradient invoice">
+
+                            <div class="panel-heading clearfix">
+
+                                <h4 class="left">
+                                    <span>Details Espace</span>
+                                </h4>
+                                <div class="print">
+                                    <a href="{{ path('edition_espace', {'id':entity.id}) }}" class="tip" title="Modifier l'espace"><span class="icon24 icomoon-icon-pencil-3"></span></a>
+                                </div>
+                                  
+
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libelle: <strong class="red">{{ entity.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date: <strong class="red">{{ entity.dateCreation|date("d/m/Y")  }}</strong></li>
+                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Etat: <strong class="red">{{ entity.etat }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="client col-lg-6 col-md-6 col-sm-6">
+                                    <ul class="list-unstyled">
+                                        <li><h3 class="red">Description</h3></li>
+                                        <p style="text-align: justify;">{{ entity.description }}</p>
+
+                                    </ul>
+                                </div>
+                                <div class="clearfix"></div>
+								  <h4 class="left">
+                                    <span>Membres</span>
+                                </h4>
+                                <table class="responsive table table-bordered">
+                                    <thead>
+                                      <tr>
+                                        <th>Nom</th>
+                                        <th>Structure</th>
+                                        <th>Date D'affectation</th>
+                                        <th>Actions</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set message='' %}
+		                                    {% for user in entity.membreEspace %}
+		                                       <tr>
+		                                        <td>{{ user.utilisateur }}
+			                                        {% if(user.isGestionnaire==1) %}
+			                                       		<span class=" right badge label label-success">G</span>
+			                                        {% endif %}
+			                                        
+		                                        </td>
+		                                        <td>{{ user.utilisateur.structure }}</td>
+		                                        <td>{{ user.dateaffectation|date("d/m/Y") }}</td> 
+		                                        <td>
+		                                    <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('ajout_gestionnaire', { 'id': entity.id, 'user_id': user.utilisateur.id }) }}"
+		                                     	     {% if(user.isGestionnaire==0) %}
+		                                     	   		  title="Ajouter aux Gestionnaires" ><span class="icon12  icomoon-icon-user-plus"></span>
+		                                     	     {% else %} 
+		                                     	     		title="Enlever des Gestionnaires" ><span class="icon12 icomoon-icon-user-minus"></span>
+		                                     	     {% endif %} 
+		                                     	   </a> 
+		                                      
+		                                        <a href="#" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
+		                                        </td>
+		                                      </tr>
+		                                    {% endfor %} 
+                                    </tbody>
+                                </table>
+
+                                
+                               
+                            </div>
+                        </div><!-- End .panel -->
+
+                    </div>
+
+                </div><!-- End .row -->
+{% endblock %}
+{% block pagescript %}
+{{ parent() }}
+{% endblock %}
+		 	

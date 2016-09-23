@@ -1,0 +1,40 @@
+ <div class="col-lg-6">                            
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>
+					<span class="icon16 icomoon-icon-equalizer-2"></span>
+					<span>Types Actions</span>
+				</h4>
+			</div>
+			<div style="height:340px; overflow-y: scroll; class="panel-body noPad">
+		        <table class="table table-bordered" height="100px">
+					<thead>
+					  <tr>
+					    <th>Type</th>
+					    <th>Couleur</th>
+					    <th>Actions</th>
+					  </tr>
+					</thead>
+		            <tbody>
+		            {% for entity in entities %}
+		              <tr>
+			               <td>{{ entity.type }}</td>
+			               <td>
+					               <div >
+					                   <div style="  margin: auto;border: 1px dotted silver;  padding: 3px; width:15px;height:15px;background:{{ entity.couleur }};"> </div>
+					                </div> 
+					               </td>
+			               <td>
+			                  <div class="controls center">
+			                      <a href="{{ path('edition_type_action', { 'id': entity.id }) }}" title="Modifier" class="tip"><span class="icon12 icomoon-icon-pencil"></span></a>
+			                     <a href="#" title="Supprimer bu" class="tip"><span class="icon12 icomoon-icon-remove"></span></a>
+			                      
+			                  </div>
+			               </td>
+		              </tr>
+		             {% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->  

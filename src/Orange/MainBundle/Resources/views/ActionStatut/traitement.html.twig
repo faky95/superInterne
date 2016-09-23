@@ -1,0 +1,182 @@
+{% set actionStatutKey  = entity.actionStatut|length - 1 %}
+{# {% set statut =  entity.actionStatut[actionStatutKey].statut.code %}#}
+{% set statut =  entity.etatCourant %}
+{% set etatReel =  entity.etatReel %}
+{% set dateInitial = entity.dateInitial|date("m/d/Y")  %}
+{% set last_commentaire%}
+	{% if entity.actionStatut[actionStatutKey] is defined %}
+   		<p>{{ entity.actionStatut[actionStatutKey].commentaire }}.</p>
+   	{% else %}
+   		<p style="color: red;font-weight: bold;">Commentaire non disponible.</p>
+   	{% endif %}
+{% endset %}
+<div class="you col-lg-12 col-md-6 col-sm-6" >
+	<div class="panel panel-default">
+	    <div class="panel-heading" style="background:#FFFFFF">
+	        <h4>
+	        	<span class="icon16 icomoon-icon-airplane-2"></span>
+	            <span class="red">Traitement de l'action</span>
+	        </h4>
+	       
+	        <a href="#" class="minimize">Minimize</a>
+	    </div>
+	    <div class="panel-body">
+	    	{% if statut == 'ACTION_NOUVELLE' and app.user.id == entity.porteur.id  %}
+		    	<div class="form-group">
+		        	<p>Vous êtes prié de valider cette action ou de faire une proposition.</p>
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('validation', {'action_id': entity.id})}}" title="Valider la prise en charge de l'action"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Valider</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('actionstatut_new', {'action_id': entity.id})}}" title="Invalider la prise en charge de l'action"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Proposition</button></a>
+				</div>
+			{% elseif etatReel == 'EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE' and (entity|has_rights_animateur or has_rights('ROLE_ADMIN')) %}
+				<div class="form-group">
+					<p>Le porteur a fait un amendement merci de prendre en charge. 
+                	</p>
+                </div>
+		    	<div class="form-group">
+		    		<li><h5 class="red">Motif d'invalidation de l'action par le porteur</h5></li>{{ last_commentaire }}
+		    	</div>
+		    	<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('validation', {'action_id': entity.id})}}" title="Valider la prise en charge de l'action"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Accepter</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('actionstatut_new', {'action_id': entity.id})}}" title="Invalider la prise en charge de l'action"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Refuser</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('changer_statut', {'entity_id': entity.id})}}" title="Modifie le statut  de l'action">
+						<button class="btn btn-primary">
+							<span class="icon16 icomoon-icon-pencil white"></span>Modifier statut
+						</button>
+					</a>
+				</div>
+			<!-- Validation de niveau Manager -->
+			{% elseif etatReel == 'EVENEMENT_VALIDATION_MANAGER_ATTENTE' and entity|has_rights_manager %}
+				{{ render(controller('OrangeMainBundle:ActionStatut:listeInvalidation', {'action_id': entity.id})) }}
+			{% elseif ( etatReel == 'ACTION_NON_ECHUE' or etatReel == 'ACTION_ECHUE_NON_SOLDEE') and app.user.id == entity.porteur.id and entity.actionCyclique is empty  %}
+				<div class="form-group">
+		        	<p id="compte_a_rebour"></p>Vous pouvez toujours effectuer l'une les actions ci-dessous.
+		    	</div>
+				<div class="form-group">
+					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url="{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-exit white"></span>Demande de report
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('abandon_new', {'action_id': entity.id})}}" title="Demande d'abandon">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-exit white"></span>Demande d'abandon
+						</button>
+					</a>
+					{% if entity.porteur==app.user and app.user.manager==1 %}
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('reassignation_action', {'action_id': entity.id})}}" title="Transfert vers un collaborateur">
+						<button class="btn btn-warning">
+							<span class="icon16 entypo-icon-shuffle white"></span>Ré-assignation
+						</button>
+					</a>
+					{% endif %}
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('cloturer_action', {'action_id': entity.id})}}" title="Fin de traitement de l'action">
+						<button class="btn btn-success">
+							<span class="icon16  icomoon-icon-checkmark-2 white"></span>Fin d'exécution
+						</button>
+					</a>
+				</div>
+            {% elseif (statut == 'ACTION_NON_ECHUE' or statut == 'ACTION_ECHUE_NON_SOLDEE') and app.user.id == entity.porteur.id and entity|has_rights_animateur and entity.actionCyclique is empty  %}
+				<div class="form-group">
+					<p id="compte_a_rebour"></p>Vous pouvez toujours effectuer l'une les actions ci-dessous.
+                </div>
+				<div class="form-group">
+					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url"{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-exit white"></span>Demande de report
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('abandon_new', {'action_id': entity.id})}}" title="Demande d'abandon">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-exit white"></span>Demande d'abandon
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('cloturer_action', {'action_id': entity.id})}}" title="Fin de traitement de l'action">
+						<button class="btn btn-success">
+							<span class="icon16  icomoon-icon-checkmark-2 white"></span>Fin d'exécution
+						</button>
+					</a>
+				</div>
+			{% elseif etatReel == 'ACTION_DEMANDE_ABANDON' and (entity|has_rights_animateur or has_rights('ROLE_ADMIN')) %}
+				<div class="form-group">
+		        	{{ last_commentaire }} Merci de donner une suite à cette demande !
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('demande_action', {'action_id': entity.id})}}" title="Valider la demande">
+						<button class="btn btn-success">
+							<span class="icon16  icomoon-icon-thumbs-up white"></span>Valider la demande d'bandon
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('actionstatut_new', {'action_id': entity.id})}}" title="Invalider la demande">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-thumbs-down white"></span>Refus d'abandon de l'action
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('changer_statut', {'entity_id': entity.id})}}" title="Modifie le statut  de l'action">
+						<button class="btn btn-primary">
+							<span class="icon16 icomoon-icon-pencil white"></span>Modifier statut
+						</button>
+					</a>
+				</div>
+			{% elseif (etatReel == 'ACTION_FAIT_DELAI' or etatReel == 'ACTION_FAIT_HORS_DELAI') and (entity|has_rights_animateur or has_rights('ROLE_ADMIN')) %}
+				<div class="form-group">
+                	{{ last_commentaire }} Merci de donner une suite à cette demande !
+                </div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('solder_action', {'action_id': entity.id})}}" title="Valider la demande">
+						<button class="btn btn-success">
+							<span class="icon16  icomoon-icon-thumbs-up white"></span>Soldée
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('actionstatut_new', {'action_id': entity.id})}}" title="Invalider la demande">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-thumbs-down white"></span>Non Soldée
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('changer_statut', {'entity_id': entity.id})}}" title="Modifie le statut  de l'action">
+						<button class="btn btn-primary">
+							<span class="icon16 icomoon-icon-pencil white"></span>Modifier statut
+						</button>
+					</a>
+				</div>
+			{% elseif etatReel == 'ACTION_DEMANDE_REPORT' and (entity|has_rights_animateur or has_rights('ROLE_ADMIN')) %}
+				<div class="form-group">
+		        	{{ last_commentaire }} Merci de donner une suite à cette demande !
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('demande_action', {'action_id': entity.id})}}" title="Demande d'abandon">
+						<button class="btn btn-success">
+							<span class="icon16  icomoon-icon-thumbs-up white"></span>Valider la demande de report
+						</button>
+					</a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('actionstatut_new', {'action_id': entity.id})}}" title="Invalider la prise en charge de l'action">
+						<button class="btn btn-warning">
+							<span class="icon16 icomoon-icon-thumbs-down white"></span>Refus du report d'échéance
+						</button>
+					</a>
+{# 					<a title="Modifier la demande">#}
+{# 						<button id = "demande" class="btn btn-default">#}
+{# 							<span class="icon16  icomoon-icon-clock black"></span>Modifier le délai#}
+{# 						</button>#}
+{# 					</a>#}
+				</div>
+			{% else %}
+				<div class="form-group">
+                	<p> {{ libelle_statut }}</p>
+                </div> 
+                {% if entity|has_rights_animateur or has_rights('ROLE_ADMIN')%}
+                	<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('changer_statut', {'entity_id': entity.id})}}" title="Modifie le statut  de l'action">
+						<button class="btn btn-primary">
+							<span class="icon16 icomoon-icon-pencil white"></span>Modifier statut
+						</button>
+					</a>
+				{% endif %}
+			{% endif %}
+	    </div>
+	</div><!-- End .panel -->
+</div><!-- End .col-lg-12 -->
+
+{% block pagescript %}
+	{% include 'OrangeMainBundle:Utils:compte_rebour.html.twig' with { 'dateInitial' : dateInitial } %}
+{% endblock %}

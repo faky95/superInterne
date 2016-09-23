@@ -1,0 +1,428 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Template mailing Alsacreations</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <meta content="width=device-width">
+    <style type="text/css">
+    /* Fonts and Content */
+    body, td { font-family: 'Helvetica Neue', Arial, Helvetica, Geneva, sans-serif; font-size:14px; }
+    body { background-color: #FFFFFF; margin: 0; padding: 0; -webkit-text-size-adjust:none; -ms-text-size-adjust:none; }
+    h2{ padding-top:12px; /* ne fonctionnera pas sous Outlook 2007+ */color:#0E7693; font-size:22px; }
+    
+    @media only screen and (max-width: 480px) { 
+
+        table[class=w275], td[class=w275], img[class=w275] { width:135px !important; }
+        table[class=w30], td[class=w30], img[class=w30] { width:10px !important; }  
+        table[class=w580], td[class=w580], img[class=w580] { width:280px !important; }
+        table[class=w640], td[class=w640], img[class=w640] { width:300px !important; }
+        img{ height:auto;}
+         /*illisible, on passe donc sur 3 lignes */
+        table[class=w180], td[class=w180], img[class=w180] { 
+            width:280px !important; 
+            display:block;
+        }    
+        td[class=w20]{ display:none; }    
+    } 
+
+    </style>
+   
+</head>
+<body style="margin:0px; padding:0px; -webkit-text-size-adjust:none;">
+
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:rgb(42, 55, 78)" >
+        <tbody>
+            <tr>
+                <td align="center" bgcolor="#FFFFFF">
+                    <table  cellpadding="0" cellspacing="0" border="0">
+                        <tbody>                            
+                            <tr>
+                                <td class="w640"  width="640" height="10"></td>
+                            </tr>
+                            <tr>
+                                <td class="w640"  width="640" height="10"></td>
+                            </tr>
+                            <!-- entete -->
+                            <tr class="pagetoplogo">
+                                <td class="w640"  width="640">
+                                    <table  height="90" class="w640"  width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000">
+                                        <tbody>
+                                            <tr>
+                                                <td class="w30"  width="30"></td>
+                                                <td  class="w580"  width="580" valign="middle" align="left">
+                                                   
+                                                   <span style="font-weight: 100;color: #FF6600; font-size: 40px">SUPER</span>
+                                                   
+                                                </td> 
+                                                <td class="w30"  width="30"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+
+                            <!-- separateur horizontal -->
+                            <tr>
+                                <td  class="w640"  width="640" height="1" bgcolor="#d7d6d6"></td>
+                            </tr>
+							
+							<!-- contenu -->
+								 <tr class="content">
+								     <td class="w640" class="w640"  width="640" bgcolor="#ffffff">
+								         <table class="w640"  width="640" cellpadding="0" cellspacing="0" border="0">
+								             <tbody>
+								                 <tr>
+								                     <td  class="w30"  width="30"></td>
+								                     <td  class="w580"  width="580">
+								                         <!-- une zone de contenu -->
+								                         <table class="w580"  width="580" cellpadding="0" cellspacing="0" border="0">
+															  <tbody>      
+															      <tr>
+															          <td class="w580"  width="580">
+															              <h2 style="color:#FF6600; font-size:22px; padding-top:12px;">
+															                  {{ body.titre }}  
+															              </h2>
+															
+															              <div width="580" align="left" class="article-content">
+															                  <p>
+															                  	{{ body.commentaire }}
+															                  </p>
+															                  {% if motif is defined %}
+															                  <b>Commentaire: </b>{{ motif }}
+															                  {% endif %}
+															              </div>
+															          </td>
+															      </tr>
+															      <tr>
+															          <td class="w580"  width="580" height="1" bgcolor="#c7c5c5"></td>
+															      </tr>
+															  </tbody>
+								                         </table>
+								                         <!-- fin zone -->  
+								
+								
+														{% if body.entity.action is defined and body.entity.action is not empty %}
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
+																	  <tbody>
+																	      <tr>
+																	          <td colspan="2">
+																	             <h2 style="color:#FF6600; font-size:22px; padding-top:12px;">
+																	                  Informations sur l'action 
+																	             </h2>
+																	          </td>
+																	      </tr>
+																	  </tbody>
+										                         </table>                      
+										                         <!-- une autre zone de contenu -->
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="1">
+																	  <tbody align="left">
+																	      <tr>
+																	          <td width="200" valign="top">
+																	                  <p> <b>Libellé de l'action </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.libelle }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Référence de l'action </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.reference }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Porteur </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.porteur }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Contributeurs</b></p>
+																	          </td>  
+																	          <td valign="top">
+																	          {% if body.entity.action.contributeur is defined and body.entity.action.contributeur is not empty %}
+																	                  <ul>
+																	                  	{% for uncontributeur in body.entity.action.contributeur %}
+																	                      <li> {{ uncontributeur }}</li>
+																	                     {% endfor %}
+																	                  </ul>
+																	          {% else %}
+																	          		  <p> Pas de contributeur .</p>
+																	          {% endif %}
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Domaine</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p> {{ body.entity.action.domaine }} </p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Type d'action</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.typeAction }} </p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Instance</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.instance }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Date de début</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.dateDebut| localizeddate('full', 'none') }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Délai Initial</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.dateInitial| localizeddate('full', 'none') }}</p>
+																	          </td>           
+																	      </tr>
+																	  </tbody>
+										                         </table>
+										                         <table align="right" class="w580"  width="580" cellpadding="0" cellspacing="0" border="0">
+																	  <tbody >
+																	      <p align="right"><em>Pour plus d'infos sur cette action, <a target="_blank" href="{{ url('details_action', {'id': body.entity.action.id}) }}">Cliquez ici</a></em></p>
+																	  </tbody>
+								                         		</table>
+								                         {% endif %}
+								                         
+								                         {% if body.entity.signalisation is defined and body.entity.signalisation is not empty %}
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
+																	  <tbody>
+																	      <tr>
+																	          <td colspan="2">
+																	             <h2 style="color:#FF6600; font-size:22px; padding-top:12px;">
+																	                  Informations sur la signalisation </h2>
+																	          </td>
+																	      </tr>
+																	  </tbody>
+										                         </table>                      
+										
+										                         <!-- une autre zone de contenu -->
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="1">
+																	  <tbody align="left">
+																	      <tr>
+																	          <td width="200" valign="top">
+																	                  <p> <b>Libellé</b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.signalisation.libelle }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Référence</b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.signalisation.reference }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Périmétre </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.signalisation.instance }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Domaine </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.signalisation.domaine }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Type </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.signalisation.typeSignalisation }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Source</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.signalisation.source }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Constatateur</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.signalisation.constatateur }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Date de constat</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.signalisation.dateConstat| localizeddate('full', 'none') }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Signalé le</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.signalisation.dateSignale| localizeddate('full', 'none') }}</p>
+																	          </td>           
+																	      </tr>
+																	  </tbody>
+										                         </table>
+										                         <table align="right" class="w580"  width="580" cellpadding="0" cellspacing="0" border="0">
+																	  <tbody >
+																	      <p align="right"><em>Pour plus d'infos sur cette signalisation, <a target="_blank" href="{{ url('details_signalisation', {'id': body.entity.signalisation.id}) }}">Cliquez ici</a></em></p>
+																	  </tbody>
+								                         		</table>
+								                         {% endif %}
+								                         
+								                         {% if body.type is defined and body.type is not empty and body.type == 'ACTION' %}
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
+																	  <tbody>
+																	      <tr>
+																	          <td colspan="2">
+																	             <h2 style="color:#FF6600; font-size:22px; padding-top:12px;">
+																	                  Changements sur l'action 
+																	             </h2>
+																	          </td>
+																	      </tr>
+																	  </tbody>
+										                         </table>                      
+										
+										                         <!-- une autre zone de contenu -->
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="1">
+																	  <thead>
+																		<tr>
+																			<th border=0px;></th>
+																			<th>Pre Modification</th>
+																			<th>Post Modification</th>
+																		</tr>
+																	 </thead>
+																	 <tbody>
+																	 	{% if body.changeSet is defined and body.changeSet is not empty%}
+																			{% if body.changeSet.libelle is defined and body.changeSet.libelle is not empty %}
+																				<tr style="height:20px;">
+																					<td>Libelle</td>
+																					<td>{{ body.changeSet.libelle[0] }}</td>
+																					<td>{{ body.changeSet.libelle[1] }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.dateInitial is defined and body.changeSet.dateInitial is not empty %}
+																				<tr style="height:20px;">
+																					<td>Délai Initial</td>
+																					<td>{{ body.changeSet.dateInitial[0]| localizeddate('full', 'none') }}</td>
+																					<td>{{ body.changeSet.dateInitial[1]| localizeddate('full', 'none') }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.instance is defined and body.changeSet.instance is not empty %}
+																				<tr style="height:20px;">
+																					<td>Instance</td>
+																					<td>{{ body.changeSet.instance[0] }}</td>
+																					<td>{{ body.changeSet.instance[1] }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.domaine is defined and body.changeSet.domaine is not empty %}
+																				<tr style="height:20px;">
+																					<td>Domaine</td>
+																					<td>{{ body.changeSet.domaine[0] }}</td>
+																					<td>{{ body.changeSet.domaine[1] }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.porteur is defined and body.changeSet.porteur is not empty %}
+																				<tr style="height:20px;">
+																					<td>Porteur</td>
+																					<td>{{ body.changeSet.porteur[0] }}</td>
+																					<td>{{ body.changeSet.porteur[1] }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.typeAction is defined and body.changeSet.typeAction is not empty %}
+																				<tr style="height:20px;">
+																					<td>Porteur</td>
+																					<td>{{ body.changeSet.typeAction[0] }}</td>
+																					<td>{{ body.changeSet.typeAction[1] }}</td>
+																				</tr>
+																			{% endif %}
+																			{% if body.changeSet.priorite is defined and body.changeSet.priorite is not empty %}
+																				<tr style="height:20px;">
+																					<td>Porteur</td>
+																					<td>{{ body.changeSet.priorite[0] }}</td>
+																					<td>{{ body.changeSet.priorite[1] }}</td>
+																				</tr>
+																			{% endif %}
+																		{% endif %}
+																    </tbody>
+										                         </table>
+								                         {% endif %}
+								                         
+								                     </td>
+								                     <td class="w30" height="10" class="w30"  width="30"></td>
+								                 </tr>
+								             </tbody>
+								         </table>
+								     </td>
+								 </tr>
+                            <!--  separateur horizontal de 15px de haut -->
+                            <tr>
+                                <td class="w640"  width="640" height="30" bgcolor="#ffffff"></td>
+                            </tr>
+
+                            <!-- pied de page -->
+                            <tr class="pagebottom">
+                                <td class="w640"  width="640">
+                                    <table class="w640"  width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#000000">
+                                        <tbody>
+                                            <tr>
+                                                <td colspan="5" height="10"></td>
+                                            </tr>
+                                            <tr>
+                                                <td class="w30"  width="30"></td>
+                                                <td class="w580"  width="580" valign="top">
+                                                    <p align="right" class="pagebottom-content-left">
+                                                        <a style="color:#FF6600;" href="www.orange.sn"><span style="color:#FF6600;">SONATEL MULTIMEDIA 2015</span></a>
+                                                    </p>
+                                                </td>
+                                                <td class="w30"  width="30"></td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="5" height="10"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="w640"  width="640" height="60"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

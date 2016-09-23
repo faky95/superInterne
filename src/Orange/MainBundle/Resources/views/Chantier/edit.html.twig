@@ -1,0 +1,35 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme edit_form 'OrangeMainBundle:FormTheme:smallfields.html.twig' %}
+
+{% block content -%}
+<div class="row">
+	<div class="col-lg-8">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Modifier un chantier</span>
+			    </h4>
+			</div>
+			<div class="panel-body">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_chantier', {id: entity.id}) }}" method="post" role="form">
+	                {{ form_widget(edit_form.libelle,  {'attr': {'class': 'form-control'}}) }}
+					{{ form_widget(edit_form.description,  {'attr': {'class': 'nostyle form-control'}}) }}
+	                {{ form_widget(edit_form.projet,  {'attr': {'class': 'select'}}) }}
+	                {{ form_widget(edit_form.tmp_membre,  {'attr': {'class': 'select2 form-control'}}) }}
+	                {{ form_widget(edit_form._token) }}
+			        <div class="form-group">
+						<div class="col-lg-offset-3 col-lg-9">
+						    <button type="submit" class="btn btn-info">Save changes</button>
+						    <button type="button" class="btn btn-default">Cancel</button>
+						</div>
+					</div><!-- End .form-group  -->  
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% endblock %}
+
+{% block pagescript %}
+{% endblock %}

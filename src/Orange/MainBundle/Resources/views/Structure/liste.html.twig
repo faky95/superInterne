@@ -1,0 +1,40 @@
+
+    <div class="col-lg-6">                            
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>
+					<span class="icon16 icomoon-icon-equalizer-2"></span>
+					<span>Liste des Structures</span>
+				</h4>
+			</div>
+			<div style="height:340px; overflow-y: scroll; class="panel-body noPad">
+				<table cellpadding="0" cellspacing="0" border="0" class="dynamicTable display table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Structure</th>
+											    <th>Type</th>
+											    <th>Parente</th>
+											    <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        	{% for entity in entities %}
+                                            <tr class="odd gradeX">
+                                               <td>{{ entity.libelle }}</td>
+								               <td>{{ entity.typeStructure }}</td>
+								               <td>{{ entity.parent }}</td>
+                                                <td align="center">
+                                                	<div class="controls center">
+                                                      <a href="{{ path('edition_structure', {'id':entity.id}) }}" title="Edit task" class="tip"><span class="icon12 icomoon-icon-pencil"></span></a>
+				                    				  <a  class="confirmModal"  href="{{ path('supprimer_structure', {'id':entity.id}) }}" title="Remove task" class="tip"><span class="icon12 icomoon-icon-remove"></span></a>                                                	</div>
+                                                </td>
+                                            </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+				
+				
+				
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->  

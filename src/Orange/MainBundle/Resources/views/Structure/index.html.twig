@@ -1,0 +1,51 @@
+{% extends '::base.html.twig' %}
+
+
+{% block content -%}
+	<!-- heading -->
+	<div class="heading">
+		<h3>{% block page_title %} Liste des structures {% endblock %}</h3>                    
+	</div>
+	<!-- End .heading-->
+	<div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default gradient">
+                                <div class="panel-heading">
+                                    <h4>
+                                        <span class="icon16 brocco-icon-grid"></span>
+                                        <span>Liste des Structures</span>
+                                        <div style="float: right"><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('filtrer_structures')}}"title="filtrer"><span class="icon16  icomoon-icon-filter"></span></a></div>
+                                    </h4>
+                                </div>
+                                <div class="panel-body noPad clearfix">
+                                    <table id="structureTable" cellpadding="0" cellspacing="0" border="0" class=" display table table-bordered" width="100%">
+                                        <thead>
+                                            <tr>
+                                                <th>Structure</th>
+                                                <th>Parent</th>
+											    <th>Type</th>
+											    <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr>
+                                        	<td colspan="4">chargement des donnees</td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                            </div><!-- End .panel -->
+
+                        </div><!-- End .span12 -->
+
+					</div><!-- End .row --> 
+	
+	
+	
+	
+    
+{% endblock %}
+{% block pagescript %}
+	{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'structureTable', url: path('liste_des_structures')} %}
+{% endblock %}

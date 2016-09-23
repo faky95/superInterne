@@ -1,0 +1,63 @@
+{% set statut = entity.etatCourant %}
+
+{% if entity.signStatut[entity.signStatut|length - 2] is defined %}
+{% set statut_precedent = entity.signStatut[entity.signStatut|length - 2].statut.code %}
+{% endif %}
+
+<div class="you col-lg-12 col-md-6 col-sm-6" >
+	<div class="panel panel-default">
+			    <div class="panel-heading" style="background:#FFFFFF">
+			        <h4>
+			        	<span class="icon16 icomoon-icon-spinner-6"></span>
+			            <span class="red">Traitement de la signalisation</span>
+			        </h4>
+			        <a href="#" class="minimize">Minimize</a>
+			    </div>
+	    <div class="panel-body">
+	    	{% if statut == 'SIGN_NOUVELLE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.source.utilisateur.id %}
+	    		<div class="form-group">
+		        	<p>Nouvelle signalisation. Veuillez prendre en charge cette signalisation ou la rejeter.</p>
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_PRISE_EN_CHARGE', 'id': entity.id})}}" title="Valider la prise en charge de la signalisation"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Prendre en charge</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_INVALIDE', 'id': entity.id})}}" title="Invalider la prise en charge de la signalisation"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Rejeter la signalisation</button></a>
+				</div>
+			{% elseif statut == 'SIGN_NOUVELLE' and has_rights('ROLE_MANAGER') and app.user.id != entity.source.utilisateur.id %}
+	    		<div class="form-group">
+		        	<p>Nouvelle signalisation. Veuillez l'affecter à un Ingénieur support.</p>
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_signalisation_animateur', {'signalisation_id' : entity.id }) }}" title="Modifier l\'animateur"><button class="btn btn-default"><span class="icon16 icomoon-icon-user-plus-2 black"></span>Affecter à un IS</button></a>
+				</div>
+			{% elseif statut == 'SIGN_PRISE_EN_CHARGE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.source.utilisateur.id %}
+				<div class="form-group">
+		        	<p>Vous êtes affecté au traitement de cette signalisation. Veuillez ajouter des actions correctives.</p>
+		    	</div>
+				<div class="form-group">
+					<a href="{{ path('nouvelle_signalisation_action', {signalisation_id : entity.id }) }}" target="_blank" title="Ajouter des actions correctives !"><button class="btn btn-success"><span class="icon16 minia-icon-plus-2 white"></span>Actions correctives</button></a>
+				</div>
+			{% elseif statut == 'SIGN_TRAITEMENT_FIN' and ( app.user.id == entity.source.utilisateur.id ) %}
+				<div class="form-group">
+		        	<p>Fin de traitement de la signalisation. Veuillez apprécier cette signalisation.</p>
+		    	</div>
+				<div class="form-group">
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_TRAIT_EFFICACE', 'id': entity.id})}}" title="Valider la prise en charge de la signalisation"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Traitement Efficace</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_TRAIT_NON_EFFICACE', 'id': entity.id})}}" title="Invalider la prise en charge de la signalisation"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Traitement Inefficace</button></a>
+				</div>
+			{% elseif statut == 'SIGN_TRAIT_NON_EFFICACE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.source.utilisateur.id %}
+				<div class="form-group">
+		        	<p>{{ entity.signStatut[entity.signStatut|length - 1].commentaire }}</p>
+		    	</div>
+				<div class="form-group">
+					<a href="#" title="Recharger les actions de cette signalisation !"><button id="reload" class="btn btn-warning"><span class="icon16 icomoon-icon-redo-2 white"></span>Recharger les actions</button></a>
+				</div>
+			{% else %}
+	    		<div class="form-group">
+	    			{% if entity.signStatut[entity.signStatut|length - 1].commentaire is defined and entity.signStatut[entity.signStatut|length - 1].commentaire is not empty %}
+		        		<p>{{ entity.signStatut[entity.signStatut|length - 1].commentaire }}</p>
+		        	{% endif %}
+		    	</div>
+	    	{% endif %}
+	    </div>
+	</div><!-- End .panel -->
+</div><!-- End .col-lg-12 -->
