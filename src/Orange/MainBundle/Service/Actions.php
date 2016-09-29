@@ -225,8 +225,9 @@ class Actions {
 	 */
 	public function generateActionsForUtilisateur($entity) {
 		$actions = '<div class="btn-group">
-					 <a class="btn btn-default" method="delete" href="%s" title="Transfert actions"><span class="iconic-icon-transfer"></span></a></div>
-				     <a class="btn btn-default" href="%s" title="Détails sur l\'utilisateur "><span class="icomoon-icon-eye"></span></a>';
+					<a class="btn btn-default" href="%s" title="Détails sur l\'utilisateur "><span class="icomoon-icon-eye"></span></a>';
+// 		<a class="btn btn-default" method="delete" href="%s" title="Transfert actions"><span class="iconic-icon-transfer"></span></a></div>
+		 
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'utilisateur"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
@@ -239,7 +240,8 @@ class Actions {
 		if($this->user->hasRole('ROLE_SUPER_ADMIN')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Se connecter au compte"><span class="entypo-icon-shuffle"></span></a></div>';
 		}
-		return sprintf($actions, $this->router->generate('transfert_action', 	array('id'=>$entity->getId())),
+		return sprintf($actions,
+// 				$this->router->generate('transfert_action', 	array('id'=>$entity->getId())),
 				$this->router->generate('details_utilisateur', 	array('id'=>$entity->getId())),
 				$this->router->generate('edition_utilisateur', 	array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_utilisateur', array('id'=>$entity->getId())),

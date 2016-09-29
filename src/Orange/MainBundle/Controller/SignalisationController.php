@@ -49,8 +49,9 @@ class SignalisationController extends BaseController
 	public function indexAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$ids = $em->getRepository('OrangeMainBundle:Source')->allSources();
-		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids, 'user'=>$this->getUser())));
+		$ids = $em->getRepository('OrangeMainBundle:Signalisation')->getOnlySources();
+		$cst = $em->getRepository('OrangeMainBundle:Signalisation')->getOnlyCsts();
+		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids,'cst'=> $cst, 'user'=>$this->getUser())));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {

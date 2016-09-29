@@ -27,6 +27,7 @@ class SignalisationCriteria extends AbstractCriteria
     	$user =(isset($options['attr']['user']))?$options['attr']['user']:null;
 		$structure_id = $user->getStructure()->getId();
 		$ids=(isset($options['attr']['ids']))?$options['attr']['ids']:null;
+		$cst=(isset($options['attr']['cst']))?$options['attr']['cst']:null;
 		
     	$builder
     		->add('perimetre', 'entity', array('class'=>'Orange\MainBundle\Entity\Instance',
@@ -39,14 +40,22 @@ class SignalisationCriteria extends AbstractCriteria
    			))
     		->add('constat', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
     			'label' => 'Constat fait par :',
+    			'required' => false,
    				'empty_value' => '--- Choisir le constatateur ---',
-  				'query_builder' => function(EntityRepository $er ) use ($structure_id) {
+  				'query_builder' => function(UtilisateurRepository $er ) use ($cst) {
    				return $er->createQueryBuilder('q')
-    			->innerJoin('q.structure', 'str')
-    			->where('str.id = ?1')
-   				->setParameter(1, $structure_id);
+   				->where('q.id IN (:cst)')->setParameters(array('cst' => $cst));
     			}
    			))
+   			->add('utilisateur', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
+   					'label' => 'La souce :',
+   					'required' => false,
+   					'empty_value' => '--- Choisir la source ---',
+   					'query_builder' => function(UtilisateurRepository $er ) use ($ids) {
+   					return $er->createQueryBuilder('q')
+   					->where('q.id IN (:ids)')->setParameters(array('ids' => $ids));
+   					}
+   					))
    			->add('dom', 'entity', array('class'=>'Orange\MainBundle\Entity\InstanceHasDomaine',
     			'label' => 'Domaine :',
    				'empty_value' => '--- Choisir le domaine ---',
@@ -63,21 +72,14 @@ class SignalisationCriteria extends AbstractCriteria
     			->where('ty.instance = 55 OR ty.instance = 139');
     			}
    					))
-   			->add('utilisateur', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
-   					'label' => 'La souce :',
-   					'required' => false,
-   					'empty_value' => '--- Choisir la source ---',
-  				'query_builder' => function(UtilisateurRepository $er ) use ($ids) {
-   				return $er->createQueryBuilder('q')
-   				->where('q.id IN (:ids)')->setParameters(array('ids' => $ids));
-    			}
-   					))
    			->add('statut', 'entity', array('class' => 'OrangeMainBundle:Statut', 'query_builder' => function(EntityRepository $er) {
    				return $er->createQueryBuilder('s')->where('s.typeStatut = 1')->andWhere('s.display = 1');
    					}, 'label' =>'Statut', 'empty_value' => '--- Choisir le statut ---'
    			))
 	    	->add('fromDateConstat', 'date', array('label' => 'Date constat Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('toDateConstat', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
+	    	->add('fromDateSignale', 'date', array('label' => 'Date de signalisation Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
+	    	->add('toDateSignale', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('filtrer', 'submit', array('label' => 'Filtrer', 'attr' => array('class' => 'btn btn-warning submitLink')))
 	        ->add('effacer', 'submit', array('label' => 'Effacer', 'attr' => array('class' => 'btn btn-danger submitLink')));
     }

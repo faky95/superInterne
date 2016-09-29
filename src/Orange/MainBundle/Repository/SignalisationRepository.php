@@ -128,6 +128,8 @@ class SignalisationRepository extends BaseRepository{
 		$queryBuilder = $this->filter();
 		$fromDateConstat= $criteria->getFromDateConstat();
 		$toDateConstat= $criteria->getToDateConstat();
+		$fromDateSignale= $criteria->getFromDateSignale();
+		$toDateSignale= $criteria->getToDateSignale();
 		$perimetre = $criteria->getPerimetre();
 		$constatateur = $criteria->getConstatateur();
 		$source = $criteria->getUtilisateur();
@@ -154,35 +156,25 @@ class SignalisationRepository extends BaseRepository{
 		}
 		if($fromDateConstat) {
 			$queryBuilder->andWhere('sign.dateConstat >= :from and sign.dateConstat <= :to')->setParameter('to', $toDateConstat)->setParameter('from', $fromDateConstat);
+		}
+		if($fromDateSignale) {
+			$queryBuilder->andWhere('sign.dateSignale >= :from and sign.dateSignale <= :to')->setParameter('to', $toDateSignale)->setParameter('from', $fromDateSignale);
 		}
 		return $queryBuilder->andWhere("sign.etatCourant LIKE '%NOUVELLE%'");
 	}
 	
 	public function listAllElements($criteria){
 		$queryBuilder = $this->filter();
-// 		$fromDateConstat= $criteria->getFromDateConstat();
-// 		$toDateConstat= $criteria->getToDateConstat();
 		$fromDateConstat= $criteria->getFromDateConstat();
 		$toDateConstat= $criteria->getToDateConstat();
+		$fromDateSignale= $criteria->getFromDateSignale();
+		$toDateSignale= $criteria->getToDateSignale();
 		$perimetre = $criteria->getPerimetre();
-		$constatateur = $criteria->getConstatateur();
+		$constatateur = $criteria->getConstat();
 		$source = $criteria->getUtilisateur();
-		//var_dump($source);exit;
 		$domaine = $criteria->getDom();
 		$type = $criteria->getType();
 		$statut = $criteria->getStatut();
-// 		$source = $criteria->getSource();
-// 		if(isset($animateur)) {
-// 			$queryBuilder
-// 			->leftJoin('sign.animateurSignalisation', 'a')
-// 			->andWhere('a.utilisateur LIKE :animateur')
-// 			->setParameter('animateur', $animateur);
-// 		}
-// 		if(isset($source)) {
-// 			$queryBuilder
-// 			->andWhere('a.source LIKE :source')
-// 			->setParameter('source', $source);
-// 		}
 		if($type) {
 			$queryBuilder->andWhere('sign.typeSignalisation = :type')->setParameter('type', $type);
 		}
@@ -203,6 +195,9 @@ class SignalisationRepository extends BaseRepository{
 		}
 		if($fromDateConstat) {
 			$queryBuilder->andWhere('sign.dateConstat >= :from and sign.dateConstat <= :to')->setParameter('to', $toDateConstat)->setParameter('from', $fromDateConstat);
+		}
+		if($fromDateSignale) {
+			$queryBuilder->andWhere('sign.dateSignale >= :from and sign.dateSignale <= :to')->setParameter('to', $toDateSignale)->setParameter('from', $fromDateSignale);
 		}
 		return $queryBuilder;
 	}
@@ -268,4 +263,23 @@ class SignalisationRepository extends BaseRepository{
 					->addSelect('count(sign.id) total, sign.etatCourant ')
 					->addGroupBy('sign.etatCourant');
 	}
+	public function getOnlySources(){
+		return $this->createQueryBuilder('s')
+		->select('u.id')
+		->innerJoin('s.source', 'sr')
+		->innerJoin('sr.utilisateur', 'u')
+		->groupBy('u.id')
+		->getQuery()
+		->getResult();
+	}
+	
+	public function getOnlyCsts(){
+		return $this->createQueryBuilder('s')
+		->select('cst.id')
+		->innerJoin('s.constatateur', 'cst')
+		->groupBy('cst.id')
+		->getQuery()
+		->getResult();
+	}
+	
 }

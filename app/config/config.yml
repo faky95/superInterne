@@ -97,7 +97,13 @@ fos_user:
     profile:
         form:
             type: orange_user_profile
-
+            
+av_alertify:
+    default:
+        context: app
+        engine: toastr
+        layout: top-right
+        translationDomain: alertify.fr.xliff
 monolog:
     handlers:
         main_error:

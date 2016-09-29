@@ -34,12 +34,15 @@ class ActionCorrect {
 	 * @return string
 	 */
 	public function createActionCorrective($entity) {
+		$query = new ActionQuery($this->em->getConnection());
+		$table = 'action_has_signalisation';
+		$query->updateId($table);
 		$action = new Action();
 		$date = new \DateTime();
 		$action->setDateAction($date);
 		$action->setDateDebut($date);
 		$action->setLibelle($entity->getLibelle());
-		$action->setDescription($entity->getLibelle());
+		$action->setDescription($entity->getDescription());
 		$action->setInstance($entity->getInstance()->getParent());
 		$action->setDomaine($entity->getDomaine());
 		$action->setTypeAction($entity->getTypeSignalisation());
@@ -50,7 +53,6 @@ class ActionCorrect {
 		$action->setDateInitial($date);
 		$this->em->persist($action);
 		$this->em->flush();
-		$query = new ActionQuery($this->em->getConnection());
 		$query->insertActionSign($action->getId(), $entity->getId());
 		ActionUtils::setReferenceActionSignalisation($this->em, $action, $entity);
 		SignalisationUtils::changeStatutSignalisation($this->em, $this->user, Statut::TRAITEMENT_SIGNALISATION, $entity, 'Une action corrective a été ajoutée pour traiter cette signalisation');

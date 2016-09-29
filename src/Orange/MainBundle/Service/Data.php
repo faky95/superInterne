@@ -118,8 +118,12 @@ class Data extends BaseQuery {
 		foreach ($data as $value){
 			$actions= $this->em->getRepository('OrangeMainBundle:ActionHasSignalisation')->findActions($value->getId());
 			$action = "";
+			$j=1;
 			if(!empty($actions)){
-				$action = $actions[0]->getAction()->getReference();
+				foreach ($actions as $act){
+					$action .= $j.') '.$act->getAction()->getReference()."\n";
+					$j++;
+				}
 			}
 			$array[$i] = array( 'reference' => $value->getReference(), 'ref_action' => $action, 'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
@@ -152,6 +156,7 @@ class Data extends BaseQuery {
 					'dateCloture' => '','libelle' => $value->getLibelle(),'description' => $value->getLibelle(),'priorite'=>'importante'
 	
 			);
+			$date = new \DateTime();
 			$i++;
 		}
 		return $array;

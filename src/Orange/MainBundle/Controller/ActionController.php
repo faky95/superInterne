@@ -277,10 +277,11 @@ class ActionController extends BaseController
      * @QMLogger(message="Creation d'une action")
      * @Route("/creer_action", name="creer_action")
      * @Route("/{espace_id}/creer_action_to_espace", name="creer_action_to_espace")
+     * * @Route("/{sign_id}/creer_action_sign", name="creer_action_sign")
      * @Method("POST")
      * @Template("OrangeMainBundle:Action:new.html.twig")
      */
-    public function createAction(Request $request,$espace_id=null){
+    public function createAction(Request $request,$espace_id=null,$sign_id){
     	$logger = $this->get('my_service.logger');
 		$logger->info('Création action :{  Utilisateur/login: '.$this->getUser()->getNomComplet().'/'.$this->getUser()->getUsername().' | Date: '.date('d-m-Y H:i:s').' | IP: '.$_SERVER["REMOTE_ADDR"].' | URL: '.$_SERVER['REQUEST_URI'].' }');
     	$entity = new Action();
@@ -440,7 +441,9 @@ class ActionController extends BaseController
     	$em = $this->getDoctrine()->getManager();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
     	$entity = new Action();
-   		$entity->setInstance($signalisation->getInstance());
+    	$entity->setLibelle($signalisation->getLibelle());
+    	$entity->setDescription($signalisation->getDescription());
+   		$entity->setInstance($signalisation->getInstance()->getParent()?$signalisation->getInstance()->getParent():$signalisation->getInstance());
    		$entity->setDomaine($signalisation->getDomaine());
    		$entity->setTypeAction($signalisation->getTypeSignalisation());
     	$form   = $this->createCreateForm( $entity,'Action');
@@ -456,6 +459,7 @@ class ActionController extends BaseController
      * @Method("POST")
      */
     public function createSignalisationAction(Request $request, $signalisation_id) {
+    	$dispatcher = $this->container->get('event_dispatcher');
     	$em = $this->getDoctrine()->getManager();
     	$entity = new Action();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
@@ -469,6 +473,8 @@ class ActionController extends BaseController
     		ActionUtils::setReferenceActionSignalisation($em, $entity, $signalisation);
     		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a �t� ajout�e pour traiter cette signalisation');
     		ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NOUVELLE, $this->getUser(), 'Nouvelle action corrective.');
+    		$event = $this->get('orange_main.action_event')->createForAction($entity);
+    		$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
     		if($form->get('save_and_add')->isClicked()) {
     			return $this->redirect($this->generateUrl('nouvelle_signalisation_action', array('signalisation_id' => $signalisation_id)));
     		}

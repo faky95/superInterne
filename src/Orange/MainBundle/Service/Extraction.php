@@ -448,6 +448,7 @@ class Extraction extends \PHPExcel {
 			}
 			$y++;
 		}
+		$this->getActiveSheet()->getStyle('B2:B'.$this->getActiveSheet()->getHighestRow())->getAlignment()->setWrapText(true);
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}

@@ -21,7 +21,7 @@ class AppKernel extends Kernel
         	new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
             new Orange\MainBundle\OrangeMainBundle(),
         	new Ob\HighchartsBundle\ObHighchartsBundle(),
-        	//new AppVentus\Awesome\AlertifyBundle\AvAwesomeAlertifyBundle(),
+        	new AppVentus\AlertifyBundle\AvAlertifyBundle(),
         	new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         	new Knp\Bundle\MenuBundle\KnpMenuBundle(),
 //             new FOS\RestBundle\FOSRestBundle(),
