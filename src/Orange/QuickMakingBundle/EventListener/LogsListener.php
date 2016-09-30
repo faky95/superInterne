@@ -23,13 +23,13 @@ class LogsListener {
 	}
 	
 	public function preUpdate(PreUpdateEventArgs $args) {
-		$entity = $args->getEntity();
-		$entityManager = $args->getEntityManager();
-		$securityContext = $this->container->get('security.context');
-		$user = $securityContext->getToken()->getUser();
-		$url = $this->container->get('request')->getRequestUri();
-		$entityMetaData = $entityManager->getClassMetadata(get_class($entity));
-		$nomTable =  $entityMetaData->getTableName();
+// 		$entity = $args->getEntity();
+// 		$entityManager = $args->getEntityManager();
+// 		$securityContext = $this->container->get('security.context');
+// 		$user = $securityContext->getToken()->getUser();
+// 		$url = $this->container->get('request')->getRequestUri();
+// 		$entityMetaData = $entityManager->getClassMetadata(get_class($entity));
+// 		$nomTable =  $entityMetaData->getTableName();
 		
 // 		$entitiesToLogs = $this->container->getParameter('qm_logs_entities');
 // // 		$entitiesToLogs = " ";

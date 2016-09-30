@@ -36,18 +36,18 @@
                                         <tbody>
                                         	{% for entity in entities %}
                                         	{% set actionCycliqueKey  =  entity.action.actionStatut|length - 1 %}
- 											{% set statut 			  =  entity.action.actionStatut[actionCycliqueKey].statut.libelle %}
+{#  											{% set statut 			  =  statut[entity.action.etatReel] %}#}
                                         	
 	                                        	<tr>
 	                                        		<td>{{ entity.action.instance }}</td>
 	                                        		<td>{{ entity.action.libelle }}</td>
 	                                        		<td>{{ entity.action.porteur }}</td>
-	                                        		<td>{{ statut }}</td>
+	                                        		<td>{{ statut[entity.action.etatReel] }}</td>
 	                                        		<td align="center" width="200px">
 														<div class="btn-group">
 												      		<a class="btn btn-default" href="{{ path('actioncyclique_show', {'id': entity.id}) }}" title="Détails sur l'action "><span class="icomoon-icon-eye"></span></a>
-												          	<a class="btn btn-default" href="#" title="Modifier l'action"><span class="icomoon-icon-pencil-3"></span></a>
-												          	<a class="btn btn-default" href="#" title="Supprimer l'action"><span class="icomoon-icon-remove-4"></span></a>
+{# 												          	<a class="btn btn-default" href="#" title="Modifier l'action"><span class="icomoon-icon-pencil-3"></span></a>#}
+{# 												          	<a class="btn btn-default" href="#" title="Supprimer l'action"><span class="icomoon-icon-remove-4"></span></a>#}
 											       		</div>
 													</td>
 	                                        	</tr>

@@ -30,11 +30,15 @@ class ActionCycliqueController extends Controller
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
+		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatutsActions();
+		$st = array();
+		foreach ($statut as $value){
+			$st[$value['code']] = $value['libelle'];
+		}
         $entities = $em->getRepository('OrangeMainBundle:ActionCyclique')->findAll();
 
         return array(
-            'entities' => $entities,
+            'entities' => $entities,'statut' => $st
         );
     }
     /**

@@ -10,7 +10,7 @@ use Orange\MainBundle\Validator\Constraints\CycliquePeriodiciteDate as CPAssert;
  * ActionCyclique
  *
  * @ORM\Table(name="action_cyclique")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ActionCycliqueRepository")
  * @CPAssert
  */
 class ActionCyclique

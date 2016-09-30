@@ -17,6 +17,13 @@ class StatutRepository extends BaseRepository {
 		$queryBuilder->where('s.typeStatut = 2');
 		return $queryBuilder;
 	}
+	
+	public function listAllStatutsActions(){
+		$queryBuilder = $this->createQueryBuilder('s');
+		$queryBuilder->where('s.typeStatut = 2');
+		return $queryBuilder->getQuery()->getArrayResult();
+	}
+	
 	public function listAllStatutSign(){
 		$queryBuilder = $this->createQueryBuilder('s');
 		$queryBuilder->where('s.typeStatut = 1');
