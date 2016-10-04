@@ -67,7 +67,7 @@ class ReportingStructureCommand extends BaseCommand {
 		}
 		
 		foreach ($envois as $envoi){
-			  $dest = array();
+			    $dest = array();
 				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
 				$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
 				$actions = null;

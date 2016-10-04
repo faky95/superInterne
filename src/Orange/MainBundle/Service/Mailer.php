@@ -117,6 +117,7 @@ protected $mailer;
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
     	->setTo($to)
+    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
     	->setSubject($subject)
     	->setBody(
     			 
