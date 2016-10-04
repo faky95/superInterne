@@ -65,10 +65,9 @@ class ReportingStructureCommand extends BaseCommand {
 		foreach ($pas as $value){
 			$per[$value->getId()] = $value->getLibelle();
 		}
-		$dest = array();
+		
 		foreach ($envois as $envoi){
-			//$data = $this->get('orange.main.calcul')->reporting($envoi->getReporting()->getUtilisateur(), $query->getArrayResult());
-		//	if($envoi->getReporting()->getTypeReporting() == 1){
+			  $dest = array();
 				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
 				$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
 				$actions = null;
@@ -87,19 +86,6 @@ class ReportingStructureCommand extends BaseCommand {
 				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'structure',$arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportingstructureAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().'-'.date("Y-m-d_H-i").'.xlsx';
-			//}
-		/*	else{
-				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
-				$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
-				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
-				$arrType=unserialize($envoi->getReporting()->getArrayType());
-				$map= $this->get('orange.main.dataStats')->transformRequeteToSimple($req,$arrType );
-				$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
-				$data = $this->get('orange.main.calcul')->stats($bu, $map);
-				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType, $bu);
-				$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu));
-				$filename = 'reporting_'.$envoi->getReporting()->getLibelle().date("Y-m-d_H-i").'.xlsx';
-			}*/
 			$i=0;
 			foreach ($envoi->getReporting()->getDestinataire() as $destinataire){
 				$dest[$i] = $destinataire->getEmail();
