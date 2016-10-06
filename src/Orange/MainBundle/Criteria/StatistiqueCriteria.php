@@ -35,24 +35,7 @@ class StatistiqueCriteria extends AbstractCriteria
 		        ->add('utilisateur', null, array('label' =>'Porteur'))
 		        ->add('structure', null, array('label' =>'Structure'))
 		        ->add('semaine', 'choice', array('label' =>'Semaine', 'choices'=> $week))
-		        ->add('instances', 'entity', array('label' => 'Instances', 'multiple'=>true,'class' => 'OrangeMainBundle:Instance', 'attr' => array('class' => 'select2'),
-		        		'query_builder' => function(InstanceRepository $ir)use($builder) {
-		        		$instance=$builder->getData() ? $builder->getData()->getInstances() : null;
-		        		if(!$instance || !$instance->getEspace()){
-		        			$data = $parameters = array();
-		        			$queryBuilder = $ir->createQueryBuilder('i');
-		        			$queryBuilder->where($queryBuilder->expr()->in('i.id', $ir->superAdminQueryBuilder($data)->getDQL()))
-		        			->orWhere($queryBuilder->expr()->in('i.id', $ir->adminQueryBuilder($data)->getDQL()))
-		        			->orWhere($queryBuilder->expr()->in('i.id', $ir->animateurQueryBuilder($data)->getDQL()));
-		        			foreach($data as $value) {
-		        				$parameters[$value->getName()] = $value->getValue();
-		        			}
-		        			return $queryBuilder->setParameters($parameters);
-		        		}else{
-		        			return $ir->createQueryBuilder('i')->innerJoin('i.espace', 'e')->where('e.id=:id')->setParameter('id', $instance->getEspace()->getId());
-		        		}
-		        		}
-		        ))
+		        ->add('instances', 'entity', array('label' => 'Instances', 'multiple'=>true,'class' => 'OrangeMainBundle:Instance', 'attr' => array('class' => 'select2')))
 		        ->add('filtrer', 'submit', array('label' => 'Filtrer', 'attr' => array('class' => 'btn btn-warning submitLink')));
     }
     

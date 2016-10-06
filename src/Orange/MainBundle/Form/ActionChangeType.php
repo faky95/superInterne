@@ -25,7 +25,8 @@ class ActionChangeType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-			$builder->add('statutChange','entity', array('label'=>'Statut : ', 'class'=>'Orange\MainBundle\Entity\Statut','property' => 'statut',
+			$builder->add('statutChange','entity', array('label'=>'Statut : ', 'class'=>'Orange\MainBundle\Entity\Statut',
+					'empty_value' => 'Changer le Statut', 'property' => 'statut',
 					'query_builder' => function(EntityRepository $ir){
 							$queryBuilder = $ir->createQueryBuilder('s');
 							return $queryBuilder->where('s.change= 1');

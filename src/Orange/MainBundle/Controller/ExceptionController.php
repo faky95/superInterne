@@ -40,10 +40,8 @@ class ExceptionController extends Controller {
 		$code = $exception->getStatusCode();
 		if($showException==false && $code!=404) {
 			//contact admin
-			$to=array("abdouaziz.ndaw@orange-sonatel.com");
-// 			$to=array("mamekhady.diouf@orange-sonatel.com", "madiagne.sylla@orange-sonatel.com" ,"abdouaziz.ndaw@orange-sonatel.com");
-// 			$cc=array("aliounebadara.cisse@orange-sonatel.com", "servaisrodrigue.batola@orange-sonatel.com");
-			$cc=array("madiagne.sylla@orange-sonatel.com");
+ 			$to=array("mamekhady.diouf@orange-sonatel.com", "madiagne.sylla@orange-sonatel.com");
+ 			$cc=array("aliounebadara.cisse@orange-sonatel.com", "servaisrodrigue.batola@orange-sonatel.com");
 			$content=$this->twig->render('OrangeMainBundle:Exception:exception_full_bis.html.twig', array(
 							'status_code' => $code, 'currentContent' => $currentContent, 'logger' => $logger, 'exception' => $exception,
 							'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : ''

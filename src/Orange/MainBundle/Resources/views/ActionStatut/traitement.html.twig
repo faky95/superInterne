@@ -64,7 +64,7 @@
 							<span class="icon16 icomoon-icon-exit white"></span>Demande d'abandon
 						</button>
 					</a>
-					{% if entity.porteur==app.user and app.user.manager==1 %}
+					{% if  (entity.porteur==app.user and app.user.manager==1) or entity|has_rights_manager %}
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('reassignation_action', {'action_id': entity.id})}}" title="Transfert vers un collaborateur">
 						<button class="btn btn-warning">
 							<span class="icon16 entypo-icon-shuffle white"></span>Ré-assignation

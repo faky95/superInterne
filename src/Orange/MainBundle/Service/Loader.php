@@ -133,7 +133,7 @@ class Loader {
 		$lesMails = array();
 		$query = new ActionQuery($this->em->getConnection());
 		$next_id = $repository->getNextId();
-		//$query->createTable($next_id);
+		$query->createTable($next_id);
 		$nl = $query->loadTable($file->getPathname(), $this->web_dir, $next_id);
 		$number = $query->updateTable($users, $instances,$statuts,$lesMails);
 		$query->migrateData($nouvelle_statut, $current_user, $nl);

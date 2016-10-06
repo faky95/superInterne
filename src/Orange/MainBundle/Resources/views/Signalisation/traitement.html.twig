@@ -19,8 +19,7 @@
 		        	<p>Nouvelle signalisation. Veuillez prendre en charge cette signalisation ou la rejeter.</p>
 		    	</div>
 				<div class="form-group">
-					<a href="{{ path('nouvelle_signalisation_action', {signalisation_id : entity.id }) }}" title="Valider la prise en charge de la signalisation"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Prendre en charge</button></a>
-{# 					<a href="{{ path('nouvelle_signalisation_action', {signalisation_id : entity.id }) }}" target="_blank" title="Ajouter des actions correctives !"><button class="btn btn-success"><span class="icon16 minia-icon-plus-2 white"></span>Actions correctives</button></a>#}
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_PRISE_EN_CHARGE', 'id': entity.id})}}" title="Valider la prise en charge de la signalisation"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Prendre en charge</button></a>
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_INVALIDE', 'id': entity.id})}}" title="Invalider la prise en charge de la signalisation"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Rejeter la signalisation</button></a>
 				</div>
 			{% elseif statut == 'SIGN_NOUVELLE' and has_rights('ROLE_MANAGER') and app.user.id != entity.source.utilisateur.id %}

@@ -78,17 +78,7 @@ class ActionRepository extends BaseRepository {
 			->execute();
 		
 	}
-	public function actionsTransfert($porteur){
-		$queryBuilder = $this->createQueryBuilder('a')
-		->innerJoin('a.porteur', 'u')
-		->andWhere("a.etatReel LIKE 'ACTION_NON_ECHUE'")
-		->andWhere("u.id =".$porteur)
-		->orderBy('a.id', 'ASC')
-		->addOrderBy('a.dateAction', 'DESC')
-		->getQuery()
-		->execute();
-		return $queryBuilder;
-	}
+	
 	public function userToAlertAnimateur($bu, $espace, $projet)
 	{
 	

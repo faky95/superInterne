@@ -81,6 +81,18 @@ class Actions {
 	}
 	
 	/**
+	 * @param \Orange\MainBundle\Entity\ActionCyclique $entity
+	 * @return string
+	 */
+	public function generateActionsForActionCyclique($entity) {
+		$content = '<div class="btn-group">
+				     <a class="btn btn-default" href="%s" title="Détails sur l\'action cylclique "><span class="icomoon-icon-eye"></span></a>';
+		
+		return sprintf($content, $this->router->generate('actioncyclique_show', array('id'=>$entity->getId()))
+				);
+	}
+	
+	/**
 	 * @param \Orange\MainBundle\Entity\Bu $entity
 	 * @return string
 	 */

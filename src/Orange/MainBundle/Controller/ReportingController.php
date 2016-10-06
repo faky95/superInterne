@@ -105,5 +105,45 @@ class ReportingController extends BaseController
     			$this->get('orange_main.actions')->generateActionsForReporting($entity)
     	);
     }
+	
+	 /**
+     *
+     * @Route("/update_reportings", name="update_reportings")
+     * @Template()
+     */
+    public function updateQueryAction(){
+    	$em = $this->getDoctrine()->getManager();
+    	$reportings = $em->getRepository('OrangeMainBundle:Reporting')->findBy(array('query' => null));
+    	foreach ($reportings as $key => $entity){
+			if($entity->getRequete()!=null){
+		    	$debutJoins = strpos($entity->getRequete(), 'FROM');
+		    	$finJoins = strpos($entity->getRequete(), 'GROUP BY');
+		    	
+		    	$p1 = strpos($entity->getRequete(), 'COUNT');
+		    	$p2 = strpos($entity->getRequete(), 'total');
+		        
+		        $tmp=explode('(', substr($entity->getRequete(), $p1, $p2 - $p1));
+				list($val1,$val2)=$tmp;
+		    	list($alias)=explode('.',$val2);
+		    	$select = "SELECT ".$alias.".id";
+		    	$joins = substr($entity->getRequete(), $debutJoins, $finJoins - $debutJoins);
+		    	
+		    	$where = " AND". $alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'
+					    			AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'
+					    			AND ".$alias.".etatCourant NOT LIKE 'ACTION_NOUVELLE'
+    			                    AND ".$alias.".etatCourant NOT LIKE 'EVENEMENT_INVALIDER'";
+		    	$groupBy= " GROUP BY ".$alias.".id";
+		    	$query= $select." ".$joins." ".$where." ".$groupBy;
+		    	$entity->setQuery($query);
+		    	$em->persist($entity);
+			}
+    	}
+    	$em->flush();
+    	$this->get('session')->getFlashBag()->add('success', array (
+    			'title' => 'Notification',
+    			'body' => 'Reporting modifié avec succés !'
+    	));
+    	return $this->redirect($this->generateUrl('les_reportings'));
+    }
     
 }

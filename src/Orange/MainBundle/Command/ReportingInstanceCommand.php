@@ -68,7 +68,7 @@ class ReportingInstanceCommand extends BaseCommand {
 				$actions = null;
 				if ($envoi->getReporting()->getQuery()){
 					$query2 = $this->getEntityManager()->createQuery($envoi->getReporting()->getQuery());
-					$query2->setParameters(unserialize($envoi->getReporting()->getParam()));
+					$query2->setParameters(unserialize($envoi->getReporting()->getParameter()));
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}

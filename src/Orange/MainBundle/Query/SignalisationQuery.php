@@ -26,13 +26,13 @@ class SignalisationQuery extends BaseQuery {
 	public function loadTable($fileName, $web_dir) {
 		$newPath = $this->loadDataFile($fileName, 'signalisation', $web_dir);
 		/*Insertion du chargement du fichier tÃ©lÃ©chargÃ© dans la table temporaire*/
-		$query="LOAD DATA LOCAL INFILE  '$newPath' INTO TABLE tmp_signalisation
+		$statement = $this->connection->prepare(sprintf("LOAD DATA LOCAL INFILE '%s' INTO TABLE tmp_signalisation
 			CHARACTER SET latin1
 			FIELDS TERMINATED BY  ';'
 			LINES TERMINATED BY  '\\r\\n'
 			IGNORE 1 LINES
-			(`libelle`,`description`,`perimetre`,`domaine`,`type`, `date_constat`, `constateur`, `source`, `site`);";
-		$this->connection->prepare($query)->execute();
+			(`libelle`,`description`,`perimetre`,`domaine`,`type`, `date_constat`, `constateur`, `source`, `site`);", $newPath));
+		$statement->execute();
 	}
 	
 	/**
@@ -86,6 +86,7 @@ class SignalisationQuery extends BaseQuery {
 		$query="INSERT INTO signalisation (`id`, `reference`, `source_id`, `constatateur`, `libelle`, `description`, `instance_id`, `domaine_id`, `type_signalisation_id`, `date_constat`, `date_signale`, `site`, `etat_courant`)
 						                     select null, CONCAT('S_', t.id), t.source, t.constateur, t.libelle,t.description,t.perimetre,t.domaine,t.type, STR_TO_DATE(t.date_constat, '%d/%m/%Y'), CURRENT_TIMESTAMP(),t.site,'SIGN_NOUVELLE'
 						                     from tmp_signalisation t";
+		
 		$resultsAction = $this->connection->fetchAll("SELECT id ,source from tmp_signalisation ");
 		$query1="INSERT INTO signalisation_has_statut (`id` ,`signalisation_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
 		for($i=0; $i<count($resultsAction);$i++) {

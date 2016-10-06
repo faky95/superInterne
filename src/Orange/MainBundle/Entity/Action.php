@@ -1111,13 +1111,5 @@ class Action
 		}
 		return $ava;
 	}
-	public function getInstances() {
-		return $this->instances;
-	}
-	public function setInstances($instances) {
-		$this->instances = $instances;
-		return $this;
-	}
-	
 	
 }

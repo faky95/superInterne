@@ -125,7 +125,7 @@ class Data extends BaseQuery {
 					$j++;
 				}
 			}
-			$array[$i] = array( 'reference' => $value->getReference(), 'ref_action' => $action, 'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
+			$array[$i] = array( 'reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Domaine' => $value->getDomaine()?$value->getDomaine()->__toString():'',
 								'Type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->__toString().'#'.$value->getTypeSignalisation()->getCouleur():'##ffffff',
@@ -156,7 +156,6 @@ class Data extends BaseQuery {
 					'dateCloture' => '','libelle' => $value->getLibelle(),'description' => $value->getLibelle(),'priorite'=>'importante'
 	
 			);
-			$date = new \DateTime();
 			$i++;
 		}
 		return $array;

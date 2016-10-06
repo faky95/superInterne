@@ -28,7 +28,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
-use Orange\MainBundle\Entity\ActionHasSignalisation;
 
 /**
  * Signalisation controller.
@@ -49,9 +48,8 @@ class SignalisationController extends BaseController
 	public function indexAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$ids = $em->getRepository('OrangeMainBundle:Signalisation')->getOnlySources();
-		$cst = $em->getRepository('OrangeMainBundle:Signalisation')->getOnlyCsts();
-		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids,'cst'=> $cst, 'user'=>$this->getUser())));
+		$ids = $em->getRepository('OrangeMainBundle:Source')->allSources();
+		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids, 'user'=>$this->getUser())));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {
@@ -86,8 +84,6 @@ class SignalisationController extends BaseController
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Signalisation')->listAllElements($criteria);
 		$this->get('session')->set('data',array('query' => $queryBuilder->getDql(),'param' =>$queryBuilder->getParameters()) );
-		$queryCanevas = $em->getRepository('OrangeMainBundle:Signalisation')->forCanevas($criteria);
-		$this->get('session')->set('canevas',array('query' => $queryCanevas->getDql(),'param' =>$queryCanevas->getParameters()) );
 		return $this->paginate($request, $queryBuilder);
 	}
 	
@@ -105,24 +101,6 @@ class SignalisationController extends BaseController
 		$data = $this->get('orange.main.data')->exportSignalisation($query->execute(),  $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);
 		$filename = sprintf("Extraction_des_signalisations_du_%s.xlsx", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
-		return $this->redirect($this->getUploadDir().$filename);
-	}
-	
-	
-	/**
-	 * @QMLogger(message="Extraction des canevas")
-	 * @Route("/export_canevas", name="export_canevas")
-	 * @Template()
-	 */
-	public function exportCanevasAction() {
-		$em = $this->getDoctrine()->getEntityManager();
-		$queryBuilder = $this->get('session')->get('canevas', array());
-		$query = $em->createQuery($queryBuilder['query']);
-		$query->setParameters($queryBuilder['param']);
-		$data = $this->get('orange.main.data')->exportCanevas($query->execute());
-		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
-		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
 		$objWriter->save($this->web_dir."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
@@ -254,6 +232,7 @@ class SignalisationController extends BaseController
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Signalisation entity.');
         }
+		
         return array(
             'entity'      => $entity
         );
@@ -437,8 +416,10 @@ class SignalisationController extends BaseController
      */
    	public function actionsAction($signalisation_id)
    	{
+   		
    		$em = $this->getDoctrine()->getManager();
-   		$actionId = $em->getRepository('OrangeMainBundle:ActionHasSignalisation')->findIdActions($signalisation_id);
+   		$actionId = $em->getRepository('OrangeMainBundle:Signalisation')->actionSignalisationId($signalisation_id);
+   		
    		if(!$actionId)
    		{
    			
@@ -447,9 +428,10 @@ class SignalisationController extends BaseController
 		$actionCorrectives = array();
 		foreach ($actionId as $id)
 		{
-			$action =  $em->getRepository('OrangeMainBundle:Action')->find($id['id']);
+			$action =  $em->getRepository('OrangeMainBundle:Action')->find(intval($id['action_id']));
 			array_push($actionCorrectives, $action);
 		}
+   		
    		
    		return array('actions' => $actionCorrectives);
    	}
@@ -519,6 +501,7 @@ class SignalisationController extends BaseController
    				return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));
    			}
    		}
+		   		
    		return $this->render('OrangeMainBundle:Signalisation:reload.html.twig', array("id" =>$signalisation_id, 'entity' => $signalisation, "form" => $form->createView()));
    	}
    	

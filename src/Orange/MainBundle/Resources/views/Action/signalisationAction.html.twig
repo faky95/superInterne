@@ -23,46 +23,46 @@
 				</h4>
 	        </div>
 	        <div class="panel-body">
-		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_signalisation_action', {'signalisation_id': signalisation_id}) }}" method="post" role="form" {{ form_enctype(form) }} >
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_signalisation_action', {'signalisation_id': signalisation_id}) }}" method="post" role="form">
 						<div class="form-group">
 			                {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}} ) }}
-			                {{ form_widget(form.instance) }}
+			                {{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 						</div>
 						<div class="form-group">
-							 {{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-							{{ form_widget(form.domaine) }}
+							{{ form_widget(form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 						</div>
 						<div class="form-group">
-							{{ form_widget(form.porteur) }}
-							{{ form_widget(form.priorite) }}
+							{{ form_widget(form.porteur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(form.priorite,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 						</div>
 						<div class="form-group">
-	{# 						{{ form_widget(form.groupe) }}#}
-							{{ form_widget(form.tmp_contributeur) }}
+							{{ form_widget(form.groupe,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(form.tmp_contributeur, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
 						</div>
 						<div class="form-group">
 							{{ form_widget(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
 							{{ form_widget(form.dateInitial, {'attr': {'class': 'form-control'}}) }}
 						</div>
-						{{ form_row(form.erq.file) }}
-						{{ form_row(form.description) }}
-		                {{ form_widget(form._token) }}
-				        <div class="form-group form-actions">
-				        	<div class="col-lg-offset-2 col-lg-9">
-								{{ form_widget(form.save) }}
-								{{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
-							</div>
-						</div><!-- End .form-group  -->  
+							{{ form_row(form.description) }}
+		                	{{ form_widget(form._token) }}
+			        <div class="form-group">
+			        	<div class="col-lg-offset-2 col-lg-9">
+							    {{ form_widget(form.save) }}
+							    {{ form_widget(form.save_and_add) }}
+							    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  -->  
 				</form>
 	        </div>
         </div>
     </div><!-- End .span12 -->
 </div><!-- End .row -->
 {% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-	{parent: form.instance, child: form.typeAction, url: path('type_by_instance'), key: 'id' } 
+	{parent: form.instance, child: form.typeAction, url: path('typesignalisation_by_instance'), key: 'id' } 
 %}
 {% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-	{parent: form.instance, child: form.domaine, url: path('domaine_by_instance'), key: 'id' } 
+	{parent: form.instance, child: form.domaine, url: path('domaine_signalisation_by_instance'), key: 'id' } 
 %}
 {% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 	{parent: form.instance, child: form.porteur, url: path('porteur_by_instance'), key: 'id' } 

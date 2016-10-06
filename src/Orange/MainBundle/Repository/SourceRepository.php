@@ -12,7 +12,6 @@ class SourceRepository extends EntityRepository{
 		return $this->createQueryBuilder('s')
 		->select('u.id')
 		->innerJoin('s.utilisateur', 'u')
-		->groupBy('u.id')
 		->getQuery()
 		->getResult();
 	}

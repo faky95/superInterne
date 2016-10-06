@@ -12,53 +12,48 @@
 	<div class="row">
 			<div class="col-lg-8">
 				 <a href="{{ path('export_signalisation') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter signalisations</button></a>
-				 {% if has_rights('ROLE_SOURCE') or has_rights('ROLE_ADMIN') %}
-				 	<a href="{{ path('chargement_signalisation') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des signalisations</button></a>
-				 	<a href="{{ path('export_canevas') }}"><button class="btn btn-warning"><span class="icon16 entypo-icon-export white"></span>Extraire actions correctives</button></a> 
-				{% endif %}
+{# 				 {% if has_rights('ROLE_SOURCE') or has_rights('ROLE_ADMIN') %}#}
+{# 				 	<a href="{{ path('chargement_signalisation') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des signalisations</button></a> #}
+{# 				{% endif %}#}
 				 <div class="marginB10"></div>
 			</div><!-- End .span4 -->
 	</div>
-	    	<div class="panel panel-default">
-	        <div class="panel-heading">
-				<h4> 
-					<span class="icon16 icomoon-icon-filter-2"></span>
-					<span>Filtrer les signalisations </span>
-				</h4>
-				<a href="#minimize" class="maximize" style="display: inline;">Minimize</a>
-	        </div>
-	        <div class="panel-body with-footer" style="display: none;">
-		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('les_signalisations') }}" method="post">
-					<div class="form-group">
-						{{ form_widget(form.perimetre,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
-						{{ form_widget(form.statut,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-					</div>
-					<div class="form-group">
-						{{ form_widget(form.constat,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-						{{ form_widget(form.utilisateur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-					</div>
-					<div class="form-group">
-						{{ form_widget(form.dom,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-						{{ form_widget(form.type,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-					</div>
-					<div class="form-group">
-						{{ form_widget(form.fromDateConstat) }}
-						{{ form_widget(form.toDateConstat) }}
-					</div>
-					<div class="form-group">
-						{{ form_widget(form.fromDateSignale) }}
-						{{ form_widget(form.toDateSignale) }}
-					</div>
-	                	{{ form_widget(form._token) }}
-			        <div class="form-group form-actions">
-			        	<div class="col-lg-offset-2 col-lg-9">
-							{{ form_widget(form.filtrer) }}
-							{{ form_widget(form.effacer) }}
-						</div>
-					</div><!-- End .form-group  -->  
-				</form>
-	        </div>
-        </div>
+{# 	    	<div class="panel panel-default">#}
+{# 	        <div class="panel-heading">#}
+{# 				<h4> #}
+{# 					<span class="icon16 icomoon-icon-filter-2"></span>#}
+{# 					<span>Filtrer les signalisations </span>#}
+{# 				</h4>#}
+{# 				<a href="#minimize" class="maximize" style="display: inline;">Minimize</a>#}
+{# 	        </div>#}
+{# 	        <div class="panel-body with-footer" style="display: none;">#}
+{# 		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('les_signalisations') }}" method="post">#}
+{# 					<div class="form-group">#}
+{# 						{{ form_widget(form.perimetre,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}#}
+{# 						{{ form_widget(form.statut,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}#}
+{# 					</div>#}
+{# 					<div class="form-group">#}
+{# 						{{ form_widget(form.constat,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}#}
+{# 						{{ form_widget(form.utilisateur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}#}
+{# 					</div>#}
+{# 					<div class="form-group">#}
+{# 						{{ form_widget(form.dom,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}#}
+{# 						{{ form_widget(form.type,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}#}
+{# 					</div>#}
+{# 					<div class="form-group">#}
+{# 						{{ form_widget(form.fromDateConstat) }}#}
+{# 						{{ form_widget(form.toDateConstat) }}#}
+{# 					</div>#}
+{# 	                	{{ form_widget(form._token) }}#}
+{# 			        <div class="form-group form-actions">#}
+{# 			        	<div class="col-lg-offset-2 col-lg-9">#}
+{# 							{{ form_widget(form.filtrer) }}#}
+{# 							{{ form_widget(form.effacer) }}#}
+{# 						</div>#}
+{# 					</div><!-- End .form-group  -->  #}
+{# 				</form>#}
+{# 	        </div>#}
+{#         </div>#}
     <div class="panel panel-default gradient">
         <div class="panel-heading">
             <h4>

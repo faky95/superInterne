@@ -65,21 +65,20 @@ class SignalisationStatutController extends BaseController
         $form->handleRequest($request);
 	        if ($form->isValid()) 
 	        {
+	        	$em->persist($entity);
 	        	$entity->setUtilisateur($this->getUser());
 	        	$entity->setSignalisation($signalisation);
 	        	$entity->setStatut($statutSignalisation);
 	        	$entity->setCommentaire("'".$entity->getCommentaire()."' ".$this->getUser());
 	        	$entity->setDateStatut(new \DateTime());
-	        	$em->persist($entity);
 	            $em->flush();
 	            if ($valide == 'SIGN_PRISE_EN_CHARGE'){
 	            	$event = $this->get('orange_main.signalisation_event')->createForSignalisation($entity);
 	            	$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_PRISE_EN_CHARGE, $event);
-	            	$this->get('orange_main.action_correct')->createActionCorrective($entity->getSignalisation());
+	            	//$this->get('orange_main.action_correct')->createActionCorrective($entity->getSignalisation());
 	            	$this->get('session')->getFlashBag()->add('success', array (
 	            			'title' => 'Notification',
-	            			'body' => 'Signalisation prise en charge.<br>
-	            						Action corrective créée.'
+	            			'body' => 'Signalisation prise en charge.'
 	            	));
 	            }
 	            if ($valide == 'SIGN_INVALIDE'){

@@ -149,4 +149,28 @@ class ActionCyclique
     {
         return $this->tache;
     }
+    
+    /**
+     * 
+     * @return string
+     */
+    public function getLibelle(){
+    	return $this->getAction()?$this->getAction()->getLibelle():'non renseigné';
+    }
+    
+    /**
+     * 
+     * @return NULL|\Orange\MainBundle\Entity\Instance
+     */
+    public function getInstance(){
+    	return $this->getAction()?$this->getAction()->getInstance():null;
+    }
+    
+    /**
+     * 
+     * @return NULL|\Orange\MainBundle\Entity\Utilisateur
+     */
+    public function getPorteur(){
+    	return $this->getAction()?$this->getAction()->getPorteur():null;
+    }
 }

@@ -346,7 +346,7 @@ class Extraction extends \PHPExcel {
 						'color' => array('rgb' => '000000')
 				));
 		$objPHPExcel = new \PHPExcel();
-		$th = array('Référence Signalisation', 'Référence action associée','Instance', 'Périmétre', 'Domaine', 'Type', 'Libellé', 'Description', 'Source', 'Date de signalisation', 'Direction', 'Pôle', 'Département', 'Service','Statut');
+		$th = array('Référence Signalisation', 'Instance', 'Périmétre', 'Domaine', 'Type', 'Libellé', 'Description', 'Source', 'Date de signalisation', 'Direction', 'Pôle', 'Département', 'Service','Statut');
 		$col = "A";
 		$x=1;
 		foreach ($th as $value){
@@ -358,7 +358,7 @@ class Extraction extends \PHPExcel {
 		foreach ($arrData as $values){
 			$b = "A";
 			foreach ($values as $value){
-				if($b == "C"){
+				if($b == "B"){
 					$inst = explode("##", $value);
 					$this->getActiveSheet()->setCellValue($b.$y, $inst[0])->getColumnDimension($b)->setAutoSize(true);
 					$style_instance = array(
@@ -381,7 +381,7 @@ class Extraction extends \PHPExcel {
 							));
 					$this->getActiveSheet()->getStyle($b.$y)->applyFromArray($style_instance);
 					$b++;
-				}elseif($b == "D"){
+				}elseif($b == "C"){
 					$inst = explode("##", $value);
 					$this->getActiveSheet()->setCellValue($b.$y, $inst[0])->getColumnDimension($b)->setAutoSize(true);
 					$style_instance = array(
@@ -404,7 +404,7 @@ class Extraction extends \PHPExcel {
 							));
 					$this->getActiveSheet()->getStyle($b.$y)->applyFromArray($style_instance);
 					$b++;
-				}elseif($b == "F"){
+				}elseif($b == "E"){
 					$inst = explode("##", $value);
 					$this->getActiveSheet()->setCellValue($b.$y, $inst[0])->getColumnDimension($b)->setAutoSize(true);
 					$style_instance = array(
@@ -427,7 +427,7 @@ class Extraction extends \PHPExcel {
 							));
 					$this->getActiveSheet()->getStyle($b.$y)->applyFromArray($style_instance);
 					$b++;
-				}elseif($b == "H"){
+				}elseif($b == "G"){
 					$this->getActiveSheet()->setCellValue($b.$y, $value);
 					$cont = array(
 							'borders' => array('top' => $default_border

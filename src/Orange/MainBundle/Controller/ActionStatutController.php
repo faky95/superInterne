@@ -43,7 +43,6 @@ class ActionStatutController extends BaseController
 		$em  = $this->getDoctrine()->getManager();
 		$statutInvalidation = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::EVENEMENT_INVALIDER);
 		$listeInvalidations = $em->getRepository('OrangeMainBundle:ActionStatut')->findBy(array('action' => $action_id, 'statut' => $statutInvalidation->getId()));
-		var_dump($listeInvalidations);exit;
 		return $this->render("OrangeMainBundle:ActionStatut:validationManager.html.twig", array('liste_invalidations' => $listeInvalidations, 'action_id' => $action_id));
 	}
 	

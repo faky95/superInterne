@@ -15,6 +15,7 @@ use Orange\MainBundle\Criteria\InstanceCriteria;
 use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Orange\MainBundle\Query\ActionQuery;
 /**
  * Instance controller.
  *

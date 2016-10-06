@@ -9,10 +9,6 @@ use Symfony\Component\Security\Core\SecurityContext;
 use Orange\MainBundle\Repository\DomaineRepository;
 use Orange\MainBundle\Repository\TypeActionRepository;
 use Orange\MainBundle\Repository\UtilisateurRepository;
-use Orange\MainBundle\Entity\InstanceHasDomaine;
-use Orange\MainBundle\Repository\InstanceHasDomaineRepository;
-use Orange\MainBundle\Entity\InstanceHasTypeAction;
-use Orange\MainBundle\Repository\InstanceHasTypeActionRepository;
 
 class SignalisationCriteria extends AbstractCriteria
 {
@@ -27,7 +23,6 @@ class SignalisationCriteria extends AbstractCriteria
     	$user =(isset($options['attr']['user']))?$options['attr']['user']:null;
 		$structure_id = $user->getStructure()->getId();
 		$ids=(isset($options['attr']['ids']))?$options['attr']['ids']:null;
-		$cst=(isset($options['attr']['cst']))?$options['attr']['cst']:null;
 		
     	$builder
     		->add('perimetre', 'entity', array('class'=>'Orange\MainBundle\Entity\Instance',
@@ -40,36 +35,29 @@ class SignalisationCriteria extends AbstractCriteria
    			))
     		->add('constat', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
     			'label' => 'Constat fait par :',
-    			'required' => false,
    				'empty_value' => '--- Choisir le constatateur ---',
-  				'query_builder' => function(UtilisateurRepository $er ) use ($cst) {
+  				'query_builder' => function(EntityRepository $er ) use ($structure_id) {
    				return $er->createQueryBuilder('q')
-   				->where('q.id IN (:cst)')->setParameters(array('cst' => $cst));
+    			->innerJoin('q.structure', 'str')
+    			->where('str.id = ?1')
+   				->setParameter(1, $structure_id);
     			}
    			))
+   			->add('dom', 'entity', array('class'=>'Orange\MainBundle\Entity\Domaine',
+    			'label' => 'Domaine :',
+   				'empty_value' => '--- Choisir le domaine ---'
+   			))
+   			->add('type', 'entity', array('class'=>'Orange\MainBundle\Entity\TypeAction',
+   					'label' => 'Type de la signalisation :',
+   					'empty_value' => '--- Choisir le type ---'
+   					))
    			->add('utilisateur', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
    					'label' => 'La souce :',
    					'required' => false,
    					'empty_value' => '--- Choisir la source ---',
-   					'query_builder' => function(UtilisateurRepository $er ) use ($ids) {
-   					return $er->createQueryBuilder('q')
-   					->where('q.id IN (:ids)')->setParameters(array('ids' => $ids));
-   					}
-   					))
-   			->add('dom', 'entity', array('class'=>'Orange\MainBundle\Entity\InstanceHasDomaine',
-    			'label' => 'Domaine :',
-   				'empty_value' => '--- Choisir le domaine ---',
-    			'query_builder' => function(InstanceHasDomaineRepository $er ) {
-    			return $er->createQueryBuilder('dom')
-    			->where('dom.instance = 55 OR dom.instance = 139');
-    			}
-   			))
-   			->add('type', 'entity', array('class'=>'Orange\MainBundle\Entity\InstanceHasTypeAction',
-   					'label' => 'Type:',
-   					'empty_value' => '--- Choisir le type ---',
-    			'query_builder' => function(InstanceHasTypeActionRepository $er ) {
-    			return $er->createQueryBuilder('ty')
-    			->where('ty.instance = 55 OR ty.instance = 139');
+  				'query_builder' => function(UtilisateurRepository $er ) use ($ids) {
+   				return $er->createQueryBuilder('q')
+   				->where('q.id IN (:ids)')->setParameters(array('ids' => $ids));
     			}
    					))
    			->add('statut', 'entity', array('class' => 'OrangeMainBundle:Statut', 'query_builder' => function(EntityRepository $er) {
@@ -78,8 +66,6 @@ class SignalisationCriteria extends AbstractCriteria
    			))
 	    	->add('fromDateConstat', 'date', array('label' => 'Date constat Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('toDateConstat', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
-	    	->add('fromDateSignale', 'date', array('label' => 'Date de signalisation Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
-	    	->add('toDateSignale', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('filtrer', 'submit', array('label' => 'Filtrer', 'attr' => array('class' => 'btn btn-warning submitLink')))
 	        ->add('effacer', 'submit', array('label' => 'Effacer', 'attr' => array('class' => 'btn btn-danger submitLink')));
     }

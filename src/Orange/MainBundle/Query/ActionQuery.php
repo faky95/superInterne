@@ -6,31 +6,8 @@ use Doctrine\ORM\ORMException;
 
 class ActionQuery extends BaseQuery {
 
-	public function createTable($next_id, $nbr) {
-		if($nbr == 14){
-			$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
-			CREATE TABLE IF NOT EXISTS `temp_action` (
-			  `id` int(11) NOT NULL AUTO_INCREMENT,
-			  `reference` varchar(150) DEFAULT NULL,
-			  `prenoms` varchar(150) DEFAULT NULL,
-			  `email` varchar(50) NOT NULL,
-			  `instance` varchar(100) DEFAULT NULL,
-			  `contributeur` longtext COLLATE utf8_unicode_ci,
-			  `statut` varchar(40) DEFAULT NULL,
-			  `code_statut` varchar(40) DEFAULT NULL,
-			  `type_action` varchar(100) DEFAULT NULL,
-			  `domaine` varchar(50) DEFAULT NULL,
-			  `date_debut` varchar(10) DEFAULT NULL,
-			  `date_initial` varchar(10) DEFAULT NULL,
-			  `date_cloture` varchar(10) DEFAULT NULL,
-			  `libelle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-			  `description` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-			  `priorite` varchar(45) NULL,
-			  PRIMARY KEY (`id`)
-			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=%s;", $next_id));
-			$statement->execute();
-		}else{
-			$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
+	public function createTable($next_id) {
+		$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
 			CREATE TABLE IF NOT EXISTS `temp_action` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
 			  `prenoms` varchar(150) DEFAULT NULL,
@@ -46,19 +23,17 @@ class ActionQuery extends BaseQuery {
 			  `date_cloture` varchar(10) DEFAULT NULL,
 			  `libelle` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
 			  `description` longtext COLLATE utf8_unicode_ci DEFAULT NULL,
-			  `priorite` varchar(45) NULL,
+			  `priorite` varchar(45) NULL,		  
 			  PRIMARY KEY (`id`)
 			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=%s;", $next_id));
-			$statement->execute();
-		}
+		$statement->execute();
 	}
 	
-	public function loadTable($fileName, $web_dir, $next_id) {
+	public function loadTable($fileName, $web_dir) {
 		$newPath = $this->loadDataFile($fileName, 'action', $web_dir);
 		$erreurAction = null;
 		$handle = fopen($newPath, 'r');
 		$numberColumns = count(fgetcsv($handle, null, ';'));
-		$this->createTable($next_id, $numberColumns);
 		$index = 1;
 		while(($line = fgets($handle)) !== FALSE) {
 			$index++;
@@ -71,55 +46,18 @@ class ActionQuery extends BaseQuery {
 			throw new ORMException($erreurAction);
 		}
 		/*Insertion du chargement du fichier téléchargé dans la table temporaire*/
-		if ($numberColumns == 14){
-			$this->createTable($next_id, $numberColumns);
-			$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
-			CHARACTER SET latin1
-			FIELDS TERMINATED BY  ';'
-			LINES TERMINATED BY  '\\r\\n'
-			IGNORE 1 LINES
-			(`reference`,`prenoms`, `email`,`instance`, `contributeur`,
-			`statut` ,`type_action`,`domaine`,
-			`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
-			";
-			$this->connection->prepare($query)->execute();
-		}else{
-			$this->createTable($next_id, $numberColumns);
-			$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
-			CHARACTER SET latin1
-			FIELDS TERMINATED BY  ';'
-			LINES TERMINATED BY  '\\r\\n'
-			IGNORE 1 LINES
-			(`prenoms`, `email`,`instance`, `contributeur`,
-			`statut` ,`type_action`,`domaine`,
-			`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
-			";
-			$this->connection->prepare($query)->execute();
-		}
-		 return $numberColumns;
-	}
-	/*
-	 * insert in action_has_signalisation after prise en charge
-	 */
-	public function insertActionSign($action, $sign) {
-		$query="INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`) VALUES (".$action.",".$sign.")";
-		$this->connection->prepare($query)->execute();
-	}
-	public function miseAJourEntity(){
-		$sql = "UPDATE action a, utilisateur u SET a.structure_id = u.structure_id 
-				WHERE a.porteur_id = u.id 
-					AND  a.structure_id is not null 
-					AND a.etat_courant NOT like '%ACTION_SOLDEE%'
-					AND a.etat_courant NOT like '%ABANDONNEE%'";
-		$this->connection->prepare($sql)->execute();
+		$query="LOAD DATA INFILE '$newPath' INTO TABLE temp_action
+				CHARACTER SET latin1
+				FIELDS TERMINATED BY  ';'
+				LINES TERMINATED BY  '\\r\\n'
+				IGNORE 1 LINES
+				(`prenoms`, `email`,`instance`, `contributeur`,
+				`statut` ,`type_action`,`domaine`,
+				`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
+				";
+		 $this->connection->prepare($query)->execute();
 	}
 	
-	public function updateId($table){
-		$sql = "SET  @num := 0;";
-		$sql .= "UPDATE $table SET id = @num := (@num+1);";
-		$sql .= "ALTER TABLE $table AUTO_INCREMENT =1;";
-		$this->connection->prepare($sql)->execute();
-	}
 	/**
 	 * @throws \Exception
 	 * @return number
@@ -154,9 +92,10 @@ class ActionQuery extends BaseQuery {
 					$contributeurId = $contributeur;
 					break;
 				}
-			}
-			if(!$resultsAction[$i]['date_initial']){
+			}if(!$resultsAction[$i]['date_initial']){
 				$erreurAction .= sprintf("Le délai initial à la ligne %s n'est pas renseigné<br>", $i+2);
+			}if(!$resultsAction[$i]['date_debut']){
+				$erreurAction .= sprintf("La date de début à la ligne %s n'est pas renseigné<br>", $i+2);
 			}
 			if(preg_match("/[a-z]/i", $resultsAction[$i]['date_debut'])){
 				$erreurAction .= sprintf("Le format de la date de début à la ligne %s n'existe pas<br>", $i+2);
@@ -170,11 +109,11 @@ class ActionQuery extends BaseQuery {
 			if(ctype_digit($resultsAction[$i]['email'])==false) {
 				$erreurAction .= sprintf("Le porteur à la ligne %s n'existe pas<br>", $i+2);
 			}
-// 			if(!empty($membres)){
-// 				if(!in_array($resultsAction[$i]['email'], $membres)) {
-// 					$erreurAction .= sprintf("Le porteur à la ligne %s n'est pas membre dans l'espace.<br>", $i+2);
-// 				}
-// 			}
+			if(!empty($membres)){
+				if(!in_array($resultsAction[$i]['email'], $membres)) {
+					$erreurAction .= sprintf("Le porteur à la ligne %s n'est pas membre dans l'espace.<br>", $i+2);
+				}
+			}
 			if(ctype_digit($resultsAction[$i]['domaine'])==false) {
 				$erreurAction .= sprintf("Le domaine à la ligne %s n'existe pas<br>", $i+2);
 			}
@@ -206,36 +145,18 @@ class ActionQuery extends BaseQuery {
 	 * @param unknown $nouvelle_statut
 	 * @param \Orange\MainBundle\Entity\Utilisateur $current_user
 	 */
-	public function migrateData($nouvelle_statut, $current_user, $nl) {
-		if ($nl == 14){
-			$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`,
-   					`libelle`, `description`, `date_action`, `date_debut`,
-					`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`,
-					`animateur_id`)
-			select t.id,CONCAT(t.reference, CONCAT('-A_', t.id)), t.priorite, t.type_action,
-				  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
-				  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'),
-                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
-				  		from temp_action t;";
-		}else{
-			$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`,
-   					`libelle`, `description`, `date_action`, `date_debut`,
-					`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`,
-					`animateur_id`)
-			select t.id,CONCAT('A_', t.id), t.priorite, t.type_action,
-				  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
-				  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'),
-                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
-				  		from temp_action t;";
-		}
+	public function migrateData($nouvelle_statut, $current_user) {
+		$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`, 
+						   			`libelle`, `description`, `date_action`, `date_debut`, 
+									`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`, 
+									`animateur_id`) 
+						select t.id,CONCAT('A_', t.id), t.priorite, t.type_action, 
+								  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
+								  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'), 
+				                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
+								  		from temp_action t;";
 		$resultsAction = $this->connection->fetchAll("SELECT id ,email , contributeur, statut , code_statut, date_initial, date_cloture from temp_action ");
 		$query1="INSERT INTO action_has_statut (`id` ,`action_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
-		if ($nl == 14){
-			$q="INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
-			select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
-			
-			$qq= "UPDATE signalisation s SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' WHERE s.id IN (select a.signalisation_id from action_has_signalisation a);";
-		}
 		$query2="";
 		$query3='';
 		$query5='';
@@ -291,13 +212,8 @@ class ActionQuery extends BaseQuery {
 		$query1.=";"; 
 		$this->connection->prepare($query)->execute();
 		$this->connection->prepare($query1)->execute();
-		if($nl==14){
-			$this->connection->prepare($q)->execute();
-			$this->connection->prepare($qq)->execute();
-		}
 		if(strlen($query2)>0)
 		$this->connection->prepare($query2)->execute();
-		
 		
 		if(strlen($query3)>0){
 			$query3.=";";
@@ -316,4 +232,19 @@ class ActionQuery extends BaseQuery {
 		$statement->execute();
 	}
 	
+	public function miseAJourEntity(){
+		$sql = "UPDATE action a, utilisateur u SET a.structure_id = u.structure_id 
+				WHERE a.porteur_id = u.id 
+					AND  a.structure_id is not null 
+					AND a.etat_courant NOT like '%ACTION_SOLDEE%'
+					AND a.etat_courant NOT like '%ABANDONNEE%'";
+		$this->connection->prepare($sql)->execute();
+	}
+	
+	public function updateId($table){
+		$sql = "SET  @num := 0;";
+		$sql .= "UPDATE $table SET id = @num := (@num+1);";
+		$sql .= "ALTER TABLE $table AUTO_INCREMENT =1;";
+		$this->connection->prepare($sql)->execute();
+	}
 }

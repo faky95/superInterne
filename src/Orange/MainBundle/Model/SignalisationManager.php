@@ -63,16 +63,14 @@ class SignalisationManager
 	//prise en charge signalisation
 	public function priseEnChargeSignalisation($entity, $helper){
 		$instance = $entity->getSignalisation()->getInstance();
-		$source = $entity->getSignalisation()->getSource()->getUtilisateur()->getEmail();
-		$cst = $entity->getSignalisation()->getConstatateur()->getEmail();
-		$cc = array($source, $cst);
+		$source = $entity->getSignalisation()->getSource();
 		$destinataire = InstanceUtils::animateursEmail($this->em, $instance);
 		$copySignalisation = array('madisylla@orange.sn');
 		SignalisationUtils::addAnimateur ($this->em, $this->user, $entity->getSignalisation());
 		$subject = 'Prise en charge de la signalisation';
 		$commentaire = 'La signalisation intitulée : ' . $entity->getSignalisation()->getLibelle() . '
 								a été prise en charge par '.$this->user->getCompletNom().' .';
-		Notification::notificationSignWithCopy($helper, $subject, $destinataire, $cc, $commentaire, $entity);
+		Notification::notificationSignWithCopy($helper, $subject, $destinataire, $source->getUtilisateur()->getEmail(), $commentaire, $entity);
 		$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_PRISE_CHARGE, $entity->getSignalisation());
 	}
 	

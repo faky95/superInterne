@@ -35,7 +35,7 @@ class SignalisationType extends AbstractType
             		'empty_value' => '--- Choisir le périmètre ---',
             		'query_builder' => function(InstanceRepository $er ) use ( $user_id ) {
             			return $er->createQueryBuilder('i')
-		            			  ->where('i.parent = 55 OR i.parent = 139 OR i.typeAction = 2');
+		            			  ->where('i.parent = 55 OR i.parent = 139  OR i.typeInstance = 2');
             		}
             ))
             ->add('constatateur', null, array(

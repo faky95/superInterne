@@ -412,6 +412,7 @@ class Signalisation
     /**
      * Get action
      *
+     * @return \Doctrine\Common\Collections\Collection 
      */
     public function getAction()
     {
@@ -602,6 +603,13 @@ class Signalisation
 		$this->perimetre = $perimetre;
 		return $this;
 	}
+	public function getConstat() {
+		return $this->constat;
+	}
+	public function setConstat($constat) {
+		$this->constat = $constat;
+		return $this;
+	}
 	public function getStatut() {
 		return $this->statut;
 	}
@@ -628,13 +636,6 @@ class Signalisation
 	}
 	public function setUtilisateur($utilisateur) {
 		$this->utilisateur = $utilisateur;
-		return $this;
-	}
-	public function getConstat() {
-		return $this->constat;
-	}
-	public function setConstat($constat) {
-		$this->constat = $constat;
 		return $this;
 	}
 	

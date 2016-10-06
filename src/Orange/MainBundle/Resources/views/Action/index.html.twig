@@ -65,7 +65,7 @@
 					<div class="form-group">
 						{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
 						{% if  espace_id is empty %}
-							{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%', 'help' : 'Choisissez les instances à afficher'}}) }}
+							{{ form_widget(form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 						{% endif %}
 					</div>
 					<div class="form-group">
@@ -143,15 +143,15 @@
 			});
 	});
 </script>
-{# 	{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with #}
-{# 			{parent: form.instance, child: form.typeAction, url: path('type_by_instance'), key: 'id', empty_child: 'false'} #}
-{# 		%}#}
-{# 		{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with #}
-{# 			{parent: form.instance, child: form.domaine, url: path('domaine_by_instance'), key: 'id', empty_child: 'false' } #}
-{# 		%}#}
-{# 		{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with #}
-{# 			{parent: form.instance, child: form.porteur, url: path('porteur_by_instance'), key: 'id', empty_child: 'false' } #}
-{# 		%}#}
+	{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with 
+			{parent: form.instance, child: form.typeAction, url: path('type_by_instance'), key: 'id', empty_child: 'false'} 
+		%}
+		{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with 
+			{parent: form.instance, child: form.domaine, url: path('domaine_by_instance'), key: 'id', empty_child: 'false' } 
+		%}
+		{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with 
+			{parent: form.instance, child: form.porteur, url: path('porteur_by_instance'), key: 'id', empty_child: 'false' } 
+		%}
 {% endblock %}
 
 {% block pagescript %}

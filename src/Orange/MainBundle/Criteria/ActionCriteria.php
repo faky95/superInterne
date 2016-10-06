@@ -37,7 +37,7 @@ class ActionCriteria extends AbstractCriteria
 				}, 'empty_value' => '--- Choisir la structure---'
 			));
 		$builder->add('porteur', null, array('label' =>'Porteur', 'query_builder'=>function (UtilisateurRepository $ur)use($espace_id){
-		        	//	return($espace_id==0) ? $ur->filter() : $ur->getMembreEspace($espace_id);
+		        		return($espace_id==0) ? $ur->filter() : $ur->getMembreEspace($espace_id);
 		       	}, 'empty_value' => '--- Choisir le porteur ---'
 		    ));
 		$builder->add('typeAction', null, array('label' =>'Type', 'query_builder'=>function (TypeActionRepository $tr)use($espace_id) {
