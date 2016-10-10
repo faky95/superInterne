@@ -185,7 +185,7 @@
 																	                  <p> <b>Date de début</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ body.entity.action.dateDebut| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ body.entity.action.dateDebut| date("d/m/Y") }}</p>
 																	          </td>           
 																	      </tr>
 																	      <tr>
@@ -193,7 +193,7 @@
 																	                  <p> <b>Délai Initial</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ body.entity.action.dateInitial| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ body.entity.action.dateInitial| date("d/m/Y") }}</p>
 																	          </td>           
 																	      </tr>
 																	  </tbody>
@@ -281,7 +281,7 @@
 																	                  <p> <b>Date de constat</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ body.entity.signalisation.dateConstat| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ body.entity.signalisation.dateConstat| date("d/m/Y") }}</p>
 																	          </td>           
 																	      </tr>
 																	      <tr>
@@ -289,7 +289,7 @@
 																	                  <p> <b>Signalé le</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ body.entity.signalisation.dateSignale| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ body.entity.signalisation.dateSignale| date("d/m/Y") }}</p>
 																	          </td>           
 																	      </tr>
 																	  </tbody>
@@ -335,8 +335,8 @@
 																			{% if body.changeSet.dateInitial is defined and body.changeSet.dateInitial is not empty %}
 																				<tr style="height:20px;">
 																					<td>Délai Initial</td>
-																					<td>{{ body.changeSet.dateInitial[0]| localizeddate('full', 'none') }}</td>
-																					<td>{{ body.changeSet.dateInitial[1]| localizeddate('full', 'none') }}</td>
+																					<td>{{ body.changeSet.dateInitial[0]| date("d/m/Y") }}</td>
+																					<td>{{ body.changeSet.dateInitial[1]| date("d/m/Y") }}</td>
 																				</tr>
 																			{% endif %}
 																			{% if body.changeSet.instance is defined and body.changeSet.instance is not empty %}

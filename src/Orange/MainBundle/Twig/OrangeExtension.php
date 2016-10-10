@@ -52,7 +52,8 @@ class OrangeExtension extends \Twig_Extension {
     public function getFilters() {
         return array(
             'show_status' => new \Twig_Filter_Method($this, 'showStatus', array('is_safe' => array('html'))),
-            'get_statut' => new \Twig_Filter_Method($this, 'getStatutForAction', array('is_safe' => array('html')))
+            'get_statut' => new \Twig_Filter_Method($this, 'getStatutForAction', array('is_safe' => array('html'))),
+        	'get_statut_signalisation' => new \Twig_Filter_Method($this, 'getStatutForSignalisation', array('is_safe' => array('html')))
         );
     }
     
@@ -84,6 +85,14 @@ class OrangeExtension extends \Twig_Extension {
      */
     public function getStatutForAction($entity) {
     	return $this->em->getRepository('OrangeMainBundle:Statut')->getStatutForAction($entity);
+    }
+    
+    /**
+     *
+     * @param \Orange\MainBundle\Entity\Signalisation $entity
+     */
+    public function getStatutForSignalisation($entity) {
+    	return $this->em->getRepository ( 'OrangeMainBundle:Statut' )->getStatutForSignalisation ( $entity );
     }
 
     public function getName() {

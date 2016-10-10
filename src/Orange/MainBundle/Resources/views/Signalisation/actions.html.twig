@@ -19,12 +19,10 @@
 			                <tbody>
 			                {% if actions is defined and actions is not empty %}
 			                	{% for action in actions %}
-			                		{% set actionStatutKey  = action.actionStatut|length - 1 %}
-									{% set statut =  action.actionStatut[actionStatutKey].statut.code %}
 				                    <tr class="odd gradeX">
 										<td align="center" width="110px">{{ action.libelle }}</td>
 										<td align="center" width="150px">{{ action.porteur }}</td>
-										<td align="center" width="180px">{{ action.actionStatut[actionStatutKey].statut.libelle }}</td>
+										<td align="center" width="180px">{{ action|get_statut }}</td>
 										<td align="center" width="130px">
 											<div class="btn-group">
 									      		<a class="btn btn-default" href="{{ path('details_action', { 'id': action.id }) }}" title="Détails sur l'action "><span class="icomoon-icon-eye"></span></a>

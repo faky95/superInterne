@@ -15,19 +15,16 @@
                         <div class="panel panel-default gradient invoice">
                             <div class="panel-heading clearfix">
                                 <h4 class="left">
-                                    <span class="red">Action <strong> référence {{ action.reference }} </strong></span>
+                                    <span class="red"> Référence Action <strong> {{ action.reference }} </strong></span>
                                 </h4>
-{#                                 <h4 class="right">#}
-{#                                 	<div style="float: right"><a href="{{ path('edition_action', {'id':action.id}) }}" class="tip" title="Modifier l'action"><span class="icomoon-icon-pencil-4"></span></a></div>#}
-{#                             	</h4>#}
                             </div>
                             <div class="panel-body row" style="margin-left:0; margin-right:0;">
                                  <div class="you col-lg-6 col-md-6 col-sm-6" >
                                     <ul class="list-unstyled">
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ action.libelle }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement : <strong class="red">{{ action.dateAction| localizeddate('full', 'none')  }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ action.dateDebut| localizeddate('full', 'none')  }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement : <strong class="red">{{ action.dateAction| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ action.dateDebut| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| date("d/m/Y")  }}</strong></li>
                                         
                                     </ul>
                                  </div>    
@@ -81,7 +78,7 @@
 		                                            	<span class="by label label-danger" style="width: 10%;display: inline-block;">Non renseigné</span>
 		                                            	<span style="width: 15%;display: inline-block;">&nbsp;</span>
 		                                            
-		                                            <span class="date" style="width: 20%;display: inline-block;">{{ document.dateCreation | localizeddate('full', 'none') }}</span>
+		                                            <span class="date" style="width: 20%;display: inline-block;">{{ document.dateCreation | date("d/m/Y") }}</span>
 		                                        </div>
 		                                        <div class="controls">
 		                                        {% if action.porteur.id==app.user.id or action|has_rights_animateur or action|has_rights_manager or has_rights('ROLE_ADMIN') %}

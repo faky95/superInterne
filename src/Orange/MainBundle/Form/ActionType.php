@@ -30,7 +30,11 @@ class ActionType extends AbstractType
         $builder->add('libelle', null, array('label'=>'Nom de l\'action :'))
             ->add('description', null,array('label'=>'Description :') )
             ->add('dateDebut', 'date', array('label' => 'Date de Début :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
-            ->add('porteur', null, array('label'=>'Porteur :', 'empty_value' => '--- Choix Porteur ---'
+            ->add('porteur', null, array('label'=>'Porteur :', 'empty_value' => '--- Choix Porteur ---', 
+            		                     'query_builder' => function(UtilisateurRepository $ur) use($options){
+            		                     	if(isset($options['attr']['manager']))
+						                         return $ur->managerQueryBuilder()->select('u4');
+					}
             ))
             ->add('dateInitial', 'date', array('label' => 'Délai Initial :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('priorite','entity', array('label'=>'Priorite :', 'class'=>'Orange\MainBundle\Entity\Priorite', 'empty_value' => '--- Choix Priorite ---'

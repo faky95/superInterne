@@ -187,6 +187,45 @@ class SignalisationRepository extends BaseRepository{
 		return $data['total'];
 	}
 	
+	public function forCanevas($criteria){
+		$queryBuilder = $this->filter();
+		$fromDateConstat= $criteria->getFromDateConstat();
+		$toDateConstat= $criteria->getToDateConstat();
+		$fromDateSignale= $criteria->getFromDateSignale();
+		$toDateSignale= $criteria->getToDateSignale();
+		$perimetre = $criteria->getPerimetre();
+		$constatateur = $criteria->getConstatateur();
+		$source = $criteria->getUtilisateur();
+		$domaine = $criteria->getDom();
+		$type = $criteria->getType();
+		$statut = $criteria->getStatut();
+		if($type) {
+			$queryBuilder->andWhere('sign.typeSignalisation = :type')->setParameter('type', $type);
+		}
+		if($domaine) {
+			$queryBuilder->andWhere('sign.domaine = :domaine')->setParameter('domaine', $domaine);
+		}
+		if($statut) {
+			$queryBuilder->andWhere('sign.etatCourant = :code')->setParameter('code', $statut->getCode());
+		}
+		if($constatateur) {
+			$queryBuilder->andWhere('sign.constatateur = :const')->setParameter('const', $constatateur);
+		}
+		if($source) {
+			$queryBuilder->innerJoin('sign.source', 'sour')->andWhere('sour.utilisateur = :source')->setParameter('source', $source);
+		}
+		if($perimetre) {
+			$queryBuilder->andWhere('sign.instance = :perimetre')->setParameter('perimetre', $perimetre);
+		}
+		if($fromDateConstat) {
+			$queryBuilder->andWhere('sign.dateConstat >= :from and sign.dateConstat <= :to')->setParameter('to', $toDateConstat)->setParameter('from', $fromDateConstat);
+		}
+		if($fromDateSignale) {
+			$queryBuilder->andWhere('sign.dateSignale >= :from and sign.dateSignale <= :to')->setParameter('to', $toDateSignale)->setParameter('from', $fromDateSignale);
+		}
+		return $queryBuilder->andWhere("sign.etatCourant LIKE '%NOUVELLE%'");
+	}
+	
 	public function actionSignalisationId($signalisation_id)
 	{
 		$connection = $this->_em->getConnection();

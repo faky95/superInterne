@@ -676,12 +676,13 @@ class ActionController extends BaseController
     }
      
     /**
-     * @Route("/chargement_action", name="chargement_action")
+     * @Route("/chargement_action/{isCorrective}", name="chargement_action")
      * @Template()
      */
-    public function loadingAction() {
+    public function loadingAction($isCorrective=0) {
         $form = $this->createForm(new LoadingType());
-        return array('form' => $form->createView());
+        $form->add('isCorrective','hidden');
+        return array('form' => $form->createView(),'isCorrective'=>$isCorrective);
     }
     
     /**
@@ -695,11 +696,13 @@ class ActionController extends BaseController
     	$em   = $this->getDoctrine()->getManager();
     	$array =  array();
         $form = $this->createForm(new LoadingType());
+        $form->add('isCorrective','hidden');
         $users=$em->getRepository('OrangeMainBundle:Utilisateur')->getArrayUtilisateur();
         $instances=$em->getRepository('OrangeMainBundle:Instance')->getArrayInstance();
         $form->handleRequest($request);
         if($form->isValid()) {
             $data = $form->getData();
+            $isCorrective = intval($data['isCorrective']);
             try {
             	if($espace_id){
             		$idsMembres = $em->getRepository('OrangeMainBundle:MembreEspace')->getAllMembres($espace_id);
@@ -707,7 +710,7 @@ class ActionController extends BaseController
             			array_push($array, $value['id']);
             		}
             	}
-                $number = $this->get('orange.main.loader')->loadAction($data['file'], $this->getUser(), $users, $instances, $array);
+                $number = $this->get('orange.main.loader')->loadAction($data['file'], $this->getUser(), $users, $instances, $data['isCorrective']);
                 $actions = $em->getRepository('OrangeMainBundle:Action')->getActions($number['id']);
                 $nbr = $number['nbr'];
                 foreach ($actions as $value){
@@ -727,7 +730,7 @@ class ActionController extends BaseController
         if ($espace_id){
         	return $this->render('OrangeMainBundle:Action:loadingForEspace.html.twig', array('form' => $form->createView(), 'espace_id' => $espace_id));
         }else{
-        	return $this->render('OrangeMainBundle:Action:loading.html.twig', array('form' => $form->createView()));
+        	return $this->render('OrangeMainBundle:Action:loading.html.twig', array('form' => $form->createView(), 'isCorrective'=>$isCorrective));
         }
     }
     

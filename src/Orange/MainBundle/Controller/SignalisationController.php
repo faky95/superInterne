@@ -84,6 +84,8 @@ class SignalisationController extends BaseController
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Signalisation')->listAllElements($criteria);
 		$this->get('session')->set('data',array('query' => $queryBuilder->getDql(),'param' =>$queryBuilder->getParameters()) );
+		$queryCanevas = $em->getRepository('OrangeMainBundle:Signalisation')->forCanevas($criteria);
+		$this->get('session')->set('canevas',array('query' => $queryCanevas->getDql(),'param' =>$queryCanevas->getParameters()) );
 		return $this->paginate($request, $queryBuilder);
 	}
 	
@@ -104,6 +106,23 @@ class SignalisationController extends BaseController
 		$objWriter->save($this->web_dir."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
+	/**
+	 * @QMLogger(message="Extraction des canevas")
+	 * @Route("/export_canevas", name="export_canevas")
+	 * @Template()
+	 */
+	public function exportCanevasAction() {
+		$em = $this->getDoctrine()->getEntityManager();
+		$queryBuilder = $this->get('session')->get('canevas', array());
+		$query = $em->createQuery($queryBuilder['query']);
+		$query->setParameters($queryBuilder['param']);
+		$data = $this->get('orange.main.data')->exportCanevas($query->execute());
+		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
+		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
+		$objWriter->save($this->web_dir."/upload/reporting/$filename");
+		return $this->redirect($this->getUploadDir().$filename);
+	}
+	
 	
     /**
      * @Route("/traitement_signalisation/{signalisation_id}", name="traitement_signalisation")

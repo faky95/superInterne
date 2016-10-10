@@ -41,7 +41,8 @@
 				        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de la Signalisation : <strong class="red">{{ entity.dateSignale|date("d/m/Y")  }}</strong></li>
 						<li><span class="icon16 icomoon-icon-arrow-right-3"></span>Périmétre : <strong class="red">{{ entity.instance }}</strong></li>
                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Type : <strong class="red">{{ entity.typeSignalisation }}</strong></li>
-                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Site : <strong class="red">{{ entity.site }}</strong></li>*
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Site : <strong class="red">{{ entity.site }}</strong></li>
+                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Statut : <strong class="red">{{ entity|get_statut_signalisation() }}</strong></li>
 					</ul>
 				</div>
 				<div class="you col-lg-12 col-md-6 col-sm-6" >

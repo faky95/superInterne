@@ -51,7 +51,7 @@
 				{{ render(controller('OrangeMainBundle:ActionStatut:listeInvalidation', {'action_id': entity.id})) }}
 			{% elseif ( etatReel == 'ACTION_NON_ECHUE' or etatReel == 'ACTION_ECHUE_NON_SOLDEE') and app.user.id == entity.porteur.id and entity.actionCyclique is empty  %}
 				<div class="form-group">
-		        	<p id="compte_a_rebour"></p>Vous pouvez toujours effectuer l'une les actions ci-dessous.
+		        	<p id="compte_a_rebour"></p>Vous pouvez effectuer l’une des actions suivantes
 		    	</div>
 				<div class="form-group">
 					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url="{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">

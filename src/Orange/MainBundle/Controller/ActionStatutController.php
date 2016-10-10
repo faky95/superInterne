@@ -22,8 +22,6 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 class ActionStatutController extends BaseController
 {
 	
-	
-	
 	/**
 	 * @Route("/traitement/{action_id}", name="traitement_action")
 	 * @Template()

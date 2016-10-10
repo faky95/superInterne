@@ -107,7 +107,7 @@
 		 {% block body %}
     		<!-- Modal -->
 				    {%- block modal -%}
-				     		<div style="min-width: 500px; " align="center" class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+				     		<div style="min-width: 500px; " align="center" class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
 						   </div>
 				   {%- endblock modal -%}
 		 <!-- loading animation -->
@@ -214,7 +214,7 @@
 				
 				
 				<!-- Modal -->
-				<div id="changePasswordDialog" class="modal fide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div id="changePasswordDialog" class="modal fide fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
 				      <!-- Modal content-->
 				      	<div class="modal-content">
@@ -351,12 +351,6 @@
 		 	{% endblock %}
 		 	
 		 	<script type="text/javascript">
-			 	$(document).ready(function() {
-				  $("select").select2();
-				});
-		 	</script>
-		 	
-		 	<script type="text/javascript">
 		 	function alertAfterModalError(thrownError, xhr) {
 				//$("#myModal").modal("hide");
 				response = {type:"warning", title:"Erreur", text:"Une erreur inattendue s'est produite durant le traitement !!"};
@@ -377,26 +371,11 @@
 			 		$("#myModal").modal("hide");
 				});
 			</script>
-{# 			<script type="text/javascript">#}
-{# 				$(function(){#}
-{# 				    $(".mychosen").chosen();#}
-{# 				});#}
-{# 			    // document ready function#}
-{# 				    $(document).ready(function() {#}
-{# 				    	$(':checkbox').checkboxpicker(); #}
-{# 				        $("#tags").select2({#}
-{# 				            tags:["red", "green", "blue", "orange"]#}
-{# 				        });#}
-						
-{# 				        $('.iToggle-button').toggleButtons({#}
-{# 				            width: 70,#}
-{# 				            label: {#}
-{# 				                enabled: "<span class='icon16 icomoon-icon-checkmark white'></span>",#}
-{# 				                disabled: "<span class='icon16 icomoon-icon-close white marginL10'></span>"#}
-{# 				            }#}
-{# 				        });#}
-{# 				    });//End document ready functions#}
-{# 			</script>#}
+			<script type="text/javascript">
+			 	$(document).ready(function() {
+				  $("select").select2();
+				});
+		 	</script>
 		 {% endblock %}
 	 </body>
 </html>

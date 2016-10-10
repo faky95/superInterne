@@ -10,6 +10,7 @@ class ActionQuery extends BaseQuery {
 		$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;
 			CREATE TABLE IF NOT EXISTS `temp_action` (
 			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `reference` varchar(100) DEFAULT NULL,
 			  `prenoms` varchar(150) DEFAULT NULL,
 			  `email` varchar(50) NOT NULL,
 			  `instance` varchar(100) DEFAULT NULL,
@@ -29,7 +30,7 @@ class ActionQuery extends BaseQuery {
 		$statement->execute();
 	}
 	
-	public function loadTable($fileName, $web_dir) {
+	public function loadTable($fileName, $web_dir,$next_id,$isCorrective) {
 		$newPath = $this->loadDataFile($fileName, 'action', $web_dir);
 		$erreurAction = null;
 		$handle = fopen($newPath, 'r');
@@ -46,15 +47,27 @@ class ActionQuery extends BaseQuery {
 			throw new ORMException($erreurAction);
 		}
 		/*Insertion du chargement du fichier téléchargé dans la table temporaire*/
-		$query="LOAD DATA INFILE '$newPath' INTO TABLE temp_action
-				CHARACTER SET latin1
-				FIELDS TERMINATED BY  ';'
-				LINES TERMINATED BY  '\\r\\n'
-				IGNORE 1 LINES
-				(`prenoms`, `email`,`instance`, `contributeur`,
-				`statut` ,`type_action`,`domaine`,
-				`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
-				";
+		if($isCorrective==0)
+				$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
+						CHARACTER SET latin1
+						FIELDS TERMINATED BY  ';'
+						LINES TERMINATED BY  '\\r\\n'
+						IGNORE 1 LINES
+						(`prenoms`, `email`,`instance`, `contributeur`,
+						`statut` ,`type_action`,`domaine`,
+						`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
+						";
+		else 
+				$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
+						CHARACTER SET latin1
+						FIELDS TERMINATED BY  ';'
+						LINES TERMINATED BY  '\\r\\n'
+						IGNORE 1 LINES
+						(`reference`,`prenoms`, `email`,`instance`, `contributeur`,
+						`statut` ,`type_action`,`domaine`,
+						`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
+						";
+			
 		 $this->connection->prepare($query)->execute();
 	}
 	
@@ -145,91 +158,67 @@ class ActionQuery extends BaseQuery {
 	 * @param unknown $nouvelle_statut
 	 * @param \Orange\MainBundle\Entity\Utilisateur $current_user
 	 */
-	public function migrateData($nouvelle_statut, $current_user) {
-		$query="INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`, 
+	public function migrateData($nouvelle_statut, $current_user,$isCorrective) {
+		$ref = $isCorrective==0 ? "CONCAT('A_', t.id)" : "CONCAT(t.reference, CONCAT('-A_', t.id))";
+		$query = "update temp_action t
+                set t.code_statut =
+				CASE
+				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')<STR_TO_DATE(t.date_cloture,'%d/%m/%Y') ) or (t.date_cloture='' and STR_TO_DATE(t.date_initial, '%d/%m/%Y')<NOW())) THEN '" . Statut::ACTION_SOLDEE_HORS_DELAI . "'
+				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')>=STR_TO_DATE(t.date_cloture,'%d/%m/%Y') ) or (t.date_cloture!='' and STR_TO_DATE(t.date_initial, '%d/%m/%Y')>=NOW() )) THEN '" . Statut::ACTION_SOLDEE_DELAI . "'
+				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')<NOW() THEN '" . Statut::ACTION_ECHUE_NON_SOLDEE . "'
+				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')>=NOW() THEN '" . Statut::ACTION_NON_ECHUE . "'
+				END
+				where t.code_statut = '" . Statut::ACTION_SOLDEE . "' or t.code_statut = '" . Statut::ACTION_EN_COURS . "';";
+		
+		$query .= "INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`, 
 						   			`libelle`, `description`, `date_action`, `date_debut`, 
 									`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`, 
 									`animateur_id`) 
-						select t.id,CONCAT('A_', t.id), t.priorite, t.type_action, 
-								  		t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
-								  		STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'), 
-				                      t.domaine,  t.instance, t.code_statut, t.code_statut, t.email,".$current_user->getId()."
-								  		from temp_action t;";
-		$resultsAction = $this->connection->fetchAll("SELECT id ,email , contributeur, statut , code_statut, date_initial, date_cloture from temp_action ");
-		$query1="INSERT INTO action_has_statut (`id` ,`action_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
-		$query2="";
-		$query3='';
-		$query5='';
-		$test=0;
+					select t.id,".$ref.", t.priorite, t.type_action, 
+								  	 t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
+								  	 STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'), 
+				                     t.domaine,  t.instance, t.code_statut, t.code_statut, t.email," . $current_user->getId () . "
+								  	 from temp_action t;";
+		
+		$query .= "INSERT INTO action_has_statut (`id` ,`action_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) 
+					select null, t.id, st.id, NOW()," . $current_user->getId () . ", 'action importée avec succés'
+					from temp_action t
+					inner join statut st on st.code =t.code_statut;";
+		
+		if ($isCorrective == 1){
+			$query .= "INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
+			           select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
+				
+			$query.= "UPDATE signalisation s 
+					  LEFT JOIN action_has_signalisation ahs on s.id = a.signalisation_id
+					  SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' 
+					  WHERE a.signalisation_id is not null;";
+		}
+		
+		$query2 = "";
+		$test = 0;
+		$resultsAction = $this->connection->fetchAll("SELECT id , contributeur from temp_action ");
 		for($i=0; $i<count($resultsAction);$i++) {
 			$id=$resultsAction[$i]['id'];
-			$code_statut=$resultsAction[$i]['code_statut'];
-			$statut=0; 
-			if($resultsAction[$i]['code_statut']==Statut::ACTION_EN_COURS){
-				if($resultsAction[$i]['date_initial']>\date('dd/mm/YYYY')){
-					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_ECHUE_NON_SOLDEE."' ")[0];
-					$code_statut=Statut::ACTION_ECHUE_NON_SOLDEE;
-				}else{ 
-					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_NON_ECHUE."' ")[0];
-					$code_statut=Statut::ACTION_NON_ECHUE;
+			$idsContrib=\explode(',', $resultsAction[$i]['contributeur']);
+			foreach ($idsContrib as $key=>$val){
+				if(strlen($val)>0){
+					$query2.="INSERT INTO contributeur (`id` ,`action_id`,`utilisateur_id`) values";
+					$query2 .= "(null,".$id.",".$val.");";
 				}
-				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
-				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
-			}elseif($resultsAction[$i]['code_statut']==Statut::ACTION_SOLDEE){
-				if($resultsAction[$i]['date_initial']<$resultsAction[$i]['date_cloture']){
-					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_SOLDEE_HORS_DELAI."' ")[0];
-					$code_statut=Statut::ACTION_SOLDEE_HORS_DELAI;
-				}else{
-					$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_SOLDEE_DELAI."' ")[0];
-					$code_statut=Statut::ACTION_SOLDEE_DELAI;
-				}
-				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
-				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
-			}elseif($resultsAction[$i]['code_statut']==Statut::ACTION_ABANDONNEE){
-				$statut=$this->connection->fetchArray("SELECT id from statut where code='".Statut::ACTION_ABANDONNEE."' ")[0];
-				$code_statut=Statut::ACTION_ABANDONNEE;
-				$query3.="UPDATE action set etat_courant='".$code_statut."' where id='".$id."';";
-				$query5.="UPDATE action set etat_reel='".$code_statut."' where id='".$id."';";
-			}else{
-				$statut=$this->connection->fetchArray("SELECT id from statut where code='".$code_statut."' ")[0];
 			}
-			if($i==0){
-				$query1 .= "(null,".($resultsAction[$i]['id']).",".$statut.",NOW() ,".$current_user->getId().", 'action import�e avec succ�s')";
-			} else {
-				$query1 .= ",(null,".($resultsAction[$i]['id']).",".$statut.",NOW() ,".$current_user->getId().", 'action import�e avec succ�s')";
-			}
-				$idsContrib=\explode(',', $resultsAction[$i]['contributeur']);
-					foreach ($idsContrib as $key=>$val){
-						if(strlen($val)>0){
-							$query2="INSERT INTO contributeur (`id` ,`action_id`,`utilisateur_id`) values";
-							$query2 .= "(null,".($resultsAction[$i]['id']).",".$val.");";
-							
-						}
-					}
+		}
 					
-		}
-		
-		$query1.=";"; 
 		$this->connection->prepare($query)->execute();
-		$this->connection->prepare($query1)->execute();
 		if(strlen($query2)>0)
-		$this->connection->prepare($query2)->execute();
-		
-		if(strlen($query3)>0){
-			$query3.=";";
-			$this->connection->prepare($query3)->execute();
-		}
-		if(strlen($query5)>0){
-			$query5.=";";
-			$this->connection->prepare($query5)->execute();
-		}
+	    	$this->connection->prepare($query2)->execute();
 		$query4 = "UPDATE action set priorite_id=null where priorite_id=0;";
 		$this->connection->prepare($query4)->execute();
 	}
 	
 	public function deleteTable() {
-		$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;"));
-		$statement->execute();
+ 		$statement = $this->connection->prepare(sprintf("DROP TABLE IF EXISTS `temp_action`;"));
+ 		$statement->execute();
 	}
 	
 	public function miseAJourEntity(){

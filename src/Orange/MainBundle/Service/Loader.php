@@ -120,13 +120,16 @@ class Loader {
 		$query->deleteTable();
 		return $number;
 	}
-	
 	/**
+	 * 
 	 * @param \Symfony\Component\HttpFoundation\File\UploadedFile $file
 	 * @param \Orange\MainBundle\Entity\Utilisateur $current_user
-	 * @return integer
+	 * @param unknown $users
+	 * @param unknown $instances
+	 * @param integer $isCorrective
+	 * @return number
 	 */
-	public function loadAction($file, $current_user, $users, $instances) {
+	public function loadAction($file, $current_user, $users, $instances, $isCorrective) {
 		$repository = $this->em->getRepository('OrangeMainBundle:Action');
 		$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NOUVELLE));
 		$statuts=$this->em->getRepository('OrangeMainBundle:Statut')->getArrayStatutImport();
@@ -134,9 +137,9 @@ class Loader {
 		$query = new ActionQuery($this->em->getConnection());
 		$next_id = $repository->getNextId();
 		$query->createTable($next_id);
-		$nl = $query->loadTable($file->getPathname(), $this->web_dir, $next_id);
+		$nl = $query->loadTable($file->getPathname(), $this->web_dir, $next_id,$isCorrective);
 		$number = $query->updateTable($users, $instances,$statuts,$lesMails);
-		$query->migrateData($nouvelle_statut, $current_user, $nl);
+		$query->migrateData($nouvelle_statut, $current_user, $isCorrective);
 		$query->deleteTable();
 		return $number;
 	}

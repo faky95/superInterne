@@ -56,6 +56,16 @@ class StatutRepository extends BaseRepository {
 			->getQuery()
 			->getOneOrNullResult();
 	}
+	/**
+	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+	 */
+	public function getStatutForSignalisation($signalisation) {
+		return $this->createQueryBuilder('q')
+		->innerJoin('OrangeMainBundle:Signalisation', 'a', 'WITH', 'a.etatCourant = q.code')
+		->where('a = :sign')->setParameter('sign', $signalisation)
+		->getQuery()
+		->getOneOrNullResult();
+	}
 }
 
 ?>

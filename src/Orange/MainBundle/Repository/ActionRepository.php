@@ -594,15 +594,22 @@ class ActionRepository extends BaseRepository {
 			->innerJoin('a.porteur', 'port')
 			->leftJoin('a.priorite', 'priori')
 			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')
-			->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi');
+			->innerJoin('a.porteur', 'mp')
+			->innerJoin('a.instance', 'mi');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ADMIN)) {
 			$structure_id = $this->_user->getStructure()->getRoot();
 			$structure=$this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id);
-			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.structure)', $this->_user->getChildrenForStructure( $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id))));
-			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getAllInstances($structure)));
+			$bu = $structure->getBuPrincipal();
+			$idsInstances =array();
+			foreach($bu->getInstance() as $inst)
+				$idsInstances[] = $inst->getId();
+				
+			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $idsInstances));
+			//$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.structure)', $this->_user->getChildrenForStructure( $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id))));
+			//$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getAllInstances($structure)));
 			
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ANIMATEUR)) {
@@ -1786,8 +1793,6 @@ class ActionRepository extends BaseRepository {
     				$arrData[$i]=array( 'total'=>intval($value['total']));
     				if ($value['action_etat']!=null)
     					$arrData[$i]['etatCourant']=$value['action_etat'];
-//     					else
-//     						$arrData[$i]['etatCourant']=$value['tache_etat'];
     			}else{
     				$aide=false;
     				for ($j=0; $j<count($arrData);$j++){
@@ -1798,21 +1803,12 @@ class ActionRepository extends BaseRepository {
     							break;
     						}
     					}
-//     					else{
-//     						if ($arrData[$j]['etatCourant']==$value['tache_etat'] ){
-//     							$arrData[$j]['total']+=intval($value['total']);
-//     							$aide=true;
-//     							break;
-//     						}
-//     					}
     				}
     				if($aide==false){
     					$i++;
     					$arrData[$i]=array( 'total'=>intval($value['total']));
     					if ($value['action_etat']!=null)
     						$arrData[$i]['etatCourant']=$value['action_etat'];
-//     						else
-//     							$arrData[$i]['etatCourant']=$value['tache_etat'];
     				}
     					
     			}
