@@ -8,6 +8,8 @@ use Orange\MainBundle\Entity\Source;
 
 class SourceRepository extends EntityRepository{
 	
+	
+	
 	public function allSources(){
 		return $this->createQueryBuilder('s')
 		->select('u.id')
@@ -35,6 +37,15 @@ class SourceRepository extends EntityRepository{
 		->innerJoin('q.utilisateur', 'u')
 		->getQuery()
 		->execute();
+	}
+	
+	public function allSourcesWithSignalisation(){
+		return $this->createQueryBuilder('s')
+		->select('u.id')
+		->innerJoin('s.utilisateur', 'u')
+		->innerJoin('s.signalisation', 'sign')
+		->getQuery()
+		->getResult();
 	}
 }
 ?>

@@ -48,8 +48,7 @@ class SignalisationController extends BaseController
 	public function indexAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
-		$ids = $em->getRepository('OrangeMainBundle:Source')->allSources();
-		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids, 'user'=>$this->getUser())));
+		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'user'=>$this->getUser())));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {
@@ -61,10 +60,6 @@ class SignalisationController extends BaseController
 		} else {
 			$this->get('session')->set('signalisation_criteria', new Request());
 		}
-// 		$entities = $em->getRepository('OrangeMainBundle:Signalisation')->findAll();
-// 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatutSign();
-// 		$data = $this->get('orange.main.mapping')->exportSignalisation($entities,  $statut->getQuery()->execute());
-// 		$this->get('session')->set('data_export',array('data' => $data) );
 		return array('form' => $form->createView());
 	}
 	
@@ -77,9 +72,7 @@ class SignalisationController extends BaseController
 	 */
 	public function listAction(Request $request) {
 		$em = $this->getDoctrine()->getManager();
-		$ids = $em->getRepository('OrangeMainBundle:Source')->allSources();
-		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'ids'=> $ids, 'user'=>$this->getUser())));
-	//	$form = $this->createForm(new SignalisationCriteria($this->getUser()));
+		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'user'=>$this->getUser())));
 		$this->modifyRequestForForm($request, $this->get('session')->get('signalisation_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Signalisation')->listAllElements($criteria);

@@ -4,12 +4,14 @@ namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Orange\MainBundle\Validator\Constraints\ActionReportDate as ARAssert;
 
 /**
  * ActionReport
  *
  * @ORM\Table(name="action_report")
  * @ORM\Entity
+ * @ARAssert
  */
 class ActionReport
 {

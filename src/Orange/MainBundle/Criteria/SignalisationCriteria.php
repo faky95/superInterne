@@ -22,7 +22,6 @@ class SignalisationCriteria extends AbstractCriteria
     {
     	$user =(isset($options['attr']['user']))?$options['attr']['user']:null;
 		$structure_id = $user->getStructure()->getId();
-		$ids=(isset($options['attr']['ids']))?$options['attr']['ids']:null;
 		
     	$builder
     		->add('perimetre', 'entity', array('class'=>'Orange\MainBundle\Entity\Instance',
@@ -55,9 +54,9 @@ class SignalisationCriteria extends AbstractCriteria
    					'label' => 'La souce :',
    					'required' => false,
    					'empty_value' => '--- Choisir la source ---',
-  				'query_builder' => function(UtilisateurRepository $er ) use ($ids) {
+  				'query_builder' => function(UtilisateurRepository $er ) {
    				return $er->createQueryBuilder('q')
-   				->where('q.id IN (:ids)')->setParameters(array('ids' => $ids));
+   				          ->innerJoin('q.sources', 's')->innerJoin('s.signalisation', 'sign');
     			}
    					))
    			->add('statut', 'entity', array('class' => 'OrangeMainBundle:Statut', 'query_builder' => function(EntityRepository $er) {

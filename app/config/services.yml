@@ -86,7 +86,7 @@ services:
         arguments: ["@mailer", "@templating"]
         
     orange.validator.report:                             
-        class: Orange\MainBundle\Validator\Constraints\ActionDateReportValidator   
+        class: Orange\MainBundle\Validator\Constraints\ActionReportDateValidator   
         tags:
             - { name: validator.constraint_validator, alias: report_date }
         

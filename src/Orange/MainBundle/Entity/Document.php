@@ -235,8 +235,10 @@ class Document
     public function preUpload() {
         if (null !== $this->file) {
     		$this->libelle = $this->file->getClientOriginalName();
+    		$toArray =explode('.', $this->libelle);
+    		$extension= end($toArray);
             // faites ce que vous voulez pour générer un nom unique
-            $this->nomFichier = sha1(uniqid(mt_rand(), true)).'.'.$this->file->guessExtension();
+            $this->nomFichier = sha1(uniqid(mt_rand(), true)).'.'.$extension;
         }
     }
 

@@ -83,6 +83,7 @@ class ActionReportController extends Controller
     	$em = $this->getDoctrine()->getManager();
     	$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
     	$entity = new ActionReport();
+    	$entity->setAction($action);
     	$statut = new ActionStatut();
     	$form = $this->createCreateForm($entity,'ActionReport');
     	$form->handleRequest($request);

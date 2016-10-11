@@ -134,7 +134,7 @@ class DomaineRepository extends BaseRepository{
 		->innerJoin('d.instance', 'i')
 		->where('i.id = :id AND d.libelleDomaine LIKE :libelle')
 		->setParameter('id', $id)
-		->setParameter('libelle', '%'.'_'.$libelle.'_'.'%')
+		->setParameter('libelle', '%\_'.$libelle.'\_%')
 		->distinct()
 		->getQuery()->getArrayResult();
 	}

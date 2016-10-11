@@ -57,7 +57,7 @@ class ActionVoter extends AbstractVoter {
 				break;
 			case self::READ:
 				// S'il est le porteur désigné de l'
-				if(($user->getId() === $action->getPorteur()->getId()) || ($this->isInstanceAnimateur($action, $user)) || ($this->isBuAdministrateur($action, $user)) || ($this->isGestionnaireEspace($action, $user))) {
+				if(($user->getId() === $action->getPorteur()->getId()) || ($this->isInstanceAnimateur($action, $user)) || ($this->isBuAdministrateur($action, $user)) || ($this->isGestionnaireEspace($action, $user)) || ($this->isContributeurOfAction($action, $user))) {
 					return true;
 				}
 				// S'il est un manager ou ++ de la structure
@@ -121,6 +121,16 @@ class ActionVoter extends AbstractVoter {
 					$result = true;
 				}
 			}
+		}
+		return $result;
+	}
+	
+	public function isContributeurOfAction($action, $user) {
+		$result = false;
+		if($user->hasRole(Utilisateur::ROLE_CONTRIBUTEUR)) {
+			$contributeur = $this->em->getRepository('OrangeMainBundle:Contributeur')->findBy(array('utilisateur' => $user->getId(), 'action' => $action->getId()));
+			if($contributeur!=null)
+					$result = true;
 		}
 		return $result;
 	}

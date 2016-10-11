@@ -357,9 +357,11 @@
 				closeAndNotify(response);
 			} 
 				{% set functionAfterShowModal %}
-						activateModals();
+				     function(){
+				    	 $("select").select2();
+				     }						
 				{% endset %}
-				{{ addEventActionLink('myModal', "", functionAfterShowModal) }}
+				{{ addEventActionLink(functionAfterShowModal) }}
 				{% set functionOnComplet %}
 					todoOnCompleteWithError();
 				{% endset %}

@@ -595,6 +595,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin('a.priorite', 'priori')
 			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')
 			->innerJoin('a.porteur', 'mp')
+			->leftJoin('a.contributeur', 'contrib')
 			->innerJoin('a.instance', 'mi');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
@@ -608,8 +609,6 @@ class ActionRepository extends BaseRepository {
 				$idsInstances[] = $inst->getId();
 				
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $idsInstances));
-			//$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.structure)', $this->_user->getChildrenForStructure( $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id))));
-			//$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getAllInstances($structure)));
 			
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ANIMATEUR)) {
@@ -630,6 +629,9 @@ class ActionRepository extends BaseRepository {
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_SOURCE)) {
 			$queryBuilder->orWhere('IDENTITY(src.utilisateur) = :userId');
+		}
+		if($this->_user->hasRole(Utilisateur::ROLE_CONTRIBUTEUR)) {
+			$queryBuilder->orWhere('IDENTITY(contrib.utilisateur) = :userId');
 		}
 		return $queryBuilder->setParameter('userId', $this->_user->getId());
 	}

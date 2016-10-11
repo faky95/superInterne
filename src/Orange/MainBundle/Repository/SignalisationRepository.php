@@ -126,29 +126,14 @@ class SignalisationRepository extends BaseRepository{
 	
 	public function listAllElements($criteria){
 		$queryBuilder = $this->filter();
-// 		$fromDateConstat= $criteria->getFromDateConstat();
-// 		$toDateConstat= $criteria->getToDateConstat();
 		$fromDateConstat= $criteria->getFromDateConstat();
 		$toDateConstat= $criteria->getToDateConstat();
 		$perimetre = $criteria->getPerimetre();
 		$constatateur = $criteria->getConstatateur();
 		$source = $criteria->getUtilisateur();
-		//var_dump($source);exit;
 		$domaine = $criteria->getDom();
 		$type = $criteria->getType();
 		$statut = $criteria->getStatut();
-// 		$source = $criteria->getSource();
-// 		if(isset($animateur)) {
-// 			$queryBuilder
-// 			->leftJoin('sign.animateurSignalisation', 'a')
-// 			->andWhere('a.utilisateur LIKE :animateur')
-// 			->setParameter('animateur', $animateur);
-// 		}
-// 		if(isset($source)) {
-// 			$queryBuilder
-// 			->andWhere('a.source LIKE :source')
-// 			->setParameter('source', $source);
-// 		}
 		if($type) {
 			$queryBuilder->andWhere('sign.typeSignalisation = :type')->setParameter('type', $type);
 		}

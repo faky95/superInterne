@@ -153,7 +153,7 @@ class Data extends BaseQuery {
 					'type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->getType():null,
 					'domaine' => $value->getDomaine()?$value->getDomaine()->getLibelleDomaine():null,
 					'dateDeb' => $date->format('d/m/Y'),'dateInit' => $date->add($interval)->format('d/m/Y'),
-					'dateCloture' => '','libelle' => $value->getLibelle(),'description' => $value->getLibelle(),'priorite'=>'importante'
+					'dateCloture' => '','libelle' => $value->getLibelle(),'description' => $value->getDescription(),'priorite'=>'importante'
 	
 			);
 			$i++;

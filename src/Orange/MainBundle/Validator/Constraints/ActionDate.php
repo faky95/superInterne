@@ -1,6 +1,4 @@
 <?php
-// src/Sdz/BlogBundle/Validator/AntiFlood.php
-
 namespace Orange\MainBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;

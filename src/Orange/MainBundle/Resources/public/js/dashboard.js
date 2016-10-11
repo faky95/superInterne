@@ -355,6 +355,7 @@ function deleter() {
 }
 
 function activateModals () {
+	alert('yyy');
 	// bind event handlers to modal triggers
 	$('a.modal-trigger').on('click', function(e){
 		e.preventDefault();

@@ -82,11 +82,19 @@
 					<p id="compte_a_rebour"></p>Vous pouvez toujours effectuer l'une les actions ci-dessous.
                 </div>
 				<div class="form-group">
+				{% if etatReel != 'ACTION_DEMANDE_REPORT'  %}
 					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url"{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">
 						<button class="btn btn-warning">
 							<span class="icon16 icomoon-icon-exit white"></span>Demande de report
 						</button>
 					</a>
+				{% else %}
+				   <a href="#" class="actionLink" title="Demande de report en attente de validation" disabled="disabled">
+						<button class="btn ">
+							<span class="icon16 icomoon-icon-exit white"></span>Demande de report en attente de validation
+						</button>
+					</a>
+				{% endif %}
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('abandon_new', {'action_id': entity.id})}}" title="Demande d'abandon">
 						<button class="btn btn-warning">
 							<span class="icon16 icomoon-icon-exit white"></span>Demande d'abandon

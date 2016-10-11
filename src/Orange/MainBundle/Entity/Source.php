@@ -37,6 +37,11 @@ class Source
 	 * @ORM\JoinColumn(nullable=false)
 	 */
 	private $instance;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="Signalisation", mappedBy="source", cascade={"persist","remove","merge"})
+	 */
+	private $signalisation;
 
 
 	/**
