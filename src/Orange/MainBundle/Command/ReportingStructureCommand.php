@@ -49,6 +49,11 @@ class ReportingStructureCommand extends BaseCommand {
 	public function execute(InputInterface $input, OutputInterface $output){
 		$em = $this->getEntityManager();
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiStructure();
+		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting();
+		$mapUsers = array();
+		foreach ($utilisateurs as $usr){
+			$mapUsers[$usr->getId()] = $usr->getEmail();
+		}
 		$pas = $em->getRepository('OrangeMainBundle:Pas')->listAllPas()->getQuery()->execute();
 		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
 		$per = array();
@@ -87,8 +92,8 @@ class ReportingStructureCommand extends BaseCommand {
 				$objWriter = $this->get('orange.main.reporting')->reportingstructureAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().'-'.date("Y-m-d_H-i").'.xlsx';
 			$i=0;
-			foreach ($envoi->getReporting()->getDestinataire() as $destinataire){
-				$dest[$i] = $destinataire->getEmail();
+			foreach ($envoi->getReporting()->getDestinataire() as $key => $destinataire){
+				$dest[$i] = $mapUsers[$destinataire->getId()];
 				$i++;
 			}
 			$objWriter->save("./web/upload/reporting/$filename");

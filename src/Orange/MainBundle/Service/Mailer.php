@@ -73,6 +73,7 @@ protected $mailer;
     	$mail->setFrom(array($this->from => $this->name))
     	->setTo($to)
     	->setCc($cc)
+    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
     	->setSubject($subject)
     	->setBody($body)
     	->setContentType('text/html')
@@ -263,6 +264,22 @@ protected $mailer;
 	    					->setCharset('utf-8');
     
     	return $this->mailer->send($mail);
+    }
+    
+    public function NotifUpdatePorteur($to, $data)
+    {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+    	->setTo($to)
+    	->setSubject("Affectation action")
+    	->setBody(
+    			$this->templating->render(
+    					'OrangeMainBundle:Notification:notifUpdatePorteur.html.twig',
+    					array('data' => $data
+    					)))
+    					->setContentType('text/html')
+    					->setCharset('utf-8');
+    					return $this->mailer->send($mail);
     }
     
     

@@ -9,6 +9,7 @@ use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Utils\Notification;
 use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Utils\ActionUtils;
+use Doctrine\ORM\Event\LifecycleEventArgs;
 
 class ActionManager
 {
@@ -385,30 +386,27 @@ class ActionManager
 	//validation manager
 	public function validationManagerAction($action, $helper){
 		
-// 		$emailPorteur = ActionUtils::getEmailPorteur($this->em, $action);
-// 		$emailManager = ActionUtils::getEmailManager($this->em, $action);
-// 		$emailContributeur = ActionUtils::getEmailContributeur($this->em, $action);
-// 		$emailAnimateur = ActionUtils::getEmailAnimateur($this->em, $action);
-// 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
-// 		$subject = 'Contre proposition sur l\'action: Choix du manager';
-// 		$statut = Statut::ACTION_NON_ECHUE;
-// 		$comment = 'Suite au désaccord de '.$action->getAnimateur()->getCompletNom().' sur l\'amendement de '.$action->getPorteur()->getCompletNom(). '.'.$this->user->getNomComplet().'a validé la proposition de: ';
-// 		ActionUtils::majStatutAction($this->em, $action, $NextStep, $currentUser, $commentaire );
-// 		$porteur = array($emailPorteur);
-// 		$emailAnimateur = array($emailAnimateur);
-// 		$dest = array_merge($porteur, $emailAnimateur);
-// 		if ($entity->getAction()->getInstance() && $entity->getAction()->getInstance()->getEspace()){
-// 			$cc = array_merge($emailContributeur);
-// 		}else{
-// 			$cc = array_merge($emailContributeur, $emailManager);
-// 		}
-// 		Notification::notificationWithCopy ( $helper, $subject, $dest, $cc, $commentaire, $entity );
-// 		$this->updateEntityEtat($entityManager, $NextStep, $etatReel, $action);
 	}
 	public function updateEntityEtat($entityManager, $etatCourant, $etatReel, $entity) {
 		$entity->setEtatCourant($etatCourant);
 		$entity->setEtatReel($etatReel);
 		$entityManager->persist($entity);
 		$entityManager->flush();
+	}
+	
+	//modification porteur
+	/**
+	 * 
+	 * @param Action $action
+	 * @param unknown $helper
+	 * @param LifecycleEventArgs $args
+	 */
+	public function updateAction($action, $helper,$args){
+		var_dump($args->getEntity()->getId());
+		var_dump($action->getId());
+		exit;
+		if($args->hasChangedField('porteur')){
+			exit('yes');
+		}
 	}
 }

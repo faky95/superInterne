@@ -23,40 +23,41 @@ class LogsListener {
 	}
 	
 	public function preUpdate(PreUpdateEventArgs $args) {
-// 		$entity = $args->getEntity();
-// 		$entityManager = $args->getEntityManager();
-// 		$securityContext = $this->container->get('security.context');
-// 		$user = $securityContext->getToken()->getUser();
-// 		$url = $this->container->get('request')->getRequestUri();
-// 		$entityMetaData = $entityManager->getClassMetadata(get_class($entity));
-// 		$nomTable =  $entityMetaData->getTableName();
+		$entity = $args->getEntity();
+		$entityManager = $args->getEntityManager();
+		$securityContext = $this->container->get('security.context');
+		$user = $securityContext->getToken()->getUser();
+		$url = $this->container->get('request')->getRequestUri();
+		$entityMetaData = $entityManager->getClassMetadata(get_class($entity));
+		$nomTable =  $entityMetaData->getTableName();
 		
-// 		$entitiesToLogs = $this->container->getParameter('qm_logs_entities');
-// // 		$entitiesToLogs = " ";
+		$entitiesToLogs = $this->container->hasParameter('qm_logs_entities')?
+                          $this->container->getParameter('qm_logs_entities'):
+                          array();
 		
-// 		if($entitiesToLogs){
-// 			foreach ($entitiesToLogs as $key => $value){
-// 				$classe = $value['class'];
-// 				$allColumns = array_merge($entityMetaData->getFieldNames(),array_keys($entityMetaData->getAssociationMappings()));
-// 				$colonnes = count($value['columns'])>0?$value['columns']:$allColumns;
+		if(count($entitiesToLogs)>0){
+			foreach ($entitiesToLogs as $key => $value){
+				$classe = $value['class'];
+				$allColumns = array_merge($entityMetaData->getFieldNames(),array_keys($entityMetaData->getAssociationMappings()));
+				$colonnes = count($value['columns'])>0?$value['columns']:$allColumns;
 				
-// 					if($entity instanceof $classe){
-// 						$operation = new Operation();
-// 						$operation->setUser($user);
-// 						$operation->setUrl($url);
-// 						$this->logs['operation']= $operation;
-// 						foreach ($colonnes as $colonne){
-// 							if($args->hasChangedField($colonne)){
-// 								$oldValue = $this->toString($args->getOldValue($colonne));
-// 								$newValue = $this->toString($args->getNewValue($colonne));
-// 								$log = new Logs();	
-// 								$log->loadValue($operation, get_class($entity), $nomTable, $colonne, $entity->getid(), $user->getId(), $oldValue, $newValue);
-// 								$this->logs['logs'][] = $log;
-// 							}
-// 						}
-// 					}
-// 				}
-// 		}
+					if($entity instanceof $classe){
+						$operation = new Operation();
+						$operation->setUser($user);
+						$operation->setUrl($url);
+						$this->logs['operation']= $operation;
+						foreach ($colonnes as $colonne){
+							if($args->hasChangedField($colonne)){
+								$oldValue = $this->toString($args->getOldValue($colonne));
+								$newValue = $this->toString($args->getNewValue($colonne));
+								$log = new Logs();	
+								$log->loadValue($operation, get_class($entity), $nomTable, $colonne, $entity->getid(), $user->getId(), $oldValue, $newValue);
+								$this->logs['logs'][] = $log;
+							}
+						}
+					}
+				}
+		}
 	}
 	
 	public function postFlush(PostFlushEventArgs $event)

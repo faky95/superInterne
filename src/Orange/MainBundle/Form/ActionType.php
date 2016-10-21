@@ -34,6 +34,8 @@ class ActionType extends AbstractType
             		                     'query_builder' => function(UtilisateurRepository $ur) use($options){
             		                     	if(isset($options['attr']['manager']))
 						                         return $ur->managerQueryBuilder()->select('u4');
+            		                     	else
+            		                     		return $ur->filter();
 					}
             ))
             ->add('dateInitial', 'date', array('label' => 'Délai Initial :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))

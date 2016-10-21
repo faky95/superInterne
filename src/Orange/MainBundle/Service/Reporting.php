@@ -11,8 +11,14 @@ class Reporting extends \PHPExcel {
 		$this->removeSheetByIndex(0);
 		$this->createSheet(0);
 		$this->setActiveSheetIndex(0);
+		if($this->getSheetCount()>1){
+			for ($i=1;$i<$this->getSheetCount();$i++)
+				$this->removeSheetByIndex($i);
+		}
 		
 		$sheet2 = $objPHPExcel->createSheet(1);
+		$sheet3 = $objPHPExcel->createSheet(2);
+		
 		$a = Reporting::exportAction($sheet2, $actions, $statuts);
 		$x=1;
 		$col = 'B';
@@ -140,12 +146,10 @@ class Reporting extends \PHPExcel {
 			$i++;
 		}
 
-		// 		exit('dd');
 		$this->addSheet($a);
 		$this->getActiveSheet()->setTitle('stats_par_instance');
 		$sheet2->setTitle('actions');
-		
-		
+		$sheet3->setTitle('Synthèse par instance');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}
@@ -438,30 +442,12 @@ public function exportAction($sheet, $arrData, $dataStatut){
 				$y++;
 			}
 		}
-// 		$sheet->getStyle('C2:C'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
-// 		$sheet->getStyle('D2:D'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
-// 		$sheet->getStyle('R2:R'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
-// 		$sheet->getStyle('N2:N'.$sheet->getHighestRow())->getAlignment()->setWrapText(true);
-// 		$sheet->getStyle('A2:A'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('E2:E'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('F2:F'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('G2:G'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('H2:H'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('I2:I'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('J2:J'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('K2:K'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('L2:L'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('M2:M'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('N2:N'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('O2:O'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('P2:P'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('Q2:Q'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('R2:R'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('B2:B'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('C2:C'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-// 		$sheet->getStyle('D2:D'.$sheet->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
 		$objPHPExcel->getDefaultStyle()->getAlignment()->setWrapText(true);
 		return $sheet;
+	}
+	
+	public function syntheseInstance(){
+		
 	}
 	
 }

@@ -30,7 +30,7 @@ class alerteDepassementCommand extends BaseCommand {
 			$nbr =  count($user['action']);
 			$to = $user['email_porteur'];
 // 			$cc = $user['manager'];
-			$cc = array($user['manager']);
+			$cc = array($user['manager'],$user['animateur']);
 			$subject = 	"Notification de rappel d'échéances";
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alertDepassement.html.twig', array(
 						'porteur' => $user['porteur'], 'actions' => $user['action'],'nbr' => $nbr,

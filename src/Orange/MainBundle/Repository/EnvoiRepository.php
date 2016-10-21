@@ -30,6 +30,7 @@ class EnvoiRepository extends BaseRepository{
 	{
 		$date =  date('Y-m-d');
 		$queryBuilder = $this->createQueryBuilder('e')
+		    ->innerJoin('e.reporting', 'r')
 			->where('e.typeReporting = 1')
 			->andWhere('e.dateEnvoi = :date')->setParameter('date', $date)
 			->getQuery()

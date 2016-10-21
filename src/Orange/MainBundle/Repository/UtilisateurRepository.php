@@ -282,5 +282,11 @@ public function getUtilisateurByStructure($structures, $bu=null){
 			return $this->createQueryBuilder('u')
 				->where('u.id IN (:ids)')->setParameter('ids', $manager->getCollaboratorsId());
 		}
+		
+		public function getAllDestinataireOfReporting(){
+			return $this->createQueryBuilder('u')
+						->select('partial u.{id , email}')
+			            ->innerJoin('u.reporting','r')->getQuery()->execute();
+		}
 }
 

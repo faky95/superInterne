@@ -76,7 +76,7 @@ class ActionListener implements EventSubscriberInterface
         		OrangeMainEvents::ACTION_PROPOSITION_ANIMATEUR	 	=> 'onPropositionAnimateurAction',
         		OrangeMainEvents::ACTION_VALIDATION_ANIMATEUR	 	=> 'onValidationAnimateurAction',
         		OrangeMainEvents::ACTION_VALIDATION_MANAGER	 		=> 'onValidationManagerAction',
-        		OrangeMainEvents::ACTION_REASSIGNATION				=> 'onReassignationAction',
+        		OrangeMainEvents::ACTION_REASSIGNATION				=> 'onReassignationAction'
         		
         	);
     }
@@ -159,4 +159,3 @@ class ActionListener implements EventSubscriberInterface
     	return isset($ext) ? $ext : false;
     }
 }
-?>

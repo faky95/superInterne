@@ -3,8 +3,8 @@
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 use FOS\UserBundle\Model\User as BaseUser;
+use Symfony\Component\Validator\Constraints as Assert;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
@@ -204,6 +204,13 @@ class Utilisateur extends BaseUser
      *  @ORM\OneToMany(targetEntity="Statistique", mappedBy="type", cascade={"persist","remove","merge"})
      */
     private $statistique;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     * 
+     * @ORM\ManyToMany(targetEntity="Reporting", mappedBy="destinataire")
+     */
+    private $reporting;
 	
 	/**
      * @var boolean
@@ -542,6 +549,7 @@ class Utilisateur extends BaseUser
         $this->sources = new \Doctrine\Common\Collections\ArrayCollection();
         $this->projets = new \Doctrine\Common\Collections\ArrayCollection();
         $this->action = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->reporting = new \Doctrine\Common\Collections\ArrayCollection();
         $this->firstChangePassword = 1;
         $this->rapporteurStructure= new \Doctrine\Common\Collections\ArrayCollection();
     }
@@ -1277,5 +1285,38 @@ class Utilisateur extends BaseUser
     
     public function getPorteur(){
     	return $this->prenom.' '.$this->nom.' ['.$this->structure.']';
+    }
+    
+    /**
+     * Add reporting
+     *
+     * @param \Orange\MainBundle\Entity\Reporting $reporting
+     * @return Utilisateur
+     */
+    public function addReporting(\Orange\MainBundle\Entity\Reporting $reporting)
+    {
+    	$this->reporting[] = $reporting;
+    
+    	return $this;
+    }
+    
+    /**
+     * Remove reporting
+     *
+     * @param \Orange\MainBundle\Entity\Reporting $reporting
+     */
+    public function removeReporting(\Orange\MainBundle\Entity\Reporting $reporting)
+    {
+    	$this->reporting->removeElement($reporting);
+    }
+    
+    /**
+     * Get reporting
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getReporting()
+    {
+    	return $this->reporting;
     }
 }

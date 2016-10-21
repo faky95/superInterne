@@ -44,6 +44,11 @@ class ReportingInstanceCommand extends BaseCommand {
 	public function execute(InputInterface $input, OutputInterface $output){
 		$em = $this->getEntityManager();
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiInstance();
+		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting();
+		$mapUsers = array();
+		foreach ($utilisateurs as $usr){
+			$mapUsers[$usr->getId()] = $usr->getEmail();
+		}
 		$pas = $em->getRepository('OrangeMainBundle:Pas')->listAllPas()->getQuery()->execute();
 		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
 		$per = array();
@@ -72,10 +77,6 @@ class ReportingInstanceCommand extends BaseCommand {
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
-// 				$query2 = $this->getEntityManager()->createQuery($envoi->getReporting()->getQuery());
-// 				$query2->setParameters(unserialize($envoi->getReporting()->getParam()));
-// 				$idActions = $this->mapIds($query2->execute());
-// 				$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				
 				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
 				$arrType=unserialize($envoi->getReporting()->getArrayType());
@@ -85,11 +86,9 @@ class ReportingInstanceCommand extends BaseCommand {
 				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().date("Y-m-d_H-i").'.xlsx';
-			//}
 			$i=0;
 			foreach ($envoi->getReporting()->getDestinataire() as $destinataire) {
-				$email= $em->getRepository('OrangeMainBundle:Utilisateur')->getEmail($destinataire->getId());
-				$dest[$i] = $email[0]['email'];
+				$dest[$i] = $mapUsers[$destinataire->getId()];
 				$i++;
 			}
 			$objWriter->save($this->getContainer()->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");

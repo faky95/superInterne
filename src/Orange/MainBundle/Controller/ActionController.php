@@ -559,6 +559,7 @@ class ActionController extends BaseController
     public function updateAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
+        $porteur = $entity->getPorteur();
         $form = $this->createCreateForm($entity,'Action');
         $request = $this->get('request');
         $statut = new ActionStatut();
@@ -573,6 +574,9 @@ class ActionController extends BaseController
 					$statut->setCommentaire("Délai initial modifié par: ".$this->getUser()->getNomComplet());
 					$statut->setStatut($s);
 					$em->persist($statut);
+        		}
+        		if($entity->getPorteur()->getId() != $porteur->getId()){
+        			$this->get('orange.main.mailer')->NotifUpdatePorteur($entity->getPorteur()->getEmail(), $entity);
         		}
         		$em->persist($entity);
         		$em->flush();

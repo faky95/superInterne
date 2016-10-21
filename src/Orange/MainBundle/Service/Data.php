@@ -196,7 +196,8 @@ class Data extends BaseQuery {
 			$data[$i] = array('user_id' => $action->getPorteur()->getId(), 'nom' => $action->getPorteur()->getCompletNom(), 'email' => $action->getPorteur()->getEmail(),
 					'manager' => $action->getPorteur()->getSuperior()? $action->getPorteur()->getSuperior()->getEmail():$action->getPorteur()->getEmail(), 'instance' => $action->getInstance()->getLibelle(),
 					'reference' => $action->getReference(), 'jours' => $a, 'delai' => $action->getDateInitial()->format('d-m-Y'),
-					'libelle' => $action->getLibelle(), 'id' => $action->getId()
+					'libelle' => $action->getLibelle(), 'id' => $action->getId(),
+					'animateur'=>$action->getAnimateur()->getEmail()
 			); 
 			$i++;
 		}
@@ -209,6 +210,7 @@ class Data extends BaseQuery {
 			$array['user'][$value['user_id']]['email_porteur'] = $value['email'];
 			$array['user'][$value['user_id']]['porteur'] = $value['nom'];
 			$array['user'][$value['user_id']]['manager'] = $value['manager'];
+			$array['user'][$value['user_id']]['animateur'] = $value['animateur'];
 			$array['user'][$value['user_id']]['action'][$i] = array('id'  => $value['id'], 'reference' => $value['reference'], 'libelle' => $value['libelle'],
 					'instance' => $value['instance'], 'delai' => $value['delai'], 'jours' => $value['jours']
 			);
@@ -376,18 +378,12 @@ class Data extends BaseQuery {
 	public function validationAction($actions){
 		$date2 = new \DateTime();
 		$statut= $this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NON_ECHUE));
-		$date2 = new \DateTime();
 		$nbHeureActuel= intval($date2->getTimestamp()/3600);
 		foreach ($actions as $action){
 			$nbHeureDate=intval($action->getDateAction()->getTimestamp()/3600);
 			if($nbHeureActuel-$nbHeureDate >= 24){
 				$action->setEtatCourant(Statut::ACTION_NON_ECHUE);
 				$action->setEtatReel(Statut::ACTION_NON_ECHUE);
-			/*	$actionStatut=new ActionStatut();
-				$actionStatut->setAction($action);
-				$actionStatut->setStatut($statut);
-				$actionStatut->setUtilisateur($action->getPorteur());*/
-				//$this->em->persist($actionStatut);
 				$this->em->persist($action);
 				$this->em->flush();
 			}

@@ -182,7 +182,7 @@
 																	                  <p> <b>Date de début</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ data.dateDebut| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ data.dateDebut| date('d/m/Y') }}</p>
 																	          </td>           
 																	      </tr>
 																	      <tr>
@@ -190,7 +190,7 @@
 																	                  <p> <b>Délai Initial</b></p>
 																	          </td>  
 																	         <td  valign="top">
-																	                  <p>{{ data.dateInitial| localizeddate('full', 'none') }}</p>
+																	                  <p>{{ data.dateInitial| date('d/m/Y') }}</p>
 																	          </td>           
 																	      </tr>
 																	  </tbody>
