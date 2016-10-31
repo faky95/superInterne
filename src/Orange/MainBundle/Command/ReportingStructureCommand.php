@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Orange\MainBundle\Utils\LogsMailUtils;
 
 class ReportingStructureCommand extends BaseCommand {
 
@@ -99,6 +100,13 @@ class ReportingStructureCommand extends BaseCommand {
 			$objWriter->save("./web/upload/reporting/$filename");
 			$sub = "Reporting ".$per[$envoi->getReporting()->getPas()->getId()];
 			$result = $this->getMailer()->sendReport($dest, $sub, $filename);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
+		}
+		if (!empty($chemin)){
+			$send = $this->getMailer()->sendLogsMail(
+					"Journal sur les reporting par structures",
+					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
+							array('libelle'=>" reportings par structure")),$chemin);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

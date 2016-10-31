@@ -372,7 +372,7 @@ class Data extends BaseQuery {
 			$array['user'][$action['email']]['action'][$i] = $action;
 			$i++;
 		}
-		return $array['user'];
+		return isset($array['user'])?$array['user']:array();
 		
 	}
 	public function validationAction($actions){

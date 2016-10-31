@@ -3,6 +3,7 @@ namespace Orange\MainBundle\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Orange\MainBundle\Utils\LogsMailUtils;
 
 class ReportingInstanceCommand extends BaseCommand {
 
@@ -66,14 +67,15 @@ class ReportingInstanceCommand extends BaseCommand {
 			$per[$value->getId()] = $value->getLibelle();
 		}
 		foreach ($envois as $envoi) {
+			    $objWriter=null;
 				$dest = array();
 				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
-				$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
-				
+				$params= unserialize($envoi->getReporting()->getParameter());
+				$query->setParameters($params);
 				$actions = null;
 				if ($envoi->getReporting()->getQuery()){
 					$query2 = $this->getEntityManager()->createQuery($envoi->getReporting()->getQuery());
-					$query2->setParameters(unserialize($envoi->getReporting()->getParameter()));
+					$query2->setParameters($params);
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
@@ -94,7 +96,13 @@ class ReportingInstanceCommand extends BaseCommand {
 			$objWriter->save($this->getContainer()->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");
 			$sub = "Reporting ".$per[$envoi->getReporting()->getPas()->getId()];
 			$result = $this->getMailer()->sendReport($dest, $sub, $filename);
-			
+			$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
+		}
+		if (!empty($chemin)){
+			$send = $this->getMailer()->sendLogsMail(
+					"Journal sur les reporting par instance",
+					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
+							array('libelle'=>" reportings par instance")),$chemin);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

@@ -1,11 +1,10 @@
 <?php
 
 namespace Orange\MainBundle\Command;
-use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Orange\MainBundle\Utils\LogsMailUtils;
 
 class atteinteDelaiCommand extends BaseCommand {
 	
@@ -36,8 +35,14 @@ class atteinteDelaiCommand extends BaseCommand {
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
 			$result = $this->getMailer()->send($to, $cc, $subject, $body);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to),null,$nbr);
 		}
-			
+		if (!empty($chemin)){
+			$send = $this->getMailer()->sendLogsMail(
+					                "Journal sur les relances des Actions échues",
+					                $this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
+					                 array('libelle'=>"relances des Actions échues")),$chemin);
+		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

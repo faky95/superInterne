@@ -282,6 +282,18 @@ protected $mailer;
     					return $this->mailer->send($mail);
     }
     
+    public function sendLogsMail($subject, $body,$chemin) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+    	->setTo(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"))
+    	->setSubject($subject)
+    	->setBody($body)
+    	->setContentType('text/html')
+    	->setCharset('utf-8')
+    	->attach(\Swift_Attachment::fromPath($chemin))
+    	;
+    	return $this->mailer->send($mail);
+    }
     
     
 }

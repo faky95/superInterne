@@ -225,7 +225,7 @@ class Utilisateur extends BaseUser
     
     public function __toString()
     {
-    	return $this->prenom.' '.$this->nom.' [ '.$this->getDirection().' ]';
+    	return $this->prenom.' '.strtoupper($this->nom).' [ '.$this->getDirection().' ]';
     }
 	
 
@@ -282,7 +282,7 @@ class Utilisateur extends BaseUser
      */
     public function getNom()
     {
-        return $this->nom;
+        return strtoupper($this->nom);
     }
 
     /**
@@ -291,7 +291,7 @@ class Utilisateur extends BaseUser
      */
     public function getNomComplet()
     {
-        return $this->prenom.' '.$this->nom.' [ '.$this->getDirection().' ]';
+        return $this->prenom.' '.strtoupper($this->nom).' [ '.$this->getDirection().' ]';
     }
 
     /**

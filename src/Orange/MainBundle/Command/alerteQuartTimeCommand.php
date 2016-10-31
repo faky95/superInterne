@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Orange\MainBundle\Utils\LogsMailUtils;
 
 class alerteQuartTimeCommand extends BaseCommand {
 	
@@ -25,15 +26,6 @@ class alerteQuartTimeCommand extends BaseCommand {
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->alertQuartTime($bu, $projet, $espace);
 		$tabUsersActions= $this->get('orange.main.data')->actionQuartTime($actions);
-		
-		$logger = $this->get('rappel_quart.logger');
-		$logger->info("\n");
-		$logger->info("\n");
-		$logger->info('----'.date('l').' '.date('d-m-Y').'---');
-		$logger->info(count($tabUsersActions).' utilisateurs');
-		$logger->info("\n");
-		$logger->info("\n");
-		
 		foreach ($tabUsersActions as $key => $user){
 			$to = $key;
 			$subject = "Rappel Quart Temps";
@@ -42,8 +34,15 @@ class alerteQuartTimeCommand extends BaseCommand {
 					'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 				));
 			$result = $this->getMailer()->sendAlerteQuartTime($to,$subject, $body);
-			$logger->info($user['porteur'].' '.count($user['action']).' action(s) à '.date('H:i:s'));
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to));
 		}
+		if (!empty($chemin)){
+			$send = $this->getMailer()->sendLogsMail(
+					"Journal sur les relances des Rappel Quart Temps",
+					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
+							array('libelle'=>"relances les rappels Quart Temps")),$chemin);
+		 }
+		 
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

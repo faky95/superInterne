@@ -5,6 +5,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Orange\MainBundle\Utils\LogsMailUtils;
 
 class alerteDepassementCommand extends BaseCommand {
 	
@@ -37,8 +38,14 @@ class alerteDepassementCommand extends BaseCommand {
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
 			$result = $this->getMailer()->send($to, $cc, $subject, $body);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to),$cc,$nbr);
 		}
-			
+		if (!empty($chemin)){
+			$send = $this->getMailer()->sendLogsMail(
+					"Journal sur les relances des rappels d'échéances ",
+					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
+							array('libelle'=>"rappel d'échéances")),$chemin);
+		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

@@ -82,6 +82,14 @@ $(document).ready(function(){
 <script type="text/javascript">
 	$(document).ready(function(){
 		$('#orange_mainbundle_instance_bu').removeAttr("multiple");
+		var i=0; 
+		var tab=[];
+		$('select#orange_mainbundle_instance_tmp_source option').each(function( index ) {
+			if($(this).attr("selected")){
+				//$('select#orange_mainbundle_instance_tmp_source').parent().css("background","red");
+				$('select#orange_mainbundle_instance_tmp_source').parent().children('span.select2').css("background","red");
+			}
+		});
 	});
 </script>
 {% endblock %}

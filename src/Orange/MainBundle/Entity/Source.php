@@ -139,4 +139,38 @@ class Source
     {
         return $this->instance;
     }
+
+    /**
+     * Add signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+     *
+     * @return Source
+     */
+    public function addSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
+    {
+        $this->signalisation[] = $signalisation;
+
+        return $this;
+    }
+
+    /**
+     * Remove signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+     */
+    public function removeSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
+    {
+        $this->signalisation->removeElement($signalisation);
+    }
+
+    /**
+     * Get signalisation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSignalisation()
+    {
+        return $this->signalisation;
+    }
 }

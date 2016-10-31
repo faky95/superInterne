@@ -113,7 +113,7 @@ class ReportingController extends BaseController
      */
     public function updateQueryAction(){
     	$em = $this->getDoctrine()->getManager();
-    	$reportings = $em->getRepository('OrangeMainBundle:Reporting')->findBy(array('query' => null));
+    	$reportings = $em->getRepository('OrangeMainBundle:Reporting')->findBy(array('query' => ''));
     	foreach ($reportings as $key => $entity){
 			if($entity->getRequete()!=null){
 		    	$debutJoins = strpos($entity->getRequete(), 'FROM');
@@ -128,7 +128,7 @@ class ReportingController extends BaseController
 		    	$select = "SELECT ".$alias.".id";
 		    	$joins = substr($entity->getRequete(), $debutJoins, $finJoins - $debutJoins);
 		    	
-		    	$where = " AND". $alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'
+		    	$where = " AND ". $alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'
 					    			AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'
 					    			AND ".$alias.".etatCourant NOT LIKE 'ACTION_NOUVELLE'
     			                    AND ".$alias.".etatCourant NOT LIKE 'EVENEMENT_INVALIDER'";

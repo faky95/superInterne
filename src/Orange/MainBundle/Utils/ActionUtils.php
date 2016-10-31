@@ -151,7 +151,8 @@ class ActionUtils {
 	}
 	public static function updateEtatCourantEntity($entityManager, $entity, $codeStatut, $etatReel){
 		$entity->setEtatCourant($codeStatut);
-		$entity->setEtatReel($etatReel);
+		if($etatReel != Statut::ACTION_DEMANDE_ABANDON && $etatReel != Statut::ACTION_DEMANDE_REPORT)
+		   $entity->setEtatReel($etatReel);
 		$entityManager->persist($entity);
 		$entityManager->flush();
 	}

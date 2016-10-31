@@ -5,6 +5,7 @@ namespace Orange\MainBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Orange\MainBundle\Entity\Source;
 
 /**
  * Instance
@@ -954,5 +955,17 @@ class Instance
     public function getEspace()
     {
         return $this->espace;
+    }
+    
+    public function getIdsSourcesWithSignalisation(){
+    	$ids = array();
+    	$i=0;
+    	foreach ($this->sourceInstance as $source){
+    		if($source->getSignalisation()->count()>0){
+    		    $ids[$i] = $source->getId();
+    		    $i++;
+    		}
+    	}
+    	return $ids;
     }
 }
