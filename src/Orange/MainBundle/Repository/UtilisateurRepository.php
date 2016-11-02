@@ -138,10 +138,16 @@ class UtilisateurRepository extends BaseRepository {
 	/**
 	 * @return QueryBuilder
 	 */
-	public function managerQueryBuilder(&$data = array()) {
+	public function managerQueryBuilder(&$data = array(), $direct = false) {
+		$data = $data ? $data : array();
  		$queryBuilder = $this->createQueryBuilder('u4')->select('u4.id')
 			->innerJoin('u4.structure', 's4');
- 		$data = array_merge($this->filterByProfile($queryBuilder, 's4', Utilisateur::ROLE_MANAGER)->getParameters()->toArray(), $data);
+		if($direct) {
+			$queryBuilder->andWhere('u4.id IN (:collaboratorIds)')->setParameter('collaboratorIds', $this->_user->getCollaboratorsId());
+		} else {
+			$this->filterByProfile($queryBuilder, 's4', Utilisateur::ROLE_MANAGER);
+		}
+		$data = array_merge($queryBuilder->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
 
