@@ -37,8 +37,7 @@ class EnvoiRepository extends BaseRepository{
 			->execute();
 			return $queryBuilder;
 	}
-	public function getEnvoiInstance()
-	{
+	public function getEnvoiInstance($bu = null, $espace = null, $projet = null) {
 		$date =  date('Y-m-d');
 		$queryBuilder = $this->createQueryBuilder('e')
 			->where('e.typeReporting = 2')

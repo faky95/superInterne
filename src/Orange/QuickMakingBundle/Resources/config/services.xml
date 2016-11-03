@@ -31,7 +31,7 @@
             <argument type="service" id="service_container" />
         </service>
         
-        <service id="orange.quick_making_formatter" class="Orange\QuickMakingBundle\Service\LogsFormatterFile" public="true">
+        <service id="orange.quickmaking_formatter" class="Orange\QuickMakingBundle\Service\LogFormatter" public="true">
         </service>        
         <!-- end services for Logs with monolog  -->
         

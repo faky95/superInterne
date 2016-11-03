@@ -19,7 +19,7 @@ class DashboardController extends Controller {
 	
 	/**
 	 * Tableau de bord 
-	 * 
+	 * @QMLogger(message="Page d'accueil")
 	 * @Route("/", name="dashboard")
 	 * @Method("GET")
 	 * @Template()

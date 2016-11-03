@@ -51,7 +51,6 @@ class AnnotationListener
 		list($controllerObject, $methodName) = $controller;
 		 
 		$monologAnnotation = 'Orange\QuickMakingBundle\Annotation\QMLogger';
-// 		exit(var_dump('IN'));
 		$message = '';
 		 
 		// Get class annotation
@@ -71,14 +70,6 @@ class AnnotationListener
 		 
 		// Override the response only if the annotation is used for method or class
 		if($classAnnotation || $methodAnnotation)
-			$this->container->get('logger.log')->log($this->container, $this->container->get('logger'), $this->container->get('security.context')->getToken()->getUser(), $message);
-// 			exit(var_dump($this->container->get('security.context')->getToken()->getUser()));
-// 			$event->setController(
-// 					function() use ($message) {
-// 						return new Response($message);;
-// 						exit(var_dump($message));
-// 					}
-// 		);
-// 		exit(var_dump($methodAnnotation));
+			$this->container->get('monolog.logger.trace')->log(200, $message, array('container' => $this->container));
 	}
 }

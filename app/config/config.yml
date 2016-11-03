@@ -104,19 +104,18 @@ av_alertify:
         engine: toastr
         layout: top-right
         translationDomain: alertify.fr.xliff
+        
 monolog:
+    channels: ["trace"]
     handlers:
         main_error:
-            type:           fingers_crossed
-            action_level:   info
-            handler:        streamed_error
-            channels: ["!routing"]
-        streamed_error:
             type:           rotating_file
-            max_files:      15
-            path:           "%kernel.logs_dir%/%kernel.environment%.log"
+            max_files:      366
+            path:           "%kernel.logs_dir%/%kernel.environment%/%kernel.environment%.log"
             level:          info
-            formatter:      orange.quick_making_formatter
+            action_level:   info
+            channels:       ["trace"]
+            formatter:      orange.quickmaking_formatter
 
 #fr3d_ldap
 fr3d_ldap:

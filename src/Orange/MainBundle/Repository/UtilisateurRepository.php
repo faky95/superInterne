@@ -289,7 +289,7 @@ public function getUtilisateurByStructure($structures, $bu=null){
 				->where('u.id IN (:ids)')->setParameter('ids', $manager->getCollaboratorsId());
 		}
 		
-		public function getAllDestinataireOfReporting(){
+		public function getAllDestinataireOfReporting($bu = null, $espace = null, $projet = null){
 			return $this->createQueryBuilder('u')
 						->select('partial u.{id , email}')
 			            ->innerJoin('u.reporting','r')->getQuery()->execute();

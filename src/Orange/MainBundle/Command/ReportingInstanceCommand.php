@@ -4,6 +4,7 @@ namespace Orange\MainBundle\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Orange\MainBundle\Utils\LogsMailUtils;
+use Symfony\Component\Console\Input\InputOption;
 
 class ReportingInstanceCommand extends BaseCommand {
 
@@ -21,7 +22,11 @@ class ReportingInstanceCommand extends BaseCommand {
 	
 	protected function configure(){
 		parent::configure();
-		$this->setName($this->getName() . ':reporting_instance')->setDescription('envoi des reporting automatisé');
+		$this->setName($this->getName() . ':reporting_instance')
+				->addOption('projet', 'p', InputOption::VALUE_OPTIONAL)
+				->addOption('espace', 'es', InputOption::VALUE_OPTIONAL)
+				->addOption('bu', 'b', InputOption::VALUE_OPTIONAL)
+				->setDescription('envoi des reporting automatisé');
 	}
 
 	public function getStatus($bu){
@@ -42,10 +47,13 @@ class ReportingInstanceCommand extends BaseCommand {
 		return $array;
 	}
 	
-	public function execute(InputInterface $input, OutputInterface $output){
+	public function execute(InputInterface $input, OutputInterface $output) {
+		$espace = $input->getOption('espace');
+		$bu = $input->getOption('bu');
+		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
-		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiInstance();
-		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting();
+		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiInstance($bu, $espace, $projet);
+		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting($bu, $espace, $projet);
 		$mapUsers = array();
 		foreach ($utilisateurs as $usr){
 			$mapUsers[$usr->getId()] = $usr->getEmail();
