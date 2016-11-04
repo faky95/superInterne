@@ -1,3 +1,6 @@
 /.project
 /.buildpath
+/vendor
+/.settings
+/.externalToolBuilders
 /composer.json

@@ -377,9 +377,9 @@ class Utilisateur extends BaseUser
     		}
     	}
     	foreach($this->structure->getChildren() as $structure) {
-    		foreach ($structure->getUtilisateur() as $utilisateur){
+    		/*foreach ($structure->getUtilisateur() as $utilisateur){
     			$collaborators->add($utilisateur);
-    		}
+    		}*/
     		$manager = $structure->getManager();
     		if($manager) {
     			$collaborators->add($manager);

@@ -24,6 +24,7 @@ class ActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $data = array();
     	$espace = isset($options['attr']['espace_id']) ? $options['attr']['espace_id'] : null;
 		$instance = isset($options['attr']['instance_id']) ? $options['attr']['instance_id'] : null;
         $optionManager = (isset($options['attr']['manager'])) ?  array('choices' => $options['attr']['manager']->getCollaborator()) : array();
@@ -33,7 +34,7 @@ class ActionType extends AbstractType
             ->add('porteur', null, array('label'=>'Porteur :', 'empty_value' => '--- Choix Porteur ---', 
             		                     'query_builder' => function(UtilisateurRepository $ur) use($options){
             		                     	if(isset($options['attr']['manager']))
-						                         return $ur->managerQueryBuilder()->select('u4');
+						                         return $ur->managerQueryBuilder($data, true)->select('u4');
             		                     	else
             		                     		return $ur->filter();
 					}
