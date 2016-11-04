@@ -40,11 +40,15 @@ class EnvoiRepository extends BaseRepository{
 	public function getEnvoiInstance($bu = null, $espace = null, $projet = null) {
 		$date =  date('Y-m-d');
 		$queryBuilder = $this->createQueryBuilder('e')
+			->innerJoin('e.reporting', 'r')
+			->innerJoin('r.utilisateur', 'u')
+			->innerJoin('u.structure', 's')
 			->where('e.typeReporting = 2')
-			->andWhere('e.dateEnvoi = :date')->setParameter('date', $date)
-			->getQuery()
-			->execute();
-		return $queryBuilder;
+			->andWhere('e.dateEnvoi = :date')->setParameter('date', $date);
+		if($bu) {
+			$queryBuilder->andWhere('s.buPrincipal = :bu', $bu);
+		}
+		return $queryBuilder->getQuery()->execute();
 	}
 	
 }
