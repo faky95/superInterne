@@ -194,25 +194,6 @@ class SignalisationController extends BaseController
     }
 
     /**
-     * Creates a form to create a Signalisation entity.
-     *
-     * @param Signalisation $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-    
-    private function createCreateForm(Signalisation $entity, $usr_id, $em)
-    {
-        $form = $this->createForm(new SignalisationType($usr_id, $em), $entity, array(
-            'action' => $this->generateUrl('creer_signalisation'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    } */
-
-    /**
      * Displays a form to create a new Signalisation entity.
      * @QMLogger(message="Nouvelle signalisation")
      * @Route("/nouvelle_signalisation", name="nouvelle_signalisation")

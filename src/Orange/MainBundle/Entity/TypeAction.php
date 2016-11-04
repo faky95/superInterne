@@ -76,6 +76,12 @@ class TypeAction
     private $action; 
     
     /**
+     *
+     * @ORM\OneToMany(targetEntity="Signalisation", mappedBy="typeSignalisation", cascade={"persist", "merge", "remove"})
+     */
+    private $signalisation;
+    
+    /**
      * 
      * @var Boolean
      */
@@ -317,5 +323,39 @@ class TypeAction
     public function getAction()
     {
         return $this->action;
+    }
+
+    /**
+     * Add signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+     *
+     * @return TypeAction
+     */
+    public function addSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
+    {
+        $this->signalisation[] = $signalisation;
+
+        return $this;
+    }
+
+    /**
+     * Remove signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+     */
+    public function removeSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
+    {
+        $this->signalisation->removeElement($signalisation);
+    }
+
+    /**
+     * Get signalisation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSignalisation()
+    {
+        return $this->signalisation;
     }
 }

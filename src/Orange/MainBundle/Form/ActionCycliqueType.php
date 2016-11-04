@@ -5,6 +5,7 @@ namespace Orange\MainBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Doctrine\ORM\EntityRepository;
 
 class ActionCycliqueType extends AbstractType
 {
@@ -15,18 +16,25 @@ class ActionCycliqueType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('periodicite', 'choice', array(
-            		'empty_value' => '--- Choisir la périodicité ---',
-            		'label'=>'Périodicité :',
-            		'choices' => array(
-            				'HEBDOMADAIRE' => 'Périodicité hebdomadaire',
-            				'MENSUEL' => 'Périodicité mensuelle',
-            				'BIMESTRE' => 'Périodicité bimestrielle',
-            				'TRIMESTRE' => 'Périodicité trimestrielle',
-            				'SEMESTRE' => 'Périodicité semestrielle',
-            				'ANNUEL' => 'Périodicité annuelle'
-            		)
-            ))
+            ->add('pas',null, array('label'=>"Périodicité", 
+            		'attr' => array('class' => 'select pas'),
+            		'empty_value' => '--- Choix periodicite ---', 
+            		'query_builder' => function(EntityRepository $er) {
+            			return $er->createQueryBuilder('q')->where('q.canBeCyclique = true');
+            			
+            }))
+            ->add('dayOfMonth',null,
+            		array('label'=>'Délai initial des occurences :',
+            				'empty_value' => 'Choisir le jour du mois',
+            				'attr' => array('class' => 'select')
+            		))
+            ->add('dayOfWeek',null,
+            				array('label'=>'Délai initial des occurences :',
+            						'empty_value' => 'Choisir le jour de la semaine',
+            						'attr' => array('class' => 'select')
+            		))
+            ->add('iteration', null,
+            			array('label'=>'Semaine:'))
         	->add('action', new ActionType())
         	->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
         ;

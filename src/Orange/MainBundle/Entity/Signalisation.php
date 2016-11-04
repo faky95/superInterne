@@ -168,7 +168,7 @@ class Signalisation
 	private $etatCourant;
 	
 	/**
-	 * @ORM\ManyToOne(targetEntity="TypeAction", inversedBy="action")
+	 * @ORM\ManyToOne(targetEntity="TypeAction", inversedBy="signalisation")
 	 * @ORM\JoinColumns({
 	 *   @ORM\JoinColumn(name="type_signalisation_id", referencedColumnName="id")
 	 * })
@@ -179,7 +179,7 @@ class Signalisation
 	
 	/**
 	 *
-	 * @ORM\ManyToOne(targetEntity="Domaine", inversedBy="action")
+	 * @ORM\ManyToOne(targetEntity="Domaine", inversedBy="signalisation")
 	 * @ORM\JoinColumns({
 	 *   @ORM\JoinColumn(name="domaine_id", referencedColumnName="id")
 	 * })

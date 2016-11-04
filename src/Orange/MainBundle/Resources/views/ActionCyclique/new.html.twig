@@ -1,22 +1,3 @@
-{# {% extends '::base.html.twig' %}#}
-
-{# {% block body -%}#}
-{#     <h1>ActionCyclique creation</h1>#}
-
-{#     {{ form(form) }}#}
-{#     {{ form_row(form.action) }}#}
-
-{#         <ul class="record_actions">#}
-{#     <li>#}
-{#         <a href="{{ path('actioncyclique') }}">#}
-{#             Back to the list#}
-{#         </a>#}
-{#     </li>#}
-{# </ul>#}
-{# {% endblock %}#}
-
-
-
 {% extends '::base.html.twig' %}
 
 {% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
@@ -44,8 +25,21 @@
 	        <div class="panel-body">
 		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('actioncyclique_create') }}" method="post" role="form">
 						<div class="form-group">
-							{{ form_row(form.periodicite,  {'attr': {'class': 'select form-control', 'style' : 'width: 123%'}}) }}
+							{{ form_widget(form.pas,  {'attr': {'class': 'select form-control ', 'style' : 'width: 100%'}}) }}
+                        </div>
+                        <div class="form-group">
+						<div >
+							{{ form_widget(form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}
 						</div>
+                        <div >
+				        	{{ form_widget(form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}
+						</div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+				        	{{ form_widget(form.iteration, {'attr': {'class': 'form-control '}}) }}
+				        	</div>
+						 </div>
 						<div class="form-group">
 			                {{ form_widget(form.action.libelle,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}} ) }}
 			                {{ form_widget(form.action.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
@@ -87,4 +81,30 @@
 		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 			{parent: form.action.instance, child: form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
 		%}
+<script type="text/javascript">
+$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
+$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+ 	$(document).ready(function() {
+	 // $("select").select2();
+	  $("#orange_mainbundle_actioncyclique_pas").change(function(){
+		 if($(this).val()=="3"){
+			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
+			 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().show();
+			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+		 }else if($(this).val()=="1"){
+			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
+			 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+		 }else if($(this).val()=="9"){
+				$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
+				 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+				$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+		 }else{
+		 $("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
+		 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+		 $("#orange_mainbundle_actioncyclique_iteration").parent().parent().show();
+		}
+	  });
+	});
+ 	</script>
 {% endblock %}

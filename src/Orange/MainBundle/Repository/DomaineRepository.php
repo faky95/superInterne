@@ -146,7 +146,6 @@ class DomaineRepository extends BaseRepository{
 		->getQuery()->getArrayResult();
 	}
 	
-	
 }
 
 ?>

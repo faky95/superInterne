@@ -57,17 +57,12 @@ class SignalisationUtils {
 		
 		$animateur = $entityManager->getRepository('OrangeMainBundle:SignalisationAnimateur')->findOneBy(array('actif' => true, 'signalisation' => $signalisation->getid()));
 		
-		if($animateur){
-			array_push($membreEmail, $animateur->getUtilisateur()->getEmail());
-			
-			$structureAnimateur = $animateur->getUtilisateur()->getStructure();
-			$managerAnimateur = $entityManager->getRepository('OrangeMainBundle:Utilisateur')->findOneBy(array('structure' => $structureAnimateur->getid(), 'manager' => true));
-			
-			if($managerAnimateur){
-				array_push($membreEmail, $managerAnimateur->getEmail());
-			}
+		$animateurs = $instance->getAnimateur()->count()==0
+		? $instance->getParent()->getAnimateur()
+		: $instance->getAnimateur();
+		foreach ($animateurs as $animateur){
+			array_push ($membreEmail, $animateur->getUtilisateur()->getEmail());
 		}
-		
 		return $membreEmail;
 	}
 	

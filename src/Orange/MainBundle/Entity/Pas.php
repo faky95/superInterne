@@ -47,6 +47,13 @@ class Pas
      */
     private $action;
     
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="can_be_cylique", type="boolean", nullable=true)
+     */
+    private $canBeCyclique;
+    
     
     /**
      * Get id
@@ -125,5 +132,70 @@ class Pas
     public function __toString()
     {	
     	return $this->libelle;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->action = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Set canBeCyclique
+     *
+     * @param boolean $canBeCyclique
+     *
+     * @return Pas
+     */
+    public function setCanBeCyclique($canBeCyclique)
+    {
+        $this->canBeCyclique = $canBeCyclique;
+
+        return $this;
+    }
+
+    /**
+     * Get canBeCyclique
+     *
+     * @return boolean
+     */
+    public function getCanBeCyclique()
+    {
+        return $this->canBeCyclique;
+    }
+
+    /**
+     * Add action
+     *
+     * @param \Orange\MainBundle\Entity\Action $action
+     *
+     * @return Pas
+     */
+    public function addAction(\Orange\MainBundle\Entity\Action $action)
+    {
+        $this->action[] = $action;
+
+        return $this;
+    }
+
+    /**
+     * Remove action
+     *
+     * @param \Orange\MainBundle\Entity\Action $action
+     */
+    public function removeAction(\Orange\MainBundle\Entity\Action $action)
+    {
+        $this->action->removeElement($action);
+    }
+
+    /**
+     * Get action
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAction()
+    {
+        return $this->action;
     }
 }
