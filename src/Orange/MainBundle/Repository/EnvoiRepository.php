@@ -46,7 +46,7 @@ class EnvoiRepository extends BaseRepository{
 			->where('e.typeReporting = 2')
 			->andWhere('e.dateEnvoi = :date')->setParameter('date', $date);
 		if($bu) {
-			$queryBuilder->andWhere('s.buPrincipal = :bu', $bu);
+			$queryBuilder->andWhere('s.buPrincipal = :bu')->setParameter('bu', $bu);
 		}
 		return $queryBuilder->getQuery()->execute();
 	}
