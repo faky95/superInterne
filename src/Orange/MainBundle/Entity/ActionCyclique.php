@@ -15,15 +15,6 @@ use Orange\MainBundle\Validator\Constraints\CycliquePeriodiciteDate as CPAssert;
  */
 class ActionCyclique
 {
-	
-	const PERIODICITE_HEBDOMADAIRE 			= 'HEBDOMADAIRE';
-	const PERIODICITE_MENSUEL				= 'MENSUEL';
-	const PERIODICITE_BIMESTRIEL			= 'BIMESTRE';
-	const PERIODICITE_TRIMESTRIEL			= 'TRIMESTRE';
-	const PERIODICITE_SEMESTRIEL			= 'SEMESTRE';
-	const PERIODICITE_ANNUEL				= 'ANNUEL';
-	
-	
     /**
      * @var integer
      *
@@ -40,18 +31,52 @@ class ActionCyclique
      **/
     private $action;
     
+    
     /**
-     * @var string
-     *
-     * @ORM\Column(name="periodicite", type="string", length=255, nullable=true)
-     * @Assert\NotBlank()
+     * @ORM\ManyToOne(targetEntity="Orange\MainBundle\Entity\Pas")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="pas_id", referencedColumnName="id")
+     * })
      */
-    private $periodicite;
+    private $pas;
+    
     
     /**
      * @ORM\OneToMany(targetEntity="Tache", mappedBy="actionCyclique", cascade={"persist","merge"})
      **/
     private $tache;
+    
+    /**
+     * @var \DayOfMonth
+     *
+     * @ORM\ManyToOne(targetEntity="DayOfMonth")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="day_of_month_id", referencedColumnName="id")
+     * })
+     *
+     *
+     */
+    private $dayOfMonth;
+    
+    /**
+     * @var \DayOfWeek
+     *
+     * @ORM\ManyToOne(targetEntity="DayOfWeek")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="day_of_week_id", referencedColumnName="id")
+     * })
+     *
+     *
+     */
+    private $dayOfWeek;
+    
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="iteration", type="integer", nullable=true)
+     *
+     */
+    private $iteration;
     
     /**
      * Constructor
@@ -69,29 +94,6 @@ class ActionCyclique
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set periodicite
-     *
-     * @param string $periodicite
-     * @return ActionCyclique
-     */
-    public function setPeriodicite($periodicite)
-    {
-        $this->periodicite = $periodicite;
-
-        return $this;
-    }
-
-    /**
-     * Get periodicite
-     *
-     * @return string 
-     */
-    public function getPeriodicite()
-    {
-        return $this->periodicite;
     }
 
     /**
@@ -172,5 +174,102 @@ class ActionCyclique
      */
     public function getPorteur(){
     	return $this->getAction()?$this->getAction()->getPorteur():null;
+    }
+
+
+    /**
+     * Set pas
+     *
+     * @param \Orange\MainBundle\Entity\Pas $pas
+     *
+     * @return ActionCyclique
+     */
+    public function setPas(\Orange\MainBundle\Entity\Pas $pas = null)
+    {
+        $this->pas = $pas;
+
+        return $this;
+    }
+
+    /**
+     * Get pas
+     *
+     * @return \Orange\MainBundle\Entity\Pas
+     */
+    public function getPas()
+    {
+        return $this->pas;
+    }
+
+    /**
+     * Set dayOfMonth
+     *
+     * @param \Orange\MainBundle\Entity\DayOfMonth $dayOfMonth
+     *
+     * @return ActionCyclique
+     */
+    public function setDayOfMonth(\Orange\MainBundle\Entity\DayOfMonth $dayOfMonth = null)
+    {
+        $this->dayOfMonth = $dayOfMonth;
+
+        return $this;
+    }
+
+    /**
+     * Get dayOfMonth
+     *
+     * @return \Orange\MainBundle\Entity\DayOfMonth
+     */
+    public function getDayOfMonth()
+    {
+        return $this->dayOfMonth;
+    }
+
+    /**
+     * Set dayOfWeek
+     *
+     * @param \Orange\MainBundle\Entity\DayOfWeek $dayOfWeek
+     *
+     * @return ActionCyclique
+     */
+    public function setDayOfWeek(\Orange\MainBundle\Entity\DayOfWeek $dayOfWeek = null)
+    {
+        $this->dayOfWeek = $dayOfWeek;
+
+        return $this;
+    }
+
+    /**
+     * Get dayOfWeek
+     *
+     * @return \Orange\MainBundle\Entity\DayOfWeek
+     */
+    public function getDayOfWeek()
+    {
+        return $this->dayOfWeek;
+    }
+
+    /**
+     * Set iteration
+     *
+     * @param integer $iteration
+     *
+     * @return ActionCyclique
+     */
+    public function setIteration($iteration)
+    {
+        $this->iteration = $iteration;
+
+        return $this;
+    }
+
+    /**
+     * Get iteration
+     *
+     * @return integer
+     */
+    public function getIteration()
+    {
+        return $this->iteration;
     }
 }

@@ -35,23 +35,30 @@ class SignalisationCriteria extends AbstractCriteria
     		->add('constat', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
     			'label' => 'Constat fait par :',
    				'empty_value' => '--- Choisir le constatateur ---',
-  				'query_builder' => function(EntityRepository $er ) use ($structure_id) {
+  				'query_builder' => function(UtilisateurRepository $er ) {
    				return $er->createQueryBuilder('q')
-    			->innerJoin('q.structure', 'str')
-    			->where('str.id = ?1')
-   				->setParameter(1, $structure_id);
+    			->innerJoin('q.signalisation', 'sign')
+    			;
     			}
    			))
    			->add('dom', 'entity', array('class'=>'Orange\MainBundle\Entity\Domaine',
     			'label' => 'Domaine :',
-   				'empty_value' => '--- Choisir le domaine ---'
+   				'empty_value' => '--- Choisir le domaine ---',
+   				'query_builder' => function(DomaineRepository $er ) {
+	   				return $er->createQueryBuilder('q')
+	   				          ->innerJoin('q.signalisation', 's');
+    			}
    			))
    			->add('type', 'entity', array('class'=>'Orange\MainBundle\Entity\TypeAction',
    					'label' => 'Type de la signalisation :',
-   					'empty_value' => '--- Choisir le type ---'
+   					'empty_value' => '--- Choisir le type ---',
+   					'query_builder' => function(TypeActionRepository $er ) {
+	   					return $er->createQueryBuilder('q')
+	   					->innerJoin('q.signalisation', 's');
+	   					}
    					))
    			->add('utilisateur', 'entity', array('class'=>'Orange\MainBundle\Entity\Utilisateur',
-   					'label' => 'La souce :',
+   					'label' => 'La source :',
    					'required' => false,
    					'empty_value' => '--- Choisir la source ---',
   				'query_builder' => function(UtilisateurRepository $er ) {
@@ -65,6 +72,8 @@ class SignalisationCriteria extends AbstractCriteria
    			))
 	    	->add('fromDateConstat', 'date', array('label' => 'Date constat Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('toDateConstat', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
+	    	->add('fromDateSignale', 'date', array('label' => 'Date signalé Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
+	    	->add('toDateSignale', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 	    	->add('filtrer', 'submit', array('label' => 'Filtrer', 'attr' => array('class' => 'btn btn-warning submitLink')))
 	        ->add('effacer', 'submit', array('label' => 'Effacer', 'attr' => array('class' => 'btn btn-danger submitLink')));
     }

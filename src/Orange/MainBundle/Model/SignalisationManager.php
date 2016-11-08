@@ -100,7 +100,7 @@ class SignalisationManager
 	
 	//signalisation non efficace
 	public function signalisationNonEfficace($entity, $helper){
-		$signalisationActeursEmail = SignalisationUtils::getSignalisationMembresEmail($this->em, $entity->getSignalisation());
+		$signalisationActeursEmail = SignalisationUtils::getSignalisationRejeteMembresEmail($this->em, $entity->getSignalisation());
 		$copySignalisation = array('madisylla@orange.sn');
 		$subject = 'Evaluation de la signalisation ';
 		$commentaire = 'La signalisation <<'.$entity->getSignalisation()->getLibelle().'>> a été qualifiée non efficace par sa source '.$this->user->getCompletNom().' .

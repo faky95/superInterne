@@ -19,9 +19,9 @@
                                  <div class="you col-lg-6 col-md-6 col-sm-6" >
                                     <ul class="list-unstyled">
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ entity.action.libelle }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enrégistrement : <strong class="red">{{ entity.action.dateAction| localizeddate('full', 'none')  }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ entity.action.dateDebut| localizeddate('full', 'none')  }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ entity.action.dateInitial| localizeddate('full', 'none')  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enrégistrement : <strong class="red">{{ entity.action.dateAction|date("m/d/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ entity.action.dateDebut|date("m/d/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ entity.action.dateInitial|date("m/d/Y")  }}</strong></li>
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Animateur : 
 	                                        <strong class="red">
 	                                        	{% if app.user.id == entity.action.actionStatut[0].utilisateur.id %}

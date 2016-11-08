@@ -381,11 +381,14 @@ class ActionController extends BaseController
     	$form   = $this->createCreateForm($entity, 'ActionChange');
     	if($request->isMethod('POST')) {
     		$form->handleRequest($request);
+    		if($form->isValid()){
     			$this->get('orange.main.change_statut')->ChangeStatutAction($entity, $this->getUser());
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Statut changé avec succés.'));
     			return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $entity->getId()))));
+    		}else{
+    		     return $this->render('OrangeMainBundle:Action:changerStatut.html.twig', array('action' => $entity, 'form' => $form->createView()), new Response(null, 303));
+    		}
     	}
-   
     	return array('action' => $entity, 'form' =>$form->createView());
     }
     

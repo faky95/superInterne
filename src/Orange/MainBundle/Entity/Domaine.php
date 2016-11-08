@@ -82,6 +82,12 @@ class Domaine
      * @ORM\OneToMany(targetEntity="Action", mappedBy="domaine", cascade={"persist", "merge", "remove"})
      */
     private $action;
+    
+    /**
+     *
+     * @ORM\OneToMany(targetEntity="Action", mappedBy="domaine", cascade={"persist", "merge", "remove"})
+     */
+    private $signalisation;
 
     /**
      * Constructor
@@ -343,5 +349,39 @@ class Domaine
     public function getAction()
     {
         return $this->action;
+    }
+
+    /**
+     * Add signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Action $signalisation
+     *
+     * @return Domaine
+     */
+    public function addSignalisation(\Orange\MainBundle\Entity\Action $signalisation)
+    {
+        $this->signalisation[] = $signalisation;
+
+        return $this;
+    }
+
+    /**
+     * Remove signalisation
+     *
+     * @param \Orange\MainBundle\Entity\Action $signalisation
+     */
+    public function removeSignalisation(\Orange\MainBundle\Entity\Action $signalisation)
+    {
+        $this->signalisation->removeElement($signalisation);
+    }
+
+    /**
+     * Get signalisation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getSignalisation()
+    {
+        return $this->signalisation;
     }
 }

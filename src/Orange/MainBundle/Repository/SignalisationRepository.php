@@ -124,8 +124,15 @@ class SignalisationRepository extends BaseRepository{
 		return (int)$data[0]['maxi'] + 1;
 	}
 	
+	/**
+	 * 
+	 * @param Signalisation $criteria
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
 	public function listAllElements($criteria){
 		$queryBuilder = $this->filter();
+		$fromDateSignale= $criteria->fromDateSignale;
+		$toDateSignale= $criteria->toDateSignale;
 		$fromDateConstat= $criteria->getFromDateConstat();
 		$toDateConstat= $criteria->getToDateConstat();
 		$perimetre = $criteria->getPerimetre();
@@ -153,7 +160,16 @@ class SignalisationRepository extends BaseRepository{
 			$queryBuilder->andWhere('sign.instance = :perimetre')->setParameter('perimetre', $perimetre);
 		}
 		if($fromDateConstat) {
-			$queryBuilder->andWhere('sign.dateConstat >= :from and sign.dateConstat <= :to')->setParameter('to', $toDateConstat)->setParameter('from', $fromDateConstat);
+			$queryBuilder->andWhere('sign.dateConstat >= :from')->setParameter('from', $fromDateConstat);
+		}
+		if($toDateConstat){
+			$queryBuilder->andWhere('sign.dateConstat <= :to')->setParameter('to', $toDateConstat);
+		}
+		if($fromDateSignale) {
+			$queryBuilder->andWhere('sign.dateSignale >= :fromsign')->setParameter('fromsign', $fromDateSignale);
+		}
+		if($toDateSignale){
+			$queryBuilder->andWhere('sign.dateSignale <= :tosign')->setParameter('tosign', $toDateSignale);
 		}
 		return $queryBuilder;
 	}

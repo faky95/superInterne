@@ -42,7 +42,7 @@ class ActionType extends AbstractType
             		                     	}
 					}
             ))
-            ->add('dateInitial', 'date', array('label' => 'Délai Initial :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
+            ->add('dateInitial', 'date', array('label' => 'Date fin :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('priorite','entity', array('label'=>'Priorite :', 'class'=>'Orange\MainBundle\Entity\Priorite', 'empty_value' => '--- Choix Priorite ---'
             		
             ));

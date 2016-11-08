@@ -35,7 +35,7 @@ class atteinteDelaiCommand extends BaseCommand {
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
 			$result = $this->getMailer()->send($to, $cc, $subject, $body);
-			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to),null,$nbr);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to),array($cc),$nbr);
 		}
 		if (!empty($chemin)){
 			$send = $this->getMailer()->sendLogsMail(
