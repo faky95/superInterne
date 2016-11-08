@@ -6,19 +6,17 @@
 <!-- heading -->
 <div class="heading">
 	<h3>{% block page_title %} Ajout d'une action {% endblock %}</h3> 
-	{% if  espace_id is not empty %}  
-		 	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+	{% if  espace is not empty %}
+		{% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace.id, 'gest': espace.isGestionnaire(app.user) } %}
 	{% endif %} 
-	 
-	 
 </div>
 <!-- End .heading-->
 <div class="row">
     <div class="col-lg-12">
     	<div class="row">
 			<div class="col-lg-4">
-			{% if espace_id is defined and espace_id is not empty %}
-				<a href="{{ path('les_actions_by_espace', {'espace_id':espace_id}) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span> Liste des actions</button></a>				
+			{% if espace is defined and espace is not empty %}
+				<a href="{{ path('les_actions_by_espace', {'espace_id':espace.id}) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span> Liste des actions</button></a>				
 			{% else %}
 				<a href="{{ path('les_actions') }}" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span> Liste des actions</button></a>
 			{% endif %}
@@ -32,16 +30,12 @@
 				</h4>
 	        </div>
 	        <div class="panel-body with-footer">
-		        <form novalidate="novalidate" class="form-horizontal" action="{{ espace_id is empty ? path('creer_action') : path('creer_action_to_espace', {'espace_id': espace_id}) }}" method="post" {{ form_enctype(form) }} role="form">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ espace is empty ? path('creer_action') : path('creer_action_to_espace', {'espace_id': espace.id}) }}" method="post" {{ form_enctype(form) }} role="form">
 					<div class="form-group">
 		                {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}} ) }}
-		                <div 
-					{% if espace_id is defined and espace_id is not empty %}
-						style="display:none;"
-					{% endif %}
-					>
-						{{ form_widget(form.instance) }}
-					</div>
+		                <div {% if espace is defined and espace is not empty %}style="display:none;"{% endif %}>
+						    {{ form_widget(form.instance) }}
+						</div>
 					</div>
 					<div class="form-group">
 						 {{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
@@ -74,12 +68,12 @@
         </div>
     </div><!-- End .span12 -->
 </div><!-- End .row -->
-{% if  espace_id is not empty%}
+{% if  espace is not empty%}
 	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 		{parent: form.instance, child: form.porteur, url: path('porteur_by_espace'), key: 'id' } 
 	%}
 {% endif %}
-{% if espace_id is empty %}
+{% if espace is empty %}
 		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 			{parent: form.instance, child: form.typeAction, url: path('type_by_instance'), key: 'id' } 
 		%}
@@ -93,7 +87,7 @@
 			{parent: form.instance, child: form.tmp_contributeur, url: path('user_by_instance'), key: 'id' } 
 		%}
 {% endif %}
-{% if  espace_id is not empty%}
+{% if  espace is not empty%}
 	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 		{parent: form.instance, child: form.porteur, url: path('porteur_by_espace'), key: 'id' } 
 	%}

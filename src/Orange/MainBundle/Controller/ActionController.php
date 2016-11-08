@@ -281,11 +281,10 @@ class ActionController extends BaseController
      * @Template("OrangeMainBundle:Action:new.html.twig")
      */
     public function createAction(Request $request,$espace_id=null){
-    	$logger = $this->get('my_service.logger');
-		$logger->info('Création action :{  Utilisateur/login: '.$this->getUser()->getNomComplet().'/'.$this->getUser()->getUsername().' | Date: '.date('d-m-Y H:i:s').' | IP: '.$_SERVER["REMOTE_ADDR"].' | URL: '.$_SERVER['REQUEST_URI'].' }');
     	$entity = new Action();
      	$dispatcher = $this->container->get('event_dispatcher');
-    	if($espace_id!=null){
+     	$espace = null;
+    	if($espace_id!=null) {
     		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		$entity->setInstance($espace->getInstance());
     		$entity->setEtatCourant(Statut::ACTION_NON_ECHUE);
@@ -313,7 +312,11 @@ class ActionController extends BaseController
     				ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NOUVELLE, $this->getUser(), "Nouvelle action créée par ".$entity->getAnimateur()->getNomComplet());
     				$event = $this->get('orange_main.action_event')->createForAction($entity);
     				$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
-    			}else{
+    			} else {
+    				$membre = $this->getDoctrine()->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array(
+    						'utilisateur' => $this->getUser(), 'espace' => $espace_id
+    					));
+    				$gestionnaire = $membre ? $membre->getIsGestionnaire() : false;
     				$espace = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id)->getLibelle();
     				ActionUtils::setReferenceAction($em, $entity);
     				ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NON_ECHUE, $this->getUser(), "Nouvelle action créée dans l'espace ".$espace);
@@ -342,9 +345,7 @@ class ActionController extends BaseController
     			}
     		}
     	}
-    	return array('entity' => $entity, 'form' => $form->createView(), 'espace_id'=>$espace_id,
-    				'espace'=>$espace_id?$espace:null
-    	);
+    	return array('entity' => $entity, 'form' => $form->createView(), 'espace'=> $espace);
     }
     
     /**
@@ -357,24 +358,14 @@ class ActionController extends BaseController
      * @Template() 
      */
     public function newAction($espace_id=null, $instance_id=null) {
-		$em = $this->getDoctrine()->getManager();
     	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Action();
-        $gestionnaire=$espace=$actions=$act=null;
         if($espace_id){
        		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-       		$user = $this->getDoctrine()->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
-       		$membre=$this->getDoctrine()->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(
-       				array('utilisateur' => $user, 'espace' => $espace));
-       		$gestionnaire = $membre->getIsGestionnaire();
-       		$actions = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->allActionEspace($espace_id);
-       		$act = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->listActionsUserByEspace($this->getUser()->getId(), $espace_id);
       		$entity->setInstance($espace->getInstance());
-      		
         }
         $form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id, 'instance_id'=>$instance_id, 'bu_id'=>$bu)));
-        return array('entity' => $entity, 'form' => $form->createView(), 'espace_id'=>$espace_id, 'espace' => $espace,
-        		'gest' => $gestionnaire, 'nbrTotal' => count($actions), 'nbr' => count($act));
+        return array('entity' => $entity, 'form' => $form->createView(), 'espace' => $espace);
     }
     
     /**

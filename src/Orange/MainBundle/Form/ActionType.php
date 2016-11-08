@@ -32,11 +32,14 @@ class ActionType extends AbstractType
             ->add('description', null,array('label'=>'Description :') )
             ->add('dateDebut', 'date', array('label' => 'Date de Début :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('porteur', null, array('label'=>'Porteur :', 'empty_value' => '--- Choix Porteur ---', 
-            		                     'query_builder' => function(UtilisateurRepository $ur) use($options){
-            		                     	if(isset($options['attr']['manager']))
+            		                     'query_builder' => function(UtilisateurRepository $ur) use($options, $espace) {
+            		                     	if($espace) {
+            		                     		return $ur->getMembreEspace($espace);
+            		                     	} elseif(isset($options['attr']['manager'])) {
 						                         return $ur->managerQueryBuilder($data, true)->select('u4');
-            		                     	else
+            		                     	} else {
             		                     		return $ur->filter();
+            		                     	}
 					}
             ))
             ->add('dateInitial', 'date', array('label' => 'Délai Initial :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
@@ -95,10 +98,7 @@ class ActionType extends AbstractType
             	 		'multiple' => true, 'class'=>'Orange\MainBundle\Entity\Utilisateur', 
 						'label' => 'Contributeur :', 'empty_value' => 'Choisir les contributeurs',
 						'query_builder'=>function(UtilisateurRepository $ur)use($espace){
-						if($espace!=null)
-							return $ur->getMembreEspace($espace);
-						else
-								return $ur->filter();
+							return ($espace!=null) ? $ur->getMembreEspace($espace) : $ur->filter();
 						}
             )) ;
 		

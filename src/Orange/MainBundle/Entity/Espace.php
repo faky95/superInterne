@@ -405,4 +405,22 @@ class Espace
     {
     	return $this->typeAction;
     }
+    
+    /**
+     * @param \Orange\MainBundle\Entity\Utilisateur $user
+     * @return boolean
+     */
+    public function isGestionnaire($user = null) {
+    	$data =$this->membreEspace->filter(function($membre) use($user) {
+    			return $membre->getUtilisateur()->getId()==$user->getId() && $membre->getIsGestionnaire();
+    		});
+    	return $data->count() ? true : false;
+    }
+    
+    /**
+     * @return number
+     */
+    public function getTotalNumber() {
+    	return $this->instance->getAction()->filter(function($action) { return !strpos($action->getEtatCourant(), 'ARCHIVE'); })->count();
+    }
 }

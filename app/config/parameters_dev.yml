@@ -1,6 +1,6 @@
 # This file is a "template" of what your parameters.yml file should look like
 parameters:
-
+    template_status: OrangeMainBundle:Extra:status.html.twig
     ids:
     
     pas:
