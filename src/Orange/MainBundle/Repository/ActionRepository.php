@@ -66,9 +66,21 @@ class ActionRepository extends BaseRepository {
 		return $queryBuilder;
 	}
 	public function alertQuartTime($bu, $espace, $projet) {
-		$queryBuilder = $this->createQueryBuilder ( 'a' )->innerJoin ( 'a.porteur', 'u' )->innerJoin ( 'a.instance', 'i' )->innerJoin ( 'u.structure', 's' )->innerJoin ( 's.buPrincipal', 'bu' )->select ( 'a.libelle libelle, a.id id, a.reference reference, i.libelle as lib_instance,
-				u.prenom as prenom, u.nom as nom, a.dateDebut as dateDebut, a.dateInitial as dateInitial, u.email as email' )->where ( "a.etatCourant LIKE 'ACTION_NON_ECHUE'" )->orderBy ( 'a.id', 'ASC' )->addOrderBy ( 'a.dateAction', 'DESC' )->getQuery ()->getArrayResult ();
-		return $queryBuilder;
+		$date = new \DateTime ( '@' . strtotime ( '+40 days' ) );
+		$queryBuilder = $this->createQueryBuilder ( 'a' )
+							  ->innerJoin ( 'a.porteur', 'u' )
+							  ->innerJoin ( 'a.instance', 'i' )
+							  ->innerJoin ( 'u.structure', 's' )
+							  ->innerJoin ( 's.buPrincipal', 'bu' )
+							  ->select ( 'a.libelle libelle, a.id id, a.reference reference, i.libelle as lib_instance,
+									u.prenom as prenom, u.nom as nom, a.dateDebut as dateDebut, a.dateInitial as dateInitial, u.email as email' )
+							  ->where ( "a.etatCourant LIKE 'ACTION_NON_ECHUE'" )
+							  ->andWhere("a.dateInitial > :date")->setParameter('date', $date)
+							  ->orderBy ( 'a.id', 'ASC' )->addOrderBy ( 'a.dateAction', 'DESC' );
+		if($bu){
+			$queryBuilder->andWhere('s.buPrincipal = :bu')->setParameter('bu', $bu);
+		}
+		return $queryBuilder->getQuery ()->getArrayResult ();
 	}
 	public function atteintDelai($bu, $espace, $projet) {
 		$queryBuilder = $this->createQueryBuilder ( 'a' )->innerJoin ( 'a.porteur', 'u' )->innerJoin ( 'a.instance', 'i' )->innerJoin ( 'a.domaine', 'd' )->where ( 'a.dateInitial < CURRENT_DATE()' )->andWhere ( "a.etatReel LIKE 'ACTION_ECHUE_NON_SOLDEE'" )->orderBy ( 'a.id', 'ASC' )->addOrderBy ( 'a.dateAction', 'DESC' )->getQuery ()->execute ();
