@@ -46,7 +46,7 @@ class SignalisationCriteria extends AbstractCriteria
    				'empty_value' => '--- Choisir le domaine ---',
    				'query_builder' => function(DomaineRepository $er ) {
 	   				return $er->createQueryBuilder('q')
-	   				          ->innerJoin('q.signalisation', 's');
+	   				          ->innerJoin('q.signalisation', 'sign');
     			}
    			))
    			->add('type', 'entity', array('class'=>'Orange\MainBundle\Entity\TypeAction',

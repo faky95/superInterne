@@ -85,7 +85,7 @@ class Domaine
     
     /**
      *
-     * @ORM\OneToMany(targetEntity="Action", mappedBy="domaine", cascade={"persist", "merge", "remove"})
+     * @ORM\OneToMany(targetEntity="Signalisation", mappedBy="domaine", cascade={"persist", "merge", "remove"})
      */
     private $signalisation;
 
@@ -354,11 +354,11 @@ class Domaine
     /**
      * Add signalisation
      *
-     * @param \Orange\MainBundle\Entity\Action $signalisation
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
      *
      * @return Domaine
      */
-    public function addSignalisation(\Orange\MainBundle\Entity\Action $signalisation)
+    public function addSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
     {
         $this->signalisation[] = $signalisation;
 
@@ -368,9 +368,9 @@ class Domaine
     /**
      * Remove signalisation
      *
-     * @param \Orange\MainBundle\Entity\Action $signalisation
+     * @param \Orange\MainBundle\Entity\Signalisation $signalisation
      */
-    public function removeSignalisation(\Orange\MainBundle\Entity\Action $signalisation)
+    public function removeSignalisation(\Orange\MainBundle\Entity\Signalisation $signalisation)
     {
         $this->signalisation->removeElement($signalisation);
     }
