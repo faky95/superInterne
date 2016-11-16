@@ -647,6 +647,7 @@ class Extraction extends \PHPExcel {
 		$objWriter = \PHPExcel_IOFactory::createWriter ( $this, 'CSV' );
 		$objWriter->setDelimiter(';');
 		$objWriter->setUseBOM(true);
+		$objWriter->setExcelCompatibility(true);
 		ob_end_clean ();
 		return $objWriter;
 	}
