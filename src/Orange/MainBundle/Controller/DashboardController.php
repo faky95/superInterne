@@ -10,7 +10,7 @@ use Orange\MainBundle\Entity\Utilisateur;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 /**
  * Controlleur du Tableau de bord
- * @author tmp_savi2790
+ * @author madiagne
  *
  */
 class DashboardController extends Controller {

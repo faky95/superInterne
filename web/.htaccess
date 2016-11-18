@@ -5,6 +5,10 @@
 # to each configured DirectoryIndex file (e.g. index.php, index.html, index.pl).
 DirectoryIndex app.php
 
+AddType 'text/csv; charset=ISO-8859-1' csv
+AddDefaultCharset ISO-8859-1
+AddCharset ISO-8859-1 .csv
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
 
