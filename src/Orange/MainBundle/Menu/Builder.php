@@ -287,8 +287,8 @@ class Builder extends ContainerAware
     	foreach ($mmb as $me){
     		if($me->getIsGestionnaire()==true)
     			$espaces_gest[]=$me->getEspace();
-    			else
-    				$espaces_mmb[]=$me->getEspace();
+    		else
+    			$espaces_mmb[]=$me->getEspace();
     	}
     	 
     	$menu->addChild('Espace', array('uri' => '#', 'label' => 'Espaces', 'attributes' => array('class' => 'icomoon-icon-stats')));

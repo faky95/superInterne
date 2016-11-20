@@ -489,7 +489,7 @@ class Utilisateur extends BaseUser
     	} elseif(strtoupper($role)==self::ROLE_MANAGER) {
     		return $this->manager;
     	} elseif(strtoupper($role)==self::ROLE_CONTRIBUTEUR) {
-    		return $this->getContributeurs()->count()>0;
+    		return true;
     	}elseif(strtoupper($role)==self::ROLE_SOURCE) {
     		return $this->getSources()->count()>0;
     	} elseif(strtoupper($role)==self::ROLE_CHEF_PROJET) {
@@ -497,8 +497,8 @@ class Utilisateur extends BaseUser
     	} elseif(strtoupper($role)==self::ROLE_GESTIONNAIRE_ESPACE) {
     		$trouve=false;
     		if($this->getMembreEspace()->count()>0)
-	    		foreach ($this->membreEspace as $mmber)
-	    			if($mmber->getIsGestionnaire()) {
+	    		foreach ($this->membreEspace as $member)
+	    			if($member->getIsGestionnaire()) {
 	    				$trouve=true;
 	    				break;
 	    			}

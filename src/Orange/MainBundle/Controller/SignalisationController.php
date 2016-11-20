@@ -105,6 +105,7 @@ class SignalisationController extends BaseController
 	 * @Template()
 	 */
 	public function exportCanevasAction() {
+        $response = new Response();
 		$em = $this->getDoctrine()->getEntityManager();
 		$queryBuilder = $this->get('session')->get('canevas', array());
 		$query = $em->createQuery($queryBuilder['query']);
@@ -112,8 +113,11 @@ class SignalisationController extends BaseController
 		$data = $this->get('orange.main.data')->exportCanevas($query->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
 		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
-		return $this->redirect($this->getUploadDir().$filename);
+        $response->headers->set('Content-Type', 'text/html; charset=ISO-8859-1;');
+        $response->headers->set('content-disposition', 'attachement; filename = '.$filename);
+        $response->sendHeaders();
+        $objWriter->save('php://output');
+		return $response;
 	}
 	
 	
