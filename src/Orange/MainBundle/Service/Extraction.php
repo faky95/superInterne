@@ -639,7 +639,7 @@ class Extraction extends \PHPExcel {
 		foreach ( $arrData as $values ) {
 			$b = "A";
 			foreach ( $values as $value ) {
-				$this->getActiveSheet ()->setCellValue ( $b . $y, mb_convert_encoding( $value,"Windows-1252","utf-8") )->getColumnDimension ( $b )->setAutoSize ( true );
+				$this->getActiveSheet ()->setCellValue ( $b . $y, iconv('utf-8', 'ASCII//TRANSLIT', $value) )->getColumnDimension ( $b )->setAutoSize ( true );
 				$b ++;
 			}
 			$y ++;
