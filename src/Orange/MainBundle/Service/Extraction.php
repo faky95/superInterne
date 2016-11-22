@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller;
 use Symfony\Component\Serializer\Encoder\ChainEncoder;
 
 class Extraction extends \PHPExcel {
+	
 	public function exportUser($arrData) {
 		$default_border = array (
 				'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -612,7 +613,6 @@ class Extraction extends \PHPExcel {
 	}
 	public function exportCanevas($arrData) {
 		$objPHPExcel = new \PHPExcel ();
-		
 		$th = array (
 				'Réference',
 				'Prénom et Nom du porteur',
@@ -632,22 +632,21 @@ class Extraction extends \PHPExcel {
 		$col = "A";
 		$x = 1;
 		foreach ( $th as $value ) {
-			$this->getActiveSheet ()->setCellValue ( $col . $x, $value )->getColumnDimension ( $col )->setAutoSize ( true );
+			$this->getActiveSheet ()->setCellValue ( $col . $x, mb_convert_encoding( $value,"Windows-1252","utf-8") )->getColumnDimension ( $col )->setAutoSize ( true );
 			$col ++;
 		}
 		$y = 2;
 		foreach ( $arrData as $values ) {
 			$b = "A";
 			foreach ( $values as $value ) {
-				$this->getActiveSheet ()->setCellValue ( $b . $y, $value )->getColumnDimension ( $b )->setAutoSize ( true );
+				$this->getActiveSheet ()->setCellValue ( $b . $y, mb_convert_encoding( $value,"Windows-1252","utf-8") )->getColumnDimension ( $b )->setAutoSize ( true );
 				$b ++;
 			}
 			$y ++;
 		}
 		$objWriter = \PHPExcel_IOFactory::createWriter ( $this, 'CSV' );
 		$objWriter->setDelimiter(';');
-		$objWriter->setUseBOM(true);
-		ob_end_clean ();
+		//$objWriter->setUseBOM(true);
 		return $objWriter;
 	}
 	public function exportInstance($arrData) {
@@ -802,5 +801,6 @@ class Extraction extends \PHPExcel {
 		$objWriter = \PHPExcel_IOFactory::createWriter ( $this, 'Excel2007' );
 		return $objWriter;
 	}
+	
 }
 	

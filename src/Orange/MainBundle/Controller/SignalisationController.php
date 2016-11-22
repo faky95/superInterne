@@ -112,8 +112,14 @@ class SignalisationController extends BaseController
 		$data = $this->get('orange.main.data')->exportCanevas($query->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
 		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
-		return $this->redirect($this->getUploadDir().$filename);
+		$response = new Response();
+		$response->headers->set('Content-Type', 'application/vnd.ms-excel');
+		$response->headers->set('Content-Disposition', sprintf('attachement;filename=%s', $filename));
+		$response->headers->set('Cache-Control','max-age=0');
+		//echo "\xBE\xBD\xBE";
+		$response->sendHeaders();
+		$objWriter->save('php://output');
+		return $response;
 	}
 	
 	
