@@ -434,6 +434,9 @@ class ActionController extends BaseController
     	$em = $this->getDoctrine()->getManager();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
     	$entity = new Action();
+   		$entity->setLibelle($signalisation->getLibelle());
+   		$entity->setDescription($signalisation->getDescription());
+   		$entity->setDateDebut(new \DateTime('NOW'));
    		$entity->setInstance($signalisation->getInstance());
    		$entity->setDomaine($signalisation->getDomaine());
    		$entity->setTypeAction($signalisation->getTypeSignalisation());
