@@ -184,17 +184,15 @@ class ActionQuery extends BaseQuery {
 					select null, t.id, st.id, NOW()," . $current_user->getId () . ", 'action importée avec succés'
 					from temp_action t
 					inner join statut st on st.code =t.code_statut;";
-		
 		if ($isCorrective == 1){
 			$query .= "INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
-			           select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
+			           select t.id, s.id from temp_action t INNER JOIN signalisation s ON s.reference = t.reference;";
 				
-			$query.= "UPDATE signalisation s 
-					  LEFT JOIN temp_action ahs on s.id = a.signalisation_id
+			$query .= "UPDATE signalisation s 
+					  LEFT JOIN temp_action t on s.reference = t.reference 
 					  SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' 
-					  WHERE a.signalisation_id is not null;";
+					  WHERE t.id is not null;";
 		}
-		
 		$query2 = "";
 		$test = 0;
 		$resultsAction = $this->connection->fetchAll("SELECT id , contributeur from temp_action ");
@@ -208,7 +206,6 @@ class ActionQuery extends BaseQuery {
 				}
 			}
 		}
-					
 		$this->connection->prepare($query)->execute();
 		if(strlen($query2)>0)
 	    	$this->connection->prepare($query2)->execute();

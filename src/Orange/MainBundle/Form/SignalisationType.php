@@ -20,12 +20,9 @@ class SignalisationType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-    	
+    public function buildForm(FormBuilderInterface $builder, array $options) {
     	$user_id 		= $options['attr']['user_id'];
     	$structure_id 	= $options['attr']['structure_id'];
-		    	
         $builder
             ->add('libelle',null,array('label'=>'Libellé :'))
             ->add('description',null,array('label'=>'Description :'))
@@ -34,8 +31,7 @@ class SignalisationType extends AbstractType
             		'label' => 'Périmètre :',
             		'empty_value' => '--- Choisir le périmètre ---',
             		'query_builder' => function(InstanceRepository $er ) use ( $user_id ) {
-            			return $er->createQueryBuilder('i')
-		            			  ->where('i.parent = 55 OR i.parent = 139  OR i.typeInstance = 2');
+            			return $er->filterForSignalisation();
             		}
             ))
             ->add('constatateur', null, array(
@@ -48,12 +44,7 @@ class SignalisationType extends AbstractType
 		            			  ->setParameter(1, $structure_id);
             		}
             ))
-            ->add('dateConstat', 'date', array(
-            		'label' => 'Date de constat :',
-            		'widget' => 'single_text',
-            		'input'  => 'datetime',
-            		'format' => 'dd/MM/yyyy'
-            ))
+            ->add('dateConstat', 'date', array('label' => 'Date de constat :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('domaine', null, array('label'=>'Domaine :', 'empty_value' => 'Choisissez un domaine ..'))
             ->add('typeSignalisation', null, array('label'=>'Type Signalisation :', 'empty_value' => 'Choisissez un type de signalisation...'))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))

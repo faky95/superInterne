@@ -234,9 +234,9 @@ protected $mailer;
     {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
+    	->setTo('madiagne.sylla@orange-sonatel.com')
     	->setCc($cc)
-    	->setSubject(utf8_encode($subject))
+    	->setSubject('Traitement dans SUPER')
     	->setBody(
     			$this->templating->render(
     					'OrangeMainBundle:Notification:notif.html.twig',

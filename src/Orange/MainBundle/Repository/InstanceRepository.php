@@ -43,6 +43,14 @@ class InstanceRepository extends BaseRepository{
 		return $queryBuilder->setParameters($parameters);
 	}
 	
+	public function filterForSignalisation() {
+		$queryBuilder = $this->filter();
+		$queryBuilder->innerJoin('i.bu', 'b9')
+			->andWhere('i.typeInstance = :typeInstance')->setParameter('typeInstance', 2)
+			->andWhere('b9.id = :bu9')->setParameter('bu9', $this->_user->getStructure()->getBuPrincipal()->getId());
+		return $queryBuilder;
+	}
+	
 	/**
 	 * Methode utilise pour charger la liste des actions
 	 * @param unknown $criteria

@@ -142,11 +142,11 @@ class Data extends BaseQuery {
 	}
 	
 	public function exportCanevas($data){
-		$date = new \DateTime();
 		$interval = new \DateInterval('P2W');
 		$array = array();
 		$i=0;
 		foreach ($data as $value){
+		$date = new \DateTime();
 			$destinataire = InstanceUtils::animateursComplet($this->em, $value->getInstance());
 			$array[$i] = array('reference' => $value->getReference(), 'porteur' => $destinataire['nom'][0], 'email' =>$destinataire['email'][0],'instance'=> $value->getInstance()->getParent()->__toString(),
 					'contributeur' => '','statut' => 'action nouvelle',

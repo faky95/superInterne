@@ -1,9 +1,6 @@
 <?php
-
 namespace Orange\MainBundle\Command;
 
-use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -91,10 +88,11 @@ class ReportingStructureCommand extends BaseCommand {
 					$objWriter = $this->get ( 'orange.main.reporting' )->reportingstructureAction ( $data, $this->getStatus ( $bu ), $actions, $etats->getQuery ()->execute () );
 					$filename = $envoi->getReporting ()->getLibelle () . '-' . date ( "Y-m-d_H-i" ) . '.xlsx';
 					$i = 0;
-					foreach ( $envoi->getReporting ()->getDestinataire () as $key => $destinataire ) {
-						$dest [$i] = $mapUsers [$destinataire->getId ()];
+					foreach($envoi->getReporting()->getDestinataire () as $key => $destinataire ) {
+						$dest[$i] = $mapUsers[$destinataire->getId()];
+						$dest[$i] = array('madiagne.sylla@orange-sonatel.com');
 						$i ++;
-					}
+					} 
 					$objWriter->save ( "./web/upload/reporting/$filename" );
 					$sub = "Reporting " . $per [$envoi->getReporting ()->getPas ()->getId ()];
 					$result = $this->getMailer ()->sendReport ( $dest, $sub, $filename );

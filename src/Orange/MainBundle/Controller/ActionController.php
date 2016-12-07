@@ -360,7 +360,7 @@ class ActionController extends BaseController
     public function newAction($espace_id=null, $instance_id=null) {
     	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Action();
-        if($espace_id){
+        if($espace_id) {
        		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
       		$entity->setInstance($espace->getInstance());
         }
@@ -437,7 +437,7 @@ class ActionController extends BaseController
    		$entity->setLibelle($signalisation->getLibelle());
    		$entity->setDescription($signalisation->getDescription());
    		$entity->setDateDebut(new \DateTime('NOW'));
-   		$entity->setInstance($signalisation->getInstance());
+   		$entity->setInstance($signalisation->getInstance()->getParent() ? $signalisation->getInstance()->getParent() : $signalisation->getInstance());
    		$entity->setDomaine($signalisation->getDomaine());
    		$entity->setTypeAction($signalisation->getTypeSignalisation());
     	$form   = $this->createCreateForm( $entity,'Action');
@@ -455,17 +455,24 @@ class ActionController extends BaseController
     public function createSignalisationAction(Request $request, $signalisation_id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = new Action();
+     	$dispatcher = $this->container->get('event_dispatcher');
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
     	$entity->setAnimateur($this->getUser());
+    	$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	$form = $this->createCreateForm( $entity,'Action');
     	$form->handleRequest($request);
     	if($form->isValid()) {
+	    	$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
+	    	$entity->setEtatReel(Statut::ACTION_NOUVELLE);
     		$em->persist($entity);
     		$entity->addSignalisation($signalisation);
     		$em->flush();
     		ActionUtils::setReferenceActionSignalisation($em, $entity, $signalisation);
     		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a �t� ajout�e pour traiter cette signalisation');
     		ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NOUVELLE, $this->getUser(), 'Nouvelle action corrective.');
+			$event = $this->get('orange_main.action_event')->createForAction($entity);
+			$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
+    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action créée avec succés.'));
     		if($form->get('save_and_add')->isClicked()) {
     			return $this->redirect($this->generateUrl('nouvelle_signalisation_action', array('signalisation_id' => $signalisation_id)));
     		}
@@ -705,7 +712,7 @@ class ActionController extends BaseController
             $data = $form->getData();
             $isCorrective = intval($data['isCorrective']);
             try {
-            	if($espace_id){
+            	if($espace_id) {
             		$idsMembres = $em->getRepository('OrangeMainBundle:MembreEspace')->getAllMembres($espace_id);
             		foreach ($idsMembres as $value){
             			array_push($array, $value['id']);
@@ -714,9 +721,10 @@ class ActionController extends BaseController
                 $number = $this->get('orange.main.loader')->loadAction($data['file'], $this->getUser(), $users, $instances, $data['isCorrective']);
                 $actions = $em->getRepository('OrangeMainBundle:Action')->getActions($number['id']);
                 $nbr = $number['nbr'];
-                foreach ($actions as $value){
+                foreach ($actions as $value) {
                 	$this->get('orange.main.mailer')->notifNewAction($value->getPorteur()->getEmail(), $value);
                 }
+                $em->flush();
                 $this->get('orange.main.setStructure')->setStructureForAction();
                 $this->get('session')->getFlashBag()->add('success', array (
                 		'title' => 'Notification',
