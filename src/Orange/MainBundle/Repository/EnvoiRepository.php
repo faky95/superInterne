@@ -28,7 +28,7 @@ class EnvoiRepository extends BaseRepository{
 	}
 	public function getEnvoiStructure($bu = null, $espace = null, $projet = null)
 	{
-		$date =  date('Y-m-d');
+		$date =  '2016-12-05';//date('Y-m-d');
 		$queryBuilder = $this->createQueryBuilder('e')
 		    ->innerJoin('e.reporting', 'r')
 		    ->innerJoin('r.utilisateur', 'u')
