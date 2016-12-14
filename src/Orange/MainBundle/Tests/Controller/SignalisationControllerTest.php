@@ -15,6 +15,7 @@ class SignalisationControllerTest extends BaseControllerTest
 	 */
 	public function urlProvider() {
 		return array(
+			 array("/les_signalisations"),
 			 array("/-1/edition_signalisation"),
 			 array("/-1/supprimer_signalisation"),
 			 array("/ss_instance"),

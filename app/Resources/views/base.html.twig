@@ -1,5 +1,3 @@
-{% trans_default_domain 'messages' %}
-
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -223,7 +221,7 @@
 							        <h4 class="modal-title" id="exampleModalLabel">Changement de mot de passe</h4>
 						       </div>
 						       <form id="changePassword" novalidate="novalidate" action="{{ path('fos_user_change_password') }}" method="POST" class="fos_user_change_password">
-							   		{{ render(controller('FOSUserBundle:ChangePassword:changePassword')) }}
+							   		{# render(controller('FOSUserBundle:ChangePassword:changePassword')) #}
 							   </form>
 						</div>
 					</div>

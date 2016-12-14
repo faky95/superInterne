@@ -437,6 +437,10 @@ class ActionController extends BaseController
     public function newSignalisationAction(Request $request, $signalisation_id) {
     	$em = $this->getDoctrine()->getManager();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
+    	if(!$signalisation) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$entity = new Action();
    		$entity->setLibelle($signalisation->getLibelle());
    		$entity->setDescription($signalisation->getDescription());
@@ -461,6 +465,10 @@ class ActionController extends BaseController
     	$entity = new Action();
      	$dispatcher = $this->container->get('event_dispatcher');
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
+    	if(!$signalisation) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$entity->setAnimateur($this->getUser());
     	$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	$form = $this->createCreateForm( $entity,'Action');
@@ -501,10 +509,11 @@ class ActionController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $action = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('read', $action, 'Unauthorized access!');
-        if (!$action) {
-            throw $this->createNotFoundException('Unable to find Action entity.');
-        }
-        if($id_espace){
+    	if(!$action) {
+    		$this->addFlash('error', "Impossible de voir les détails, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
+    	}
+        if($id_espace) {
         	$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($id_espace);
         	$user = $this->getDoctrine()->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
         	$membre=$this->getDoctrine()->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(
@@ -531,7 +540,8 @@ class ActionController extends BaseController
         $entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('update', $entity, 'Unauthorized access!');
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Action entity.');
+    		$this->addFlash('error', "Impossible de voir les détails, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
         }
         $editForm = $this->createEditForm($entity);
         if($entity->getInstance()->getEspace()){
@@ -551,9 +561,6 @@ class ActionController extends BaseController
     private function createEditForm(Action $entity, $espace_id=null) {
     	$form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id),
     			'action' => $this->generateUrl('modifier_action', array('id' => $entity->getId())), 'method' => 'PUT'));
-//         $form = $this->createForm(new ActionType(), $entity, array(
-//             	'action' => $this->generateUrl('modifier_action', array('id' => $entity->getId())), 'method' => 'PUT'
-//         	));
         $form->add('submit', 'submit', array('label' => 'Update'));
         return $form;
     }
@@ -610,7 +617,11 @@ class ActionController extends BaseController
     public function deleteAction(Request $request, $id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
-    	if($request->getMethod() === 'POST'){
+        if (!$entity) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
+        }
+    	if($request->getMethod() === 'POST') {
     		if($entity) {
     			$em->remove($entity);
     			$em->flush();
@@ -620,7 +631,7 @@ class ActionController extends BaseController
     			$this->get('session')->getFlashBag()->add('failed', array('title' => 'Notification', 'body' =>  'Action inexistante!'));
     		}
     	}
-    			return array('id' => $id);
+    	return array('id' => $id);
     }
     
     /**
