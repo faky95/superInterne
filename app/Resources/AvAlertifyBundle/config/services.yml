@@ -1,0 +1,17 @@
+parameters:
+    twig.extension.alertify.class: AppVentus\AlertifyBundle\Twig\Extension\AlertifyExtension
+    bestmodules_alertify.alertify_service.class: AppVentus\AlertifyBundle\Service\AlertifyServic
+services:
+    twig.extension.alertify:
+        class: %twig.extension.alertify.class%
+        arguments:
+            - "%av_alertify%"
+        tags:
+            - { name: twig.extension }
+
+    bestmodules_alertify.alertify_service:
+        class: %bestmodules_alertify.alertify_service.class%
+        arguments: ["@session"]
+        
+    alertify:
+        alias: bestmodules_alertify.alertify_service

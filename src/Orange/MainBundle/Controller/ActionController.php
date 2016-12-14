@@ -80,7 +80,7 @@ class ActionController extends BaseController
 			$this->get('session')->set('action_criteria', new Request());
 		}
 		$espace = $espace_id ? $this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
-		if ($espace_id){
+		if ($espace) {
 			$entity = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
 			$user = $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
 			$membre=$em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
@@ -361,7 +361,11 @@ class ActionController extends BaseController
     	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Action();
         if($espace_id) {
-       		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+       		$espace = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+	        if(!$espace) {
+	            $this->addFlash('error', "Espace non reconnu");
+	            return $this->redirect($this->generateUrl('dashboard'));
+	        }
       		$entity->setInstance($espace->getInstance());
         }
         $form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id, 'instance_id'=>$instance_id, 'bu_id'=>$bu)));

@@ -46,7 +46,6 @@ class SignalisationController extends BaseController
 	 */
 	public function indexAction(Request $request)
 	{
-		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new SignalisationCriteria(), null, array('attr'=>array( 'user'=>$this->getUser())));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
@@ -125,9 +124,13 @@ class SignalisationController extends BaseController
      * @Route("/traitement_signalisation/{signalisation_id}", name="traitement_signalisation")
      * @Template()
      */
-    public function traitementAction($signalisation_id){
+    public function traitementAction($signalisation_id) {
     	$em = $this->getDoctrine()->getManager();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
+    	if(!$signalisation) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$animateur = $em->getRepository('OrangeMainBundle:SignalisationAnimateur')->findOneBy(array('signalisation' => $signalisation_id, 'actif' => true));
     	if($animateur){
     		$animateur = $animateur->getUtilisateur();
@@ -146,8 +149,7 @@ class SignalisationController extends BaseController
      * @Method("POST")
      * @Template("OrangeMainBundle:Signalisation:new.html.twig")
      */
-    public function createAction(Request $request)
-    {
+    public function createAction(Request $request) {
     	$dispatcher = $this->container->get('event_dispatcher');
     	$em = $this->getDoctrine()->getManager();
         $entity = new Signalisation();
@@ -204,8 +206,9 @@ class SignalisationController extends BaseController
     public function showAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Signalisation entity.');
+        if(!$entity) {
+    		$this->addFlash('error', "Impossible d'afficher les détails, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
         }
         return array('entity' => $entity);
     }
@@ -221,7 +224,8 @@ class SignalisationController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Signalisation entity.');
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
         }
         $editForm = $this->createEditForm($entity);
         return array('entity' => $entity, 'edit_form'   => $editForm->createView());
@@ -251,10 +255,13 @@ class SignalisationController extends BaseController
      * @Method("POST")
      * @Template("OrangeMainBundle:Signalisation:edit.html.twig")
      */
-    public function updateSignalisation(Request $request, $id)
-    {
+    public function updateSignalisation(Request $request, $id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
+    	if(!$entity) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$form = $this->createCreateForm($entity, 'Signalisation', array(
         					'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
     		));
@@ -282,8 +289,8 @@ class SignalisationController extends BaseController
     public function deleteAction(Request $request, $id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
-        if ($entity) {
-           	if($entity->getAction()->count()>0){
+        if($entity) {
+           	if($entity->getAction()->count()>0) {
            		$this->get('session')->getFlashBag()->add('failed', array ('title' =>'Notification', 'body' => 'La suppresion impossible ! '));
            	} else {
 	            $em->remove($entity);
@@ -292,9 +299,10 @@ class SignalisationController extends BaseController
        					'title' =>'Notification', 'body' => 'La suppresion de la signalisation a été annulé avec succes ! '
            			 ));
             	}
-            } else {
-                throw $this->createNotFoundException('Signalisation inexistant.');
-            }
+        } else {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+        }
         return $this->redirect($this->generateUrl('les_signalisations'));
     }
     
@@ -316,16 +324,14 @@ class SignalisationController extends BaseController
      * @QMLogger(message="Liste des périmètres d'une instance")
      */
     public function ssInstanceAction(Request $request) {
-    	if($request->isXmlHttpRequest()) {
-    		$instance_id = $request->request->get('instance_id');
-    		$em = $this->getDoctrine()->getManager();
-	    	$queryBuilder = $em->createQueryBuilder();
-	    	$queryBuilder->select('i')
-		    	->from('OrangeMainBundle:Instance', 'i')
-		    	->where('i.parent = :p')
-		    	->setParameter('p', $instance_id);
-    		return new JsonResponse( $queryBuilder->getQuery()->getArrayResult()); 
-    	}
+   		$instance_id = $request->request->get('instance_id');
+   		$em = $this->getDoctrine()->getManager();
+    	$queryBuilder = $em->createQueryBuilder();
+    	$queryBuilder->select('i')
+	    	->from('OrangeMainBundle:Instance', 'i')
+	    	->where('i.parent = :p')
+	    	->setParameter('p', $instance_id);
+   		return new JsonResponse($instance_id ? $queryBuilder->getQuery()->getArrayResult() : array()); 
     }
     
     /**
@@ -337,6 +343,10 @@ class SignalisationController extends BaseController
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
     	$typeStatut = $em->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_SIGNALISATION);
     	$statutSignalisation = $em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $valide, 'typeStatut' => $typeStatut));
+    	if(!$signalisation || !$statutSignalisation) {
+    		$this->addFlash('erreur', "Cette opération ne peut être effectuée, la signalisation ou bien son statut n'est pas reconnu");
+    		return $this->redirect($this->generateUrl('details_signalisation', array('id' => $id)));
+    	}
     	return $this->redirect($this->generateUrl('signalisationstatut_new', array(
     			'signalisation_id' => $signalisation->getId(), 'statut_id' => $statutSignalisation->getId()
     		)));
@@ -433,17 +443,18 @@ class SignalisationController extends BaseController
    	
    	
    	public function getSignalisationMembresEmail($em, $entity) {
-   		$membreEmail = array ();
+   		$membreEmail = array();
+   		if(!$entity) {
+   			return array();
+   		}
    		$source = $entity->getSource()->getUtilisateur();
-   		array_push ( $membreEmail, $source->getEmail () );
+   		array_push($membreEmail, $source->getEmail());
    		$animateur = $em->getRepository('OrangeMainBundle:SignalisationAnimateur')->findOneBy(array('actif' => true, 'signalisation' => $entity->getid()));
-   		if($animateur)
-   		{
+   		if($animateur) {
    			array_push($membreEmail, $animateur->getUtilisateur()->getEmail());
    			$structureAnimateur = $animateur->getUtilisateur()->getStructure();
    			$managerAnimateur = $em->getRepository('OrangeMainBundle:Utilisateur')->findOneBy(array('structure' => $structureAnimateur->getid(), 'manager' => true));
-   			if($managerAnimateur)
-   			{
+   			if($managerAnimateur) {
    				array_push($membreEmail, $managerAnimateur->getEmail());
    			}
    		}
@@ -521,9 +532,13 @@ class SignalisationController extends BaseController
      */
     public function listTypeSignalisationByInstanceAction(Request $request) {
     	$em = $this->getDoctrine()->getManager();
-    	$instance = $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
-    	$id = $instance->getParent()?$instance->getParent()->getId():$instance->getId();
-    	$arrData = $em->getRepository('OrangeMainBundle:TypeAction')->listTypeByInstance($id);
+    	$instance = empty($request->request->get('id')) ? null : $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
+    	if($instance) {
+	    	$id = $instance->getParent() ? $instance->getParent()->getId() : $instance->getId();
+	    	$arrData = $em->getRepository('OrangeMainBundle:TypeAction')->listTypeByInstance($id);
+    	} else {
+    		$arrData = array();
+    	}
     	$output = array(0 => array('id' => null, 'libelle' => 'Choisir un type  ...'));
     	foreach ($arrData as $data) {
     		$output[] = array('id' => $data['id'], 'libelle' => $data['type']);
@@ -540,9 +555,11 @@ class SignalisationController extends BaseController
      */
     public function listDomaineSignalisationByInstanceAction(Request $request) {
     	$em = $this->getDoctrine()->getManager();
-    	$instance = $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
-    	$parent = $instance->getParent();
-    	if(!$parent && $instance->getConfiguration()) {
+    	$instance = empty($request->request->get('id')) ? null : $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
+    	$parent = $instance ? $instance->getParent() : null;
+    	if(!$instance) {
+    		$arrData = array();
+    	} elseif(null==$parent=$instance->getParent() && $instance->getConfiguration()) {
         	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
     	} else {
     		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listDomaineByInstance($parent, $instance->getLibelle());

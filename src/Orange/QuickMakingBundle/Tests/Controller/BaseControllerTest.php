@@ -9,6 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 class BaseControllerTest extends WebTestCase
 {	
 	/**
+	 * @array
+	 */
+	protected $connexion;
+	
+	/**
 	 * @var Session
 	 */
 	protected $session;
@@ -19,7 +24,6 @@ class BaseControllerTest extends WebTestCase
 	protected $container;
 	
 	/**
-	 * 
 	 * @var Request
 	 */
 	protected $request;
@@ -38,12 +42,14 @@ class BaseControllerTest extends WebTestCase
 	/**
 	 * @dataProvider urlProvider
 	 */
-	public function testActionWithGet($url)
-	{
+	public function testActionWithGet($url) {
 		$client = self::createClient();
-		$data = $this->generateDataForSessionToExport();
-		$client->getContainer()->get('session')->set('export_data',$data);
-		$this->doLogin('tmp_diouf3173', 'orange', $client);
+		$client->getContainer()->get('session')->set('export_data', array());
+		$connexion = array(
+				'username' => isset($this->connexion['username']) ? $this->connexion['username'] : null, 
+				'password' => isset($this->connexion['password']) ? $this->connexion['password'] : null
+			);
+		$this->doLogin($connexion['username'], $connexion['password'], $client);
 		$client->request('GET', $url);
 		$this->assertEquals(true, $client->getResponse()->isSuccessful());
 	}
