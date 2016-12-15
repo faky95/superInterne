@@ -6,50 +6,32 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 class ActionStatutControllerTest extends WebTestCase
 {
-    /*
-    public function testCompleteScenario()
-    {
-        // Create a new client to browse the application
-        $client = static::createClient();
 
-        // Create a new entry in the database
-        $crawler = $client->request('GET', '/actionstatut/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /actionstatut/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
-
-        // Fill in the form and submit it
-        $form = $crawler->selectButton('Create')->form(array(
-            'orange_mainbundle_actionstatut[field_name]'  => 'Test',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
-
-        // Edit the entity
-        $crawler = $client->click($crawler->selectLink('Edit')->link());
-
-        $form = $crawler->selectButton('Update')->form(array(
-            'orange_mainbundle_actionstatut[field_name]'  => 'Foo',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
-
-        // Delete the entity
-        $client->submit($crawler->selectButton('Delete')->form());
-        $crawler = $client->followRedirect();
-
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
-    }
-
-    */
+	/**
+	 * @array
+	 */
+	protected $connexion = array('username' => 'sylla060210', 'password' => 'orange');
+	
+	/**
+	 * @return array
+	 */
+	public function urlProvider() {
+		return array(
+				array("/actionstatut/traitement/-1"),
+				array("/actionstatut/liste_invalidation/-1"),
+				array("/actionstatut/choix_proposition/-2"),
+				array("/actionstatut/solder_action/-1"),
+				array("/actionstatut/demande_action/-1"),
+				array("/actionstatut/validation_action/-1"),
+				array("/actionstatut/"),
+				array("/actionstatut/creer_action_statut/-1"),
+				array("/actionstatut/action_statut_nouveau/-1"),
+				array("/actionstatut/-1"),
+				array("/actionstatut/-1/edit"),
+				array("/actionstatut/historique/-1"),
+				array("/actionstatut/demande_abandon_nouveau/-1"),
+				array("/actionstatut/creer_abandon/-1"),
+				array("/actionstatut/cloturer_action/-1")
+		);
+	}
 }

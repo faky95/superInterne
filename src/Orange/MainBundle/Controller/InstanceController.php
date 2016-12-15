@@ -1,5 +1,4 @@
 <?php
-
 namespace Orange\MainBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -15,14 +14,12 @@ use Orange\MainBundle\Criteria\InstanceCriteria;
 use Doctrine\ORM\QueryBuilder;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
-use Orange\MainBundle\Query\ActionQuery;
+
 /**
  * Instance controller.
- *
  */
 class InstanceController extends BaseController
 {
-	protected $web_dir = WEB_DIRECTORY;
 
     /**
      * Lists all Instance entities.
@@ -321,7 +318,7 @@ class InstanceController extends BaseController
     	$data = $this->get('orange.main.data')->exportInstance($query->execute());
 	  	$objWriter = $this->get('orange.main.extraction')->exportInstance($data);
     	$filename = sprintf("Extraction_des_instances_du_%s.xlsx", date('d-m-Y'));
-    	$objWriter->save($this->web_dir."/upload/reporting/$filename");
+    	$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
     	return $this->redirect($this->getUploadDir().$filename);
     }
     

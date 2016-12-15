@@ -16,15 +16,15 @@ class SignalisationControllerTest extends BaseControllerTest
 	public function urlProvider() {
 		return array(
 			 array("/les_signalisations"),
-			 array("/-1/edition_signalisation"),
-			 array("/-1/supprimer_signalisation"),
+			 array("/7/edition_signalisation"),
 			 array("/ss_instance"),
-			 array("/validation_signalisation/valide/-1"),
-			 array("/actions_correctives/-1"),
-			 array("/reload_actions/-1"),
+			 array("/validation_signalisation/SIGN_VALIDE/7"),
+			 array("/actions_correctives/7"),
+			 array("/reload_actions/7"),
 			 array("/chargement_signalisation"),
 			 array("/typesignalisation_by_instance"),
 			 array("/domaine_signalisation_by_instance"),
+			 array("/7/supprimer_signalisation")
 		);
 	}
 	

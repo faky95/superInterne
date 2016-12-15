@@ -7,7 +7,6 @@ use Orange\MainBundle\Criteria\ActionCriteria;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Reporting;
 use Orange\MainBundle\Entity\Statut;
-use Orange\MainBundle\Form\ActionType;
 use Orange\MainBundle\Form\LoadingType;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Utils\SignalisationUtils;
@@ -30,12 +29,9 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 /**
  * Action controller.
  */
-
 class ActionController extends BaseController
 {
 
-	protected $web_dir = WEB_DIRECTORY;
-	
 	/**
 	 * @Route("/les_mails", name="les_mails")
 	 */
@@ -47,10 +43,6 @@ class ActionController extends BaseController
 		$this->get('orange.main.data')->mapDataforAlertDepassement($actions);
 		return array();
 	}
-
-	/**
-	 * @Route("/les_actions_validees", name="les_actions_validees")
-	 */
 
 	/**
 	 * Lists all Action entities.
@@ -267,7 +259,7 @@ class ActionController extends BaseController
 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->execute(), $statut->getQuery()->execute());
 		//$filename = sprintf("Extraction des actions du %s.xlsx", date('d-m-Y à H:i:s'));
 		$filename = sprintf("Extraction_des_actions_du_%s.xlsx", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
+		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
 	
@@ -456,7 +448,7 @@ class ActionController extends BaseController
 
     /**
      * Creates a new Signalisation Action entity.
-     * @QMLogger(message="Creation d'une action")
+     * @QMLogger(message="Création d'une action")
      * @Route("/creer_signalisation_action/{signalisation_id}/signalisation", name="creer_signalisation_action")
      * @Method("POST")
      */

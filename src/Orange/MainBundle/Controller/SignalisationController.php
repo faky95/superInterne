@@ -36,8 +36,6 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 class SignalisationController extends BaseController
 {
 	
-	protected $web_dir = WEB_DIRECTORY;
-	
 	/**
 	 * Lists all Signalisation entities.
 	 * @QMLogger(message="Liste des signalisations")
@@ -94,7 +92,7 @@ class SignalisationController extends BaseController
 		$data = $this->get('orange.main.data')->exportSignalisation($query->execute(),  $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);
 		$filename = sprintf("Extraction_des_signalisations_du_%s.xlsx", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
+		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
 	/**
@@ -154,7 +152,8 @@ class SignalisationController extends BaseController
     	$em = $this->getDoctrine()->getManager();
         $entity = new Signalisation();
         $form = $this->createCreateForm($entity,'Signalisation', array(
-        														'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())));
+        		'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
+        	));
         $form->handleRequest($request);
         if ($request->getMethod() == 'POST' ) {
 	        if ($form->isValid()) {
@@ -169,14 +168,14 @@ class SignalisationController extends BaseController
 	            $event = $this->get('orange_main.signalisation_event')->createForSignalisation($entity);
 	            $dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_CREATE_NOUVELLE, $event);
 	            $this->get('session')->getFlashBag()->add('success', array (
-									            		  'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès'
-	            ));
+						'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès'
+	            	));
 	            return $this->redirect($this->generateUrl('details_signalisation', array('id' => $entity->getId())));
 	        }
 	        if(!$form->isValid()) {
 	        	$this->get('session')->getFlashBag()->add('error', array (
-									        			  'title' => 'Notification', 'body' => 'Une erreur est survenue. Veuillez réessayer.'
-	        	));
+						'title' => 'Notification', 'body' => 'Une erreur est survenue. Veuillez réessayer.'
+	        		));
 	        }
         }
         return array('entity' => $entity, 'form'   => $form->createView());
@@ -192,7 +191,7 @@ class SignalisationController extends BaseController
     public function newAction() {
         $entity = new Signalisation();
         $form   = $this->createCreateForm($entity,'Signalisation', array(
-	   					'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
+	   			'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
         	));
         return array('entity' => $entity, 'form'   => $form->createView());
     }
@@ -223,12 +222,12 @@ class SignalisationController extends BaseController
     public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
-        if (!$entity) {
+        if(!$entity) {
     		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
     		return $this->redirect($this->generateUrl('les_signalisations'));
         }
         $editForm = $this->createEditForm($entity);
-        return array('entity' => $entity, 'edit_form'   => $editForm->createView());
+        return array('entity' => $entity, 'edit_form' => $editForm->createView());
     }
     
    /**
@@ -239,11 +238,10 @@ class SignalisationController extends BaseController
     private function createEditForm(Signalisation $entity)
     {
         $form = $this->createForm(new SignalisationType(), $entity, array(
-            'action' => $this->generateUrl('modification_signalisation', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        	'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
-        ));
-
+	            'action' => $this->generateUrl('modification_signalisation', array('id' => $entity->getId())),
+	            'method' => 'PUT',
+	        	'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
+	        ));
         $form->add('submit', 'submit', array('label' => 'Update'));
         return $form;
     }
@@ -263,7 +261,7 @@ class SignalisationController extends BaseController
     		return $this->redirect($this->generateUrl('les_signalisations'));
     	}
     	$form = $this->createCreateForm($entity, 'Signalisation', array(
-        					'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
+        		'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
     		));
     	$request = $this->get('request');
     	$today = new \DateTime();
@@ -301,7 +299,7 @@ class SignalisationController extends BaseController
             	}
         } else {
     		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
-    		return $this->redirect($this->generateUrl('les_signalisations'));
+    		return $this->redirect($this->generateUrl('details_signalisation', array('id' => $id)));
         }
         return $this->redirect($this->generateUrl('les_signalisations'));
     }
@@ -348,7 +346,7 @@ class SignalisationController extends BaseController
     		return $this->redirect($this->generateUrl('details_signalisation', array('id' => $id)));
     	}
     	return $this->redirect($this->generateUrl('signalisationstatut_new', array(
-    			'signalisation_id' => $signalisation->getId(), 'statut_id' => $statutSignalisation->getId()
+    			'id' => $signalisation->getId(), 'valide' => $statutSignalisation->getCode()
     		)));
     }
     
@@ -409,13 +407,9 @@ class SignalisationController extends BaseController
    			}
    			//Here is my problem , how can i my $questions into form? ---
    			$form = $this->createFormBuilder()
-   			->add('isReload', 'collection', array(
-   					'type' => new ReloadActionType() ,
-   					'allow_add' => false,
-   					'allow_delete' => false,
-   					'label' => false))
-   					->add('save', 'submit', array('label' => 'Reload'))
-   					->getForm();
+   				->add('isReload', 'collection', array('type' => new ReloadActionType(), 'allow_add' => false, 'allow_delete' => false, 'label' => false))
+   				->add('save', 'submit', array('label' => 'Reload'))
+   				->getForm();
    			$form->setData(array('isReload' => $actionsReload));
    			$form->handleRequest($request);
    			if ($form->isValid()) {
@@ -437,6 +431,9 @@ class SignalisationController extends BaseController
    				}
    				return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));
    			}
+   		} else {
+   			$this->addFlash('warning', "Cette signalisation n'a pas d'actions correctives");
+   			return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));
    		}
    		return $this->render('OrangeMainBundle:Signalisation:reload.html.twig', array("id" =>$signalisation_id, 'entity' => $signalisation, "form" => $form->createView()));
    	}

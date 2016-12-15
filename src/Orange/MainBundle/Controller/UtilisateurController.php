@@ -2,10 +2,7 @@
 
 namespace Orange\MainBundle\Controller;
 
-use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\FormEvent;
-use FOS\UserBundle\Event\FilterUserResponseEvent;
-use FOS\UserBundle\Event\GetResponseUserEvent;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -14,7 +11,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\Utilisateur;
 use Orange\MainBundle\Form\UtilisateurType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Orange\MainBundle\Criteria\UtilisateurCriteria;
@@ -24,13 +20,12 @@ use Orange\MainBundle\Form\LoadingType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use DoctrineExtensions\Query\Mysql\Date;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+
 /**
  * Utilisateur controller.
  */
 class UtilisateurController extends BaseController
 {
-	protected $web_dir = WEB_DIRECTORY;
-
     /**
      * Lists all Utilisateur entities.
      * @QMLogger(message="Liste des utilisateurs")
@@ -356,7 +351,7 @@ class UtilisateurController extends BaseController
     	$data = $this->get('orange.main.data')->exportUtilisateur($query->execute());
     	$objWriter = $this->get('orange.main.extraction')->exportUser($data);
     	$filename = sprintf("Extraction des utilisateurs du %s.xlsx", date('d-m-Y à H:i:s'));
-    	$objWriter->save($this->web_dir."/upload/user/$filename");
+    	$objWriter->save($this->get('kernel')->getWebDir()."/upload/user/$filename");
     	return $this->redirect($this->getUploadDir().$filename);
     }
     
@@ -439,7 +434,7 @@ class UtilisateurController extends BaseController
     	$subject= $request->request->get('error');
     	$body = $request->request->get('page');
     	$doc="".date("Y_m_d");
-    	$dossier=WEB_DIRECTORY."/upload/bugs/".$doc;
+    	$dossier = $this->get('kernel')->getWebDir()."/upload/bugs/".$doc;
     	if(! file_exists(_dossier))
     		mkdir($dossier, 0777, true);
     	$file="bug-".Date("His").".html";

@@ -46,7 +46,7 @@ class ExceptionController extends Controller {
 							'status_code' => $code, 'currentContent' => $currentContent, 'logger' => $logger, 'exception' => $exception,
 							'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : ''
 					));
-			$dossier = WEB_DIRECTORY."/upload/bugs/".date("Y_m_d");
+			$dossier = $this->get('kernel')->getWebDir()."/upload/bugs/".date("Y_m_d");
 			if(!file_exists($dossier))
 				mkdir($dossier, 0777, true);
 			$file="bug-".Date("His").".html";

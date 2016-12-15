@@ -41,4 +41,20 @@ class AppKernel extends Kernel
     {
         $loader->load(__DIR__.'/config/config_'.$this->getEnvironment().'.yml');
     }
+
+    /**
+     * get WEB Dir
+     */
+    public function getWebDir() {
+        return sprintf('%s/../web', $this->rootDir);
+    }
+
+    /**
+     * Returns the kernel parameters.
+     * @return array An array of kernel parameters
+     */
+    protected function getKernelParameters()
+    {
+    	return array_merge(parent::getKernelParameters(), array('kernel.web_dir' => $this->getWebDir()));
+    }
 }

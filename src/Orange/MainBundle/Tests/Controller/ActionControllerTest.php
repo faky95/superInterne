@@ -8,7 +8,7 @@ class ActionControllerTest extends BaseControllerTest
 	/**
 	 * @array
 	 */
-	protected $connexion = array('username' => 'sylla060210', 'password' => 'Compil_87');
+	protected $connexion = array('username' => 'sylla060210', 'password' => 'orange');
 
 	/**
 	 * @return array 
@@ -16,7 +16,6 @@ class ActionControllerTest extends BaseControllerTest
 	public function urlProvider() {
 		return array(
 			 array("/les_mails"),
-			 array("/les_actions_validees"),
 			 array("{code}/les_actions_validees"),
 			 array("/les_actions"),
 			 array("{code_statut}/{espace_id}/les_actions_by_statut"),
@@ -51,8 +50,7 @@ class ActionControllerTest extends BaseControllerTest
 			 array("/porteur_by_instance"),
 			 array("/user_by_instance"),
 			 array("/type_by_instance"),
-			 array("/domaine_by_instance"),
-			 array("/nouveau_reporting")
+			 array("/domaine_by_instance")
 		);
 	}
 	

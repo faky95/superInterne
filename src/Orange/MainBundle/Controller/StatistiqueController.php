@@ -26,7 +26,6 @@ use Orange\MainBundle\Entity\Statistique;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 class StatistiqueController extends BaseController
 {
-	 protected $web_dir = WEB_DIRECTORY;
 
      protected  $statuts= array(
                         'nbAbandon' => 'Abandonnée',
@@ -472,7 +471,7 @@ class StatistiqueController extends BaseController
     			$filename = "test.xlsx";
 //     			$filename = sprintf("Extraction des statistiques par instance du %s.xlsx", date('d-m-Y à H:i:s'));
     			$filename = sprintf("Extraction des statistiques par instance-du-%s.xlsx", date('d-m-Y'));
-    			$objWriter->save($this->web_dir."/upload/reporting/$filename");
+    			$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
     			return $this->redirect($this->getUploadDir().$filename);
     			
     }
@@ -495,7 +494,7 @@ class StatistiqueController extends BaseController
     			$objWriter = $this->get('orange.main.reporting')->reportingStructureAction($data['data'], $this->getStatus(),$actions, $statuts->getQuery()->execute());
 //     			$filename = sprintf("Extraction des statistiques par structure du %s.xlsx", date('d-m-Y à H:i:s'));
     			$filename = sprintf("Extraction_des_statistiques_par_structure_du_%s.xlsx", date('d-m-Y'));
-    			$objWriter->save($this->web_dir."/upload/reporting/$filename");
+    			$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
     			return $this->redirect($this->getUploadDir().$filename);
     	
     }
