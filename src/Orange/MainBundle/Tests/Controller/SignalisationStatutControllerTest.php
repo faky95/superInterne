@@ -18,8 +18,8 @@ class SignalisationStatutControllerTest extends WebTestCase
 	public function urlProvider() {
 		return array(
 				array("/signalisationstatut/"),
-				array("/signalisationstatut/signalisation_statut_nouveau/SIGN_NOUVELLE/-1"),
-				array("/signalisationstatut/-1/edit")
+				array("/signalisationstatut/signalisation_statut_nouveau/SIGN_NOUVELLE/7"),
+				array("/signalisationstatut/7/edit")
 		);
 	}
 
