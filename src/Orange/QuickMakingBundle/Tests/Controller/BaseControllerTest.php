@@ -51,7 +51,7 @@ class BaseControllerTest extends WebTestCase
 			);
 		$this->doLogin($connexion['username'], $connexion['password'], $client);
 		$client->request('GET', $url);
-		$this->assertEquals(true, $client->getResponse()->isSuccessful());
+		$this->assertEquals(true, $client->getResponse()->isSuccessful(), $client->getResponse()->isSuccessful() ? 'OK' : $client->getResponse()->getContent());
 	}
 
 	/**
