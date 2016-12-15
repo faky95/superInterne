@@ -24,12 +24,11 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
-const WEB_DIRECTORY = __DIR__ ;
 Debug::enable();
 
 require_once __DIR__.'/../app/AppKernel.php';
 
-$kernel = new AppKernel('test', true);
+$kernel = new AppKernel('dev', true);
 $kernel->loadClassCache();
 $request = Request::createFromGlobals();
 $response = $kernel->handle($request);

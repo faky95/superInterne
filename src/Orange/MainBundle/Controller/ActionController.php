@@ -61,6 +61,7 @@ class ActionController extends BaseController
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria(), null, array('attr'=>array( 'espace_id'=> $espace_id)));
 		$data = $request->get($form->getName());
+		echo $fail;
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {
 				$this->get('session')->set('action_criteria', new Request());
