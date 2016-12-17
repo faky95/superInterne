@@ -21,6 +21,7 @@ class Mailer
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
 	    	->setSubject("Nouvelle Action")
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleAction.html.twig', array('data' => $data)))
 			->setContentType('text/html')
 			->setCharset('utf-8');
