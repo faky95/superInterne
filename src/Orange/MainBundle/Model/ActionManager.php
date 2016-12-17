@@ -178,7 +178,7 @@ class ActionManager
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Demande d\'abandon d\'action';
 		$comment = '. La demande d\'abandon de l\'action '.$action->getReference().' a été acceptée par
-									   ' . $action->getAnimateur()->getNomComplet(). ' ';
+									   ' . $this->user->getNomComplet(). ' ';
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
 		}else{
@@ -203,7 +203,7 @@ class ActionManager
 			$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
 		}
 		$comment = '. La demande d\'abandon de l\'action '.$action->getReference().' a été refusée par
-						' . $action->getAnimateur()->getNomComplet(). ' pour les raisons suivantes: "'.$action->getActionStatut()->last()->getCommentaire ().'"';
+						' . $this->user->getNomComplet(). ' pour les raisons suivantes: "'.$action->getActionStatut()->last()->getCommentaire ().'"';
 		$emailAnimateur = array($emailAnimateur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
@@ -254,7 +254,7 @@ class ActionManager
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Demande de report d\'action';
 		$comment = 'La demande de report d\'échéance a été acceptée.
-										par ' . $action->getAnimateur()->getNomComplet().' ';
+										par ' . $this->user->getNomComplet().' ';
 		$emailPorteur = array($emailPorteur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
@@ -279,7 +279,7 @@ class ActionManager
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Demande de report d\'action .';
 		$comment = '. La demande de report d\'échéance a été refusée
-											par ' . $action->getAnimateur()->getNomComplet() . ' !, reprise de traitement de l\'action .';
+											par ' . $this->user->getNomComplet() . ' !, reprise de traitement de l\'action .';
 		$statut = Statut::ACTION_NON_ECHUE;
 		if($today > $action->getDateInitial()->format('Y-m-d')){
 			$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
