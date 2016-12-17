@@ -36,7 +36,6 @@ class ActionController extends BaseController
 	 * @Route("/les_mails", name="les_mails")
 	 */
 	public function mailAction() {
-		$mails=$this->getDoctrine()->getRepository('OrangeMainBundle:Utilisateur')->getMailsByBu();
 		$bu = $projet = $espace = array();
 		$em = $this->getDoctrine()->getManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
@@ -57,11 +56,10 @@ class ActionController extends BaseController
 	 * @Template()
 	 */
 	public function indexAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $espace_id=null, $code=null) {
-		$gestionnaire=$espace=$actions=$act=null;
+		$gestionnaire = $espace = null;
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria(), null, array('attr'=>array( 'espace_id'=> $espace_id)));
 		$data = $request->get($form->getName());
-		echo $fail;
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {
 				$this->get('session')->set('action_criteria', new Request());
@@ -74,17 +72,14 @@ class ActionController extends BaseController
 		}
 		$espace = $espace_id ? $this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
 		if ($espace) {
-			$entity = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-			$user = $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
-			$membre=$em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
-			$actions = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->allActionEspace($espace_id);
-			$act = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->listActionsUserByEspace($this->getUser()->getId(), $espace_id);
+			$entity	= $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+			$user	= $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
+			$membre	= $em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
 			$gestionnaire = $membre->getIsGestionnaire();
 		}
 		return array(
 				'form' => $form->createView(), 'code' => $code, 'code_statut' => $code_statut, 'instance_id' => $instance_id, 
-				'structure_id' => $structure_id, 'espace_id'=>$espace_id, 'espace'=> $espace,
-				'gest' => $gestionnaire, 'nbrTotal' => count($actions), 'nbr' => count($act)
+				'structure_id' => $structure_id, 'espace_id'=>$espace_id, 'espace'=> $espace, 'gest' => $gestionnaire
 			);
 	}
 
@@ -130,7 +125,7 @@ class ActionController extends BaseController
 	}
 	
 	/**
-	 *  @Route("/liste_actions_collaborateurs", name="liste_actions_collaborateurs")
+	 * @Route("/liste_actions_collaborateurs", name="liste_actions_collaborateurs")
 	 */
 	public function listePaCollaborateursAction(Request $request){
 		$logger = $this->get('my_service.logger');
@@ -145,15 +140,13 @@ class ActionController extends BaseController
 		return $this->paginate($request, $queryBuilder);
 	}
 	
-	
-	
 	/**
 	 * Lists  entities.
-	 *@Route("/liste_des_actions", name="liste_des_actions")
-	 *@Route("{code}/liste_des_actions_validees", name="liste_des_actions_validees")
-	 *@Route("{code_statut}/liste_des_actions_by_statut", name="liste_des_actions_by_statut")
-	 *@Route("{instance_id}/liste_des_actions_by_instance", name="liste_des_actions_by_instance")
-	 *@Route("{structure_id}/liste_des_actions_by_structure", name="liste_des_actions_by_structure")
+	 * @Route("/liste_des_actions", name="liste_des_actions")
+	 * @Route("{code}/liste_des_actions_validees", name="liste_des_actions_validees")
+	 * @Route("{code_statut}/liste_des_actions_by_statut", name="liste_des_actions_by_statut")
+	 * @Route("{instance_id}/liste_des_actions_by_instance", name="liste_des_actions_by_instance")
+	 * @Route("{structure_id}/liste_des_actions_by_structure", name="liste_des_actions_by_structure")
 	 * @Method("GET")
 	 * @Template()
 	 */
@@ -243,7 +236,7 @@ class ActionController extends BaseController
 	
 	
 	/**
-	 * @QMLogger(message="Extraction action")
+	 * @QMLogger(message="Extraction des actions")
 	 * @Route("/export_action", name="export_action")
 	 * @Template()
 	 */
@@ -267,7 +260,7 @@ class ActionController extends BaseController
 		
      /**
      * Creates a new Action entity.
-     * @QMLogger(message="Creation d'une action")
+     * @QMLogger(message="Création d'une action")
      * @Route("/creer_action", name="creer_action")
      * @Route("/{espace_id}/creer_action_to_espace", name="creer_action_to_espace")
      * @Method("POST")
@@ -740,7 +733,8 @@ class ActionController extends BaseController
                 $actions = $em->getRepository('OrangeMainBundle:Action')->getActions($number['id']);
                 $nbr = $number['nbr'];
                 foreach ($actions as $value) {
-                	$this->get('orange.main.mailer')->notifNewAction($value->getPorteur()->getEmail(), $value);
+                	$body = $this->renderView('OrangeMainBundle:Notification:nouvelleAction.html.twig', array('data' => $value));
+                	$this->get('orange.main.mailer')->send($value->getPorteur()->getEmail(), $value->getEmailContributeurs(), 'Nouvelle Action', $body);
                 }
                 $em->flush();
                 $this->get('orange.main.setStructure')->setStructureForAction();

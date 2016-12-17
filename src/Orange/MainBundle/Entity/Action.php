@@ -621,6 +621,18 @@ class Action
     }
 
     /**
+     * Get E-mail contributeurs
+     * @return array
+     */
+    public function getEmailContributeurs() {
+    	$data = array();
+    	foreach($this->contributeur as $contributeur) {
+    		$data[] = $contributeur->getUtilisateur()->getEmail();
+    	}
+        return $data;
+    }
+
+    /**
      * Add groupe
      *
      * @param \Orange\MainBundle\Entity\Groupe $groupe

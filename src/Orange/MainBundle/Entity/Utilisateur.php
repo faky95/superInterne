@@ -106,50 +106,42 @@ class Utilisateur extends BaseUser
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      * @ORM\ManyToMany(targetEntity="Groupe", mappedBy="utilisateur")
      */
     private $groupe;
     
    
     /**
-     *
      * @ORM\OneToMany(targetEntity="ActionStatut", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $actionStatut;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="Animateur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $animators;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="Contributeur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $contributeurs;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="Source", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $sources;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="Projet", mappedBy="chefProjet", cascade={"persist","remove","merge"})
      */
     private $projets;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="MembreProjet", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $membreProjet;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="MembreEspace", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $membreEspace;
@@ -157,80 +149,67 @@ class Utilisateur extends BaseUser
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      *  @ORM\OneToMany(targetEntity="Action", mappedBy="porteur", cascade={"persist","remove","merge"})
      */
     private $action;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      *  @ORM\OneToMany(targetEntity="Action", mappedBy="animateur", cascade={"persist","remove","merge"})
      */
     private $actionAnimateur;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      *  @ORM\OneToMany(targetEntity="Signalisation", mappedBy="constatateur", cascade={"persist","remove","merge"})
      */
     private $signalisation;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      * @ORM\ManyToMany(targetEntity="Structure", mappedBy="rapporteurs")
-     *  
      */
     private $rapporteurStructure;
     
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="SignalisationStatut", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $signStatut;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="SignalisationAnimateur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $signalisationAnimateur;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      *  @ORM\OneToMany(targetEntity="Statistique", mappedBy="type", cascade={"persist","remove","merge"})
      */
     private $statistique;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     * 
      * @ORM\ManyToMany(targetEntity="Reporting", mappedBy="destinataire")
      */
     private $reporting;
 	
 	/**
      * @var boolean
-     *
      * @ORM\Column(name="first_change_password", type="boolean", nullable=true)
      */
     protected $firstChangePassword;
     
     /**
-     * Constructor
+     * get full name
      */
-    
-    public function __toString()
-    {
+    public function __toString() {
     	return $this->prenom.' '.strtoupper($this->nom).' [ '.$this->getDirection().' ]';
     }
 	
 
     /**
      * Get id
-     *
      * @return integer 
      */
     public function getId()
@@ -240,20 +219,17 @@ class Utilisateur extends BaseUser
 
     /**
      * Set prenom
-     *
      * @param string $prenom
      * @return Utilisateur
      */
     public function setPrenom($prenom)
     {
         $this->prenom = $prenom;
-
         return $this;
     }
 
     /**
      * Get prenom
-     *
      * @return string 
      */
     public function getPrenom()
@@ -451,21 +427,21 @@ class Utilisateur extends BaseUser
         return $this->structure;
     }
     
-    public function getProfil(){
+    public function getProfil() {
     	$profil = array('Porteur');
-    	if($this->getAnimators()->count()>0){
+    	if($this->getAnimators()->count()>0) {
     		array_push($profil, "Animateur");
-    	}elseif($this->manager){
+    	} elseif($this->manager) {
     		array_push($profil, "Manager");
-    	}elseif( $this->getContributeurs()->count()>0){
+    	} elseif( $this->getContributeurs()->count()>0) {
     		array_push($profil, "Contributeur");
-    	}elseif($this->getRapporteurStructure()->count()>0){
+    	} elseif($this->getRapporteurStructure()->count()>0) {
     		array_push($profil, "Rapporteur");
-    	}elseif($this->isAdmin){
+    	} elseif($this->isAdmin) {
     		array_push($profil, "Administrateur");
-    	}elseif($this->getSources()->count()>0){
+    	} elseif($this->getSources()->count()>0) {
     		array_push($profil, "Source");
-    	}elseif($this->getProjets()->count()>0){
+    	} elseif($this->getProjets()->count()>0) {
     		array_push($profil, "Chef de projet");
     	}
     	return $profil;
@@ -1143,49 +1119,37 @@ class Utilisateur extends BaseUser
 
     /**
      * Add contributeur
-     *
      * @param \Orange\MainBundle\Entity\Contributeur $contributeur
-     *
      * @return Utilisateur
      */
-    public function addContributeur(\Orange\MainBundle\Entity\Contributeur $contributeur)
-    {
+    public function addContributeur(\Orange\MainBundle\Entity\Contributeur $contributeur) {
         $this->contributeurs[] = $contributeur;
-
         return $this;
     }
 
     /**
      * Remove contributeur
-     *
      * @param \Orange\MainBundle\Entity\Contributeur $contributeur
      */
-    public function removeContributeur(\Orange\MainBundle\Entity\Contributeur $contributeur)
-    {
+    public function removeContributeur(\Orange\MainBundle\Entity\Contributeur $contributeur) {
         $this->contributeurs->removeElement($contributeur);
     }
 
     /**
      * Get contributeurs
-     *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getContributeurs()
-    {
+    public function getContributeurs() {
         return $this->contributeurs;
     }
 
     /**
      * Add actionAnimateur
-     *
      * @param \Orange\MainBundle\Entity\Action $actionAnimateur
-     *
      * @return Utilisateur
      */
-    public function addActionAnimateur(\Orange\MainBundle\Entity\Action $actionAnimateur)
-    {
+    public function addActionAnimateur(\Orange\MainBundle\Entity\Action $actionAnimateur) {
         $this->actionAnimateur[] = $actionAnimateur;
-
         return $this;
     }
 

@@ -14,20 +14,6 @@ namespace Orange\MainBundle\Listener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Orange\MainBundle\OrangeMainEvents;
-use Orange\MainBundle\Event\SuiviEvent;
-//\\
-use Doctrine\ORM\EntityRepository;
-use Orange\MainBundle\Repository;
-use Orange\MainBundle\Controller\BaseController;
-use Orange\MainBundle\Filter\IndicateurFilter;
-use Orange\MainBundle\Filter\StatistiqueFilter;
-use Orange\MainBundle\Filter\SuiviFilter;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\HttpFoundation\Request;
-use Orange\MainBundle\Entity\Statistique;
-use Symfony\Component\HttpFoundation\Response;
 use Orange\MainBundle\Event\ActionEvent;
 use FOS\UserBundle\Mailer\Mailer;
 
