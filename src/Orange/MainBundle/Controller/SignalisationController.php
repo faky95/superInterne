@@ -555,10 +555,13 @@ class SignalisationController extends BaseController
     	$instance = empty($request->request->get('id')) ? null : $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
     	$parent = $instance ? $instance->getParent() : null;
     	if(!$instance) {
+    		var_dump(1);
     		$arrData = array();
     	} elseif(null==$parent=$instance->getParent() && $instance->getConfiguration()) {
+    		var_dump(2);
         	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
     	} else {
+    		var_dump(3);
     		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listDomaineByInstance($parent, $instance->getLibelle());
     	}
         $output = array(0 => array('id' => null, 'libelle' => 'Choisir un domaine  ...'));
