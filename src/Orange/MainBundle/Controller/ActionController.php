@@ -467,6 +467,9 @@ class ActionController extends BaseController
     	$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	$form = $this->createCreateForm( $entity,'Action');
     	$form->handleRequest($request);
+    	if($entity->getPorteur()) {
+    		$entity->setStructure($entity->getPorteur()->getStructure());
+    	}
     	if($form->isValid()) {
 	    	$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
 	    	$entity->setEtatReel(Statut::ACTION_NOUVELLE);
