@@ -553,13 +553,13 @@ class SignalisationController extends BaseController
     public function listDomaineSignalisationByInstanceAction(Request $request) {
     	$em = $this->getDoctrine()->getManager();
     	$instance = empty($request->request->get('id')) ? null : $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
-    	$parent = $instance ? $instance->getParent() : null;
+    	$parent = $instance->getParent() ? $instance->getParent() : null;
     	if(!$instance) {
     		$arrData = array();
     	} elseif($parent && $parent->getConfiguration()) {
-        	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
-    	} else {
     		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listDomaineByInstance($parent, $instance->getLibelle());
+    	} else {
+        	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
     	}
         $output = array(0 => array('id' => null, 'libelle' => 'Choisir un domaine  ...'));
         foreach ($arrData as $data) {
