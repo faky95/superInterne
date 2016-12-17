@@ -399,6 +399,7 @@ class ActionController extends BaseController
     	$dispatcher = $this->container->get('event_dispatcher');
    		$em = $this->getDoctrine()->getManager();
    		$entity = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
+    	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         $form   = $this->createCreateForm($entity, 'Action', array('attr' => array('manager' => $this->getUser())));
         $this->useFormFields($form, array('porteur', 'save', 'cancel'));
         if($request->isMethod('POST')) {
@@ -473,7 +474,7 @@ class ActionController extends BaseController
     		$entity->addSignalisation($signalisation);
     		$em->flush();
     		ActionUtils::setReferenceActionSignalisation($em, $entity, $signalisation);
-    		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a �t� ajout�e pour traiter cette signalisation');
+    		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a été ajoutée pour traiter cette signalisation');
     		ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NOUVELLE, $this->getUser(), 'Nouvelle action corrective.');
 			$event = $this->get('orange_main.action_event')->createForAction($entity);
 			$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
