@@ -281,6 +281,9 @@ class ActionController extends BaseController
     		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		$entity->setInstance($espace->getInstance());
     		$entity->setEtatCourant(Statut::ACTION_NON_ECHUE);
+    		$entity->setStatutChange(Statut::ACTION_NON_ECHUE);
+    	} else {
+    		$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	}
     	$entity->setAnimateur($this->getUser());
     	$form = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id)));
@@ -362,7 +365,7 @@ class ActionController extends BaseController
       		$entity->setInstance($espace->getInstance());
         }
         $form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id, 'instance_id'=>$instance_id, 'bu_id'=>$bu)));
-        return array('entity' => $entity, 'form' => $form->createView(), 'espace' => $espace);
+        return array('entity' => $entity, 'form' => $form->createView(), 'espace' => isset($espace) ? $espace : null);
     }
     
     /**
@@ -402,6 +405,9 @@ class ActionController extends BaseController
     	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         $form   = $this->createCreateForm($entity, 'Action', array('attr' => array('manager' => $this->getUser())));
         $this->useFormFields($form, array('porteur', 'save', 'cancel'));
+    	if($entity->getPorteur()) {
+    		$entity->setStructure($entity->getPorteur()->getStructure());
+    	}
         if($request->isMethod('POST')) {
         	$form->handleRequest($request);
         	if($form->isValid()) {
