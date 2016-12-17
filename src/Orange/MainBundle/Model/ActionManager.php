@@ -74,13 +74,14 @@ class ActionManager
 	public function validerAction($action, $helper){
 		$emailPorteur = ActionUtils::getEmailPorteur($this->em, $action);
 		$emailManager = ActionUtils::getEmailManager($this->em, $action);
+		$emailContributeur = ActionUtils::getEmailContributeur($this->em, $action);
 		$subject = 'Prise en charge de l\'action';
 		$commentaire = 'La prise en charge de l\'action '. $action->getReference().' a été confirmée par '.$this->user->getCompletNom().
 		'.';
 		$this->updateEntityEtat($this->em, Statut::ACTION_NON_ECHUE, Statut::ACTION_NON_ECHUE, $action);
  		$emailPorteur = array($emailPorteur);
  		$emailAnimateur = $action->getAnimateur()->getEmail();
- 		$cc = array_merge($emailPorteur, $emailManager);
+ 		$cc = array_merge($emailPorteur, $emailManager, $emailContributeur);
 		Notification::notificationAction($helper, $subject, $emailAnimateur, $cc, $commentaire, $action);
 	}
 	
