@@ -556,7 +556,7 @@ class SignalisationController extends BaseController
     	$parent = $instance ? $instance->getParent() : null;
     	if(!$instance) {
     		$arrData = array();
-    	} elseif(null==$parent && $parent->getConfiguration()) {
+    	} elseif($parent && $parent->getConfiguration()) {
         	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
     	} else {
     		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listDomaineByInstance($parent, $instance->getLibelle());
