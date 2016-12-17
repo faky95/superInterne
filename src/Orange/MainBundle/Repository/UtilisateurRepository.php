@@ -141,7 +141,8 @@ class UtilisateurRepository extends BaseRepository {
 	public function managerQueryBuilder(&$data = array(), $direct = false) {
 		$data = $data ? $data : array();
  		$queryBuilder = $this->createQueryBuilder('u4')->select('u4.id')
-			->innerJoin('u4.structure', 's4');
+			->innerJoin('u4.structure', 's4')
+ 			->andWhere('u4.enabled = :enabled')->setParameter('enabled', true);
 		if($direct) {
 			$queryBuilder->andWhere('u4.id IN (:collaboratorIds)')->setParameter('collaboratorIds', $this->_user->getCollaboratorsId());
 		} else {
