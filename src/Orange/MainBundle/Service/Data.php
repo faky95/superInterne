@@ -122,7 +122,7 @@ class Data extends BaseQuery {
 			$j=1;
 			if($actions->count()) {
 				foreach ($actions as $act){
-					$action .= $j.') '.$act->getAction()->getReference()."\n";
+					$action .= $j.') '.$act->getReference()."\n";
 					$j++;
 				}
 			}
