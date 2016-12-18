@@ -54,7 +54,7 @@ class ExceptionController extends Controller {
 			$chemin=$dossier."/".$file;
 			file_put_contents($chemin,$content);
 			$sendMail = $this->mailer;
-			$sendMail->sendBug($to, $cc, "Erreur de traitement",$this->twig->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>date("Y_m_d"), 'link'=>$request->getUri())),$dossier,$file);
+			$sendMail->sendBug($to, array(), "Erreur de traitement",$this->twig->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>date("Y_m_d"), 'link'=>$request->getUri())),$dossier,$file);
 		}
 		return new Response($this->twig->render($this->findTemplate($request, $request->getRequestFormat(), $code, $showException), array(
 						'status_code' => $code, 'exception' => $exception, 'logger' => $logger, 'currentContent' => $currentContent,
