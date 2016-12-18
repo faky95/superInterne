@@ -7,10 +7,8 @@
 <div class="heading">
 	<h3>{% block page_title %} Liste des actions {% endblock %}   </h3> 
 	{% if  espace_id is not empty %}  
-		 	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
 	{% endif %} 
-	 
-	 
 </div>
 <!-- End .heading-->
 <div class="row">

@@ -1,15 +1,5 @@
 <?php
-
 namespace Orange\MainBundle\Service;
-
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Lexer;
-use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\SqlWalker;
-use Doctrine\ORM\Query\Parser;
-use Gedmo\DoctrineExtensions;
-use Doctrine\ORM\Query\Expr;
-use DateTime;
 
 class Calcul 
 {
@@ -62,12 +52,18 @@ class Calcul
 		}
 		return $stats;
 	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Bu $bu
+	 * @param array $stats
+	 * @return number
+	 */
 	public function stats($bu, $stats)
 	{
 		$formule = $this->em->getRepository('OrangeMainBundle:Formule')->getByBu($bu);
 		$taux=array();
-		if(count($formule)>0){
-			foreach ($formule as $for){
+		if(count($formule)>0) {
+			foreach ($formule as $for) {
 				$taux[$for['id']] = array('libelle' => $for['libelle']);
 				$taux[$for['id']]['num']=$this->changeTableau(explode('+',$for['numerateur']));
 				$taux[$for['id']]['denom']=$this->changeTableau(explode('+',$for['denominateur']));
@@ -78,14 +74,21 @@ class Calcul
 					foreach($taux as $kpi) {
 						$stats[$key]['taux'][$kpi['libelle']] = $this->computeKpi($data, $kpi);
 					}
+					if(isset($data['porteurs'])) {
+						$stats[$key]['porteurs'] = $this->stats($bu, $data['porteurs']);
+					}
 				}
 		}
 		return $stats;
 	}
 	
+	/**
+	 * @param \Orange\MainBundle\Entity\Utilisateur $user
+	 * @param array $stats
+	 * @return number
+	 */
 	public function reporting($user, $stats)
 	{
-		$criteria=null;
 		$bu = $user->getStructure()->getBuPrincipal();
 		$formule = $this->em->getRepository('OrangeMainBundle:Formule')->getByBu($bu);
 		$taux=array();
@@ -117,7 +120,7 @@ class Calcul
 		return $denom ? round(($num / $denom)*100) : 0;
 	}
 	
-	public function changeTableau($tab){
+	public function changeTableau($tab) {
 		$emRef = $this->em->getRepository('OrangeMainBundle:Reference');
 		foreach ($tab as $k => $val){
 			$tab[$k] = $emRef->getBySymbole($val)->getReferenceStatistique();

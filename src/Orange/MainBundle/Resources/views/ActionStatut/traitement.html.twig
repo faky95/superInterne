@@ -49,11 +49,12 @@
 			<!-- Validation de niveau Manager -->
 			{% elseif etatReel == 'EVENEMENT_VALIDATION_MANAGER_ATTENTE' and entity|has_rights_manager %}
 				{{ render(controller('OrangeMainBundle:ActionStatut:listeInvalidation', {'action_id': entity.id})) }}
-			{% elseif ( etatReel == 'ACTION_NON_ECHUE' or etatReel == 'ACTION_ECHUE_NON_SOLDEE') and app.user.id == entity.porteur.id and entity.actionCyclique is empty  %}
+			{% elseif ( etatReel == 'ACTION_NON_ECHUE' or etatReel == 'ACTION_ECHUE_NON_SOLDEE') and entity.actionCyclique is empty  %}
 				<div class="form-group">
 		        	<p id="compte_a_rebour"></p>Vous pouvez effectuer l’une des actions suivantes
 		    	</div>
 				<div class="form-group">
+					{% if entity.porteur==app.user %}
 					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url="{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">
 						<button class="btn btn-warning">
 							<span class="icon16 icomoon-icon-exit white"></span>Demande de report
@@ -64,18 +65,21 @@
 							<span class="icon16 icomoon-icon-exit white"></span>Demande d'abandon
 						</button>
 					</a>
-					{% if  (entity.porteur==app.user and app.user.manager==1) or entity|has_rights_manager %}
+					{% endif %}
+					{% if 'now'|date('Ymd') < entity.dateInitial|date_modify("-3 day")|date('Ymd') %}
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('reassignation_action', {'action_id': entity.id})}}" title="Transfert vers un collaborateur">
 						<button class="btn btn-warning">
 							<span class="icon16 entypo-icon-shuffle white"></span>Ré-assignation
 						</button>
 					</a>
 					{% endif %}
+					{% if entity.porteur==app.user %}
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('cloturer_action', {'action_id': entity.id})}}" title="Fin de traitement de l'action">
 						<button class="btn btn-success">
 							<span class="icon16  icomoon-icon-checkmark-2 white"></span>Fin d'exécution
 						</button>
 					</a>
+					{% endif %}
 				</div>
             {% elseif (statut == 'ACTION_NON_ECHUE' or statut == 'ACTION_ECHUE_NON_SOLDEE') and app.user.id == entity.porteur.id and entity|has_rights_animateur and entity.actionCyclique is empty  %}
 				<div class="form-group">

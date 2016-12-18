@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Utilisateur;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Orange\MainBundle\Entity\Reporting;
 /**
  * Controlleur du Tableau de bord
  * @author madiagne
@@ -47,17 +48,65 @@ class DashboardController extends Controller {
 		$semaines=array();
 		for ($i=1;$i<=Date("W");$i++)
 			$semaines[$i-1]=$i;
-		return array(
-				'semaines'=>$semaines,
-				'graphe'=>$graphe,
-				'couleurs'=>$colors
-		);
+		return array('semaines'=>$semaines, 'graphe'=>$graphe, 'couleurs'=>$colors);
 	}
+
+	public function getStatus($bu) {
+		$formule=$this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Formule')->getTauxStatsByBu($bu);
+		$statuts = array(
+				'nbAbandon' => 'Abandon',
+				'nbDemandeAbandon' => "Demande d'abandon",
+				'nbFaiteDelai' => "Faite dans les délais",
+				'nbFaiteHorsDelai' => "Faite hors délai",
+				'nbNonEchue' => "Non échue",
+				'nbSoldeeHorsDelais' => 'Soldée hors délai',
+				'nbSoldeeDansLesDelais' => "Soldée dans les délais",
+				'total' => "Total",
+			);
+		if(count($formule)>0) {
+			foreach ($formule as $form) {
+				$statuts[$form['libelle']] = $form['libelle'];
+			}
+		}
+		return $statuts;
+	
+	}
+	
+	public function mapIds($data){
+		$array = array();
+		foreach($data as $value){
+			array_push($array, $value['id']);
+		}
+		return $array;
+	}
+	
 	/**
 	 * @Route("/testst", name="test")
 	*/
-	public function testAction(){
-		return(array());
+	public function testAction() {
+		$em = $this->getDoctrine()->getManager();
+		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+		$reporting = $em->getRepository('OrangeMainBundle:Reporting')->find(89);
+		$query = $em->createQuery($reporting->getRequete());
+		$query->setParameters(unserialize($reporting->getParameter()));
+// 		if ($reporting->getQuery()) {
+			$query2 = $em->createQuery($reporting->getQuery());
+			$query2->setParameters(unserialize($reporting->getParameter()));
+			//$idActions = $this->mapIds($query2->execute());
+// 			$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
+			$actions = array();
+// 		}
+		$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
+		$arrType=unserialize($reporting->getArrayType());
+		$map= $this->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+		$bu = $reporting->getUtilisateur()->getStructure()->getBuPrincipal();
+		$data = $this->get('orange.main.calcul')->stats($bu, $map);
+		$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance', $arrType, $bu);
+		exit(var_dump($data['instance']));
+		$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
+		$filename = $reporting->getLibelle().date("Y-m-d_H-i").'.xlsx';
+		$objWriter->save($this->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");
+		return $this->redirect(sprintf('/super/web/upload/reporting/%s', $filename));
 	} 
 	
 	/**

@@ -1,15 +1,6 @@
 <?php
-
 namespace Orange\MainBundle\Service;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Query\Lexer;
-use Doctrine\ORM\Query\AST\Functions\FunctionNode;
-use Doctrine\ORM\Query\SqlWalker;
-use Doctrine\ORM\Query\Parser;
-use Gedmo\DoctrineExtensions;
-use Doctrine\ORM\Query\Expr;
-use Doctrine\DBAL\Types\VarDateTimeType;
 use Orange\MainBundle\Entity\Statut;
 	
 class MappingStatistique
@@ -28,37 +19,37 @@ class MappingStatistique
 		$this->container = $container;
 	}	
 	
-	public function mappingDataStatsEvo(&$data, $type){
+	public function mappingDataStatsEvo(&$data, $type) {
 		$formule= $this->em->getRepository('OrangeMainBundle:Formule')->getTauxStats();
 		$arrData = array($type => array(), 'taux' => array());
-		for ($i=1;$i<=Date('W');$i++){
-				$aide=false;
-				foreach ($data as $value){
-						if ($i==$value['id'] ){
-							if(!isset($arrData[$type][$i])){
-								$arrData[$type][$value['id']] = array('libelle' => $value['id'], 'data' => array());
-								$this->transfertDonnes($arrData[$type][$i], $value, false);
-								if(isset($value['taux']))
-									foreach ($value['taux'] as $key => $taux){
-										$arrData[$type][$i]['data'][$key] = $taux;
-										$arrData['taux'][$key] = $taux;
-									}
-								$aide=true;
+		for($i=1;$i<=Date('W');$i++) {
+			$aide=false;
+			foreach ($data as $value) {
+				if ($i==$value['id'] ) {
+					if(!isset($arrData[$type][$i])) {
+						$arrData[$type][$value['id']] = array('libelle' => $value['id'], 'data' => array());
+						$this->transfertDonnes($arrData[$type][$i], $value, false);
+						if(isset($value['taux']))
+							foreach ($value['taux'] as $key => $taux){
+								$arrData[$type][$i]['data'][$key] = $taux;
+								$arrData['taux'][$key] = $taux;
 							}
-						}
-				}
-					if($aide==false){
-						if (!isset($arrData[$type][$i]) ){
-							$arrData[$type][$i] = array('libelle' => $i, 'data' => array());
-							$this->transfertDonnes($arrData[$type][$i], $i, true);
-							if(count($formule)>0)
-								foreach ($formule as $for){
-									$arrData[$type][$i]['data'][$for['libelle']] = 0;
-									$arrData['taux'][$for['libelle']] = 0;
-								}
-						}
+						$aide=true;
 					}
 				}
+			}
+			if($aide==false) {
+				if (!isset($arrData[$type][$i]) ) {
+					$arrData[$type][$i] = array('libelle' => $i, 'data' => array());
+					$this->transfertDonnes($arrData[$type][$i], $i, true);
+					if(count($formule)>0)
+						foreach ($formule as $for){
+							$arrData[$type][$i]['data'][$for['libelle']] = 0;
+							$arrData['taux'][$for['libelle']] = 0;
+						}
+				}
+			}
+		}
 		return $arrData;
 	}
 	
@@ -87,72 +78,71 @@ class MappingStatistique
 	 * @param unknown $data
 	 * @param unknown $type 
 	 */
-	public function mappingDataStats(&$data, $type,&$params,$bu=null){
+	public function mappingDataStats(&$data, $type, &$params, $bu=null) {
 		$formule= $this->em->getRepository('OrangeMainBundle:Formule')->getTauxStats($bu);
 		$effectif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurByStructure($params, $bu)->getQuery()->getArrayResult();
 		$effectifActif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurActifByStructure($params, $bu)->getQuery()->getArrayResult();
 		$arrData = array($type => array(), 'taux' => array());
-			foreach ($params as $key=>$par){
-				$aide=false;
-				foreach ($data as $cl=>$value){
-						if ($par['id']==$value['id'] ){
-							if(!isset($arrData[$type][$value['id']])){
-								$arrData[$type][$value['id']] = array('libelle' => $value['libelle'], 'data' => array());
-								$this->transfertDonnes($arrData[$type][$value['id']], $value, false);
-								if(!empty($value['taux']))
-									foreach ($value['taux'] as $key => $taux){
-										$arrData[$type][$value['id']]['data'][$key] = $taux;
-										$arrData['taux'][$key] = $taux;
-									}
-								
-								$aide=true;
+		foreach ($params as $key=>$par) {
+			$aide=false;
+			foreach($data as $value) {
+				if($par['id']==$value['id']) {
+					if(!isset($arrData[$type][$value['id']])) {
+						$arrData[$type][$value['id']] = array('libelle' => $value['libelle'], 'data' => array());
+						$this->transfertDonnes($arrData[$type][$value['id']], $value, false);
+						if(!empty($value['taux']))
+							foreach ($value['taux'] as $key => $taux){
+								$arrData[$type][$value['id']]['data'][$key] = $taux;
+								$arrData['taux'][$key] = $taux;
 							}
-						}
-				}
-					if($aide===false){
-						if (!isset($arrData[$type][$par['id']]) ){
-							$arrData[$type][$par['id']] = array('libelle' => $par['libelle'], 'data' => array());
-							$this->transfertDonnes($arrData[$type][$par['id']], $par, true);
-							if(!empty($formule))
-								foreach ($formule as $for){
-									$arrData[$type][$par['id']]['data'][$for['libelle']] = 0;
-									$arrData['taux'][$for['libelle']] = 0;
-								}
-						}
+						$aide=true;
 					}
-					if($type=="structure")
-						$this->addEffectifToStats($arrData[$type][$par['id']]['data'],$effectif,$effectifActif,$par);
 				}
+			}
+			if($aide===false) {
+				if(!isset($arrData[$type][$par['id']]) ) {
+					$arrData[$type][$par['id']] = array('libelle' => $par['libelle'], 'data' => array());
+					$this->transfertDonnes($arrData[$type][$par['id']], $par, true);
+					if(!empty($formule))
+						foreach ($formule as $for){
+							$arrData[$type][$par['id']]['data'][$for['libelle']] = 0;
+							$arrData['taux'][$for['libelle']] = 0;
+						}
+				}
+			}
+			if($type=="structure")
+				$this->addEffectifToStats($arrData[$type][$par['id']]['data'], $effectif, $effectifActif, $par);
+		}
 		return $arrData;
 	}
-	public function addEffectifToStats(&$arrData,&$effectif,&$effectifActif,&$par){
+	
+	public function addEffectifToStats(&$arrData, &$effectif, &$effectifActif, &$par){
 		$test=false;
-		foreach ($effectif as $eff){
-			if($eff['id']==$par['id']){
+		foreach ($effectif as $eff) {
+			if($eff['id']==$par['id']) {
 				$test=true;
 				$arrData['nbUsers']=$eff['usr'];
 				$arrData['nbMoyenActionByUser']=intval($arrData['total']/$eff['usr']);
 				break;
 			}
 		}
-		if ($test==false){
+		if ($test==false) {
 			$arrData['nbUsers']=0;
 			$arrData['nbMoyenActionByUser']=0;
 		}
 		$test=false;
-		foreach ($effectifActif as $eff){
-			if($eff['id']==$par['id']){
+		foreach ($effectifActif as $eff) {
+			if($eff['id']==$par['id']) {
 				$arrData['nbUsersActif']=$eff['usr'];
 				$arrData['nbMoyenActionByUserActif']=intval($arrData['total']/$eff['usr']);
 				$test=true;break;
 			}
 		}
-		if ($test==false){
-			$arrData['nbUsersActif']=0;
-			$arrData['nbMoyenActionByUserActif']=0;
+		if ($test==false) {
+			$arrData['nbUsersActif'] = 0;
+			$arrData['nbMoyenActionByUserActif'] = 0;
 		}
 	}
-	
 	
 	/**
 	 * le parametre type est soit instance ou structure
@@ -211,7 +201,7 @@ class MappingStatistique
 		$arrData['data']['nbSoldeeHorsDelais'] = $value['nbSoldeeHorsDelais'];
 		$arrData['data']['nbSoldeeDansLesDelais'] = $value['nbSoldeeDansLesDelais'];
 		$arrData['data']['total'] = $value['total'];
-		}else{
+		} else {
 			$arrData['data']['nbAbandon'] = 0;
 			$arrData['data']['nbDemandeAbandon'] = 0;
 			$arrData['data']['nbFaiteDelai'] = 0;
@@ -224,19 +214,19 @@ class MappingStatistique
 		}
 	}
 	
-	public function transformRequeteToSimple(&$requete, &$params){
+	public function transformRequeteToSimple(&$requete, &$params) {
 		$data=array();
 		$i=0;
-		if(count($params)>0){
-			foreach ($params as $key=>$val){
-				$data[$i]=array(  'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
+		if(count($params)>0) {
+			foreach($params as $val) {
+				$data[$i] = array('id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
-						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
-				);
-				if(count($requete)>0){
-					foreach ($requete as $cle=>$value){
-						if($val['libelle']==$value['libelle'] ){
-							$data[$i]=$this->copieDonnees($value, $data[$i]);
+						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0, 'porteurs' => array()
+					);
+				if(count($requete['data'])>0) {
+					foreach($requete['data'] as $value) {
+						if($val['libelle']==$value['libelle']) {
+							$data[$i] = $this->copieDonnees($value, $data[$i], $requete['porteurs']);
 						}
 					}
 				}
@@ -245,33 +235,35 @@ class MappingStatistique
 		}
 		return $data;
 	}
+	
 	public function transformRequeteToSimpleNull(&$requete){
-		$data=array( 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
+		$data = array('nbDemandeAbandon' => 0, 'nbAbandon'=>0,
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
 						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 				);
-		if(count($requete)>0){
-			foreach ($requete as $cle=>$value){
+		if(count($requete)>0) {
+			foreach ($requete as $value){
 				$data=$this->copieDonnees($value, $data);
 			}
 		}
 		return $data;
 	}
+	
 	public function transformRequeteToCroise(&$requete, &$params1, &$params2){
 		$data=array();
 		$i=0;
-		foreach ($params1 as $key=>$val){
-			foreach($params2 as $cle => $valeur){
+		foreach ($params1 as $val){
+			foreach($params2 as $valeur){
 				$data[$i]=array(  'f_id'=>$val['id'], 'f_libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
-					'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
-					'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0, 's_id'=>$valeur['id'],
-					's_libelle'=>$valeur['libelle']
+						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
+						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0, 's_id'=>$valeur['id'],
+						's_libelle'=>$valeur['libelle']
 					);
 				if(count($requete)>0){
-					foreach ($requete as $cl=>$value){
-							if($val['id']==$value['f_id'] && $valeur['id']==$value['s_id']){
-								$data[$i]=$this->copieDonnees($value, $data[$i]);
-							}
+					foreach ($requete as $value){
+						if($val['id']==$value['f_id'] && $valeur['id']==$value['s_id']){
+							$data[$i]=$this->copieDonnees($value, $data[$i]);
+						}
 					}
 				}$i++;
 			}
@@ -280,82 +272,99 @@ class MappingStatistique
 		return $data;
 	}
 
-	public function copieDonnees($value, $data){
-				if($value['etatCourant']==Statut::ACTION_ABANDONNEE){
-					$data['nbAbandon']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_DEMANDE_ABANDON){
-					$data['nbDemandeAbandon']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_FAIT_DELAI){
-					$data['nbFaiteDelai']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_FAIT_HORS_DELAI){
-					$data['nbFaiteHorsDelai']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_NON_ECHUE){
-					$data['nbNonEchue']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_ECHUE_NON_SOLDEE){
-					$data['nbEchueNonSoldee']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_SOLDEE_DELAI){
-					$data['nbSoldeeDansLesDelais']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				if($value['etatCourant']==Statut::ACTION_SOLDEE_HORS_DELAI){
-					$data['nbSoldeeHorsDelais']=$value['total'];
-					$data['total']+=$value['total'];
-				}
-				return $data;
-			}
-
-			
-	public function combineTacheAndAction($data){
-				$arrData=array();
-				$i=0;
-				if(count($data)>0)
-					foreach($data as $key =>$value){
-						if (count($arrData)<=0){
-							$arrData[$i]=array('id'=>$value['id'], 'libelle'=>$value['libelle'], 'total'=>intval($value['total']));
-							if ($value['tache_etat']==null)
-								$arrData[$i]['etatCourant']=$value['action_etat'];
-								else
-									$arrData[$i]['etatCourant']=$value['tache_etat'];
-						}else{
-							$aide=false;
-							for ($j=0; $j<count($arrData);$j++){
-								if ($value['tache_etat']==null){
-									if ($arrData[$j]['etatCourant']==$value['action_etat'] && $arrData[$j]['id']==$value['id']){
-										$arrData[$j]['total']+=intval($value['total']);
-										$aide=true;
-										break;
-									}
-								}else{
-									if ($arrData[$j]['etatCourant']==$value['tache_etat'] && $arrData[$j]['id']==$value['id']){
-										$arrData[$j]['total']+=intval($value['total']);
-										$aide=true;
-										break;
-									}
-								}
-							}
-							if($aide==false){
-								$i++;
-								$arrData[$i]=array('id'=>$value['id'],'libelle'=>$value['libelle'], 'total'=>intval($value['total']));
-								if ($value['tache_etat']==null)
-									$arrData[$i]['etatCourant']=$value['action_etat'];
-									else
-										$arrData[$i]['etatCourant']=$value['tache_etat'];
-							}
-								
-						}
+	public function copieDonnees($value, $data, $porteurs = array()) {
+		if(!isset($data['porteurs'][$value['user_id']])) {
+			$data['porteurs'][$value['user_id']] = array(
+					'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 
+					'nbEchueNonSoldee' =>0, 'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
+				);
+			$data['porteurs'][$value['user_id']]['libelle'] = isset($porteurs[$value['user_id']]) ? $porteurs[$value['user_id']] : null;
+		}
+		if($value['etatCourant']==Statut::ACTION_ABANDONNEE) {
+			$data['nbAbandon'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbAbandon'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_DEMANDE_ABANDON) {
+			$data['nbDemandeAbandon'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbDemandeAbandon'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_FAIT_DELAI) {
+			$data['nbFaiteDelai'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbFaiteDelai'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_FAIT_HORS_DELAI) {
+			$data['nbFaiteHorsDelai'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbFaiteHorsDelai'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_NON_ECHUE){
+			$data['nbNonEchue'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbNonEchue'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_ECHUE_NON_SOLDEE) {
+			$data['nbEchueNonSoldee'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbEchueNonSoldee'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_SOLDEE_DELAI) {
+			$data['nbSoldeeDansLesDelais'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbSoldeeDansLesDelais'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_SOLDEE_HORS_DELAI) {
+			$data['nbSoldeeHorsDelais'] = $value['total'];
+			$data['porteurs'][$value['user_id']]['nbSoldeeHorsDelais'] = $value['total'];
+		}
+		$data['total'] +=$value['total'];
+		$data['porteurs'][$value['user_id']]['total'] +=$value['total'];
+		return $data;
 	}
-				return $arrData;
-			}
+			
+	public function combineTacheAndAction($data) {
+		$arrData=array('data' => array(), 'porteurs' => array());
+		$i=0;
+		if(count($data)>0)
+			foreach($data as $value) {
+				$arrData['porteurs'][intval($value['user_id'])] = $value['porteur'];
+				if(count($arrData['data'])<=0) {
+					$arrData['data'][$i] = array(
+							'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']), 
+							'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
+						);
+					if($value['tache_etat']==null) {
+						$arrData['data'][$i]['etatCourant']=$value['action_etat'];
+					} else {
+						$arrData['data'][$i]['etatCourant']=$value['tache_etat'];
+					}
+				} else {
+					$aide=false; 
+					for($j=0; $j<count($arrData['data']);$j++) {
+						if($value['tache_etat']==null) {
+							if($arrData['data'][$j]['etatCourant']==$value['action_etat'] && $arrData['data'][$j]['id']==$value['id']) {
+								$arrData['data'][$j]['total']+=intval($value['total']);
+								$aide=true;
+								break;
+							}
+						} else {
+							if($arrData['data'][$j]['etatCourant']==$value['tache_etat'] && $arrData['data'][$j]['id']==$value['id']) {
+								$arrData['data'][$j]['total']=intval($value['total']);
+								$aide=true;
+								break;
+							}
+						}
+					}
+					if($aide==false) {
+						$i++;
+						$arrData['data'][$i] = array(
+								'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']),
+								'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
+							);
+						if($value['tache_etat']==null) {
+							$arrData['data'][$i]['etatCourant']=$value['action_etat'];
+						} else {
+							$arrData['data'][$i]['etatCourant']=$value['tache_etat'];
+						}
+					}
+						
+				}
+		}
+		return $arrData;
+	}
 }
