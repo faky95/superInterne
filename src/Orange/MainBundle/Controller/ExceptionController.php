@@ -47,7 +47,7 @@ class ExceptionController extends Controller {
 							'status_code' => $code, 'currentContent' => $currentContent, 'logger' => $logger, 'exception' => $exception,
 							'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : ''
 					));
-			$dossier = __DIR__."../../../../web/upload/bugs/".date("Y_m_d");
+			$dossier = __DIR__."/../../../../web/upload/bugs/".date("Y_m_d");
 			if(!file_exists($dossier))
 				mkdir($dossier, 0777, true);
 			$file="bug-".Date("His").".html";
