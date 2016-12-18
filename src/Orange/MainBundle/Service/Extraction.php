@@ -428,9 +428,9 @@ class Extraction extends \PHPExcel {
 		$col = "A";
 		$x = 1;
 		foreach($th as $value) {
-			$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
-			$this->getActiveSheet()->getStyle($col . $x)->applyFromArray($style_th);
-			$col ++;
+			$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setAutoSize(true);
+			$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+			$col++;
 		}
 		$y = 2;
 		foreach($arrData as $values) {
