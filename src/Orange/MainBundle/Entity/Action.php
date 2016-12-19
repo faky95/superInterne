@@ -263,7 +263,7 @@ class Action
     
     /**
      * @var \Orange\MainBundle\Entity\Statut
-     * @Assert\NotNull(message="Donnez le nouveau statut")
+     * 
      */
     private $statutChange;
 
