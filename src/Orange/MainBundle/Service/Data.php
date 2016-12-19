@@ -116,17 +116,13 @@ class Data extends BaseQuery {
 		$array = array();
 		$i=0;
 		foreach ($data as $value) {
-			$signalisation = $this->em->getRepository('OrangeMainBundle:Signalisation')->find($value->getId());
-			$actions= $signalisation ? $signalisation->getAction() : new \Doctrine\Common\Collections\ArrayCollection();
 			$action = "";
 			$j=1;
-			if($actions->count()) {
-				foreach ($actions as $act){
-					$action .= $j.') '.$act->getReference()."\n";
-					$j++;
-				}
+			foreach($value->getAction() as $act) {
+				$action .= $j.') '.$act->getReference()."\n";
+				$j++;
 			}
-			$array[$i] = array('reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
+			$array[$i] = array('reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent() ? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Domaine' => $value->getDomaine()?$value->getDomaine()->__toString():'',
 								'Type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->__toString().'#'.$value->getTypeSignalisation()->getCouleur():'##ffffff',

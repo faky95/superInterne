@@ -168,7 +168,7 @@ class SignalisationController extends BaseController
 	            $event = $this->get('orange_main.signalisation_event')->createForSignalisation($entity);
 	            $dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_CREATE_NOUVELLE, $event);
 	            $this->get('session')->getFlashBag()->add('success', array (
-						'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès'
+						'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'
 	            	));
 	            return $this->redirect($this->generateUrl('details_signalisation', array('id' => $entity->getId())));
 	        }
