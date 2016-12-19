@@ -189,8 +189,9 @@ class ActionQuery extends BaseQuery {
 			$query .= "INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
 			           select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
 				
-			$query.= "UPDATE signalisation s 
-					  LEFT JOIN temp_action ahs on s.id = a.signalisation_id
+			$query.= "UPDATE signalisation s
+					  LEFT JOIN action_has_signalisation ahs on s.id = ahs.signalisation_id
+					  LEFT JOIN temp_action ta on ta.id = ahs.action_id
 					  SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' 
 					  WHERE a.signalisation_id is not null;";
 		}

@@ -15,6 +15,9 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 	
 	public function execute(InputInterface $input, OutputInterface $output){
 		
+		// get actions cycliques
+		
+		//check if they have at least on occurence
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

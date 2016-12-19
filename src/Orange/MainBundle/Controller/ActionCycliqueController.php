@@ -72,7 +72,7 @@ class ActionCycliqueController extends BaseController
 				$em->flush();
 				ActionUtils::setReferenceAction($em, $entity->getAction());
 				ActionUtils::changeStatutAction($em, $entity->getAction(), Statut::ACTION_NOUVELLE, $this->getUser(), "Nouvelle action créée.");
-
+                
 				return $this->redirect($this->generateUrl('actioncyclique_show', array('id' => $entity->getId())));
 			}
 			 

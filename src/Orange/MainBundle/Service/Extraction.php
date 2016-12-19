@@ -612,41 +612,29 @@ class Extraction extends \PHPExcel {
 		return $objWriter;
 	}
 	public function exportCanevas($arrData) {
-		$objPHPExcel = new \PHPExcel ();
 		$th = array (
-				'Réference',
-				'Prénom et Nom du porteur',
-				'Email porteur',
-				'Instance',
-				'Email(s) contributeur(s)',
-				'Statut',
-				'Type',
-				'Domaine',
-				'Date de début',
-				'Délai initial',
-				'Date de clôture',
-				'Libellé action',
-				'Description action',
-				'Priorité' 
-		);
+				'Réference', 'Prénom et Nom du porteur', 'Email porteur', 'Instance', 'Email(s) contributeur(s)', 'Statut', 'Type',
+				'Domaine', 'Date de début', 'Délai initial', 'Date de clôture', 'Libellé action', 'Description action', 'Priorité' 
+			);
 		$col = "A";
 		$x = 1;
-		foreach ( $th as $value ) {
-			$this->getActiveSheet ()->setCellValue ( $col . $x, mb_convert_encoding( $value,"Windows-1252","utf-8") )->getColumnDimension ( $col )->setAutoSize ( true );
+		foreach (array_map("utf8_decode", $th) as $value ) {
+			$this->getActiveSheet ()->setCellValueExplicit($col.$x, $value)->getColumnDimension($col)->setAutoSize(true);
 			$col ++;
 		}
 		$y = 2;
 		foreach ( $arrData as $values ) {
 			$b = "A";
-			foreach ( $values as $value ) {
-				$this->getActiveSheet ()->setCellValue ( $b . $y, iconv('utf-8', 'ASCII//TRANSLIT', $value) )->getColumnDimension ( $b )->setAutoSize ( true );
+			foreach (array_map("utf8_decode", $values) as $value ) {
+				$this->getActiveSheet ()->setCellValueExplicit($b.$y, $value)->getColumnDimension ( $b )->setAutoSize ( true );
 				$b ++;
 			}
 			$y ++;
 		}
 		$objWriter = \PHPExcel_IOFactory::createWriter ( $this, 'CSV' );
 		$objWriter->setDelimiter(';');
-		//$objWriter->setUseBOM(true);
+		$objWriter->setEnclosure('');
+		$objWriter->setLineEnding("\r\n");
 		return $objWriter;
 	}
 	public function exportInstance($arrData) {
