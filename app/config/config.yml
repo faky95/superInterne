@@ -103,7 +103,7 @@ av_alertify:
         context: app
         engine: toastr
         layout: top-right
-        translationDomain: alertify.fr.xliff
+        translationDomain: alertify
         
 monolog:
     channels: ["trace"]

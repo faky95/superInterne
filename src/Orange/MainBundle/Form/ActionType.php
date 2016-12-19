@@ -16,8 +16,6 @@ use Orange\MainBundle\Repository\UtilisateurRepository;
 class ActionType extends AbstractType
 {
 	
-    //private $porteur;
-	
     /**
      * @param FormBuilderInterface $builder
      * @param array $options

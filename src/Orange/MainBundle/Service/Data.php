@@ -115,17 +115,18 @@ class Data extends BaseQuery {
 		}
 		$array = array();
 		$i=0;
-		foreach ($data as $value){
-			$actions= $this->em->getRepository('OrangeMainBundle:ActionHasSignalisation')->findActions($value->getId());
+		foreach ($data as $value) {
+			$signalisation = $this->em->getRepository('OrangeMainBundle:Signalisation')->find($value->getId());
+			$actions= $signalisation ? $signalisation->getAction() : new \Doctrine\Common\Collections\ArrayCollection();
 			$action = "";
 			$j=1;
-			if(!empty($actions)){
+			if($actions->count()) {
 				foreach ($actions as $act){
-					$action .= $j.') '.$act->getAction()->getReference()."\n";
+					$action .= $j.') '.$act->getReference()."\n";
 					$j++;
 				}
 			}
-			$array[$i] = array( 'reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
+			$array[$i] = array('reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent()? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Domaine' => $value->getDomaine()?$value->getDomaine()->__toString():'',
 								'Type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->__toString().'#'.$value->getTypeSignalisation()->getCouleur():'##ffffff',
@@ -133,20 +134,19 @@ class Data extends BaseQuery {
 								'source' => $value->getSource()->getUtilisateur()->getCompletNom(),'date_signale' =>  $value->getDateSignale()->format('d-m-Y'),'direction' => $value->getSource()->getUtilisateur()->getDirection(),
 								'pole' => $value->getSource()->getUtilisateur()->getPole(),'departement' => $value->getSource()->getUtilisateur()->getDepartement(),
 								'service' => $value->getSource()->getUtilisateur()->getService(),
-								'statut' => $arrayStatutSign[$value->getEtatCourant()]
-								
-			);
+								'statut' => $arrayStatutSign[$value->getEtatCourant()], 'action' => $action
+				);
 			$i++;
 		}
 		return $array;
 	}
 	
 	public function exportCanevas($data){
-		$date = new \DateTime();
 		$interval = new \DateInterval('P2W');
 		$array = array();
 		$i=0;
 		foreach ($data as $value){
+		$date = new \DateTime();
 			$destinataire = InstanceUtils::animateursComplet($this->em, $value->getInstance());
 			$array[$i] = array('reference' => $value->getReference(), 'porteur' => $destinataire['nom'][0], 'email' =>$destinataire['email'][0],'instance'=> $value->getInstance()->getParent()->__toString(),
 					'contributeur' => '','statut' => 'action nouvelle',

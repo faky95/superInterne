@@ -7,7 +7,6 @@ use Orange\MainBundle\Criteria\ActionCriteria;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Reporting;
 use Orange\MainBundle\Entity\Statut;
-use Orange\MainBundle\Form\ActionType;
 use Orange\MainBundle\Form\LoadingType;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Utils\SignalisationUtils;
@@ -30,27 +29,19 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 /**
  * Action controller.
  */
-
 class ActionController extends BaseController
 {
 
-	protected $web_dir = WEB_DIRECTORY;
-	
 	/**
 	 * @Route("/les_mails", name="les_mails")
 	 */
 	public function mailAction() {
-		$mails=$this->getDoctrine()->getRepository('OrangeMainBundle:Utilisateur')->getMailsByBu();
 		$bu = $projet = $espace = array();
 		$em = $this->getDoctrine()->getManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
 		$this->get('orange.main.data')->mapDataforAlertDepassement($actions);
 		return array();
 	}
-
-	/**
-	 * @Route("/les_actions_validees", name="les_actions_validees")
-	 */
 
 	/**
 	 * Lists all Action entities.
@@ -65,7 +56,7 @@ class ActionController extends BaseController
 	 * @Template()
 	 */
 	public function indexAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $espace_id=null, $code=null) {
-		$gestionnaire=$espace=$actions=$act=null;
+		$gestionnaire = $espace = null;
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria(), null, array('attr'=>array( 'espace_id'=> $espace_id)));
 		$data = $request->get($form->getName());
@@ -80,18 +71,15 @@ class ActionController extends BaseController
 			$this->get('session')->set('action_criteria', new Request());
 		}
 		$espace = $espace_id ? $this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
-		if ($espace_id){
-			$entity = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-			$user = $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
-			$membre=$em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
-			$actions = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->allActionEspace($espace_id);
-			$act = $this->getDoctrine()->getRepository('OrangeMainBundle:Action')->listActionsUserByEspace($this->getUser()->getId(), $espace_id);
+		if ($espace) {
+			$entity	= $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+			$user	= $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
+			$membre	= $em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
 			$gestionnaire = $membre->getIsGestionnaire();
 		}
 		return array(
 				'form' => $form->createView(), 'code' => $code, 'code_statut' => $code_statut, 'instance_id' => $instance_id, 
-				'structure_id' => $structure_id, 'espace_id'=>$espace_id, 'espace'=> $espace,
-				'gest' => $gestionnaire, 'nbrTotal' => count($actions), 'nbr' => count($act)
+				'structure_id' => $structure_id, 'espace_id'=>$espace_id, 'espace'=> $espace, 'gest' => $gestionnaire
 			);
 	}
 
@@ -137,7 +125,7 @@ class ActionController extends BaseController
 	}
 	
 	/**
-	 *  @Route("/liste_actions_collaborateurs", name="liste_actions_collaborateurs")
+	 * @Route("/liste_actions_collaborateurs", name="liste_actions_collaborateurs")
 	 */
 	public function listePaCollaborateursAction(Request $request){
 		$logger = $this->get('my_service.logger');
@@ -152,15 +140,13 @@ class ActionController extends BaseController
 		return $this->paginate($request, $queryBuilder);
 	}
 	
-	
-	
 	/**
 	 * Lists  entities.
-	 *@Route("/liste_des_actions", name="liste_des_actions")
-	 *@Route("{code}/liste_des_actions_validees", name="liste_des_actions_validees")
-	 *@Route("{code_statut}/liste_des_actions_by_statut", name="liste_des_actions_by_statut")
-	 *@Route("{instance_id}/liste_des_actions_by_instance", name="liste_des_actions_by_instance")
-	 *@Route("{structure_id}/liste_des_actions_by_structure", name="liste_des_actions_by_structure")
+	 * @Route("/liste_des_actions", name="liste_des_actions")
+	 * @Route("{code}/liste_des_actions_validees", name="liste_des_actions_validees")
+	 * @Route("{code_statut}/liste_des_actions_by_statut", name="liste_des_actions_by_statut")
+	 * @Route("{instance_id}/liste_des_actions_by_instance", name="liste_des_actions_by_instance")
+	 * @Route("{structure_id}/liste_des_actions_by_structure", name="liste_des_actions_by_structure")
 	 * @Method("GET")
 	 * @Template()
 	 */
@@ -250,7 +236,7 @@ class ActionController extends BaseController
 	
 	
 	/**
-	 * @QMLogger(message="Extraction action")
+	 * @QMLogger(message="Extraction des actions")
 	 * @Route("/export_action", name="export_action")
 	 * @Template()
 	 */
@@ -267,14 +253,14 @@ class ActionController extends BaseController
 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->execute(), $statut->getQuery()->execute());
 		//$filename = sprintf("Extraction des actions du %s.xlsx", date('d-m-Y à H:i:s'));
 		$filename = sprintf("Extraction_des_actions_du_%s.xlsx", date('d-m-Y'));
-		$objWriter->save($this->web_dir."/upload/reporting/$filename");
+		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
 	
 		
      /**
      * Creates a new Action entity.
-     * @QMLogger(message="Creation d'une action")
+     * @QMLogger(message="Création d'une action")
      * @Route("/creer_action", name="creer_action")
      * @Route("/{espace_id}/creer_action_to_espace", name="creer_action_to_espace")
      * @Method("POST")
@@ -288,6 +274,9 @@ class ActionController extends BaseController
     		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		$entity->setInstance($espace->getInstance());
     		$entity->setEtatCourant(Statut::ACTION_NON_ECHUE);
+    		$entity->setStatutChange(Statut::ACTION_NON_ECHUE);
+    	} else {
+    		$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	}
     	$entity->setAnimateur($this->getUser());
     	$form = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id)));
@@ -360,12 +349,16 @@ class ActionController extends BaseController
     public function newAction($espace_id=null, $instance_id=null) {
     	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Action();
-        if($espace_id){
-       		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+        if($espace_id) {
+       		$espace = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+	        if(!$espace) {
+	            $this->addFlash('error', "Espace non reconnu");
+	            return $this->redirect($this->generateUrl('dashboard'));
+	        }
       		$entity->setInstance($espace->getInstance());
         }
         $form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id, 'instance_id'=>$instance_id, 'bu_id'=>$bu)));
-        return array('entity' => $entity, 'form' => $form->createView(), 'espace' => $espace);
+        return array('entity' => $entity, 'form' => $form->createView(), 'espace' => isset($espace) ? $espace : null);
     }
     
     /**
@@ -402,8 +395,12 @@ class ActionController extends BaseController
     	$dispatcher = $this->container->get('event_dispatcher');
    		$em = $this->getDoctrine()->getManager();
    		$entity = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
+    	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         $form   = $this->createCreateForm($entity, 'Action', array('attr' => array('manager' => $this->getUser())));
         $this->useFormFields($form, array('porteur', 'save', 'cancel'));
+    	if($entity->getPorteur()) {
+    		$entity->setStructure($entity->getPorteur()->getStructure());
+    	}
         if($request->isMethod('POST')) {
         	$form->handleRequest($request);
         	if($form->isValid()) {
@@ -433,8 +430,15 @@ class ActionController extends BaseController
     public function newSignalisationAction(Request $request, $signalisation_id) {
     	$em = $this->getDoctrine()->getManager();
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
+    	if(!$signalisation) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$entity = new Action();
-   		$entity->setInstance($signalisation->getInstance());
+   		$entity->setLibelle($signalisation->getLibelle());
+   		$entity->setDescription($signalisation->getDescription());
+   		$entity->setDateDebut(new \DateTime('NOW'));
+   		$entity->setInstance($signalisation->getInstance()->getParent() ? $signalisation->getInstance()->getParent() : $signalisation->getInstance());
    		$entity->setDomaine($signalisation->getDomaine());
    		$entity->setTypeAction($signalisation->getTypeSignalisation());
     	$form   = $this->createCreateForm( $entity,'Action');
@@ -445,24 +449,38 @@ class ActionController extends BaseController
 
     /**
      * Creates a new Signalisation Action entity.
-     * @QMLogger(message="Creation d'une action")
+     * @QMLogger(message="Création d'une action")
      * @Route("/creer_signalisation_action/{signalisation_id}/signalisation", name="creer_signalisation_action")
      * @Method("POST")
      */
     public function createSignalisationAction(Request $request, $signalisation_id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = new Action();
+     	$dispatcher = $this->container->get('event_dispatcher');
     	$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
+    	if(!$signalisation) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
     	$entity->setAnimateur($this->getUser());
+    	$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	$form = $this->createCreateForm( $entity,'Action');
     	$form->handleRequest($request);
+    	if($entity->getPorteur()) {
+    		$entity->setStructure($entity->getPorteur()->getStructure());
+    	}
     	if($form->isValid()) {
+	    	$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
+	    	$entity->setEtatReel(Statut::ACTION_NOUVELLE);
     		$em->persist($entity);
     		$entity->addSignalisation($signalisation);
     		$em->flush();
     		ActionUtils::setReferenceActionSignalisation($em, $entity, $signalisation);
-    		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a �t� ajout�e pour traiter cette signalisation');
+    		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a été ajoutée pour traiter cette signalisation');
     		ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NOUVELLE, $this->getUser(), 'Nouvelle action corrective.');
+			$event = $this->get('orange_main.action_event')->createForAction($entity);
+			$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
+    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action créée avec succés.'));
     		if($form->get('save_and_add')->isClicked()) {
     			return $this->redirect($this->generateUrl('nouvelle_signalisation_action', array('signalisation_id' => $signalisation_id)));
     		}
@@ -487,10 +505,11 @@ class ActionController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $action = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('read', $action, 'Unauthorized access!');
-        if (!$action) {
-            throw $this->createNotFoundException('Unable to find Action entity.');
-        }
-        if($id_espace){
+    	if(!$action) {
+    		$this->addFlash('error', "Impossible de voir les détails, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
+    	}
+        if($id_espace) {
         	$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($id_espace);
         	$user = $this->getDoctrine()->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
         	$membre=$this->getDoctrine()->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(
@@ -517,7 +536,8 @@ class ActionController extends BaseController
         $entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('update', $entity, 'Unauthorized access!');
         if (!$entity) {
-            throw $this->createNotFoundException('Unable to find Action entity.');
+    		$this->addFlash('error', "Impossible de voir les détails, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
         }
         $editForm = $this->createEditForm($entity);
         if($entity->getInstance()->getEspace()){
@@ -537,9 +557,6 @@ class ActionController extends BaseController
     private function createEditForm(Action $entity, $espace_id=null) {
     	$form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id'=>$espace_id),
     			'action' => $this->generateUrl('modifier_action', array('id' => $entity->getId())), 'method' => 'PUT'));
-//         $form = $this->createForm(new ActionType(), $entity, array(
-//             	'action' => $this->generateUrl('modifier_action', array('id' => $entity->getId())), 'method' => 'PUT'
-//         	));
         $form->add('submit', 'submit', array('label' => 'Update'));
         return $form;
     }
@@ -596,7 +613,11 @@ class ActionController extends BaseController
     public function deleteAction(Request $request, $id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
-    	if($request->getMethod() === 'POST'){
+        if (!$entity) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette action n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('mes_actions'));
+        }
+    	if($request->getMethod() === 'POST') {
     		if($entity) {
     			$em->remove($entity);
     			$em->flush();
@@ -606,7 +627,7 @@ class ActionController extends BaseController
     			$this->get('session')->getFlashBag()->add('failed', array('title' => 'Notification', 'body' =>  'Action inexistante!'));
     		}
     	}
-    			return array('id' => $id);
+    	return array('id' => $id);
     }
     
     /**
@@ -702,7 +723,7 @@ class ActionController extends BaseController
             $data = $form->getData();
             $isCorrective = intval($data['isCorrective']);
             try {
-            	if($espace_id){
+            	if($espace_id) {
             		$idsMembres = $em->getRepository('OrangeMainBundle:MembreEspace')->getAllMembres($espace_id);
             		foreach ($idsMembres as $value){
             			array_push($array, $value['id']);
@@ -711,9 +732,11 @@ class ActionController extends BaseController
                 $number = $this->get('orange.main.loader')->loadAction($data['file'], $this->getUser(), $users, $instances, $data['isCorrective']);
                 $actions = $em->getRepository('OrangeMainBundle:Action')->getActions($number['id']);
                 $nbr = $number['nbr'];
-                foreach ($actions as $value){
-                	$this->get('orange.main.mailer')->notifNewAction($value->getPorteur()->getEmail(), $value);
+                foreach ($actions as $value) {
+                	$body = $this->renderView('OrangeMainBundle:Notification:nouvelleAction.html.twig', array('data' => $value));
+                	$this->get('orange.main.mailer')->send($value->getPorteur()->getEmail(), $value->getEmailContributeurs(), 'Nouvelle Action', $body);
                 }
+                $em->flush();
                 $this->get('orange.main.setStructure')->setStructureForAction();
                 $this->get('session')->getFlashBag()->add('success', array (
                 		'title' => 'Notification',

@@ -27,7 +27,10 @@ class BaseCommand extends ContainerAwareCommand
 	public function get($service) {
 		return $this->getContainer()->get($service);
 	}
-// 	public function getRepository()
+	
+	/**
+	 * @return \Orange\QuickMakingBundle\Model\EntityManager
+	 */
 	public function getEntityManager() {
 		return $this->get('doctrine.orm.entity_manager');
 	}

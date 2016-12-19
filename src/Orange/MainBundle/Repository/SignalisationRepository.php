@@ -1,9 +1,6 @@
 <?php 
-
 namespace Orange\MainBundle\Repository;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Orange\QuickMakingBundle\Repository\EntityRepository;
 use Orange\MainBundle\Entity\Utilisateur;
 use Doctrine\ORM\QueryBuilder;
 use Orange\MainBundle\Entity\Signalisation;
@@ -11,13 +8,12 @@ use Orange\MainBundle\CustomInterface\RepositoryInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Orange\MainBundle\Entity\Statut;
 
-class SignalisationRepository extends BaseRepository{
+class SignalisationRepository extends BaseRepository {
 	
 	public function findAll() {
 		//TODO: Auto-generated method stub
 		return $this->filter()->getQuery()->execute();
 	}
-	
 	
 	public function getSignalisations($ids){
 		return $this->createQueryBuilder('s')
@@ -26,18 +22,18 @@ class SignalisationRepository extends BaseRepository{
 		->getQuery()
 		->getResult();
 	}
+	
 	public function filter() {
 		$data = array();$parameters = array();
 		$queryBuilder = $this->createQueryBuilder('sign');
 		$queryBuilder->where($queryBuilder->expr()->in('sign.id', $this->superAdminQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('sign.id', $this->adminQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('sign.id', $this->animateurQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('sign.id', $this->managerQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('sign.id', $this->sourceQueryBuilder($data)->getDQL()));
+			->orWhere($queryBuilder->expr()->in('sign.id', $this->adminQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('sign.id', $this->animateurQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('sign.id', $this->managerQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('sign.id', $this->sourceQueryBuilder($data)->getDQL()));
 		foreach($data as $value) {
 			$parameters[$value->getName()] = $value->getValue();
 		}
-		
 		return $queryBuilder->setParameters($parameters);
 	}
 
@@ -67,7 +63,7 @@ class SignalisationRepository extends BaseRepository{
 	 */
 	public function animateurQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign3')->select('sign3.id')
-		->innerJoin('sign3.instance', 'i3');
+			->innerJoin('sign3.instance', 'i3');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'i3', Utilisateur::ROLE_ANIMATEUR)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -77,10 +73,10 @@ class SignalisationRepository extends BaseRepository{
 	 */
 	public function managerQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign4')->select('sign4.id')
-							 ->innerJoin('sign4.instance', 'i4')
-							 ->innerJoin('i4.bu', 'b4')
-							 ->innerJoin('b4.structureBuPrincipal', 's4');
-		$data = array_merge($this->filterByProfile($queryBuilder, 's4', Utilisateur::ROLE_MANAGER)->getParameters()->toArray(), $data);
+							->innerJoin('sign4.instance', 'i4')
+							->innerJoin('i4.animateur', 'a4')
+							->andWhere('a4.utilisateur = :user')->setParameter('user', $this->_user);
+		$data = array_merge($queryBuilder->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
 	

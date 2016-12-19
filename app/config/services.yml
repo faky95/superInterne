@@ -143,7 +143,7 @@ services:
         public:     false
         tags:
             - { name: security.voter }
-            
+
     security.access.structure_voter:
         class:      Orange\MainBundle\Security\Authorization\Voter\StructureVoter
         arguments: ["@doctrine.orm.entity_manager", "@service_container"]
@@ -239,16 +239,16 @@ services:
         class: Orange\MainBundle\Event\SignalisationEvent
         public : true
         arguments: ["@security.context", "@orange_main.signalisation_manager"]
-        
+
     my_service.logger:
         class:     Symfony\Bridge\Monolog\Logger
         arguments: [app]
         calls:
-            - [pushHandler, [@my_service.logger_handler]]
-    
+            - [pushHandler, ["@my_service.logger_handler"]]
+
     my_service.logger_handler:
         class:     Monolog\Handler\StreamHandler       
-        arguments: [%kernel.logs_dir%/%kernel.environment%.admin.log, 200]
+        arguments: ["%kernel.logs_dir%/%kernel.environment%.admin.log", 200]
         
     orange_main.action_correct:
         class: Orange\MainBundle\Service\ActionCorrect

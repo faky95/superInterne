@@ -263,7 +263,7 @@ class Action
     
     /**
      * @var \Orange\MainBundle\Entity\Statut
-     * @Assert\NotNull(message="Donnez le nouveau statut")
+     * 
      */
     private $statutChange;
 
@@ -618,6 +618,18 @@ class Action
     public function getContributeur()
     {
         return $this->contributeur;
+    }
+
+    /**
+     * Get E-mail contributeurs
+     * @return array
+     */
+    public function getEmailContributeurs() {
+    	$data = array();
+    	foreach($this->contributeur as $contributeur) {
+    		$data[] = $contributeur->getUtilisateur()->getEmail();
+    	}
+        return $data;
     }
 
     /**

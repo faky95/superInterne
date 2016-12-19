@@ -7,14 +7,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\ActionStatut;
-use Orange\MainBundle\Form\ActionStatutType;
 use Orange\QuickMakingBundle\Controller\BaseController;
-use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Entity\Statut;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\MainBundle\OrangeMainEvents;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+
 /**
  * ActionStatut controller.
  * @Route("/actionstatut")
@@ -23,10 +22,11 @@ class ActionStatutController extends BaseController
 {
 	
 	/**
+	 * @QMLogger(message="Historique d'une action")
 	 * @Route("/traitement/{action_id}", name="traitement_action")
 	 * @Template()
 	 */
-	public function traitementAction($action_id){
+	public function traitementAction($action_id) {
 		$em = $this->getDoctrine()->getManager();
 		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
         $libelleStatut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode($action->getEtatReel())->getLibelle();
@@ -34,6 +34,7 @@ class ActionStatutController extends BaseController
 	}
 	
 	/**
+	 * @QMLogger(message="Liste des contre-propositions")
 	 * @Route("/liste_invalidation/{action_id}", name="liste_invalidation")
 	 * @Template()
 	 */
@@ -45,6 +46,7 @@ class ActionStatutController extends BaseController
 	}
 	
 	/**
+	 * @QMLogger(message="Abandon d'une action")
 	 * @Route("/choix_proposition/{invalidation_id}", name="choix_proposition")
 	 * @Template("OrangeMainBundle:ActionStatut:choixProposition.html.twig")
 	 * @Method({"GET", "POST"})
@@ -56,11 +58,6 @@ class ActionStatutController extends BaseController
 			$invalidation = $em->getRepository('OrangeMainBundle:ActionStatut')->find($invalidation_id);
 			$event = $this->get('orange_main.action_event')->createForAction($invalidation->getAction());
 			$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_ABANDON_ACCEPTEE, $event);
-			
-// 			ActionUtils::changeStatutAction($em, $invalidation->getAction(), Statut::EVENEMENT_VALIDER, $this->getUser(), $invalidation->getCommentaire());
-// 			$this->get('session')->getFlashBag()->add('success', array (
-// 								'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'
-// 			));
 			return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $invalidation->getAction()->getId()))));
 		}
 		return array('invalidation_id' => $invalidation_id);
@@ -68,13 +65,13 @@ class ActionStatutController extends BaseController
 	
 	/**
 	 * Validation
+	 * @QMLogger(message="Cloture d'une action")
 	 * @Route("/solder_action/{action_id}", name="solder_action")
 	 * @Method({"GET", "POST"})
 	 * @Template()
 	 */
 	public function solderAction(Request $request, $action_id) {
 		$dispatcher = $this->container->get('event_dispatcher');
-		$date = date('Y-m-d');
 		$em   = $this->getDoctrine()->getManager();
 		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		$var = 0;
@@ -86,11 +83,11 @@ class ActionStatutController extends BaseController
 		if($request->getMethod() === 'POST') {
 			$form->handleRequest($request);
 			if($form->isValid()) {
-				if($action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI){
+				if($action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI) {
 					$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_SOLDEE_HORS_DELAI);
 					$action->setEtatCourant('ACTION_SOLDEE_HORS_DELAI');
 					$action->setEtatReel('ACTION_SOLDEE_HORS_DELAI');
-				}elseif($action->getEtatReel() === Statut::ACTION_FAIT_DELAI ){
+				} elseif($action->getEtatReel() === Statut::ACTION_FAIT_DELAI ) {
 					$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_SOLDEE_DELAI);
 					$action->setEtatCourant('ACTION_SOLDEE_DELAI');
 					$action->setEtatReel('ACTION_SOLDEE_DELAI');
@@ -106,7 +103,7 @@ class ActionStatutController extends BaseController
 			} else {
 				return $this->render('OrangeMainBundle:ActionStatut:solder.html.twig', array(
 						'entity' => $action, 'form' => $form->createView(), 'var' => $var), new Response(null, 303)
-						);
+					);
 			}
 		}
 		return array('entity' => $action, 'form' => $form->createView(), 'var' => $var);
@@ -114,7 +111,7 @@ class ActionStatutController extends BaseController
 	
 	/**
 	 * Validation
-	 * @QMLogger(message="Acceptation de demande")
+	 * @QMLogger(message="Validation d'une demande (abandon d'une action, report d'une action ou cloture d'une action)")
 	 * @Route("/demande_action/{action_id}", name="demande_action")
 	 * @Method({"GET", "POST"})
 	 * @Template()
@@ -123,7 +120,6 @@ class ActionStatutController extends BaseController
 		$em   = $this->getDoctrine()->getManager();
 		$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::EVENEMENT_VALIDER);
 		$dispatcher = $this->container->get('event_dispatcher');
-		$date = date('Y-m-d');
 		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		$entity = new ActionStatut();
 		$form = $this->createCreateForm($entity,'ActionStatut');
@@ -160,6 +156,7 @@ class ActionStatutController extends BaseController
 	}
 	/**
 	 * Validation
+	 * @QMLogger(message="Prise en charge d'une charge")
 	 * @QMLogger(message="Validation")
 	 * @Route("/validation_action/{action_id}", name="validation")
 	 * @Method({"GET", "POST"})
@@ -167,11 +164,10 @@ class ActionStatutController extends BaseController
 	 */
 	public function validationAction(Request $request, $action_id) {
 		$dispatcher = $this->container->get('event_dispatcher');
-		$date = date('Y-m-d'); 
 		$em   = $this->getDoctrine()->getManager();
     	$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
     	$var = 0;
-    	if ($action->getEtatReel() == 'ACTION_NOUVELLE' &&  $action->getEtatCourant() == 'ACTION_NOUVELLE'){
+    	if ($action->getEtatReel() == 'ACTION_NOUVELLE' &&  $action->getEtatCourant() == 'ACTION_NOUVELLE') {
     		$var = 1;
     	}
     	$entity = new ActionStatut();
@@ -216,7 +212,7 @@ class ActionStatutController extends BaseController
 	
     /**
      * Lists all ActionStatut entities.
-     *
+	 * @QMLogger(message="Historique d'une action")
      * @Route("/", name="actionstatut")
      * @Method("GET")
      * @Template()
@@ -229,7 +225,7 @@ class ActionStatutController extends BaseController
     
     /**
      * Creates a new Domaine entity.
-     * @QMLogger(message="Nouvelle demande")
+     * @QMLogger(message="Rejet d'une demande (abandon d'une action, report d'une action ou cloture d'une action)")
      * @Route("/creer_action_statut/{action_id}", name="actionstatut_create")
      * @Method({"POST","GET"})
      * @Template("OrangeMainBundle:ActionStatut:new.html.twig")
@@ -247,46 +243,39 @@ class ActionStatutController extends BaseController
     		$entity->setStatut($statut);
     		$entity->setUtilisateur($this->getUser());
     		$em->persist($entity);
-    		if($action->getEtatReel() === Statut::ACTION_DEMANDE_ABANDON){
+    		$actionName = null;
+    		if($action->getEtatReel() === Statut::ACTION_DEMANDE_ABANDON) {
+    			$actionName = OrangeMainEvents::ACTION_DEMANDE_ABANDON_REFUSEE;
+    		}
+    		if($action->getEtatReel() === Statut::EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE) {
+    			$actionName = OrangeMainEvents::ACTION_PROPOSITION_ANIMATEUR;
+    		}
+    		if($action->getEtatReel() === Statut::ACTION_NOUVELLE) {
+    			$actionName = OrangeMainEvents::ACTION_PROPOSITION_PORTEUR;
+    		}
+    		if($action->getEtatReel() === Statut::ACTION_DEMANDE_REPORT) {
+    			$actionName = OrangeMainEvents::ACTION_DEMANDE_REPORT_REFUSEE;
+    		}
+    		if($action->getEtatReel() === Statut::ACTION_FAIT_DELAI || $action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI) {
+    			$actionName = OrangeMainEvents::ACTION_PAS_SOLDER;
+    		}
+    		if($actionName) {
     			$em->flush();
     			$event = $this->get('orange_main.action_event')->createForAction($action);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_ABANDON_REFUSEE, $event);
+    			$dispatcher->dispatch($actionName, $event);    			
     		}
-    		if($action->getEtatReel() === Statut::EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE){
-    			$em->flush();
-    			$event = $this->get('orange_main.action_event')->createForAction($action);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_PROPOSITION_ANIMATEUR, $event);
-    		}
-    		if($action->getEtatReel() === Statut::ACTION_NOUVELLE){
-    			$em->flush();
-    			$event = $this->get('orange_main.action_event')->createForAction($action);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_PROPOSITION_PORTEUR, $event);
-    		}
-    		if($action->getEtatReel() === Statut::ACTION_DEMANDE_REPORT){
-    			$em->flush();
-    			$event = $this->get('orange_main.action_event')->createForAction($action);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_REPORT_REFUSEE, $event);
-    		}
-    		if($action->getEtatReel() === Statut::ACTION_FAIT_DELAI || $action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI){
-    			$em->flush();
-    			$event = $this->get('orange_main.action_event')->createForAction($action);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_PAS_SOLDER, $event);
-    		}
-    		$this->get('session')->getFlashBag()->add('success', array (
-								'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'
-    		));
+    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'));
     		return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $action_id))));
     	}
-    	
-    	return $this->render('OrangeMainBundle:ActionStatut:new.html.twig',
-    			array('entity' => $entity,
-    					'action' => $action,
-    					'form' => $form->createView()
-    			), new \Symfony\Component\HttpFoundation\Response(null,303));
+    	return $this->render('OrangeMainBundle:ActionStatut:new.html.twig', array(
+    				'entity' => $entity, 'action' => $action, 'form' => $form->createView()
+    			), new \Symfony\Component\HttpFoundation\Response(null,303)
+    		);
     }
     
     /**
      * Displays a form to create a new ActionStatut entity.
+	 * @QMLogger(message="Début de traitement d'une action")
      * @Route("/action_statut_nouveau/{action_id}", name="actionstatut_new")
      * @Method({"GET", "POST"})
      * @Template()
@@ -300,106 +289,7 @@ class ActionStatutController extends BaseController
     }
 
     /**
-     * Finds and displays a ActionStatut entity.
-     * @Route("/{id}", name="actionstatut_show")
-     * @Method("GET")
-     * @Template()
-     */
-    public function showAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:ActionStatut')->find($id);
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find ActionStatut entity.');
-        }
-        $deleteForm = $this->createDeleteForm($id);
-        return array( 'entity' => $entity, 'delete_form' => $deleteForm->createView());
-    }
-
-    /**
-     * Displays a form to edit an existing ActionStatut entity.
-     * @Route("/{id}/edit", name="actionstatut_edit")
-     * @Method("GET")
-     * @Template()
-     */
-    public function editAction($id) {
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:ActionStatut')->find($id);
-        if(!$entity) {
-            throw $this->createNotFoundException('Unable to find ActionStatut entity.');
-        }
-        $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-        return array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView());
-    }
-
-    /**
-    * Creates a form to edit a ActionStatut entity.
-    * @param ActionStatut $entity The entity
-    * @return \Symfony\Component\Form\Form The form
-    */
-    private function createEditForm(ActionStatut $entity) {
-        $form = $this->createForm(new ActionStatutType(), $entity, array(
-            	'action' => $this->generateUrl('actionstatut_update', array('id' => $entity->getId())), 'method' => 'PUT'
-        	));
-        $form->add('submit', 'submit', array('label' => 'Update'));
-        return $form;
-    }
-    
-    /**
-     * Edits an existing ActionStatut entity.
-     * @Route("/{id}", name="actionstatut_update")
-     * @Method("PUT")
-     * @Template("OrangeMainBundle:ActionStatut:edit.html.twig")
-     */
-    public function updateAction(Request $request, $id) {
-        $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:ActionStatut')->find($id);
-        if (!$entity) {
-            throw $this->createNotFoundException('Unable to find ActionStatut entity.');
-        }
-        $deleteForm = $this->createDeleteForm($id);
-        $editForm = $this->createEditForm($entity);
-        $editForm->handleRequest($request);
-        if($editForm->isValid()) {
-            $em->flush();
-            return $this->redirect($this->generateUrl('actionstatut_edit', array('id' => $id)));
-        }
-        return array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView());
-    }
-    /**
-     * Deletes a ActionStatut entity.
-     * @Route("/{id}", name="actionstatut_delete")
-     * @Method("DELETE")
-     */
-    public function deleteAction(Request $request, $id) {
-        $form = $this->createDeleteForm($id);
-        $form->handleRequest($request);
-        if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('OrangeMainBundle:ActionStatut')->find($id);
-            if (!$entity) {
-                throw $this->createNotFoundException('Unable to find ActionStatut entity.');
-            }
-            $em->remove($entity);
-            $em->flush();
-        }
-        return $this->redirect($this->generateUrl('actionstatut'));
-    }
-
-    /**
-     * Creates a form to delete a ActionStatut entity by id.
-     * @param mixed $id The entity id
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm($id) {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('actionstatut_delete', array('id' => $id)))
-            ->setMethod('DELETE')
-            ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm();
-    }
-    
-    /**
+	 * @QMLogger(message="Historique des traitements d'une action")
      * @Route("/historique/{action_id}", name="historique_action")
      * @Template()
      */
@@ -411,7 +301,7 @@ class ActionStatutController extends BaseController
     
     /**
      * Formulaire de confirmation pour abandonner une action
-     *
+	 * @QMLogger(message="Demande d'abandon d'une action")
      * @Route("/demande_abandon_nouveau/{action_id}", name="abandon_new")
      * @Method({"GET", "POST"})
      * @Template("OrangeMainBundle:ActionStatut:abandon.html.twig")
@@ -426,7 +316,7 @@ class ActionStatutController extends BaseController
     
  	/**
      * Creates a new Domaine entity.
-     *
+	 * @QMLogger(message="Abandon d'une action")
      * @Route("/creer_abandon/{action_id}", name="abandon_create")
      * @Method({"GET", "POST"})
      * @Template("OrangeMainBundle:ActionStatut:abandon.html.twig")
@@ -448,7 +338,7 @@ class ActionStatutController extends BaseController
     		$event = $this->get('orange_main.action_event')->createForAction($entity->getAction());
     		$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_ABANDON, $event);
     		$this->get('session')->getFlashBag()->add('success', array (
-							'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès'
+							'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'
     			));
     		return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $action_id))));
     	}
@@ -457,7 +347,7 @@ class ActionStatutController extends BaseController
     
     /**
 	 * Validation
-	 *
+	 * @QMLogger(message="Cloture d'une action")
 	 * @Route("/cloturer_action/{action_id}", name="cloturer_action")
 	 * @Method({"GET", "POST"})
 	 * @Template()

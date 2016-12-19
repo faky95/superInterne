@@ -19,12 +19,11 @@ umask(0000);
 //     exit('You are not allowed to access this file. Check '.basename(__FILE__).' for more information.');
 // }
 
-//Important pour l'accès à l'API
+//Important pour l'accï¿½s ï¿½ l'API
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Headers: Origin, X-Requested-With, Content-Type, Accept');
 
 $loader = require_once __DIR__.'/../app/bootstrap.php.cache';
-const WEB_DIRECTORY = __DIR__ ;
 Debug::enable();
 
 require_once __DIR__.'/../app/AppKernel.php';

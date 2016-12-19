@@ -1,9 +1,7 @@
 <?php
-
 namespace Orange\MainBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -17,7 +15,6 @@ use Orange\QuickMakingBundle\Controller\BaseController;
 
 /**
  * ActionCyclique controller.
- *
  * @Route("/actioncyclique")
  */
 class ActionCycliqueController extends BaseController
@@ -25,19 +22,13 @@ class ActionCycliqueController extends BaseController
 
 	/**
 	 * Lists all ActionCyclique entities.
-	 *
 	 * @Route("/", name="actioncyclique")
 	 * @Method("GET")
 	 * @Template()
 	 */
 	public function indexAction()
 	{
-		$em = $this->getDoctrine()->getManager();
-		$form = $this->createForm(new ActionCriteria());
-
-		return array(
-
-		);
+		return array();
 	}
 
 	/**
@@ -72,39 +63,26 @@ class ActionCycliqueController extends BaseController
 				$em->flush();
 				ActionUtils::setReferenceAction($em, $entity->getAction());
 				ActionUtils::changeStatutAction($em, $entity->getAction(), Statut::ACTION_NOUVELLE, $this->getUser(), "Nouvelle action créée.");
-                
 				return $this->redirect($this->generateUrl('actioncyclique_show', array('id' => $entity->getId())));
 			}
-			 
 			if(!$form->isValid()) {
-
 				$form_errors = $this->get('form_errors')->getArray($form);
-
-				if(!empty($form_errors)){
-	     
-					foreach ($form_errors as $key => $error){
-
+				if(!empty($form_errors)) {
+					foreach ($form_errors as $error) {
 						$this->container->get ('session')->getFlashBag()->add ('error', array (
-								'title' => 'Notification',
-								'body' => 'Des erreurs sont survenues. Veuillez réessayer . '
-						));
+								'title' => 'Notification', 'body' => 'Des erreurs sont survenues. Veuillez réessayer . '
+							));
 					}
 				}
 
 			}
-
 		}
-
-		return array(
-				'entity' => $entity,
-				'form'   => $form->createView(),
-		);
+		return array('entity' => $entity, 'form'   => $form->createView());
 	}
 
 
 	/**
 	 * Displays a form to create a new ActionCyclique entity.
-	 *
 	 * @Route("/new", name="actioncyclique_new")
 	 * @Method("GET")
 	 * @Template()
@@ -113,11 +91,7 @@ class ActionCycliqueController extends BaseController
 	{
 		$entity = new ActionCyclique();
 		$form   = $this->createCreateForm($entity, 'ActionCyclique');
-
-		return array(
-				'entity' => $entity,
-				'form'   => $form->createView(),
-		);
+		return array('entity' => $entity, 'form' => $form->createView());
 	}
 
 	/**
@@ -130,22 +104,13 @@ class ActionCycliqueController extends BaseController
 	public function showAction($id)
 	{
 		$em = $this->getDoctrine()->getManager();
-
 		$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
-
 		$taches = $em->getRepository('OrangeMainBundle:Tache')->findByActionCyclique($id);
-
 		if (!$entity) {
 			throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
 		}
-
 		$deleteForm = $this->createDeleteForm($id);
-
-		return array(
-				'entity'      => $entity,
-				'taches'	  => $taches,
-				'delete_form' => $deleteForm->createView(),
-		);
+		return array('entity' => $entity, 'taches' => $taches, 'delete_form' => $deleteForm->createView());
 	}
 
 	/**
@@ -158,28 +123,18 @@ class ActionCycliqueController extends BaseController
 	public function editAction($id)
 	{
 		$em = $this->getDoctrine()->getManager();
-
 		$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
-
 		if (!$entity) {
 			throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
 		}
-
 		$editForm = $this->createEditForm($entity);
 		$deleteForm = $this->createDeleteForm($id);
-
-		return array(
-				'entity'      => $entity,
-				'edit_form'   => $editForm->createView(),
-				'delete_form' => $deleteForm->createView(),
-		);
+		return array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView());
 	}
 
 	/**
 	 * Creates a form to edit a ActionCyclique entity.
-	 *
 	 * @param ActionCyclique $entity The entity
-	 *
 	 * @return \Symfony\Component\Form\Form The form
 	 */
 	private function createEditForm(ActionCyclique $entity)
@@ -187,15 +142,13 @@ class ActionCycliqueController extends BaseController
 		$form = $this->createForm(new ActionCycliqueType(), $entity, array(
 				'action' => $this->generateUrl('actioncyclique_update', array('id' => $entity->getId())),
 				'method' => 'PUT',
-		));
-
+			));
 		$form->add('submit', 'submit', array('label' => 'Update'));
-
 		return $form;
 	}
+	
 	/**
 	 * Edits an existing ActionCyclique entity.
-	 *
 	 * @Route("/{id}", name="actioncyclique_update")
 	 * @Method("PUT")
 	 * @Template("OrangeMainBundle:ActionCyclique:edit.html.twig")
@@ -203,32 +156,22 @@ class ActionCycliqueController extends BaseController
 	public function updateAction(Request $request, $id)
 	{
 		$em = $this->getDoctrine()->getManager();
-
 		$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
-
 		if (!$entity) {
 			throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
 		}
-
 		$deleteForm = $this->createDeleteForm($id);
 		$editForm = $this->createEditForm($entity);
 		$editForm->handleRequest($request);
-
 		if ($editForm->isValid()) {
 			$em->flush();
-
 			return $this->redirect($this->generateUrl('actioncyclique_edit', array('id' => $id)));
 		}
-
-		return array(
-				'entity'      => $entity,
-				'edit_form'   => $editForm->createView(),
-				'delete_form' => $deleteForm->createView(),
-		);
+		return array('entity' => $entity, 'edit_form' => $editForm->createView(), 'delete_form' => $deleteForm->createView());
 	}
+	
 	/**
 	 * Deletes a ActionCyclique entity.
-	 *
 	 * @Route("/{id}", name="actioncyclique_delete")
 	 * @Method("DELETE")
 	 */
@@ -236,38 +179,32 @@ class ActionCycliqueController extends BaseController
 	{
 		$form = $this->createDeleteForm($id);
 		$form->handleRequest($request);
-
 		if ($form->isValid()) {
 			$em = $this->getDoctrine()->getManager();
 			$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
-
 			if (!$entity) {
 				throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
 			}
-
 			$em->remove($entity);
 			$em->flush();
 		}
-
 		return $this->redirect($this->generateUrl('actioncyclique'));
 	}
 
 	/**
 	 * Creates a form to delete a ActionCyclique entity by id.
-	 *
 	 * @param mixed $id The entity id
-	 *
 	 * @return \Symfony\Component\Form\Form The form
 	 */
 	private function createDeleteForm($id)
 	{
 		return $this->createFormBuilder()
-		->setAction($this->generateUrl('actioncyclique_delete', array('id' => $id)))
-		->setMethod('DELETE')
-		->add('submit', 'submit', array('label' => 'Delete'))
-		->getForm()
-		;
+			->setAction($this->generateUrl('actioncyclique_delete', array('id' => $id)))
+			->setMethod('DELETE')
+			->add('submit', 'submit', array('label' => 'Delete'))
+			->getForm();
 	}
+	
 	/**
 	 * @todo retourne le nombre d'enregistrements renvoyer par le r�sultat de la requ�te
 	 * @param \Orange\MainBundle\Entity\ActionCyclique $entity

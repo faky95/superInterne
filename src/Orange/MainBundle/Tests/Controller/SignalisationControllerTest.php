@@ -1,55 +1,32 @@
 <?php
-
 namespace Orange\MainBundle\Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Orange\QuickMakingBundle\Tests\Controller\BaseControllerTest;
 
-class SignalisationControllerTest extends WebTestCase
+class SignalisationControllerTest extends BaseControllerTest
 {
-    /*
-    public function testCompleteScenario()
-    {
-        // Create a new client to browse the application
-        $client = static::createClient();
+	/**
+	 * @array
+	 */
+	protected $connexion = array('username' => 'sylla060210', 'password' => 'Compil_87');
 
-        // Create a new entry in the database
-        $crawler = $client->request('GET', '/les_signalisations/');
-        $this->assertEquals(200, $client->getResponse()->getStatusCode(), "Unexpected HTTP status code for GET /les_signalisations/");
-        $crawler = $client->click($crawler->selectLink('Create a new entry')->link());
-
-        // Fill in the form and submit it
-        $form = $crawler->selectButton('Create')->form(array(
-            'orange_mainbundle_signalisation[field_name]'  => 'Test',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check data in the show view
-        $this->assertGreaterThan(0, $crawler->filter('td:contains("Test")')->count(), 'Missing element td:contains("Test")');
-
-        // Edit the entity
-        $crawler = $client->click($crawler->selectLink('Edit')->link());
-
-        $form = $crawler->selectButton('Update')->form(array(
-            'orange_mainbundle_signalisation[field_name]'  => 'Foo',
-            // ... other fields to fill
-        ));
-
-        $client->submit($form);
-        $crawler = $client->followRedirect();
-
-        // Check the element contains an attribute with value equals "Foo"
-        $this->assertGreaterThan(0, $crawler->filter('[value="Foo"]')->count(), 'Missing element [value="Foo"]');
-
-        // Delete the entity
-        $client->submit($crawler->selectButton('Delete')->form());
-        $crawler = $client->followRedirect();
-
-        // Check the entity has been delete on the list
-        $this->assertNotRegExp('/Foo/', $client->getResponse()->getContent());
-    }
-
-    */
+	/**
+	 * @return array 
+	 */
+	public function urlProvider() {
+		return array(
+			 array("/les_signalisations"),
+			 array("/7/edition_signalisation"),
+			 array("/ss_instance"),
+			 array("/validation_signalisation/SIGN_VALIDE/7"),
+			 array("/actions_correctives/7"),
+			 array("/reload_actions/7"),
+			 array("/chargement_signalisation"),
+			 array("/typesignalisation_by_instance"),
+			 array("/domaine_signalisation_by_instance"),
+			 array("/7/supprimer_signalisation")
+		);
+	}
+	
+	
 }

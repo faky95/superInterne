@@ -89,7 +89,7 @@ class ActionQuery extends BaseQuery {
 		$query .= "UPDATE temp_action t LEFT JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = NULL WHERE p.id IS NULL;";
 		$query .= "UPDATE temp_action t INNER JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = p.id;";
 		//$query .= "UPDATE temp_action t, statut st SET t.statut = st.id WHERE t.statut LIKE st.etat;";
-		$query .= "UPDATE temp_action t, statut st SET t.code_statut = st.code WHERE LOWER(TRIM(t.statut)) LIKE LOWER(TRIM(st.etat));";
+		$query .= "UPDATE temp_action t, statut st SET t.code_statut = st.code WHERE LOWER(TRIM(t.statut)) LIKE LOWER(TRIM(st.statut));";
 		$query .= "UPDATE temp_action t INNER JOIN instance i ON i.libelle LIKE t.instance SET t.instance = i.id;";
 		$query .= "UPDATE temp_action t INNER JOIN domaine d ON d.libelle_domaine LIKE LOWER(TRIM(t.domaine)) INNER JOIN instance_has_domaine ihd ON ihd.domaine_id = d.id AND ihd.instance_id = t.instance SET t.domaine = d.id;";
 		$query .= "UPDATE temp_action t INNER JOIN type_action ta ON ta.type LIKE LOWER(TRIM(t.type_action))  INNER JOIN instance_has_type_action iht ON iht.type_action_id = ta.id AND iht.instance_id = t.instance SET t.type_action = ta.id;";
@@ -184,18 +184,15 @@ class ActionQuery extends BaseQuery {
 					select null, t.id, st.id, NOW()," . $current_user->getId () . ", 'action importée avec succés'
 					from temp_action t
 					inner join statut st on st.code =t.code_statut;";
-		
 		if ($isCorrective == 1){
 			$query .= "INSERT INTO action_has_signalisation (`action_id`, `signalisation_id`)
-			           select t.id, SUBSTR(t.reference, 3, 8) from temp_action t;";
+			           select t.id, s.id from temp_action t INNER JOIN signalisation s ON s.reference = t.reference;";
 				
-			$query.= "UPDATE signalisation s
-					  LEFT JOIN action_has_signalisation ahs on s.id = ahs.signalisation_id
-					  LEFT JOIN temp_action ta on ta.id = ahs.action_id
+			$query .= "UPDATE signalisation s 
+					  LEFT JOIN temp_action t on s.reference = t.reference 
 					  SET s.etat_courant = 'SIGN_PRISE_EN_CHARGE' 
-					  WHERE a.signalisation_id is not null;";
+					  WHERE t.id is not null;";
 		}
-		
 		$query2 = "";
 		$test = 0;
 		$resultsAction = $this->connection->fetchAll("SELECT id , contributeur from temp_action ");
@@ -209,7 +206,6 @@ class ActionQuery extends BaseQuery {
 				}
 			}
 		}
-					
 		$this->connection->prepare($query)->execute();
 		if(strlen($query2)>0)
 	    	$this->connection->prepare($query2)->execute();

@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
 	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <meta http-equiv="X-Frame-Options" content="deny">
 	    <title>Super{% block title %} {% endblock %}</title>
 		{% block stylesheets %}
 		
@@ -49,14 +48,12 @@
 		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery.min.js') }}"></script>
 		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-1.10.2.js') }}"></script>
 		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-ui.js') }}"></script>
-		    <script type="text/javascript" src="{{ asset('bundles/avalertify/toastr/js/toastr.js') }}"></script>
 		    <link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/jquery.dataTables.css') }}" type="text/css" rel="stylesheet" />
     		<link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/TableTools.css') }}" type="text/css" rel="stylesheet" />
     		<link href="{{ asset('bundles/orangemain/plugins/forms/togglebutton/toggle-buttons.css') }}" type="text/css" rel="stylesheet" />
     		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/modal.css') }}" type="text/css" media="screen" />
     		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/main.css') }}" type="text/css" media="screen" />
     	
-		    <link rel="stylesheet" href="{{ asset('bundles/avalertify/toastr/css/toastr.css') }}" type="text/css">
 		    <!-- Main stylesheets -->
 		    <link href="{{ asset('bundles/orangemain/css/main.css') }}" rel="stylesheet" type="text/css" /> 
 			
@@ -224,7 +221,7 @@
 							        <h4 class="modal-title" id="exampleModalLabel">Changement de mot de passe</h4>
 						       </div>
 						       <form id="changePassword" novalidate="novalidate" action="{{ path('fos_user_change_password') }}" method="POST" class="fos_user_change_password">
-							   		{{ render(controller('FOSUserBundle:ChangePassword:changePassword')) }}
+							   		{# render(controller('FOSUserBundle:ChangePassword:changePassword')) #}
 							   </form>
 						</div>
 					</div>

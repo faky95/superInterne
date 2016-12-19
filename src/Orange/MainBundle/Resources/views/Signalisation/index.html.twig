@@ -16,25 +16,21 @@
 		<div class="col-lg-12">
 			<div class="row">
 				<div class="col-lg-12">
-					<a href="{{ path('export_signalisation') }}"><button
-							class="btn btn-success">
-							<span class="icon16 entypo-icon-export white"></span>Exporter
-							signalisations
-						</button></a>
-					{% if has_rights('ROLE_SOURCE') or has_rights('ROLE_ADMIN') %}
-					<a href="{{ path('chargement_signalisation') }}"><button
-							class="btn btn-primary">
-							<span class="icon16 icomoon-icon-download white"></span>Importer
-							des signalisations
-						</button></a> <a href="{{ path('export_canevas') }}"><button
-							class="btn btn-warning">
-							<span class="icon16 entypo-icon-export white"></span>Extraire
-							canevas
-						</button></a> <a href="{{ path('chargement_action',{isCorrective:1}) }}"><button
-							class="btn btn-danger">
-							<span class="icon16 entypo-icon-export white"></span>Chargement
-							actions correctives
-						</button></a>
+					<a href="{{ path('export_signalisation') }}">
+						<button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les signalisations</button>
+					</a>
+					{% if  has_rights('ROLE_ADMIN') or has_rights('ROLE_SOURCE') or has_rights('ROLE_ANIMATEUR_ONLY') %}
+						<a href="{{ path('chargement_signalisation') }}">
+							<button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des signalisations</button>
+						</a> 
+					{% endif %}
+					{% if has_rights('ROLE_ANIMATEUR_ONLY') %}
+						<a href="{{ path('export_canevas') }}">
+							<button class="btn btn-warning"><span class="icon16 entypo-icon-export white"></span>Exporter les actions correctives</button>
+						</a>
+						<a href="{{ path('chargement_action',{isCorrective:1}) }}">
+							<button class="btn btn-danger"><span class="icon16 entypo-icon-export white"></span>Chargement actions correctives</button>
+						</a>
 					{% endif %}
 					<div class="marginB10"></div>
 				</div>

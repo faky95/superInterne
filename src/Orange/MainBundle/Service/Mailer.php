@@ -5,12 +5,10 @@ use Symfony\Component\Templating\EngineInterface;
 
 class Mailer
 {
-protected $mailer;
+	protected $mailer;
     protected $templating;
     private $from = "orange@orange.sn";
     private $name = " SUPER";
-    
-    
     
     public function __construct($mailer, EngineInterface $templating)
     {
@@ -21,64 +19,50 @@ protected $mailer;
     public function notifNewAction($to, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setSubject("Nouvelle Action")
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:nouvelleAction.html.twig',
-    					array('data' => $data
-    								
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setSubject("Nouvelle Action")
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleAction.html.twig', array('data' => $data)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
     }
     
     public function notifNewSignalisation($to, $cc, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($to)
-    	->setSubject("Nouvelle Signalisation")
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:nouvelleSignalisation.html.twig',
-    					array('data' => $data
-    
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setCc($to)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject("Nouvelle Signalisation")
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleSignalisation.html.twig', array('data' => $data)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
     }
     
     public function notifNewUser($to, $cc, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject("Création de compte")
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Utilisateur:email.html.twig',
-    					array('user' => $data
-    
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setSubject("Création de compte")
+	    	->setBody($this->templating->render('OrangeMainBundle:Utilisateur:email.html.twig', array('user' => $data)))
+			->setContentType('text/html')
+    		->setCharset('utf-8');
+    	return $this->mailer->send($mail);
     }
     
     public function send($to, $cc = null, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
-    	->setSubject($subject)
-    	->setBody($body)
-    	->setContentType('text/html')
-    	->setCharset('utf-8')
-    	;
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject(utf8_encode($subject))
+	    	->setBody($body)
+	    	->setContentType('text/html')
+	    	->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
     
@@ -91,75 +75,59 @@ protected $mailer;
 	    	->setBody($body)
 	    	->setContentType('text/html')
 	    	->setCharset('utf-8')
-	    	->attach(\Swift_Attachment::fromPath($chemin.'/'.$file))
-    	;
+	    	->attach(\Swift_Attachment::fromPath($chemin.'/'.$file));
     	return $this->mailer->send($mail);
     }
     
     public function sendNotifReport($to, $report, $user) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setSubject("Création de reporting")
-    	->setBody(
-    	
-    		$this->templating->render(
-    					'OrangeMainBundle:Notification:notifReporting.html.twig',
-    					array('body' => $report,
-    						  'user' => $user
-    							
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
+	    	->setTo($to)
+	    	->setSubject("Création de reporting")
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notifReporting.html.twig', array('body' => $report, 'user' => $user)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
     
-    public function sendReport($to, $subject, $file){
+    public function sendReport($to, $subject, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-		->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
-    	->setSubject($subject)
-    	->setBody(
-    			 
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:reporting.html.twig'))
-    					->setContentType('text/html')
-    					->setCharset('utf-8')
-    					->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
+	    	->setTo($to)
+			->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject($subject)
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:reporting.html.twig'))
+			->setContentType('text/html')
+			->setCharset('utf-8')
+    		->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
     	return $this->mailer->send($mail);
     }
     
     public function sendRelanceNewAction($to, $cc, $subject, $body){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject($subject)
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Relance:relanceNewAction.html.twig',
-    					array('url' => $body['accueil_url'],
-    							'action' => $body['action']
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setSubject($subject)
+	    	->setBody($this->templating->render('OrangeMainBundle:Relance:relanceNewAction.html.twig', array(
+	    			'url' => $body['accueil_url'], 'action' => $body['action']
+    			))
+	    	)->setContentType('text/html')
+    		->setCharset('utf-8');
+    	return $this->mailer->send($mail);
     }
+    
     public function registration($user){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($user->getEmail())
-    	->setSubject('Création de compte')
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Utilisateur:registration.html.twig',
-    					array('url' => $user
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($user->getEmail())
+	    	->setSubject('Création de compte')
+	    	->setBody($this->templating->render('OrangeMainBundle:Utilisateur:registration.html.twig', array('url' => $user)))
+			->setContentType('text/html')
+    		->setCharset('utf-8');
+    	return $this->mailer->send($mail);
     }
+    
     public function sendAlerteQuartTime($to, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -173,125 +141,97 @@ protected $mailer;
     public function sendRappel($to, $cc = null, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject($subject)
-    	->setBody($body)
-    	->setContentType('text/html');
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setSubject($subject)
+	    	->setBody($body)
+	    	->setContentType('text/html');
     	return $this->mailer->send($mail);
     }
     
-    public function NotifActionEspace($to, $cc, $subject, $body)
-    {
+    public function NotifActionEspace($to, $cc, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject(utf8_encode($subject))
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:notifActionEspace.html.twig',
-    					array('body' => $body
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
-    }
-    public function NotifAction($to, $cc, $subject, $body)
-    {
-    	$mail = \Swift_Message::newInstance();
-    	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject(utf8_encode($subject))
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:newAction.html.twig',
-    					array('body' => $body
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setSubject(utf8_encode($subject))
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notifActionEspace.html.twig', array('body' => $body)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
     }
     
-    public function NotifActionSignalisation($to,$cc,$subject, $body)
-    {
+    public function NotifAction($to, $cc, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject(utf8_encode($subject))
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:newAction.html.twig',
-    					array('body' => $body
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject(utf8_encode($subject))
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:newAction.html.twig', array('body' => $body)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
     }
-    public function NotifWithCopy($to, $cc, $subject, $body, $motif=null)
-    {
-    	$mail = \Swift_Message::newInstance();
-    	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setCc($cc)
-    	->setSubject(utf8_encode($subject))
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:notif.html.twig',
-    					array('body' => $body,
-    							'motif' => $motif
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
-    }
-    //kkk
-    public function Notif($to, $subject, $body)
-    {
-    	$mail = \Swift_Message::newInstance();
     
+    public function NotifActionSignalisation($to,$cc,$subject, $body) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject(utf8_encode($subject))
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:newAction.html.twig', array('body' => $body)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
+    }
+    
+    public function NotifWithCopy($to, $cc, $subject, $body, $motif=null) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject($subject)
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notif.html.twig', array('body' => $body, 'motif' => $motif)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
+    }
+
+    public function Notif($to, $subject, $body) {
+    	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
 	    	->setSubject(utf8_encode($subject))
-	    	->setBody(
-	    			$this->templating->render(
-	    					'OrangeMainBundle:Notification:notif.html.twig',
-	    					array('body' => $body,
-	    					)))
-	    					->setContentType('text/html')
-	    					->setCharset('utf-8');
-    
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notif.html.twig', array('body' => $body)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
     
-    public function NotifUpdatePorteur($to, $data)
-    {
+    public function NotifUpdatePorteur($to, $data) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setSubject("Affectation action")
-    	->setBody(
-    			$this->templating->render(
-    					'OrangeMainBundle:Notification:notifUpdatePorteur.html.twig',
-    					array('data' => $data
-    					)))
-    					->setContentType('text/html')
-    					->setCharset('utf-8');
-    					return $this->mailer->send($mail);
+	    	->setTo($to)
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setSubject("Affectation d'une action")
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notifUpdatePorteur.html.twig', array('data' => $data)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
     }
     
     public function sendLogsMail($subject, $body,$chemin) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"))
-    	->setSubject($subject)
-    	->setBody($body)
-    	->setContentType('text/html')
-    	->setCharset('utf-8')
-    	->attach(\Swift_Attachment::fromPath($chemin))
-    	;
+	    	->setTo(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"))
+	    	->setSubject($subject)
+	    	->setBody($body)
+	    	->setContentType('text/html')
+	    	->setCharset('utf-8')
+	    	->attach(\Swift_Attachment::fromPath($chemin));
     	return $this->mailer->send($mail);
     }
     

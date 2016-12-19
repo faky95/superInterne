@@ -7,6 +7,7 @@ use Symfony\Component\HttpKernel\Exception\FlattenException;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+
 class ExceptionController extends Controller {
 
 	protected $mailer;
@@ -46,14 +47,14 @@ class ExceptionController extends Controller {
 							'status_code' => $code, 'currentContent' => $currentContent, 'logger' => $logger, 'exception' => $exception,
 							'status_text' => isset(Response::$statusTexts[$code]) ? Response::$statusTexts[$code] : ''
 					));
-			$dossier = WEB_DIRECTORY."/upload/bugs/".date("Y_m_d");
+			$dossier = __DIR__."/../../../../web/upload/bugs/".date("Y_m_d");
 			if(!file_exists($dossier))
 				mkdir($dossier, 0777, true);
 			$file="bug-".Date("His").".html";
 			$chemin=$dossier."/".$file;
 			file_put_contents($chemin,$content);
 			$sendMail = $this->mailer;
-			$sendMail->sendBug($to, $cc, "Erreur de traitement",$this->twig->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>date("Y_m_d"), 'link'=>$request->getUri())),$dossier,$file);
+			$sendMail->sendBug($to, array(), "Erreur de traitement",$this->twig->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>date("Y_m_d"), 'link'=>$request->getUri())),$dossier,$file);
 		}
 		return new Response($this->twig->render($this->findTemplate($request, $request->getRequestFormat(), $code, $showException), array(
 						'status_code' => $code, 'exception' => $exception, 'logger' => $logger, 'currentContent' => $currentContent,
