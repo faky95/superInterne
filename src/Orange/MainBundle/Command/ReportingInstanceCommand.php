@@ -20,7 +20,7 @@ class ReportingInstanceCommand extends BaseCommand {
 			'total' => "Total",
 	);
 	
-	protected function configure(){
+	protected function configure() {
 		parent::configure();
 		$this->setName($this->getName() . ':reporting_instance')
 				->addOption('projet', 'p', InputOption::VALUE_OPTIONAL)
@@ -75,6 +75,8 @@ class ReportingInstanceCommand extends BaseCommand {
 			$per[$value->getId()] = $value->getLibelle();
 		}
 		foreach ($envois as $envoi) {
+			$sub = "Reporting ".$per[$envoi->getReporting()->getPas()->getId()];
+			try {
 			    $objWriter=null;
 				$dest = array();
 				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
@@ -96,15 +98,20 @@ class ReportingInstanceCommand extends BaseCommand {
 				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().date("Y-m-d_H-i").'.xlsx';
-			$i=0;
-			foreach ($envoi->getReporting()->getDestinataire() as $destinataire) {
-				$dest[$i] = $mapUsers[$destinataire->getId()];
-				$i++;
+				$i=0;
+				foreach ($envoi->getReporting()->getDestinataire() as $destinataire) {
+					$dest[$i] = $mapUsers[$destinataire->getId()];
+					$i++;
+				}
+				$objWriter->save($this->getContainer()->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");
+				$result = $this->getMailer()->sendReport($dest, $sub, $filename);
+				$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
+			} catch(\Exception $e) {
+				$this->getMailer()->send(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"), array(), 
+						"Erreur sur le reporting par instance :: ".$envoi->getReporting()->getLibelle(), $e->getMessage()
+					);
+				continue;
 			}
-			$objWriter->save($this->getContainer()->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");
-			$sub = "Reporting ".$per[$envoi->getReporting()->getPas()->getId()];
-			$result = $this->getMailer()->sendReport($dest, $sub, $filename);
-			$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
 		}
 		if (!empty($chemin)){
 			$send = $this->getMailer()->sendLogsMail(

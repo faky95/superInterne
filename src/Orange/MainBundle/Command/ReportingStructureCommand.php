@@ -71,50 +71,46 @@ class ReportingStructureCommand extends BaseCommand {
 		foreach($pas as $value) {
 			$per [$value->getId()] = $value->getLibelle();
 		}
-		try {
-			foreach($envois as $envoi) {
-				try {
-					$dest = array();
-					$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
-					$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
-					$actions = null;
-					if($envoi->getReporting()->getQuery()) {
-						$query2 = $this->getEntityManager()->createQuery($envoi->getReporting()->getQuery());
-						$query2->setParameters(unserialize($envoi->getReporting()->getParameter()));
-						$idActions = $this->mapIds($query2->execute());
-						$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
-					}
-					$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
-					$arrType = unserialize($envoi->getReporting()->getArrayType());
-					$map = $this->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
-					$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
-					$data = $this->get('orange.main.calcul')->stats($bu, $map);
-					$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'structure', $arrType, $bu);
-					$objWriter = $this->get('orange.main.reporting')->reportingstructureAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
-					$filename = $envoi->getReporting()->getLibelle() . '-' . date("Y-m-d_H-i") . '.xlsx';
-					$i = 0;
-					foreach($envoi->getReporting()->getDestinataire() as $destinataire) {
-						$dest[$i] = $mapUsers[$destinataire->getId()];
-						$dest[$i] = array('madiagne.sylla@orange-sonatel.com');
-						$i ++;
-					} 
-					$objWriter->save("./web/upload/reporting/$filename");
-					$sub = "Reporting " . $per [$envoi->getReporting()->getPas()->getId()];
-					$result = $this->getMailer()->sendReport($dest, $sub, $filename);
-					$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
-				} catch(\Exception $ex) {
-			       echo  $ex->getMessage();
-			       continue;
+		foreach($envois as $envoi) {
+			$sub = "Reporting " . $per [$envoi->getReporting()->getPas()->getId()];
+			try {
+				$dest = array();
+				$query = $this->getEntityManager()->createQuery($envoi->getReporting()->getRequete());
+				$query->setParameters(unserialize($envoi->getReporting()->getParameter()));
+				$actions = null;
+				if($envoi->getReporting()->getQuery()) {
+					$query2 = $this->getEntityManager()->createQuery($envoi->getReporting()->getQuery());
+					$query2->setParameters(unserialize($envoi->getReporting()->getParameter()));
+					$idActions = $this->mapIds($query2->execute());
+					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
+				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
+				$arrType = unserialize($envoi->getReporting()->getArrayType());
+				$map = $this->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+				$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
+				$data = $this->get('orange.main.calcul')->stats($bu, $map);
+				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'structure', $arrType, $bu);
+				$objWriter = $this->get('orange.main.reporting')->reportingstructureAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
+				$filename = $envoi->getReporting()->getLibelle() . '-' . date("Y-m-d_H-i") . '.xlsx';
+				$i = 0;
+				foreach($envoi->getReporting()->getDestinataire() as $destinataire) {
+					$dest[$i] = $mapUsers[$destinataire->getId()];
+					$i ++;
+				} 
+				$objWriter->save("./web/upload/reporting/$filename");
+				$result = $this->getMailer()->sendReport($dest, $sub, $filename);
+				$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
+			} catch(\Exception $e) {
+				$this->getMailer()->send(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"), array(), 
+						"Erreur sur le reporting par instance :: ".$envoi->getReporting()->getLibelle(), $e->getMessage()
+					);
+				continue;
 			}
-		}catch(\Exception $ex){
-			
-		}finally {
+		}
 		if(! empty($chemin)) {
 			$send = $this->getMailer()->sendLogsMail("Journal sur les reporting par structures", $this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig", array(
 					'libelle' => " reportings par structure" 
 			)), $chemin);
-		}
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

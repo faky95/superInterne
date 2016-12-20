@@ -407,6 +407,19 @@ class Bu
     }
 
     /**
+     * Get ids instance
+     * @return array 
+     */
+    public function getInstanceIds()
+    {
+    	$ids = array();
+    	foreach($this->instance as $instance) {
+    		$ids[] = $instance->getId();
+    	}
+        return $ids;
+    }
+
+    /**
      * Add typeAction
      *
      * @param \Orange\MainBundle\Entity\TypeAction $typeAction

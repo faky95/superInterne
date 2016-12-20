@@ -96,9 +96,9 @@ class DashboardController extends Controller {
 	public function statistiqueGeneralAction(){
 		$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
 		$map=array();
-		if($this->getUser()->hasRole(Utilisateur::ROLE_ADMIN))
+		if($this->getUser()->hasRole(Utilisateur::ROLE_ADMIN)) {
 			$role=Utilisateur::ROLE_ADMIN;
-		elseif($this->getUser()->hasRole(Utilisateur::ROLE_ANIMATEUR))
+		} elseif($this->getUser()->hasRole(Utilisateur::ROLE_ANIMATEUR))
 			$role=Utilisateur::ROLE_ANIMATEUR;
 		elseif ($this->getUser()->hasRole(Utilisateur::ROLE_RAPPORTEUR))
 		   $role=Utilisateur::ROLE_RAPPORTEUR;
@@ -108,11 +108,8 @@ class DashboardController extends Controller {
 			$role=Utilisateur::ROLE_PORTEUR;
 		}
 		$rq=$rep->listAllElementsGeneral($role);
-// 		var_dump($rq);exit;
 		$map= $this->container->get('orange.main.dataStats')->transformRequeteToSimpleNull($rq);
-		return array(
-				'req'=>$map,
-		);
+		return array('req'=>$map);
 	}
 	
 	
