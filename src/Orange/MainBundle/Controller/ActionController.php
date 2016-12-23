@@ -234,25 +234,20 @@ class ActionController extends BaseController
 		}
 	}
 	
-	
 	/**
 	 * @QMLogger(message="Extraction des actions")
 	 * @Route("/export_action", name="export_action")
 	 * @Template()
 	 */
 	public function exportAction() {
-		$logger = $this->get('my_service.logger');
-		$logger->info('Exportation actions :{  Utilisateur/login: '.$this->getUser()->getNomComplet().'/'.$this->getUser()->getUsername().' | Date: '.date('d-m-Y H:i:s').' | IP: '.$_SERVER["REMOTE_ADDR"].' | URL: '.$_SERVER['REQUEST_URI'].' }');
 		$queryBuilder = $this->get('session')->get('data', array());
 		$em = $this->getDoctrine()->getEntityManager();
  		$query = $em->createQuery($queryBuilder['query']);
  		$query->setParameters($queryBuilder['param']);
  		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-	  	//$data = $this->get('orange.main.data')->exportAction($query->execute(), $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->execute(), $statut->getQuery()->execute());
-		//$filename = sprintf("Extraction des actions du %s.xlsx", date('d-m-Y à H:i:s'));
-		$filename = sprintf("Extraction_des_actions_du_%s.xlsx", date('d-m-Y'));
+		$filename = sprintf("Extraction des actions du %s.xlsx", date('YmdHis'));
 		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
@@ -294,7 +289,7 @@ class ActionController extends BaseController
                 }
                 $em->persist($entity);
                 $em->flush();
-    			if($espace_id==null){
+    			if($espace_id==null) {
     				$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
     				$entity->setEtatReel(Statut::ACTION_NOUVELLE);
     				ActionUtils::setReferenceAction($em, $entity);
@@ -302,10 +297,6 @@ class ActionController extends BaseController
     				$event = $this->get('orange_main.action_event')->createForAction($entity);
     				$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
     			} else {
-    				$membre = $this->getDoctrine()->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array(
-    						'utilisateur' => $this->getUser(), 'espace' => $espace_id
-    					));
-    				$gestionnaire = $membre ? $membre->getIsGestionnaire() : false;
     				$espace = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id)->getLibelle();
     				ActionUtils::setReferenceAction($em, $entity);
     				ActionUtils::changeStatutAction($em, $entity, Statut::ACTION_NON_ECHUE, $this->getUser(), "Nouvelle action créée dans l'espace ".$espace);

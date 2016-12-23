@@ -1,7 +1,6 @@
 <?php	
 namespace Orange\MainBundle\Command;
-use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Console\Input\InputArgument;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,10 +15,9 @@ class alerteDepassementCommand extends BaseCommand {
 				->addOption('espace', 'es', InputOption::VALUE_OPTIONAL)
 				->addOption('bu', 'b', InputOption::VALUE_OPTIONAL)
 				->setDescription('envoi des alertes depassement');
-		
 	}
 	
-	public function execute(InputInterface $input, OutputInterface $output){
+	public function execute(InputInterface $input, OutputInterface $output) {
 		$espace = $input->getOption('espace');
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
@@ -27,12 +25,11 @@ class alerteDepassementCommand extends BaseCommand {
 		$states = $this->getContainer()->getParameter('states');
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
 		$data = $this->get('orange.main.data')->mapDataforAlertDepassement($actions);
-		foreach($data['user'] as $key => $user){
+		foreach($data['user'] as $user) {
 			$nbr =  count($user['action']);
 			$to = $user['email_porteur'];
-// 			$cc = $user['manager'];
-			$cc = array($user['manager'],$user['animateur']);
-			$subject = 	"Notification de rappel d'échéances";
+			$cc = array($user['manager'], $user['animateur']);
+			$subject = 	"Notification de rappel d'echeances";
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alertDepassement.html.twig', array(
 						'porteur' => $user['porteur'], 'actions' => $user['action'],'nbr' => $nbr,
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)

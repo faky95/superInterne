@@ -159,249 +159,62 @@ class Extraction extends \PHPExcel {
 		foreach($dataStatut as $statut) {
 			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
 		}
-		$default_border = array(
-				'style' => \PHPExcel_Style_Border::BORDER_THIN,
-				'size' => 16,
-				'color' => array(
-						'rgb' => '000000' 
-				) 
-		);
+		$default_border = array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'size' => 16, 'color' => array('rgb' => '000000'));
 		$style_th = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => 'ff6600' 
-						) 
-				),
-				'font' => array(
-						'bold' => true,
-						'size' => 16,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
-		$data = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => 'ffffff' 
-						) 
-				),
-				'font' => array(
-						'size' => 13,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
-		$action = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
-		$desc = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
-		$objPHPExcel = new \PHPExcel();
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff6600')),
+				'font' => array('bold' => true, 'size' => 16, 'color' => array('rgb' => '000000')) 
+			);
 		$th = array(
-				'Référence',
-				'Instance',
-				'Libellé',
-				'Description',
-				'Priorité',
-				'Porteur',
-				'Direction',
-				'Pôle',
-				'Département',
-				'Service',
-				'Type',
-				'Statut',
-				'Domaine',
-				'Contributeurs',
-				'Date de début',
-				'Date de fin prévue',
-				'Date de clôture',
-				'Avancements' 
-		);
+				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 
+				'Service', 'Type', 'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Date de fin prévue', 'Date de clôture', 'Avancements' 
+			);
 		$col = "A";
 		$x = 1;
 		foreach($th as $value) {
 			if($col == "C") {
-				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setWidth('50');
-				$this->getActiveSheet()->getStyle($col . $x)->applyFromArray($style_th);
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			} elseif($col == "D") {
-				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setWidth('50');
-				$this->getActiveSheet()->getStyle($col . $x)->applyFromArray($style_th);
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			} elseif($col == "R") {
-				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setWidth('50');
-				$this->getActiveSheet()->getStyle($col . $x)->applyFromArray($style_th);
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			} else {
 				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
-				$this->getActiveSheet()->getStyle($col . $x)->applyFromArray($style_th);
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			}
 		}
-		$y = 2;
-		$b = "A";
+		$tableau = array();
 		foreach($arrData as $value) {
-			$b = "A";
-			if($b == "A") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getReference())->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "B") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getInstance() ? $value->getInstance()->__toString() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "C") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getLibelle());
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($action)->getAlignment()->setWrapText(true);
-				$b ++;
-			}
-			if($b == "D") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getDescription());
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($desc)->getAlignment()->setWrapText(true);
-				$b ++;
-			}
-			if($b == "E") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getPriorite() ? $value->getPriorite()->__toString() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "F") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getPorteur() ? $value->getPorteur()->getCompletNom() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "G") {
-				// $this->getActiveSheet()->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getDirection():' ')->getColumnDimension($b)->setAutoSize(true);
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDirection() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "H") {
-				// $this->getActiveSheet()->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getPole():' ')->getColumnDimension($b)->setAutoSize(true);
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getPole() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "I") {
-				// $this->getActiveSheet()->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getDepartement():' ')->getColumnDimension($b)->setAutoSize(true);
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDepartement() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "J") {
-				// $this->getActiveSheet()->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getService():' ')->getColumnDimension($b)->setAutoSize(true);
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getService() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "K") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getTypeAction() ? $value->getTypeAction()->__toString() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "L") {
-				$this->getActiveSheet()->setCellValue($b.$y, $arrayStatut [$value->getEtatReel()])->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "M") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getDomaine() ? $value->getDomaine()->__toString() : ' ')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "N") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getAllContributeur())->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "O") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getDateDebut()->format('d-m-Y'))->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "P") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getDateInitial()->format('d-m-Y'))->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "Q") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getDateFinExecut() ? $value->getDateFinExecut()->format('d-m-Y') : 'En Cours')->getColumnDimension($b)->setAutoSize(true);
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			if($b == "R") {
-				$this->getActiveSheet()->setCellValue($b.$y, $value->getAllAvancement());
-				// $this->getActiveSheet()->getStyle($b.$y)->applyFromArray($data);
-				$b ++;
-			}
-			$y ++;
+			$tableau[] = array(
+					$value->getReference(),
+					$value->getInstance() ? $value->getInstance()->__toString() : ' ',
+					$value->getLibelle(),
+					$value->getDescription(),
+					$value->getPriorite() ? $value->getPriorite()->__toString() : ' ',
+					$value->getPorteur() ? $value->getPorteur()->getCompletNom() : ' ',
+					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDirection() : ' ',
+					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getPole() : ' ',
+					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDepartement() : ' ',
+					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getService() : ' ',
+					$value->getTypeAction() ? $value->getTypeAction()->__toString() : ' ',
+					$arrayStatut [$value->getEtatReel()],
+					$value->getDomaine() ? $value->getDomaine()->__toString() : ' ',
+					$value->getAllContributeur(),
+					$value->getDateDebut() ? $value->getDateDebut()->format('d-m-Y') : '',
+					$value->getDateInitial() ? $value->getDateInitial()->format('d-m-Y') : '',
+					$value->getDateFinExecut() ? $value->getDateFinExecut()->format('d-m-Y') : 'En Cours',
+					$value->getAllAvancement()
+				);
 		}
-		$this->getActiveSheet()->getStyle('C2:C' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setWrapText(true);
-		$this->getActiveSheet()->getStyle('D2:D' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setWrapText(true);
-		$this->getActiveSheet()->getStyle('R2:R' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setWrapText(true);
-		$this->getActiveSheet()->getStyle('N2:N' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setWrapText(true);
-		$this->getActiveSheet()->getStyle('A2:A' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('E2:E' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('F2:F' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('G2:G' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('H2:H' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('I2:I' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('J2:J' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('K2:K' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('L2:L' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('M2:M' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('N2:N' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('O2:O' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('P2:P' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('Q2:Q' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('R2:R' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('B2:B' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('C2:C' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
-		$this->getActiveSheet()->getStyle('D2:D' . $this->getActiveSheet()->getHighestRow())->getAlignment()->setVertical(\PHPExcel_Style_Alignment::VERTICAL_TOP);
+		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}
