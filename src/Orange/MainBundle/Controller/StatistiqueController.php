@@ -336,7 +336,7 @@ class StatistiqueController extends BaseController
     		$tableau = $this->container->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType);
     		$this->get('session')->set('donnees_reporting_actions_instance',array('query'=>$reqActions->getDQL() , 'param'=>$reqActions->getParameters()));
     		$this->get('session')->set('donnees_reporting_instance',array('data'=>$tableau, 'req'=>$rq->getDQL() , 'param'=>$rq->getParameters()));
-    		$this->get('session')->set('reporting_instance',array('req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 2, 'arrType' => serialize($arrType)));
+    		$this->get('session')->set('reporting_instance',array('req' => $rq->addGroupBy('u.id')->getDQL(), 'param' => $rq->getParameters(), 'tp' => 2, 'arrType' => serialize($arrType)));
     		$this->get('session')->set('type',array('valeur' => 2));
     		
     	} else {

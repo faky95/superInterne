@@ -1141,7 +1141,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
 			->innerJoin($alias.'.structure', 's')
-			->groupBy('i.id')->addGroupBy('u.id')->addGroupBy($alias.'.etatCourant')->addGroupBy('t1.etatCourant');
+			->groupBy('i.id')->addGroupBy($alias.'.etatCourant')->addGroupBy('t1.etatCourant');
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
 		$this->filtres($queryBuilder, $criteria, $alias);
