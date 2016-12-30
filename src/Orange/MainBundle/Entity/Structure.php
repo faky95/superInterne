@@ -7,7 +7,6 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Structure
- *
  * @Gedmo\Tree(type="nested")
  * @ORM\Table(name="structure")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\StructureRepository")

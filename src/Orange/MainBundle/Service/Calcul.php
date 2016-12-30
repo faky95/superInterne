@@ -74,9 +74,6 @@ class Calcul
 					foreach($taux as $kpi) {
 						$stats[$key]['taux'][$kpi['libelle']] = $this->computeKpi($data, $kpi);
 					}
-					if(isset($data['porteurs'])) {
-						$stats[$key]['porteurs'] = $this->stats($bu, $data['porteurs']);
-					}
 				}
 		}
 		return $stats;

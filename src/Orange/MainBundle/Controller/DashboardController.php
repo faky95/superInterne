@@ -59,6 +59,7 @@ class DashboardController extends Controller {
 				'nbFaiteDelai' => "Faite dans les délais",
 				'nbFaiteHorsDelai' => "Faite hors délai",
 				'nbNonEchue' => "Non échue",
+				'nbEchueNonSoldee' => "Echue non soldée",
 				'nbSoldeeHorsDelais' => 'Soldée hors délai',
 				'nbSoldeeDansLesDelais' => "Soldée dans les délais",
 				'total' => "Total",
@@ -96,13 +97,12 @@ class DashboardController extends Controller {
 // 			$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 			$actions = array();
 // 		}
-		$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
+		$req = $this->get('orange.main.dataStats')->combineTacheAndActionByPorteur($query->getArrayResult());
 		$arrType=unserialize($reporting->getArrayType());
-		$map= $this->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+		$map= $this->get('orange.main.dataStats')->transformRequeteToPorteur($req, $arrType);
 		$bu = $reporting->getUtilisateur()->getStructure()->getBuPrincipal();
 		$data = $this->get('orange.main.calcul')->stats($bu, $map);
 		$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance', $arrType, $bu);
-		exit(var_dump($data['instance']));
 		$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 		$filename = $reporting->getLibelle().date("Y-m-d_H-i").'.xlsx';
 		$objWriter->save($this->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");

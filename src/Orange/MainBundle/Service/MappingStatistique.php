@@ -6,14 +6,14 @@ use Orange\MainBundle\Entity\Statut;
 class MappingStatistique
 {
 	
-	//protected $container;
+	protected $container;
 
 	/**
 	 * @var \Doctrine\ORM\EntityManager
 	 */
 	protected $em;
 	
-	public function __construct($em,$container)
+	public function __construct($em, $container)
 	{
 		$this->em = $em;
 		$this->container = $container;
@@ -75,20 +75,33 @@ class MappingStatistique
 	 * le parametre type est soit instance ou structure
 	 * le parametre params est utilise lors au cas ou on veut afficher
 	 *  les structures ou instances qui n'ont pas de stats et qu'on vaut afficher
-	 * @param unknown $data
+	 * @param array $data
 	 * @param unknown $type 
 	 */
 	public function mappingDataStats(&$data, $type, &$params, $bu=null) {
 		$formule= $this->em->getRepository('OrangeMainBundle:Formule')->getTauxStats($bu);
 		$effectif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurByStructure($params, $bu)->getQuery()->getArrayResult();
 		$effectifActif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurActifByStructure($params, $bu)->getQuery()->getArrayResult();
-		$arrData = array($type => array(), 'taux' => array());
+		$arrData = array($type => array(), 'taux' => array(), 'porteurs' => array());
 		foreach ($params as $key=>$par) {
 			$aide=false;
 			foreach($data as $value) {
 				if($par['id']==$value['id']) {
 					if(!isset($arrData[$type][$value['id']])) {
 						$arrData[$type][$value['id']] = array('libelle' => $value['libelle'], 'data' => array());
+						$arrData[$type][$value['id']]['couleur'] = isset($value['couleur']) ? $value['couleur'] : 'FFFFFF';
+						if(isset($value['porteurs']) && is_array($value['porteurs'])) {
+							$arrData[$type][$value['id']]['porteurs'] = $value['porteurs'];
+							foreach($value['porteurs'] as $porteurId => $porteur) {
+								if(!isset($arrData['porteurs'][$porteurId])) {
+									$arrData['porteurs'][$porteurId] = $porteur;
+									continue;
+								}
+								foreach($arrData['porteurs'][$porteurId] as $key => $number) {
+									$arrData['porteurs'][$porteurId][$key] = $porteur[$key] + $number;
+								}
+							}
+						}
 						$this->transfertDonnes($arrData[$type][$value['id']], $value, false);
 						if(!empty($value['taux']))
 							foreach ($value['taux'] as $key => $taux){
@@ -101,7 +114,7 @@ class MappingStatistique
 			}
 			if($aide===false) {
 				if(!isset($arrData[$type][$par['id']]) ) {
-					$arrData[$type][$par['id']] = array('libelle' => $par['libelle'], 'data' => array());
+					$arrData[$type][$par['id']] = array('libelle' => $par['libelle'], 'couleur' => $par['couleur'], 'data' => array());
 					$this->transfertDonnes($arrData[$type][$par['id']], $par, true);
 					if(!empty($formule))
 						foreach ($formule as $for){
@@ -155,7 +168,7 @@ class MappingStatistique
 		$arrData = array($type => array());
 		foreach ($paramsType as $key=>$parT){
 			$arrData[$type][$parT['libelle']] = array($typeCroise => array(), 'taux' => array());
-			foreach ($paramsCroise as $cle=>$parC){
+			foreach ($paramsCroise as $parC){
 				$aide=false;
 				if(count($data)>0){
 				foreach ($data as $k=>$value){ 
@@ -219,14 +232,36 @@ class MappingStatistique
 		$i=0;
 		if(count($params)>0) {
 			foreach($params as $val) {
-				$data[$i] = array('id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
+				$data[$i]=array(  'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
-						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0, 'porteurs' => array()
+						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
+				);
+				if(count($requete)>0) {
+					foreach ($requete as $value){
+						if($val['libelle']==$value['libelle'] ) {
+							$data[$i]=$this->copieDonnees($value, $data[$i]);
+						}
+					}
+				}
+				$i++;
+			}
+		}
+		return $data;
+	}
+	
+	public function transformRequeteToPorteur(&$requete, &$params) {
+		$data=array();
+		$i=0;
+		if(count($params)>0) {
+			foreach($params as $val) {
+				$data[$i]=array(
+						'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 
+						'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,	'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 					);
 				if(count($requete['data'])>0) {
-					foreach($requete['data'] as $value) {
-						if($val['libelle']==$value['libelle']) {
-							$data[$i] = $this->copieDonnees($value, $data[$i], $requete['porteurs']);
+					foreach ($requete['data'] as $value) {
+						if($val['libelle']==$value['libelle'] ) {
+							$data[$i]=$this->copieDonneesAlsoForPorteur($value, $data[$i], $requete['porteurs']);
 						}
 					}
 				}
@@ -272,7 +307,37 @@ class MappingStatistique
 		return $data;
 	}
 
-	public function copieDonnees($value, $data, $porteurs = array()) {
+	public function copieDonnees($value, $data) {
+		if($value['etatCourant']==Statut::ACTION_ABANDONNEE) {
+			$data['nbAbandon'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_DEMANDE_ABANDON) {
+			$data['nbDemandeAbandon'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_FAIT_DELAI) {
+			$data['nbFaiteDelai'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_FAIT_HORS_DELAI) {
+			$data['nbFaiteHorsDelai'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_NON_ECHUE){
+			$data['nbNonEchue'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_ECHUE_NON_SOLDEE) {
+			$data['nbEchueNonSoldee'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_SOLDEE_DELAI) {
+			$data['nbSoldeeDansLesDelais'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_SOLDEE_HORS_DELAI) {
+			$data['nbSoldeeHorsDelais'] = $value['total'];
+		}
+		$data['total'] +=$value['total'];
+		return $data;
+	}
+	
+	public function copieDonneesAlsoForPorteur($value, $data, $porteurs = array()) {
+		$data['couleur'] =$value['couleur'];
 		if(!isset($data['porteurs'][$value['user_id']])) {
 			$data['porteurs'][$value['user_id']] = array(
 					'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 
@@ -316,8 +381,10 @@ class MappingStatistique
 		$data['porteurs'][$value['user_id']]['total'] +=$value['total'];
 		return $data;
 	}
+	
+	
 			
-	public function combineTacheAndAction($data) {
+	public function combineTacheAndActionByPorteur($data) {
 		$arrData=array('data' => array(), 'porteurs' => array());
 		$i=0;
 		if(count($data)>0)
@@ -325,7 +392,7 @@ class MappingStatistique
 				$arrData['porteurs'][intval($value['user_id'])] = $value['porteur'];
 				if(count($arrData['data'])<=0) {
 					$arrData['data'][$i] = array(
-							'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']), 
+							'id' => $value['id'], 'libelle' => $value['libelle'], 'couleur' => $value['couleur'], 'total' => intval($value['total']), 
 							'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
 						);
 					if($value['tache_etat']==null) {
@@ -354,7 +421,7 @@ class MappingStatistique
 						$i++;
 						$arrData['data'][$i] = array(
 								'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']),
-								'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
+								'couleur' => $value['couleur'], 'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
 							);
 						if($value['tache_etat']==null) {
 							$arrData['data'][$i]['etatCourant']=$value['action_etat'];
@@ -364,6 +431,50 @@ class MappingStatistique
 					}
 						
 				}
+		}
+		return $arrData;
+	}
+	
+	public function combineTacheAndAction($data) {
+		$arrData=array();
+		$i=0;
+		if(count($data)>0) {
+			foreach($data as $value) {
+				if(count($arrData)<=0) {
+					$arrData[$i]=array('id'=>$value['id'], 'libelle'=>$value['libelle'], 'total'=>intval($value['total']));
+					if($value['tache_etat']==null) {
+						$arrData[$i]['etatCourant']=$value['action_etat'];
+					} else {
+						$arrData[$i]['etatCourant']=$value['tache_etat'];
+					}
+				} else {
+					$aide=false;
+					for($j=0; $j<count($arrData);$j++) {
+						if($value['tache_etat']==null) {
+							if($arrData[$j]['etatCourant']==$value['action_etat'] && $arrData[$j]['id']==$value['id']) {
+								$arrData[$j]['total']+=intval($value['total']);
+								$aide=true;
+								break;
+							}
+						} else {
+							if($arrData[$j]['etatCourant']==$value['tache_etat'] && $arrData[$j]['id']==$value['id']) {
+								$arrData[$j]['total']+=intval($value['total']);
+								$aide=true;
+								break;
+							}
+						}
+					}
+					if($aide==false) {
+						$i++;
+						$arrData[$i]=array('id'=>$value['id'],'libelle'=>$value['libelle'], 'total'=>intval($value['total']));
+						if($value['tache_etat']==null) {
+							$arrData[$i]['etatCourant']=$value['action_etat'];
+						} else {
+							$arrData[$i]['etatCourant']=$value['tache_etat'];
+						}
+					}
+				}
+			}
 		}
 		return $arrData;
 	}

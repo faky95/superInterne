@@ -1,10 +1,11 @@
 <?php
 namespace Orange\MainBundle\Service;
 
-class Reporting extends \PHPExcel {
+use Orange\QuickMakingBundle\Service\PHPExcelAdvanced;
 
-	public function reportingInstanceAction($arrData, $statut, $actions, $statuts) {
-		var_dump($arrData);exit;
+class Reporting extends PHPExcelAdvanced {
+
+	public function reportingInstanceAction($arrData, $statut, $actions, $statuts, $withPorteur = false) {
 		$this->removeSheetByIndex(0);
 		$this->createSheet(0);
 		$this->setActiveSheetIndex(0);
@@ -15,7 +16,6 @@ class Reporting extends \PHPExcel {
 		}
 		$sheet2 = $this->createSheet(1);
 		$sheet3 = $this->createSheet(2);
-		$sheet4 = $this->createSheet(3);
 		
 		$x = 1;
 		$col = 'B';
@@ -92,19 +92,22 @@ class Reporting extends \PHPExcel {
 					$this->getActiveSheet ()->setCellValue($col2 . $x, $valeur['data'][$key].'%');
 					$this->getActiveSheet ()->getStyle($col2 . $x)->applyFromArray($style_taux);
 					$col2 ++;
-				}
+				} 
 			}
 			$x ++;
 			$i ++;
 		}
 		$sheet2 = Reporting::exportAction($sheet2, $actions, $statuts);
 		$sheet3 = Reporting::syntheseInstance($sheet3, $arrData, $statut, $statuts);
-		$sheet4 = Reporting::synthesePorteur($sheet4, $arrData, $statut, $statuts);
+		if($withPorteur) {
+			$sheet4 = $this->createSheet(3);
+			$sheet4 = Reporting::synthesePorteur($sheet4, $arrData, $statut, $statuts);
+			$sheet4->setTitle('Synthèse par porteur');
+		}
 		$this->setActiveSheetIndex(0);
 		$this->getActiveSheet()->setTitle('stats_par_instance');
 		$sheet2->setTitle('actions');
 		$sheet3->setTitle('Synthèse par instance');
-		$sheet4->setTitle('Synthèse par porteur');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}
@@ -381,8 +384,70 @@ class Reporting extends \PHPExcel {
 	}
 	
 	public function synthesePorteur($sheet, $arrData, $statut, $statuts) {
-		var_dump($arrData);exit;
+		$this->setActiveSheetIndex(3);
+		$row = 1;
+		$this->writeSyntheseByPorteur($sheet, $arrData['porteurs'], $statut, $statuts, 'Globale', $row, 'FF6600');
+		$row += 2;
+		foreach($arrData['instance'] as $data) {
+			$this->writeSyntheseByPorteur($sheet, $data['porteurs'], $statut, $statuts, $data['libelle'], $row, substr($data['couleur'], 1));
+			$row += 2;
+		}
 		return $sheet;
+	}
+	
+	/**
+	 * 
+	 * @param PHPExcel_Worksheet $sheet
+	 * @param array $arrData
+	 * @param array $statut
+	 * @param array $statuts
+	 * @param string $title
+	 * @param string $row
+	 */
+	private function writeSyntheseByPorteur($sheet, $arrData, $statut, $statuts, $title, &$row, $couleur) {
+		$debut = $row;
+		$total = array(
+				'nbAbandon'=>0, 'nbDemandeAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 
+				'nbEchueNonSoldee'=>0, 'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'totalSoldee'=>0, 'total'=>0
+			);
+		$columns = array(
+					'B'=>'nbAbandon', 'D'=>'nbDemandeAbandon', 'F'=>'nbFaiteDelai', 'G'=>'nbFaiteHorsDelai', 'H'=>'nbNonEchue', 
+					'J'=>'nbEchueNonSoldee', 'L'=>'nbSoldeeHorsDelais', 'M'=>'nbSoldeeDansLesDelais', 'P'=>'total'
+				);
+		$tColumns = array('C'=>'tAbandon', 'E'=>'tDA', 'I'=>'tNE', 'K'=>'tENS', 'O'=>'tSolde');
+		$this->setColumnWidth(array('A' => 30, 'F' => 20, 'G' => 15, 'L' => 20, 'M' => 20));
+		$this->mergeCells(array(
+				array('B'.$row, 'C'.$row), array('D'.$row, 'E'.$row), array('H'.$row, 'I'.$row), array('J'.$row, 'K'.$row), array('N'.$row, 'O'.$row) 
+			));
+		$sheet->setCellValue('A'.$row, sprintf('Synthèse %s par Porteur', $title));
+		$sheet->setCellValue('N'.$row, 'Total soldé');
+		$this->addRowData($statut, $columns, $row);
+		$row++;
+		foreach($arrData as $data) {
+			$data['totalSoldee'] = $data['nbSoldeeHorsDelais'] + $data['nbSoldeeDansLesDelais'];
+			foreach(array_merge(array('N'=>'totalSoldee'), $columns) as $etat) {
+				$total[$etat] += $data[$etat];
+			}
+			$data = $this->addPercent($data, array(
+					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSolde'=>'totalSoldee'
+				), 'total');
+			$this->addRowData($data, array_merge(array('A' => 'libelle', 'N'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+			$row++;
+		}
+		$total = $this->addPercent($total, array(
+				'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSolde'=>'totalSoldee'
+			), 'total');
+		$sheet->setCellValue('A'.$row, 'Total');
+		$this->addRowData($total, array_merge(array('N'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+		$this->applyStyleRanges(array(
+					"A$debut:P$debut", "B$debut:C$row", "D$debut:E$row", "H$debut:I$row", "J$debut:K$row", "N$debut:O$row",
+					"A$debut:A$row", "F$debut:F$row", "G$debut:G$row", "L$debut:L$row", "M$debut:M$row", "P$debut:P$row"
+				), array(
+					'outline_border' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM) 
+			));
+		$this->applyStyleRanges(array(sprintf("N%s:O%s", $debut+1, $row)), array('bgcolor' => 'D8FFFF'));
+		$this->applyStyleRanges(array("A$debut:A$row", "A$debut:P$debut", "P$debut:P$row"), array('bgcolor' => $couleur));
+		$row++;
 	}
 	
 	public function syntheseInstance($sheet, $arrData, $statut, $statuts) {
@@ -563,5 +628,18 @@ class Reporting extends \PHPExcel {
 			$i ++;
 		}
 		return $sheet;
+	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $data
+	 * @return array
+	 */
+	private function addPercent($arrData, $data, $denom) {
+		foreach($data as $key => $value) {
+			$taux = $arrData[$value] * 100 / $arrData[$denom];
+			$arrData[$key] = round($taux).'%';
+		}
+		return $arrData;
 	}
 }

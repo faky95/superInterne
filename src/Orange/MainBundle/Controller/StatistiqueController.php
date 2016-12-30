@@ -86,7 +86,7 @@ class StatistiqueController extends BaseController
     	$statutsM=$this->getStatus();
     	$statsM=array();
     	
-    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)){
+    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
     		$id=$this->getUser()->getStructure()->getId();
     		$structures=$this->getDoctrine()->getRepository('OrangeMainBundle:Structure')
     										->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
@@ -97,15 +97,8 @@ class StatistiqueController extends BaseController
     	}
     	$statuts=$this->getStatus();
     	return array(
-    			'statut'=>$statuts,
-    			'statutM'=>$statutsM,
-    			'statsP'=>$statsP,
-    			'statut'=> $statuts,
-    			'statsC'=>$statsC,
-    			'statsM'=>$statsM,
-    			'nbTaux'=>$this->getNombreTaux(),
-    
-    	);
+    			'statut'=>$statuts, 'statutM'=>$statutsM, 'statsP'=>$statsP, 'statut'=> $statuts, 'statsC'=>$statsC, 'statsM'=>$statsM, 'nbTaux'=>$this->getNombreTaux(),
+    		);
     }
      
     
