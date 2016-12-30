@@ -115,13 +115,14 @@ class Data extends BaseQuery {
 		}
 		$array = array();
 		$i=0;
-		foreach ($data as $value){
-			$actions= $this->em->getRepository('OrangeMainBundle:ActionHasSignalisation')->findActions($value->getId());
+		foreach ($data as $value) {
+			$signalisation = $this->em->getRepository('OrangeMainBundle:Signalisation')->find($value->getId());
+			$actions= $signalisation ? $signalisation->getAction() : new \Doctrine\Common\Collections\ArrayCollection();
 			$action = "";
 			$j=1;
-			if(!empty($actions)){
+			if($actions->count()) {
 				foreach ($actions as $act){
-					$action .= $j.') '.$act->getAction()->getReference()."\n";
+					$action .= $j.') '.$act->getReference()."\n";
 					$j++;
 				}
 			}
