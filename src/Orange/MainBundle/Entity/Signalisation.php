@@ -1,10 +1,8 @@
 <?php
-
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Translation\Tests\String;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Validator\Constraints\SignalisationDate as SIAssert;
 

@@ -1,3 +1,0 @@
-_quick_making:
-    resource: "@OrangeQuickMakingBundle/Controller"
-    type:     annotation

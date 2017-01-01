@@ -89,7 +89,6 @@ class ReportingInstanceCommand extends BaseCommand {
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
-				
 				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
 				$arrType=unserialize($envoi->getReporting()->getArrayType());
 				$map= $this->get('orange.main.dataStats')->transformRequeteToSimple($req,$arrType );

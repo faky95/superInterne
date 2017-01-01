@@ -86,7 +86,7 @@ class StatistiqueController extends BaseController
     	$statutsM=$this->getStatus();
     	$statsM=array();
     	
-    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)){
+    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
     		$id=$this->getUser()->getStructure()->getId();
     		$structures=$this->getDoctrine()->getRepository('OrangeMainBundle:Structure')
     										->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
@@ -97,15 +97,8 @@ class StatistiqueController extends BaseController
     	}
     	$statuts=$this->getStatus();
     	return array(
-    			'statut'=>$statuts,
-    			'statutM'=>$statutsM,
-    			'statsP'=>$statsP,
-    			'statut'=> $statuts,
-    			'statsC'=>$statsC,
-    			'statsM'=>$statsM,
-    			'nbTaux'=>$this->getNombreTaux(),
-    
-    	);
+    			'statut'=>$statuts, 'statutM'=>$statutsM, 'statsP'=>$statsP, 'statut'=> $statuts, 'statsC'=>$statsC, 'statsM'=>$statsM, 'nbTaux'=>$this->getNombreTaux(),
+    		);
     }
      
     
@@ -240,7 +233,7 @@ class StatistiqueController extends BaseController
      * @Template("OrangeMainBundle:Statistique:vue_statique.html.twig")
      *
      */
-    public function statsGeneraleAction(Request $request,$role=4){
+    public function statsGeneraleAction(Request $request,$role=4) {
     	$tabRoles=array(Utilisateur::ROLE_ADMIN, Utilisateur::ROLE_ANIMATEUR, Utilisateur::ROLE_MANAGER,
     					Utilisateur::ROLE_RAPPORTEUR, Utilisateur::ROLE_PORTEUR, Utilisateur::ROLE_CONTRIBUTEUR );
     	$tabByInstance=array();
@@ -326,8 +319,8 @@ class StatistiqueController extends BaseController
     			'tmp_struct' => $tmp_struct
     	);
     }
+    
     /**
-     * 
      * @param unknown $type
      */
     public function statistiqueByType($type, $role, $arrType,$criteria){
@@ -337,15 +330,16 @@ class StatistiqueController extends BaseController
     	if($type=='instance') {
     		$rq = $rep->getStatsByInstance($role, $criteria);
     		$reqActions = $rep->getStatsByInstance2($role, $criteria);
-    		$req =$this->container->get('orange.main.dataStats')-> combineTacheAndAction($rq->getQuery()->getArrayResult());
-    		$map= $this->container->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+    		$req =$this->container->get('orange.main.dataStats')-> combineTacheAndActionByPorteur($rq->addGroupBy('u.id')->getQuery()->getArrayResult());
+    		$map= $this->container->get('orange.main.dataStats')->transformRequeteToPorteur($req, $arrType);
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
     		$tableau = $this->container->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType);
-    		$this->get('session')->set('donnees_reporting_actions_instance',array('query'=>$reqActions->getDQL() , 'param'=>$reqActions->getParameters()));
-    		$this->get('session')->set('donnees_reporting_instance',array('data'=>$tableau, 'req'=>$rq->getDQL() , 'param'=>$rq->getParameters()));
-    		$this->get('session')->set('reporting_instance',array('req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 2, 'arrType' => serialize($arrType)));
+    		$this->get('session')->set('donnees_reporting_actions_instance', array('query'=>$reqActions->getDQL(), 'param'=>$reqActions->getParameters()));
+    		$this->get('session')->set('donnees_reporting_instance', array('data'=>$tableau, 'req'=>$rq->getDQL(), 'role' => $role, 'param'=>$rq->getParameters()));
+    		$this->get('session')->set('reporting_instance', array(
+    				'req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 2, 'arrType' => serialize($arrType)
+    			));
     		$this->get('session')->set('type',array('valeur' => 2));
-    		
     	} else {
     		$rq=$rep->getStatsByStructure($role, $criteria);
     		$reqActions=$rep->getStatsByStructure2($role, $criteria);
@@ -358,7 +352,6 @@ class StatistiqueController extends BaseController
     		$this->get('session')->set('reporting_structure',array('req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 1, 'arrType' => serialize($arrType)));
     		$this->get('session')->set('type',array('valeur' => 1));
     	}
-    	
     	return $tableau;
     }
     
@@ -369,7 +362,7 @@ class StatistiqueController extends BaseController
      * @Template("OrangeMainBundle:Statistique:vue_evolutive.html.twig")
      *
      */
-    public function statsGeneraleEvoAction(Request $request,$role=4){
+    public function statsGeneraleEvoAction(Request $request, $role=4) {
     	$tabRoles=array(Utilisateur::ROLE_ADMIN, Utilisateur::ROLE_ANIMATEUR, Utilisateur::ROLE_MANAGER,
     			Utilisateur::ROLE_RAPPORTEUR, Utilisateur::ROLE_PORTEUR, Utilisateur::ROLE_CONTRIBUTEUR );
     
@@ -401,7 +394,7 @@ class StatistiqueController extends BaseController
     		$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($data, 'semaine');
     	}
     	
-    	if(($request->getMethod()=='POST') && $form->getData()){
+    	if(($request->getMethod()=='POST') && $form->getData()) {
     		$this->get('session')->set('statistique_criteria', $request->request->get($form->getName()));
     		if(count($form->getData()->instances)>0){
     			$insts=$form->getData()->instances;
@@ -414,7 +407,7 @@ class StatistiqueController extends BaseController
     				$structures=$repStruct->getStructureAndStructureDirecteByStructure($str)->getQuery()->getArrayResult();
     	   }
     	}
-    	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR || $tabRoles[$role]== Utilisateur::ROLE_MANAGER){
+    	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR || $tabRoles[$role]== Utilisateur::ROLE_MANAGER) {
     		$stats = $this->createTableauEvoByType($structures, "structure", $form->getData());
 	    	$graphe=$this->createManyGrapheEvo($stats, $structures,'structure');
     	}
@@ -430,14 +423,9 @@ class StatistiqueController extends BaseController
     		$graphe=$this->createGrapheEvo($stats);
     	}
     	return array(
-    			'form'=>$form->createView(),
-    			'role'=>$role,
-    			'stats'=>$stats,
-    			'graphe'=>$graphe,
-    			'statut'=>$this->getStatus(),
-    			'nbTaux'=>$this->getNombreTaux(),
-    			'semaines'=>$this->getSemaines()
-    	);
+    			'form'=>$form->createView(), 'role'=>$role, 'stats'=>$stats, 'graphe'=>$graphe, 'statut'=>$this->getStatus(), 
+    			'nbTaux'=>$this->getNombreTaux(), 'semaines'=>$this->getSemaines()
+    		);
     }
     
     public function mapIds($data){
@@ -453,33 +441,29 @@ class StatistiqueController extends BaseController
      * @Template()
      *
      */
-    public function reportingInstanceAction(Request $request){
-    			
-    			$em = $this->getDoctrine()->getEntityManager();
-    			$queryBuilder =$this->get('session')->get('donnees_reporting_actions_instance' );
-    			$query = $em->createQuery($queryBuilder['query']);
-    			$query->setParameters($queryBuilder['param']);
-    			$idActions = $this->mapIds($query->execute());
-    			$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
-    			$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-    			$statuts = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
-//     			var_dump($query->execute());exit;
-    			
-    	        $data=$this->get('session')->get('donnees_reporting_instance' );
-    			$this->get('session')->set('reporting_export',array('data' => $data['data'], 'statut' => $this->getStatus(), 'tmp' => 0) );
-    			$objWriter = $this->get('orange.main.reporting')->reportingInstanceAction($data['data'], $this->getStatus(), $actions, $statuts->getQuery()->execute());
-    			$filename = "test.xlsx";
-//     			$filename = sprintf("Extraction des statistiques par instance du %s.xlsx", date('d-m-Y à H:i:s'));
-    			$filename = sprintf("Extraction des statistiques par instance-du-%s.xlsx", date('d-m-Y'));
-    			$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
-    			return $this->redirect($this->getUploadDir().$filename);
-    			
+    public function reportingInstanceAction(Request $request) {
+		$em = $this->getDoctrine()->getEntityManager();
+		$queryBuilder =$this->get('session')->get('donnees_reporting_actions_instance' );
+		$query = $em->createQuery($queryBuilder['query']);
+		$query->setParameters($queryBuilder['param']);
+		$idActions = $this->mapIds($query->execute());
+		$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
+		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+		$statuts = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+
+        $data = $this->get('session')->get('donnees_reporting_instance');
+		$this->get('session')->set('reporting_export', array('data' => $data['data'], 'statut' => $this->getStatus(), 'tmp' => 0) );
+		$objWriter = $this->get('orange.main.reporting')->reportingInstanceAction(
+				$data['data'], $this->getStatus(), $actions, $statuts->getQuery()->execute(), $data['role']!=Utilisateur::ROLE_PORTEUR
+			);
+		$filename = sprintf("Extraction des statistiques par instance-du-%s.xlsx", date('d-m-Y'));
+		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
+		return $this->redirect($this->getUploadDir().$filename);
     }
     
     /**
      * @Route("/reporting_structure", name="reporting_structure")
      * @Template()
-     *
      */
     public function reportingStructureAction(Request $request){
     	$em = $this->getDoctrine()->getEntityManager();
@@ -489,14 +473,13 @@ class StatistiqueController extends BaseController
     	$statuts = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
     	$idActions = $this->mapIds($query->execute());
     	$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
-    	 $data=$this->get('session')->get('donnees_reporting_structure' );
-    			$this->get('session')->set('reporting_export',array('data' => $data['data'], 'statut' => $this->getStatus(), 'tmp' => 0) );
-    			$objWriter = $this->get('orange.main.reporting')->reportingStructureAction($data['data'], $this->getStatus(),$actions, $statuts->getQuery()->execute());
-//     			$filename = sprintf("Extraction des statistiques par structure du %s.xlsx", date('d-m-Y à H:i:s'));
-    			$filename = sprintf("Extraction_des_statistiques_par_structure_du_%s.xlsx", date('d-m-Y'));
-    			$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
-    			return $this->redirect($this->getUploadDir().$filename);
-    	
+    	$data=$this->get('session')->get('donnees_reporting_structure' );
+    	$this->get('session')->set('reporting_export',array('data' => $data['data'], 'statut' => $this->getStatus(), 'tmp' => 0) );
+    	$objWriter = $this->get('orange.main.reporting')->reportingStructureAction($data['data'], $this->getStatus(),$actions, $statuts->getQuery()->execute());
+//     		$filename = sprintf("Extraction des statistiques par structure du %s.xlsx", date('d-m-Y à H:i:s'));
+    	$filename = sprintf("Extraction_des_statistiques_par_structure_du_%s.xlsx", date('d-m-Y'));
+    	$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
+    	return $this->redirect($this->getUploadDir().$filename);
     }
     
     /**

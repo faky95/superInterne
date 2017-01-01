@@ -20,24 +20,26 @@ class Configuration
     private $id;
     
     /**
+     * @var Config
+     * @ORM\ManyToOne(targetEntity="\Orange\MainBundle\Entity\Config")
+     * @ORM\JoinColumn(name="config_id", referencedColumnName="id")
+     */
+    private $config;
+    
+    /**
      * @var Instance
      * @ORM\OneToOne(targetEntity="\Orange\MainBundle\Entity\Instance")
      * @ORM\JoinColumn(name="instance_id", referencedColumnName="id")
      */
     private $instance;
     
-    /**
-     * @var boolean
-     * @ORM\Column(name="public_pas", type="boolean")
-     */
-    private $publicPas = false;
     
     /**
      * @var boolean
-     * @ORM\Column(name="showed_all_domaines", type="boolean")
+     * @ORM\Column(name="etat", type="boolean")
      */
-    private $showedAllDomaines = false;
-	
+    private $etat = true;
+    
     /**
      * get instance
      * @return \Orange\MainBundle\Entity\Instance
@@ -57,34 +59,39 @@ class Configuration
     }
     
     /**
-     * @return boolean
+     * get config
+     * @return \Orange\MainBundle\Entity\Config
      */
-    public function isPublicPas() {
-    	return $this->publicPas;
+    public function getConfig() {
+    	return $this->config;
     }
     
     /**
-     * @param boolean $publicPas
+     * set config
+     * @param \Orange\MainBundle\Entity\Config $config
      * @return \Orange\MainBundle\Entity\Configuration
      */
-    public function setPublicPas($publicPas) {
-    	$this->publicPas = $publicPas;
+    public function setConfig($config) {
+    	$this->config = $config;
     	return $this;
     }
     
     /**
+     * get etat
      * @return boolean
      */
-    public function isShowedAllDomaines() {
-    	return $this->showedAllDomaines;
-    }
+	public function getEtat() {
+		return $this->etat;
+	}
+	
+	/**
+	 * set etat
+	 * @param boolean $etat
+	 * @return \Orange\MainBundle\Entity\Configuration
+	 */
+	public function setEtat($etat) {
+		$this->etat = $etat;
+		return $this;
+	}
     
-    /**
-     * @param boolean $showedAllDomaines
-     * @return \Orange\MainBundle\Entity\Configuration
-     */
-    public function setShowedAllDomaines($showedAllDomaines) {
-    	$this->showedAllDomaines = $showedAllDomaines;
-    	return $this;
-    }
 }

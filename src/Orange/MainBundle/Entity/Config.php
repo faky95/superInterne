@@ -81,7 +81,7 @@ class Config
 	 * @param string $libelle
 	 * @return \Orange\MainBundle\Entity\Config
 	 */
-	public function setCode($libelle) {
+	public function setLibelle($libelle) {
 		$this->libelle = $libelle;
 		return $this;
 	}

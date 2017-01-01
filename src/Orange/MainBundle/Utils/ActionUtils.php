@@ -8,12 +8,14 @@ use Orange\MainBundle\Entity\TacheStatut;
 use Orange\MainBundle\Entity\Statut;
 
 class ActionUtils {
+	
 	public static function updateDocument($entityManager, $action, $entity, $user){
 		$entity->getErq()->setAction($action);
 		$entity->getErq()->setUtilisateur($user);
 		$entityManager->persist($entity->getErq());
 		$entityManager->flush();
 	}
+	
 	public static function changeStatutAction($entityManager, $action, $statut, $utilisateur, $commentaire) {
 		$typeStatut = $entityManager->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_ACTION);
 		$statutEntity = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
