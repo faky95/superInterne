@@ -389,6 +389,9 @@ class Reporting extends PHPExcelAdvanced {
 		$this->writeSyntheseByPorteur($sheet, $arrData['porteurs'], $statut, $statuts, 'Globale', $row, 'FF6600');
 		$row += 2;
 		foreach($arrData['instance'] as $data) {
+			if(!isset($data['porteurs'])) {
+				continue;
+			}
 			$this->writeSyntheseByPorteur($sheet, $data['porteurs'], $statut, $statuts, $data['libelle'], $row, substr($data['couleur'], 1));
 			$row += 2;
 		}
@@ -637,8 +640,12 @@ class Reporting extends PHPExcelAdvanced {
 	 */
 	private function addPercent($arrData, $data, $denom) {
 		foreach($data as $key => $value) {
-			$taux = $arrData[$value] * 100 / $arrData[$denom];
-			$arrData[$key] = round($taux).'%';
+			if($arrData[$denom]) {
+				$taux = $arrData[$value] * 100 / $arrData[$denom];
+				$arrData[$key] = round($taux).'%';
+			} else {
+				$arrData[$key] = null;
+			}
 		}
 		return $arrData;
 	}

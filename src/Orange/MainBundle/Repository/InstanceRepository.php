@@ -99,9 +99,10 @@ class InstanceRepository extends BaseRepository{
 		/**
 		 * @return QueryBuilder
 		 */
-		public function animateurQueryBuilder(&$data = array()) {
+		public function animateurQueryBuilder(&$data = array(), $only = false) {
 			$queryBuilder = $this->createQueryBuilder('i3')->select('i3.id');
-			$data = array_merge($this->filterByProfile($queryBuilder, 'i3', Utilisateur::ROLE_ANIMATEUR)->getParameters()->toArray(), $data);
+			$role = $only ? Utilisateur::ROLE_ANIMATEUR_ONLY : Utilisateur::ROLE_ANIMATEUR;
+			$data = array_merge($this->filterByProfile($queryBuilder, 'i3', $role)->getParameters()->toArray(), $data);
 			return $queryBuilder;
 		}
 		

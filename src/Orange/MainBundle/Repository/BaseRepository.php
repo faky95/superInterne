@@ -40,6 +40,13 @@ class BaseRepository extends EntityRepository implements RepositoryInterface{
 		} elseif($role && $role==Utilisateur::ROLE_ADMIN && $this->_user->hasRole(Utilisateur::ROLE_ADMIN)) {
 			$bu = $this->_user->getStructure()->getBuPrincipal();
 			$queryBuilder->andWhere($alias.'.id = :buId')->setParameter('buId', $bu->getId());
+		} elseif($role && $role==Utilisateur::ROLE_ANIMATEUR_ONLY && $this->_user->hasRole(Utilisateur::ROLE_ANIMATEUR_ONLY)) {
+			$instanceIds = array();
+			$anims = $this->_user->getAnimators(true);
+			foreach($anims as $anim) {
+				$instanceIds[] = $anim->getInstance()->getId();
+			}
+			$queryBuilder->andWhere($alias.'.id IN (:instanceIds)')->setParameter('instanceIds', $instanceIds);
 		} elseif($role && $role==Utilisateur::ROLE_ANIMATEUR && $this->_user->hasRole(Utilisateur::ROLE_ANIMATEUR)) {
 			$instanceIds = array();
 			$anims = $this->_user->getAnimators();

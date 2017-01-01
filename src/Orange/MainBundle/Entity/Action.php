@@ -73,7 +73,6 @@ class Action
 
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="date_initial", type="date", nullable=false)
      * @Assert\NotBlank(message="Vous devez donner un délai pour cette action ! ")
      */
@@ -91,21 +90,17 @@ class Action
 	
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="date_cloture", type="date", nullable=true)
      * @Assert\Date()
-     * 
      */
     private $dateCloture;
 
     /**
      * @var \Priorite
-     *
      * @ORM\ManyToOne(targetEntity="Domaine", inversedBy="action")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="domaine_id", referencedColumnName="id")
      * })
-     * 
      * @Assert\NotBlank(message="Donnez le domaine de l'action ")
      * 
      */
@@ -113,17 +108,14 @@ class Action
     
     /**
      * @var \Priorite
-     *
      * @ORM\ManyToOne(targetEntity="Priorite")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="priorite_id", referencedColumnName="id")
      * })
-     * 
      */
     private $priorite;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="ActionStatut", mappedBy="action", cascade={"persist", "merge", "remove"})
      */
     private $actionStatut;
@@ -133,7 +125,6 @@ class Action
      * @ORM\Column(name="date_fin_execution", type="date", nullable=true)
      */
     private $dateFinExecut;
-    
 
     /**
      * @var TypeAction
@@ -142,7 +133,6 @@ class Action
      *   @ORM\JoinColumn(name="type_action_id", referencedColumnName="id")
      * })
      * @Assert\NotBlank(message="Donnez le type de l'action ")
-     * 
      */
     private $typeAction;
     
@@ -158,20 +148,16 @@ class Action
     
     /**
      * @var Utilisateur
-     *
      * @ORM\ManyToOne(targetEntity="Utilisateur", inversedBy="action")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="porteur_id", referencedColumnName="id")
      * })
-     * 
      * @Assert\NotBlank(message="Choisissez le porteur de l'action ")
-     * 
      */
     private $porteur;
     
     /**
      * @var Utilisateur
-     *
      * @ORM\ManyToOne(targetEntity="Utilisateur", inversedBy="actionAnimateur")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="animateur_id", referencedColumnName="id", nullable=true)
@@ -180,14 +166,12 @@ class Action
     private $animateur;
     
     /**
-     *
      * @ORM\OneToMany(targetEntity="Contributeur", mappedBy="action", cascade={"persist", "merge" ,"remove"})
      */
     private $contributeur;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      * @ORM\ManyToMany(targetEntity="Groupe", inversedBy="action", cascade={"persist", "merge"})
      * @ORM\JoinTable(name="action_has_groupe",
      *   joinColumns={
@@ -775,6 +759,24 @@ class Action
     public function getInstance()
     {
         return $this->instance;
+    }
+
+    /**
+     * Get espace
+     * @return \Orange\MainBundle\Entity\Espace 
+     */
+    public function getEspace()
+    {
+        return $this->instance ? $this->instance->getEspace() : null;
+    }
+
+    /**
+     * Get id espace
+     * @return number
+     */
+    public function getEspaceId()
+    {
+        return $this->getEspace() ? $this->getEspace()->getId() : null;
     }
 
     /**
