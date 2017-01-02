@@ -523,12 +523,12 @@ class ActionRepository extends BaseRepository {
 	 * @return QueryBuilder
 	 */
 	public function adminQueryBuilder(&$data = array()) {
-		$queryBuilder = $this->createQueryBuilder('a2')->select('DISTINCT(IDENTITY(a2.instance))')->innerJoin('a2.structure', 's2')->leftJoin('s2.buPrincipal', 'b21')->leftJoin('s2.bu', 'b22')->innerJoin('OrangeMainBundle:Bu', 'b2', 'WITH', 'b2 = b21 OR b2 = b22');
+		$queryBuilder = $this->createQueryBuilder('a2')->select('DISTINCT(IDENTITY(a2.instance))')->innerJoin('a2.instance', 'i2')->innerJoin('i2.bu', 'b2');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'b2', Utilisateur::ROLE_ADMIN)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
 	public function adminQueryBuilder2(&$data = array()) {
-		$queryBuilder = $this->createQueryBuilder('a2')->innerJoin('a2.structure', 's2')->leftJoin('s2.buPrincipal', 'b21')->leftJoin('s2.bu', 'b22')->innerJoin('OrangeMainBundle:Bu', 'b2', 'WITH', 'b2 = b21 OR b2 = b22');
+		$queryBuilder = $this->createQueryBuilder('a2')->innerJoin('a2.structure', 's2')->innerJoin('a2.instance', 'i2')->innerJoin('i2.bu', 'b2');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'b2', Utilisateur::ROLE_ADMIN)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -1043,17 +1043,17 @@ class ActionRepository extends BaseRepository {
 	public function getStatsByInstance2($role, $criteria) {
 		$queryBuilder = null;
 		$data = array();
-		if($role == Utilisateur::ROLE_ADMIN)
+		if($role == Utilisateur::ROLE_ADMIN) {
 			$queryBuilder = $this->adminQueryBuilder($data);
-		elseif($role == Utilisateur::ROLE_ANIMATEUR)
+		} elseif($role == Utilisateur::ROLE_ANIMATEUR) {
 			$queryBuilder = $this->animateurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_MANAGER) {
+		} elseif($role === Utilisateur::ROLE_MANAGER) {
 			$queryBuilder = $this->managerQueryBuilder($data);
-		} elseif($role === Utilisateur::ROLE_PORTEUR)
+		} elseif($role === Utilisateur::ROLE_PORTEUR) {
 			$queryBuilder = $this->porteurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_RAPPORTEUR)
+		} elseif($role === Utilisateur::ROLE_RAPPORTEUR) {
 			$queryBuilder = $this->rapporteurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_CONTRIBUTEUR) {
+		} elseif($role === Utilisateur::ROLE_CONTRIBUTEUR) {
 			$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.contributeur', 'c');
 			$queryBuilder = $this->filterByProfile($queryBuilder, 'c', Utilisateur::ROLE_CONTRIBUTEUR);
 		} else {
@@ -1065,7 +1065,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin('acl1.tache', 't1')
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
-			->innerJoin($alias.'.structure', 's')
+			->innerJoin('u.structure', 's')
 			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
@@ -1141,6 +1141,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
 			->innerJoin($alias.'.structure', 's')
+			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")
 			->groupBy('i.id')->addGroupBy($alias.'.etatCourant')->addGroupBy('t1.etatCourant');
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
@@ -1235,7 +1236,7 @@ class ActionRepository extends BaseRepository {
 		}
 		if(count($criteria->instances) > 0) {
 			$instIDs = array();
-			foreach($criteria->instances as $key => $val)
+			foreach($criteria->instances as $val)
 				$instIDs [] = $val->getId();
 			$queryBuilder->andWhere($alias.'.instance in(:instanceIds)')->setParameter('instanceIds', $instIDs);
 		}

@@ -61,8 +61,11 @@ class InstanceRepository extends BaseRepository{
 			->select('partial i.{id, libelle, description},
 					partial ty.{id, libelle},
 					partial dom.{id, libelleDomaine},
+					partial ani.{id}, partial uti.{id, prenom, nom},
 					partial ta.{id,type}')
 			->leftJoin('i.typeInstance', 'ty')
+			->leftJoin('i.animateur', 'ani')
+			->leftJoin('ani.utilisateur', 'uti')
 			->leftJoin('i.domaine', 'dom')
 			->leftJoin('i.typeAction', 'ta');
 		//->addGroupBy('i.id');

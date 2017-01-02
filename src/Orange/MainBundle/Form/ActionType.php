@@ -4,7 +4,6 @@ namespace Orange\MainBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Orange\MainBundle\Repository\InstanceRepository;
 use Orange\MainBundle\Entity\Domaine;
 use Orange\MainBundle\Entity\TypeAction;
 use Orange\MainBundle\OrangeMainForms;
@@ -33,7 +32,8 @@ class ActionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     	$instance = $builder->getData()->getInstance();
-    	if(isset($options['attr']['espace_id']) && $options['attr']['espace_id']) {
+    	if($this->action) {
+    	} elseif(isset($options['attr']['espace_id']) && $options['attr']['espace_id']) {
     		$this->action = OrangeMainForms::ACTION_ESPACE;
     		$this->espaceId = $options['attr']['espace_id'];
     	} elseif($instance && $instance->getEspace()) {
@@ -160,7 +160,8 @@ class ActionType extends AbstractType
      */
     private function buildFormForReaffectation(FormBuilderInterface $builder, array $options) {
         $builder->add('porteur', null, array('label'=>'Porteur :', 'query_builder' => function($er) use($options) {
-        			return $er->managerQueryBuilder(array(), true)->select('u4');
+        			$data = array();
+        			return $er->managerQueryBuilder($data, true)->select('u4');
         		}, 'empty_value' => 'Choisir un porteur ...'
             ))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))

@@ -230,7 +230,6 @@ class Instance
     public function __construct()
     {
         $this->animateur = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->instance = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tmp_animateur = new \Doctrine\Common\Collections\ArrayCollection();
         $this->isDeleted=false;
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();

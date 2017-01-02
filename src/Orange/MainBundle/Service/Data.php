@@ -39,39 +39,34 @@ class Data extends BaseQuery {
 	public function exportInstance($data){
 		$array = array();
 		$i = 0;
-		foreach ($data as $value){
-			$animateurs= $this->em->getRepository('OrangeMainBundle:Animateur')->findAnimateurs($value->getId());
-			$domaines= $this->em->getRepository('OrangeMainBundle:InstanceHasDomaine')->findDomaines($value->getId());
-			$types= $this->em->getRepository('OrangeMainBundle:InstanceHasTypeAction')->findtypes($value->getId());
+		foreach ($data as $value) {
 			$j=1;
 			$z=1;
 			$k=1;
 			$anim = "";
 			$dom = "";
 			$ty = "";
-			foreach ($animateurs as $animateur){
+			foreach ($value->getAnimateur() as $animateur){
 				$anim = $anim."\n".$j.'. '.$animateur->getUtilisateur()->getCompletNom();
 				$j++;
 			}
-			foreach ($domaines as $domaine){
-				$dom = $dom."\n".$z.'. '.$domaine->getDomaine()->getLibelleDomaine();
+			foreach ($value->getDomaine() as $domaine){
+				$dom = $dom."\n".$z.'. '.$domaine->getLibelleDomaine();
 				$z++;
 			}
-			foreach ($types as $type){
-				$ty = $ty."\n".$k.'. '.$type->getTypeAction()->getType();
+			foreach ($value->getTypeAction() as $type){
+				$ty = $ty."\n".$k.'. '.$type->getType();
 				$k++;
 			}
-			$array[$i] = array('libelle' => $value->getLibelle(),'type_instance' => $value->getTypeInstance()?$value->getTypeInstance()->getLibelle():null,
-					'description' => $value->getDescription(),'animateur' => $anim, 'domaine' => $dom, 'type' => $ty, 'parent' => $value->getParent()?$value->getParent()->getLibelle():null,
-						
-						
-			);
+			$array[$i] = array('libelle' => $value->getLibelle(), 'type_instance' => $value->getTypeInstance() ? $value->getTypeInstance()->getLibelle() : null,
+					'description' => $value->getDescription(), 'animateur' => $anim, 'domaine' => $dom, 'type' => $ty, 'parent' => $value->getParent() ? $value->getParent()->getLibelle() : null,
+				);
 			$i++;
 		}
 		return $array;
 	}
 	
-	public function exportAction($data, $dataStatut){
+	public function exportAction($data, $dataStatut) {
 		$arrayStatut = array();
 		foreach ($dataStatut as $statut){
 			$arrayStatut[$statut->getCode()] = $statut->getLibelle();
@@ -157,18 +152,13 @@ class Data extends BaseQuery {
 		return $array;
 	}
 	
-	public function mapStatistiqueByInstance($query) 
-	{
+	public function mapStatistiqueByInstance($query) {
 		$arrData = array('une_instance' => array());
-		
-		foreach ( $query as $key=> $value ) 
-		{
-			if(!isset($arrData['une_instance'][$value['instance_id']])) 
-			{
+		foreach($query as $key=> $value) {
+			if(!isset($arrData['une_instance'][$value['instance_id']])) {
 				$arrData['une_instance'][$value['instance_id']] = array (
-																		 'instance_id' => $value['instance_id'],
-																		 'data' 	   => array('type_statut' => array(), 'nombre' => array())
-																		);
+								'instance_id' => $value['instance_id'], 'data' => array('type_statut' => array(), 'nombre' => array()
+							));
 			}
 			$arrData['une_instance'][$value ['instance_id']]['data']['type_statut'][$key] = $value['type_statut'];
 			$arrData['une_instance'][$value ['instance_id']]['data']['nombre'][$key] = $value['nombre'];

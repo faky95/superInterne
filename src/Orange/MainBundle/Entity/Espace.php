@@ -423,4 +423,18 @@ class Espace
     public function getTotalNumber() {
     	return $this->instance->getAction()->filter(function($action) { return !strpos($action->getEtatCourant(), 'ARCHIVE'); })->count();
     }
+    
+    /**
+     * @param Utilisateur $user 
+     * @return number
+     */
+    public function numberAction($user) {
+    	if($user==null) {
+    		return 0;
+    	}
+    	return $this->instance->getAction()->filter(function($action) use($user) {
+    			return $action->getPorteur()==$user && !strpos($action->getEtatCourant(), 'ARCHIVE');
+    		})->count();
+    }
+    
 }

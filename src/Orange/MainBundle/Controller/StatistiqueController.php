@@ -56,14 +56,9 @@ class StatistiqueController extends BaseController
     public function indexAction()
     {
         $em = $this->getDoctrine()->getManager();
-
         $entities = $em->getRepository('OrangeMainBundle:Statistique')->findAll();
-
-        return array(
-            'entities' => $entities,
-        );
+        return array('entities' => $entities);
     }
-    //		statistique
     
     /**
      *  @Route("/tableauStatUtilisateur", name="tableauStatUtilisateur")
@@ -246,18 +241,16 @@ class StatistiqueController extends BaseController
     	$instances=$repInst->getInstanceByRole($tabRoles[$role])->getQuery()->getArrayResult();
     	$graphe=array();
     	
-    	if ($tabRoles[$role]==Utilisateur::ROLE_ADMIN){
+    	if ($tabRoles[$role]==Utilisateur::ROLE_ADMIN) {
     		$structures=$repStruct->getStructureAndStructureDirecteByStructure($this->getUser()->getStructure()->getRoot())->getQuery()->getArrayResult();
     	}
-    	if ($tabRoles[$role]==Utilisateur::ROLE_RAPPORTEUR){
+    	if ($tabRoles[$role]==Utilisateur::ROLE_RAPPORTEUR) {
     		$tabStruct=$this->getUser()->getArrayRapporteurStructure();
     		$structures=(count($tabStruct)>1 ? $tabStruct : $repStruct->getStructureByRole($tabRoles[$role])->getQuery()->getArrayResult());
     	}
-    		
-    		
-    	if ($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR || $tabRoles[$role]==Utilisateur::ROLE_MANAGER )
-    		     $structures=$repStruct->getStructureByRole($tabRoles[$role])->getQuery()->getArrayResult();
-    	
+    	if($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR || $tabRoles[$role]==Utilisateur::ROLE_MANAGER) {
+    	     $structures=$repStruct->getStructureByRole($tabRoles[$role])->getQuery()->getArrayResult();
+    	}
     	//var_dump($structures);exit;
     	$form=$this->createForm(new ActionCriteria(), null, array('attr'=>array( 'structures'=> $repStruct->getStructureByRole($tabRoles[$role]), 'instances'=>$repInst->getInstanceByRole($tabRoles[$role]) )));
     	$form->handleRequest($request);
@@ -332,6 +325,7 @@ class StatistiqueController extends BaseController
     		$reqActions = $rep->getStatsByInstance2($role, $criteria);
     		$req =$this->container->get('orange.main.dataStats')-> combineTacheAndActionByPorteur($rq->addGroupBy('u.id')->getQuery()->getArrayResult());
     		$map= $this->container->get('orange.main.dataStats')->transformRequeteToPorteur($req, $arrType);
+    		
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
     		$tableau = $this->container->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType);
     		$this->get('session')->set('donnees_reporting_actions_instance', array('query'=>$reqActions->getDQL(), 'param'=>$reqActions->getParameters()));
