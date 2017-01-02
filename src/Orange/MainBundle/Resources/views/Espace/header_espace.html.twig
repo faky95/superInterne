@@ -1,6 +1,6 @@
 
 	<ul class="nav navbar-nav right" style="margin-right:35px;   margin-top: -1px;">
-		{% if espace.isGestionnaire == 1 %}
+		{% if espace.isGestionnaire(app.user) == 1 %}
 			<li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Ajouter une action">
 	             <a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace.id}) }}"><span class="icon16 tip cut-icon-plus-2" ></span> 
 	             <span class="notification-petit orange"></span></a>

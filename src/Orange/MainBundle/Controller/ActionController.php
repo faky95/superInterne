@@ -58,8 +58,6 @@ class ActionController extends BaseController
 	 * @Template()
 	 */
 	public function indexAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $espace_id=null, $code=null) {
-		$gestionnaire = $espace = null;
-		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria(), null, array('attr'=>array( 'espace_id'=> $espace_id)));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
@@ -73,15 +71,9 @@ class ActionController extends BaseController
 			$this->get('session')->set('action_criteria', new Request());
 		}
 		$espace = $espace_id ? $this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
-		if ($espace) {
-			$entity	= $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-			$user	= $em->getRepository('OrangeMainBundle:Utilisateur')->find($this->getUser()->getId());
-			$membre	= $em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $entity));
-			$gestionnaire = $membre->getIsGestionnaire();
-		}
 		return array(
 				'form' => $form->createView(), 'code' => $code, 'code_statut' => $code_statut, 'instance_id' => $instance_id, 
-				'structure_id' => $structure_id, 'espace_id'=>$espace_id, 'espace'=> $espace, 'gest' => $gestionnaire
+				'structure_id' => $structure_id, 'espace'=> $espace
 			);
 	}
 

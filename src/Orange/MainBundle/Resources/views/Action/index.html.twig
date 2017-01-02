@@ -6,8 +6,8 @@
 <!-- heading -->
 <div class="heading">
 	<h3>{% block page_title %} Liste des actions {% endblock %}   </h3> 
-	{% if  espace_id is not empty %}  
-		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+	{% if  espace is not empty %}  
+		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace } %}
 	{% endif %} 
 </div>
 <!-- End .heading-->
@@ -15,9 +15,9 @@
    <div class="col-lg-12">
     	<div class="row">
 			<div class="col-lg-8">
-			{% if espace_id is not empty %}
+			{% if espace is not empty %}
 				   {% if  has_rights("ROLE_GESTIONNAIRE_ESPACE") %}
-						<a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace_id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
+						<a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace.id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
 						<a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
 				   {% endif %}
 				   		<a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
@@ -49,20 +49,20 @@
 		        action="{{ path('les_actions_by_instance', {'instance_id': instance_id})  }}"
 		        {% elseif structure_id is  defined and structure_id is not empty %}
 		        action="{{ path('les_actions_by_structure', {'structure_id': structure_id})  }}"
-				{% elseif espace_id is  defined and espace_id is not empty %}
-				action="{{ path('les_actions_by_espace', {'espace_id': espace_id})  }}"
+				{% elseif espace is defined and espace is not empty %}
+				action="{{ path('les_actions_by_espace', {'espace_id': espace.id})  }}"
 		       {% else %}
 		        action="{{ path('les_actions') }}"
 		       {% endif %}
 		         method="post">
 		         	<div class="form-group">
-		         	{% if espace_id is empty %}
+		         	{% if espace is empty %}
 						{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
 					{% endif %}
 					</div>
 					<div class="form-group">
 						{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
-						{% if  espace_id is empty %}
+						{% if  espace is empty %}
 							{{ form_widget(form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 						{% endif %}
 					</div>
