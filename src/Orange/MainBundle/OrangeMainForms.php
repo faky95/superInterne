@@ -22,6 +22,7 @@ final class OrangeMainForms
     const ACTION_PROJET 				= 'orange_main.action.projet';
     const ACTION_CHANGE_STATUT 			= 'orange_main.action.change_statut';
     const ACTION_REAFFECTATION 			= 'orange_main.action.reaffectation';
+    const ACTION_CYCLIQUE 				= 'orange_main.action.cyclique';
     
 
 }

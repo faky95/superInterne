@@ -155,18 +155,18 @@
 {% block pagescript %}
 	{{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
-	{% if code_statut is not empty and espace_id is empty %} 
+	{% if code_statut is not empty and espace is empty %} 
 			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut',{'code_statut':code_statut}), nosorting: {0:0, 6:6} } %}
-	{% elseif code_statut is  defined and code_statut is not empty and espace_id is  defined and espace_id is not empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut_espace',{'code_statut':code_statut,'espace_id':espace_id }), nosorting: {0:0, 6:6} } %}
+	{% elseif code_statut is  defined and code_statut is not empty and espace is  defined and espace is not empty %} 
+			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut_espace',{'code_statut':code_statut,'espace_id':espace.id }), nosorting: {0:0, 6:6} } %}
 	{% elseif code is not empty %} 
 			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_validees',{'code': code}), nosorting: {0:0, 6:6} } %}		
 	{% elseif instance_id is  defined and instance_id is not  empty %} 
 			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_instance',{'instance_id':instance_id}), nosorting: {0:0, 6:6} } %}
 	{% elseif structure_id is  defined and structure_id is not  empty %} 
 			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_structure',{'structure_id':structure_id}), nosorting: {0:0, 6:6} } %}
-	{% elseif espace_id is  defined and espace_id is not  empty %}
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_by_espace' ,{'espace_id':espace_id}), nosorting: {0:0, 6:6} } %}
+	{% elseif espace is  defined and espace is not  empty %}
+			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_by_espace' ,{'espace_id':espace.id}), nosorting: {0:0, 6:6} } %}
 	{% else %}
 			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions'), nosorting: {0:0, 6:6} } %}
 	{% endif %}

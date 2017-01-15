@@ -1,11 +1,11 @@
 <?php
-
 namespace Orange\MainBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
+use Orange\MainBundle\OrangeMainForms;
 
 class ActionCycliqueType extends AbstractType
 {
@@ -15,29 +15,19 @@ class ActionCycliqueType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('pas',null, array('label'=>"Périodicité", 
-            		'attr' => array('class' => 'select pas'),
-            		'empty_value' => '--- Choix periodicite ---', 
-            		'query_builder' => function(EntityRepository $er) {
+        $builder->add('pas', null, array('label'=>"Périodicité", 'query_builder' => function(EntityRepository $er) {
             			return $er->createQueryBuilder('q')->where('q.canBeCyclique = true');
-            			
-            }))
-            ->add('dayOfMonth',null,
-            		array('label'=>'Délai initial des occurences :',
-            				'empty_value' => 'Choisir le jour du mois',
-            				'attr' => array('class' => 'select')
-            		))
-            ->add('dayOfWeek',null,
-            				array('label'=>'Délai initial des occurences :',
-            						'empty_value' => 'Choisir le jour de la semaine',
-            						'attr' => array('class' => 'select')
-            		))
-            ->add('iteration', null,
-            			array('label'=>'Semaine:'))
-        	->add('action', new ActionType())
-        	->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
-        ;
+        			}, 'attr' => array('class' => 'select pas'), 'empty_value' => 'Choix la périodicite ...'
+            ))
+            ->add('dayOfMonth', null, array(
+            		'label'=>'Délai initial des occurences :', 'empty_value' => 'Choisir le jour du mois', 'attr' => array('class' => 'select')
+            ))
+            ->add('dayOfWeek', null, array(
+            		'label'=>'Délai initial des occurences :', 'empty_value' => 'Choisir le jour de la semaine', 'attr' => array('class' => 'select')
+            ))
+            ->add('iteration', null, array('label'=>'Semaine:'))
+        	->add('action', new ActionType(OrangeMainForms::ACTION_CYCLIQUE))
+        	->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')));
     }
     
     /**
@@ -57,6 +47,6 @@ class ActionCycliqueType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_actioncyclique';
+        return 'actioncyclique';
     }
 }

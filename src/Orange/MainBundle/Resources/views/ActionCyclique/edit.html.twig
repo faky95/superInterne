@@ -1,16 +1,111 @@
 {% extends '::base.html.twig' %}
 
-{% block body -%}
-    <h1>ActionCyclique edit</h1>
+{% form_theme edit_form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
 
-    {{ form(edit_form) }}
-
-        <ul class="record_actions">
-    <li>
-        <a href="{{ path('actioncyclique') }}">
-            Back to the list
-        </a>
-    </li>
-    <li>{{ form(delete_form) }}</li>
-</ul>
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Edition d'une action cyclique {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+    <div class="col-lg-12">
+    	<div class="row">
+			<div class="col-lg-4">
+				 <a target="_blank" href="{{ path('les_actions') }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span> Liste des actions cycliques</button></a> 
+				 <div class="marginB10"></div>
+			</div><!-- End .span4 -->
+		</div>
+    	<div class="panel panel-default">
+	         <div class="panel-heading">
+				<h4> 
+					<span>Editer une action cyclique </span>
+				</h4>
+	        </div>
+	        <div class="panel-body">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('actioncyclique_update', {id: entity.id}) }}" method="post" role="form">
+						<div class="form-group">
+							{{ form_widget(edit_form.pas,  {'attr': {'class': 'select form-control ', 'style' : 'width: 100%'}}) }}
+                        </div>
+                        <div class="form-group">
+						<div >
+							{{ form_widget(edit_form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}
+						</div>
+                        <div >
+				        	{{ form_widget(edit_form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}
+						</div>
+                        </div>
+                        <div class="form-group">
+                            <div>
+				        	{{ form_widget(edit_form.iteration, {'attr': {'class': 'form-control '}}) }}
+				        	</div>
+						 </div>
+						<div class="form-group">
+			                {{ form_widget(edit_form.action.libelle,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}} ) }}
+			                {{ form_widget(edit_form.action.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(edit_form.action.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(edit_form.action.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(edit_form.action.porteur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(edit_form.action.priorite,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+{# 							{{ form_widget(edit_form.action.groupe, {'attr': {'class': 'text form-control', 'id':'tags', 'type':'text', 'style' : 'width: 100%'}}) }}#}
+							{{ form_widget(edit_form.action.tmp_contributeur, {'attr': {'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(edit_form.action.dateDebut, {'attr': {'class': 'form-control'}}) }}
+							{{ form_widget(edit_form.action.dateInitial, {'attr': {'class': 'form-control'}}) }}
+						</div>
+							{{ form_row(edit_form.action.description) }}
+		                	{{ form_widget(edit_form._token) }}
+			        <div class="form-group">
+			        	<div class="col-lg-offset-2 col-lg-9">
+							    {{ form_widget(edit_form.save) }}
+						</div>
+					</div><!-- End .form-group  -->  
+				</form>
+	        </div>
+        </div>
+    </div><!-- End .span12 -->
+</div><!-- End .row -->
+		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: edit_form.action.instance, child: edit_form.action.typeAction, url: path('type_by_instance'), key: 'id' } 
+		%}
+		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: edit_form.action.instance, child: edit_form.action.domaine, url: path('domaine_by_instance'), key: 'id' } 
+		%}
+		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: edit_form.action.instance, child: edit_form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
+		%}
+<script type="text/javascript">
+$({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+$({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+$({{ ('"#'~edit_form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+ 	$(document).ready(function() {
+	 // $("select").select2();
+	  $({{ ('"#'~edit_form.pas.vars.id~'"')|raw }}).change(function() {
+		 if($(this).val()=="3") {
+			$({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~edit_form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+		 } else if($(this).val()=="1") {
+			$({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~edit_form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+		 } else if($(this).val()=="9") {
+			$({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~edit_form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+		} else {
+    		$({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
+    		$({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+    		$({{ ('"#'~edit_form.iteration.vars.id~'"')|raw }}).parent().parent().show();
+		}
+	  });
+	});
+ 	</script>
 {% endblock %}

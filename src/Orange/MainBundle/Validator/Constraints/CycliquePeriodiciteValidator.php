@@ -6,30 +6,25 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Orange\MainBundle\Utils\ActionUtils;
 
-class CycliquePeriodiciteValidator extends ConstraintValidator
-{
+class CycliquePeriodiciteValidator extends ConstraintValidator {
 
-	public function validate($actionCyclique, Constraint $constraint)
-	{
-		if($actionCyclique->getPeriodicite() && $actionCyclique->getAction()->getDateDebut() && $actionCyclique->getAction()->getDateInitial() )
-		{
-			
-			$periodicite 	= $actionCyclique->getPeriodicite();
-			switch ($periodicite)
-			{
+	public function validate($actionCyclique, Constraint $constraint) {
+		if($actionCyclique->getPas() && $actionCyclique->getAction()->getDateDebut() && $actionCyclique->getAction()->getDateInitial()) {
+			$periodicite 	= $actionCyclique->getPas();
+			switch(strtoupper($periodicite)) {
 				case 'HEBDOMADAIRE':
 					$intervalle = 7;
 					break;
 				case 'MENSUEL':
 					$intervalle = 31;
 					break;
-				case 'BIMESTRE':
+				case 'BIMESTRIEL':
 					$intervalle = 62;
 					break;
-				case 'TRIMESTRE':
+				case 'TRIMESTRIEL':
 					$intervalle = 93;
 					break;
-				case 'SEMESTRE':
+				case 'SEMESTRIEL':
 					$intervalle = 246;
 					break;
 				case 'ANNUEL':
@@ -40,8 +35,7 @@ class CycliquePeriodiciteValidator extends ConstraintValidator
 			$dateInitial 	= $actionCyclique->getAction()->getDateInitial()->format("d-m-Y");
 			
 			$dateDiff = ActionUtils::dateDiff($dateInitial, $dateDebut);
-			if($intervalle > $dateDiff['day'])
-			{
+			if($intervalle > $dateDiff['day']) {
 				$this->context->addViolationAt('periodicite', $constraint->messageCycliquePeriodicite, array(), null);
 			}
 		}

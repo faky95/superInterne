@@ -8,53 +8,48 @@ class Actions {
 	const ACTION_MODAL_TEMPLATE = '<span class="tip" ><a title="%" href="#myModal" class="actionLink" modal-url="%s" data-target="#myModal" data-toggle="modal"><img src="%s" /></a></span>';
 	
 	/**
-	 *
 	 * @var \Twig_Environment
 	 */
 	private $twig;
 	
 	/**
-	 *
 	 * @var \Symfony\Component\Routing\Router
 	 */
 	private $router;
 	
 	/**
-	 *
 	 * @var \Orange\MainBundle\Entity\Utilisateur
 	 */
 	private $user;
 	
 	/**
-	 *
 	 * @var array
 	 */
 	private $states;
 	
 	/**
-	 *
 	 * @var string
 	 */
 	private $actions;
         
-        /**
+    /**
 	 * @var \Doctrine\ORM\EntityManager
 	 */
 	protected $em;
 	
 	/**
-	 *
 	 * @param \Twig_Environment $twig        	
 	 * @param \Symfony\Component\Routing\Router $router        	
-	 * @param array $states        	
-	 * @param \Symfony\Component\Security\Core\SecurityContext $security_context        	
+	 * @param array $states
+	 * @param \Symfony\Component\Security\Core\SecurityContext $security_context
+	 * @param \Orange\QuickMakingBundle\Model\EntityManager $em    	
 	 */
 	public function __construct($twig, $router, $states, $security_context, $em) {
 		$this->twig = $twig;
 		$this->router = $router;
 		$this->states = $states;
 		$this->user = $security_context->getToken()->getUser();
-                $this->em = $em;
+        $this->em = $em;
 	}
 	
 	/**
@@ -74,10 +69,10 @@ class Actions {
 			//$actions .= '<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'action"><span class="icomoon-icon-remove-4"></span></a></div>';
 		}
 		return sprintf($actions, $entity->getInstance()->getEspace()? $this->router->generate('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $entity->getInstance()->getEspace()->getId())):
-									$this->router->generate('details_action', array('id'=>$entity->getId())),
-                   				$this->router->generate('edition_action', array('id'=>$entity->getId())),
-								$this->router->generate('supprimer_action', array('id'=>$entity->getId()))
-				);
+						$this->router->generate('details_action', array('id'=>$entity->getId())),
+                   		$this->router->generate('edition_action', array('id'=>$entity->getId())),
+						$this->router->generate('supprimer_action', array('id'=>$entity->getId()))
+					);
 	}
 	
 	/**
@@ -85,10 +80,12 @@ class Actions {
 	 * @return string
 	 */
 	public function generateActionsForActionCyclique($entity) {
-		$content = '<div class="btn-group">
-				     <a class="btn btn-default" href="%s" title="Détails sur l\'action cylclique "><span class="icomoon-icon-eye"></span></a>';
-		
-		return sprintf($content, $this->router->generate('actioncyclique_show', array('id'=>$entity->getId()))
+		$actions = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur l\'action cylclique"><span class="icomoon-icon-eye"></span></a>';
+		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
+			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
+		}
+		return sprintf($actions, $this->router->generate('actioncyclique_show', array('id'=>$entity->getId())),
+					$this->router->generate('actioncyclique_edit', array('id'=>$entity->getId()))
 				);
 	}
 	
@@ -96,35 +93,24 @@ class Actions {
 	 * @param \Orange\MainBundle\Entity\Bu $entity
 	 * @return string
 	 */
-	public function generateActionsForBu($entity)
-	{
-	
-	
-		$test = '<div class="btn-group">
-				     <a class="btn btn-default" href="%s" title="Détails sur le Bu "><span class="icomoon-icon-eye"></span></a>';
-		if($this->user->hasRole('ROLE_SUPER_ADMIN'))
-		{
+	public function generateActionsForBu($entity) {
+		$test = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur le Bu "><span class="icomoon-icon-eye"></span></a>';
+		if($this->user->hasRole('ROLE_SUPER_ADMIN')) {
 			$test = $test.'<a class="btn btn-default" href="%s" title="Modifier le Bu"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
-		if($this->user->hasRole('ROLE_ADMIN'))
-		{
-			$test = $test.'<a class="btn btn-default" method="delete" href="%s" title="Supprimer le Bu"><span class="icomoon-icon-remove-4"></span></a>
-											</div>';
+		if($this->user->hasRole('ROLE_ADMIN')) {
+			$test = $test.'<a class="btn btn-default" method="delete" href="%s" title="Supprimer le Bu"><span class="icomoon-icon-remove-4"></span></a></div>';
 		}
-	
 		return sprintf($test, $this->router->generate('details_bu', array('id'=>$entity->getId())),
 							  $this->router->generate('edition_bu', array('id'=>$entity->getId())),
 							  $this->router->generate('supprimer_bu', array('id'=>$entity->getId())));
-	
-	
 	}
 	
 	/**
 	 * @param \Orange\MainBundle\Entity\Formule $entity
 	 * @return string
 	 */
-	public function generateActionsForFormule($entity)
-	{
+	public function generateActionsForFormule($entity) {
 		$test = '<div class="btn-group">';
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) {
 			$test .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Consulter la formule ">'.
@@ -134,24 +120,19 @@ class Actions {
 			$test = $test.'<a class="btn btn-default" method="delete" href="%s" title="Supprimer la formule"><span class="icomoon-icon-remove-4"></span></a>
 											</div>';
 		}
-		
 		return sprintf($test, $this->router->generate('details_formule', array('id'=>$entity->getId())),
 							$this->router->generate('supprimer_formule', array('id'=>$entity->getId()))
 				);
 	}
 	
-	
 	/**
 	 * @param \Orange\MainBundle\Entity\Formule $entity
 	 * @return string
 	 */
-	public function generateActionsForPriorite($entity)
-	{
+	public function generateActionsForPriorite($entity) {
 		$test = '<div class="btn-group">';
-		
-			$test .= '<a class="btn btn-default" href="%s" title="Supprimer la priorite"><span class="icomoon-icon-pencil-3"></span></a></div>
+		$test .= '<a class="btn btn-default" href="%s" title="Supprimer la priorite"><span class="icomoon-icon-pencil-3"></span></a></div>
 					  <a class="btn btn-default" method="delete" href="%s" title="Editer la priorite"><span class="icomoon-icon-remove-4"></span></a>';
-	
 		return sprintf($test, $this->router->generate('edition_priorite', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_priorite', array('id'=>$entity->getId()))
 				);

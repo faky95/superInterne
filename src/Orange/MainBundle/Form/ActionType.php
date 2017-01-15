@@ -21,6 +21,9 @@ class ActionType extends AbstractType
 	 */
 	private $espaceId;
 	
+	/**
+	 * @param string $action
+	 */
 	public function __construct($action = null) {
 		$this->action = $action;
 	}
@@ -31,6 +34,10 @@ class ActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+    	if($this->action && $this->action==OrangeMainForms::ACTION_CYCLIQUE) {
+    		$this->buildFormForBu($builder, $options);
+    		return;
+    	}
     	$instance = $builder->getData()->getInstance();
     	if($this->action) {
     	} elseif(isset($options['attr']['espace_id']) && $options['attr']['espace_id']) {
@@ -182,6 +189,6 @@ class ActionType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_action';
+        return 'action';
     }
 }
