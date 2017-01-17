@@ -414,42 +414,43 @@ class Reporting extends PHPExcelAdvanced {
 				'nbEchueNonSoldee'=>0, 'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'totalSoldee'=>0, 'total'=>0
 			);
 		$columns = array(
-					'B'=>'nbAbandon', 'D'=>'nbDemandeAbandon', 'F'=>'nbFaiteDelai', 'G'=>'nbFaiteHorsDelai', 'H'=>'nbNonEchue', 
-					'J'=>'nbEchueNonSoldee', 'L'=>'nbSoldeeHorsDelais', 'M'=>'nbSoldeeDansLesDelais', 'P'=>'total'
+					'B'=>'nbAbandon', 'D'=>'nbDemandeAbandon', 'F'=>'nbFaiteDelai', 'H'=>'nbFaiteHorsDelai', 'J'=>'nbNonEchue', 
+					'L'=>'nbEchueNonSoldee', 'N'=>'nbSoldeeHorsDelais', 'P'=>'nbSoldeeDansLesDelais', 'T'=>'total'
 				);
-		$tColumns = array('C'=>'tAbandon', 'E'=>'tDA', 'I'=>'tNE', 'K'=>'tENS', 'O'=>'tSolde');
-		$this->setColumnWidth(array('A' => 30, 'F' => 20, 'G' => 15, 'L' => 20, 'M' => 20));
+		$tColumns = array('C'=>'tAbandon', 'E'=>'tDA', 'G'=>'tFD','I'=>'tFHD' , 'K'=>'tNE', 'M'=>'tENS', 'O'=>'tSHD','Q'=>'tSDD','S'=>'tSolde');
+		$this->setColumnWidth(array('A' => 30, 'L' => 20, 'T' => 20));
 		$this->mergeCells(array(
-				array('B'.$row, 'C'.$row), array('D'.$row, 'E'.$row), array('H'.$row, 'I'.$row), array('J'.$row, 'K'.$row), array('N'.$row, 'O'.$row) 
+				array('B'.$row, 'C'.$row), array('D'.$row, 'E'.$row), array('F'.$row, 'G'.$row), array('H'.$row, 'I'.$row), array('J'.$row, 'K'.$row),  array('L'.$row, 'M'.$row),array('N'.$row, 'O'.$row)
+				     , array('P'.$row, 'Q'.$row), array('R'.$row, 'S'.$row)
 			));
 		$sheet->setCellValue('A'.$row, sprintf('Synthèse %s par Porteur', $title));
-		$sheet->setCellValue('N'.$row, 'Total soldé');
+		$sheet->setCellValue('R'.$row, 'Total soldé');
 		$this->addRowData($statut, $columns, $row);
 		$row++;
 		foreach($arrData as $data) {
 			$data['totalSoldee'] = $data['nbSoldeeHorsDelais'] + $data['nbSoldeeDansLesDelais'];
-			foreach(array_merge(array('N'=>'totalSoldee'), $columns) as $etat) {
+			foreach(array_merge(array('R'=>'totalSoldee'), $columns) as $etat) {
 				$total[$etat] += $data[$etat];
 			}
 			$data = $this->addPercent($data, array(
-					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSolde'=>'totalSoldee'
+					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tFD'=>'nbFaiteDelai','tFHD'=>'nbFaiteHorsDelai','tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSHD'=>'nbSoldeeHorsDelais','tSDD'=>'nbSoldeeDansLesDelais' ,'tSolde'=>'totalSoldee',
 				), 'total');
-			$this->addRowData($data, array_merge(array('A' => 'libelle', 'N'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+			$this->addRowData($data, array_merge(array('A' => 'libelle', 'R'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
 			$row++;
 		}
 		$total = $this->addPercent($total, array(
-				'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSolde'=>'totalSoldee'
-			), 'total');
+					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tFD'=>'nbFaiteDelai','tFHD'=>'nbFaiteHorsDelai','tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSHD'=>'nbSoldeeHorsDelais','tSDD'=>'nbSoldeeDansLesDelais' ,'tSolde'=>'totalSoldee',
+				), 'total');
 		$sheet->setCellValue('A'.$row, 'Total');
-		$this->addRowData($total, array_merge(array('N'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+		$this->addRowData($total, array_merge(array('R'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
 		$this->applyStyleRanges(array(
-					"A$debut:P$debut", "B$debut:C$row", "D$debut:E$row", "H$debut:I$row", "J$debut:K$row", "N$debut:O$row",
-					"A$debut:A$row", "F$debut:F$row", "G$debut:G$row", "L$debut:L$row", "M$debut:M$row", "P$debut:P$row"
+					"A$debut:T$debut", "B$debut:C$row", "D$debut:E$row", "F$debut:G$row" ,"H$debut:I$row", "J$debut:K$row", "L$debut:M$row","N$debut:O$row", "P$debut:Q$row", "R$debut:S$row",
+					"A$debut:A$row", "T$debut:T$row"
 				), array(
 					'outline_border' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM) 
 			));
-		$this->applyStyleRanges(array(sprintf("N%s:O%s", $debut+1, $row)), array('bgcolor' => 'D8FFFF'));
-		$this->applyStyleRanges(array("A$debut:A$row", "A$debut:P$debut", "P$debut:P$row"), array('bgcolor' => $couleur));
+		$this->applyStyleRanges(array(sprintf("R%s:S%s", $debut+1, $row)), array('bgcolor' => 'D8FFFF'));
+		$this->applyStyleRanges(array("A$debut:A$row", "A$debut:T$debut", "T$debut:T$row"), array('bgcolor' => $couleur));
 		$row++;
 	}
 	

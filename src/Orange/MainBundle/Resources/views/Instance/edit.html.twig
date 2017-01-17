@@ -26,7 +26,7 @@
 					<div class="form-group">
 						<label class="col-lg-2 control-label" for="picker">Couleur :</label>
 						<div class="col-lg-9">
-							<input type="text" id="color" name="{{ edit_form.couleur.vars.full_name }}" value="#123456" class="form-control" />
+							<input type="text" id="color" name="{{ edit_form.couleur.vars.full_name }}"  value="{{ entity.couleur ? entity.couleur : '#123456' }}"  class="form-control" />
 							<div class="picker"></div>
 						</div>
 					</div>

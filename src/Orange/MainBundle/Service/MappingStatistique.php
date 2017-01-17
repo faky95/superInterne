@@ -98,7 +98,7 @@ class MappingStatistique
 									continue;
 								}
 								foreach($arrData['porteurs'][$porteurId] as $key => $number) {
-									$arrData['porteurs'][$porteurId][$key] = $porteur[$key] + $number;
+									$arrData['porteurs'][$porteurId][$key] = (is_numeric( $porteur[$key])) ? ($porteur[$key] + $number) :  $porteur[$key];
 								}
 							}
 						}
@@ -395,22 +395,18 @@ class MappingStatistique
 							'id' => $value['id'], 'libelle' => $value['libelle'], 'couleur' => $value['couleur'], 'total' => intval($value['total']), 
 							'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
 						);
-					if($value['tache_etat']==null) {
-						$arrData['data'][$i]['etatCourant']=$value['action_etat'];
-					} else {
-						$arrData['data'][$i]['etatCourant']=$value['tache_etat'];
-					}
+					$arrData['data'][$i]['etatCourant']= ($value['tache_etat']==null) ? $value['action_etat'] : $value['tache_etat'];
 				} else {
 					$aide=false; 
 					for($j=0; $j<count($arrData['data']);$j++) {
 						if($value['tache_etat']==null) {
-							if($arrData['data'][$j]['etatCourant']==$value['action_etat'] && $arrData['data'][$j]['id']==$value['id']) {
+							if($arrData['data'][$j]['etatCourant']==$value['action_etat'] && $arrData['data'][$j]['id']==$value['id'] && $arrData['data'][$j]['porteur']==$value['porteur']) {
 								$arrData['data'][$j]['total']+=intval($value['total']);
 								$aide=true;
 								break;
 							}
 						} else {
-							if($arrData['data'][$j]['etatCourant']==$value['tache_etat'] && $arrData['data'][$j]['id']==$value['id']) {
+							if($arrData['data'][$j]['etatCourant']==$value['tache_etat'] && $arrData['data'][$j]['id']==$value['id'] && $arrData['data'][$j]['porteur']==$value['porteur']) {
 								$arrData['data'][$j]['total']=intval($value['total']);
 								$aide=true;
 								break;
@@ -423,11 +419,7 @@ class MappingStatistique
 								'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']),
 								'couleur' => $value['couleur'], 'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
 							);
-						if($value['tache_etat']==null) {
-							$arrData['data'][$i]['etatCourant']=$value['action_etat'];
-						} else {
-							$arrData['data'][$i]['etatCourant']=$value['tache_etat'];
-						}
+						$arrData['data'][$i]['etatCourant']= ($value['tache_etat']==null) ? $value['action_etat'] : $value['tache_etat'];
 					}
 						
 				}
