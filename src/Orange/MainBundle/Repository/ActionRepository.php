@@ -1065,7 +1065,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin('acl1.tache', 't1')
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
-			->innerJoin('u.structure', 's')
+			->leftJoin('u.structure', 's')
 			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
@@ -1140,13 +1140,12 @@ class ActionRepository extends BaseRepository {
 			->leftJoin('acl1.tache', 't1')
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
-			->innerJoin($alias.'.structure', 's')
-			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")
-			->groupBy('i.id')->addGroupBy($alias.'.etatCourant')->addGroupBy('t1.etatCourant');
+			->leftJoin($alias.'.structure', 's')
+			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
 		$this->filtres($queryBuilder, $criteria, $alias);
-		return $queryBuilder;
+		return $queryBuilder->groupBy('i.id')->addGroupBy($alias.'.etatCourant')->addGroupBy('t1.etatCourant');
 	}
 	
 	/**
