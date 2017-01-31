@@ -82,27 +82,28 @@
 	{parent: form.action.instance, child: form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
 %}
 <script type="text/javascript">
-$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
-$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
  	$(document).ready(function() {
 	 // $("select").select2();
-	  $("#orange_mainbundle_actioncyclique_pas").change(function(){
+	  $({{ ('"#'~form.pas.vars.id~'"')|raw }}).change(function() {
 		 if($(this).val()=="3") {
-			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
-			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().show();
-			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
 		 } else if($(this).val()=="1") {
-			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
-			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
-			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
 		 } else if($(this).val()=="9") {
-			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
-			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
-			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
-		 } else {
-    		$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
-    		$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
-    		$("#orange_mainbundle_actioncyclique_iteration").parent().parent().show();
+			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+		} else {
+    		$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
+    		$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+    		$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().show();
 		}
 	  });
 	});
