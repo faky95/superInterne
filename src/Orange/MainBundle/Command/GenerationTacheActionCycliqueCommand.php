@@ -35,7 +35,11 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 			}
 			$tache = $actionCyclique->newTache($this->getContainer()->getParameter('pas'));
 			$em->persist($tache);
-			$this->get('orange.main.mailer')->notifNewTache(array($actionCyclique->getAction()->getPorteur()->getEmail()), $tache);
+	    	$contributeurs = array();
+	    	foreach($tache->getActionCyclique()->getAction()->getContributeur() as $contributeur) {
+	    		$contributeurs[] = $contributeur->getUtilisateur()->getEmail();
+	    	}
+			$this->get('orange.main.mailer')->notifNewTache(array($actionCyclique->getAction()->getPorteur()->getEmail()), $contributeurs, $tache);
 		}
 		$em->flush();
 		//check if they have at least on occurence

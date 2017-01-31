@@ -29,15 +29,12 @@ class Mailer
     
     /**
      * @param array $to
+     * @param array $contributeurs
      * @param \Orange\MainBundle\Entity\Tache $tache
      */
-    public function notifNewTache($to, $tache) {
+    public function notifNewTache($to, $contributeurs, $tache) {
     	$mail = \Swift_Message::newInstance();
     	$manager = $tache->getActionCyclique()->getAction()->getPorteur()->getSuperior();
-    	$contributeurs = array();
-    	foreach($tache->getActionCyclique()->getAction()->getContributeur() as $contributeur) {
-    		$contributeurs[] = $contributeur->getUtilisateur()->getEmail();
-    	}
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
 	    	->setCc($contributeurs)
