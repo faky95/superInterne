@@ -35,10 +35,8 @@ class Action
 
     /**
      * @var string
-     *
      * @ORM\Column(name="libelle", type="string", length=255, nullable=true)
      * @Assert\NotBlank()
-     * 
      */
     private $libelle;
 
@@ -94,7 +92,6 @@ class Action
      *   @ORM\JoinColumn(name="domaine_id", referencedColumnName="id")
      * })
      * @Assert\NotBlank(message="Donnez le domaine de l'action ")
-     * 
      */
     private $domaine;
     

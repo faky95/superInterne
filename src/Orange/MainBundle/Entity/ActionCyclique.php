@@ -32,7 +32,7 @@ class ActionCyclique
      * @var number
      * @ORM\Column(name="occurence", type="integer", nullable=false)
      */
-    private $occurence;
+    private $occurence = 0;
     
     /**
      * @ORM\ManyToOne(targetEntity="Orange\MainBundle\Entity\Pas")
