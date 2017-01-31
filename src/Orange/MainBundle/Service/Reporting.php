@@ -16,38 +16,38 @@ class Reporting extends PHPExcelAdvanced {
 		}
 		$sheet2 = $this->createSheet(1);
 		$sheet3 = $this->createSheet(2);
-		
+
 		$x = 1;
 		$col = 'B';
 		$style_instance = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ffc000')),
-				'font' => array('bold' => true, 'size' => 18, 'color' => array('rgb' => '000000')) 
-			);
+				'font' => array('bold' => true, 'size' => 18, 'color' => array('rgb' => '000000'))
+		);
 		$style_stat = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
-				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000')) 
-			);
+				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000'))
+		);
 		$style_inst = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
-				'font' => array('bold' => true, 'size' => 12, 'color' => array('rgb' => 'ffc000')) 
-			);
+				'font' => array('bold' => true, 'size' => 12, 'color' => array('rgb' => 'ffc000'))
+		);
 		$style_valeur = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
-				'font' => array('bold' => false, 'size' => 10, 'color' => array('rgb' => '000000')) 
-			);
+				'font' => array('bold' => false, 'size' => 10, 'color' => array('rgb' => '000000'))
+		);
 		$style_valeur_total = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
-				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000')) 
-			);
+				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000'))
+		);
 		$style_libelle_total = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT),
-				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000')) 
-			);
+				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000'))
+		);
 		$style_taux = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
-				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => 'ff6600')) 
-			);
+				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => 'ff6600'))
+		);
 		$style_libelle_taux = array('font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => 'ff6600')));
 		$this->getActiveSheet ()->setCellValue('A2', "Statut")->getColumnDimension('A')->setAutoSize(true);
 		$this->getActiveSheet ()->getStyle('A2')->applyFromArray($style_stat);
@@ -92,7 +92,7 @@ class Reporting extends PHPExcelAdvanced {
 					$this->getActiveSheet ()->setCellValue($col2 . $x, $valeur['data'][$key].'%');
 					$this->getActiveSheet ()->getStyle($col2 . $x)->applyFromArray($style_taux);
 					$col2 ++;
-				} 
+				}
 			}
 			$x ++;
 			$i ++;
@@ -124,40 +124,40 @@ class Reporting extends PHPExcelAdvanced {
 		$x = 1;
 		$col = 'B';
 		$style_instance = array(
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ffc000' ) 
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ffc000' )
 				),
-				'font' => array('bold' => true,'size' => 18,'color' => array(		'rgb' => '000000' ) 
-				) 
+				'font' => array('bold' => true,'size' => 18,'color' => array(		'rgb' => '000000' )
+				)
 		);
 		$style_stat = array(
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => '000000' ) 
-				) 
+				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => '000000' )
+				)
 		);
 		$style_inst = array(
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'font' => array('bold' => true,'size' => 12,'color' => array(		'rgb' => 'ffc000' ) 
-				) 
+				'font' => array('bold' => true,'size' => 12,'color' => array(		'rgb' => 'ffc000' )
+				)
 		);
 		$style_valeur = array(
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'font' => array('bold' => true,'size' => 12,'color' => array(		'rgb' => '000000' ) 
-				) 
+				'font' => array('bold' => true,'size' => 12,'color' => array(		'rgb' => '000000' )
+				)
 		);
 		$style_taux = array(
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => 'ff6600' ) 
-				) 
+				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => 'ff6600' )
+				)
 		);
 		$style_libelle_taux = array(
-				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => 'ff6600' ) 
-				) 
+				'font' => array('bold' => true,'size' => 14,'color' => array(		'rgb' => 'ff6600' )
+				)
 		);
 		$this->getActiveSheet ()->setCellValue('A2', "Statut")->getColumnDimension('A')->setAutoSize(true);
 		$this->getActiveSheet ()->getStyle('A2')->applyFromArray($style_stat);
@@ -195,7 +195,7 @@ class Reporting extends PHPExcelAdvanced {
 					$col2 ++;
 				}
 			}
-			
+				
 			$x ++;
 			$i ++;
 		}
@@ -203,59 +203,59 @@ class Reporting extends PHPExcelAdvanced {
 		$this->setActiveSheetIndex(0);
 		$this->getActiveSheet()->setTitle('stats_par_structure');
 		$sheet2->setTitle('actions');
-		
+
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}
-	
+
 	public function exportAction($sheet, $arrData, $dataStatut) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
- 			$arrayStatut [$statut->getCode ()] = $statut->getLibelle ();
+			$arrayStatut [$statut->getCode ()] = $statut->getLibelle ();
 		}
 		$default_border = array(
 				'style' => \PHPExcel_Style_Border::BORDER_THIN,
 				'size' => 16,
-				'color' => array('rgb' => '000000' 
-				) 
+				'color' => array('rgb' => '000000'
+				)
 		);
 		$style_th = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
+				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border
 				),
-				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ff6600' ) 
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ff6600' )
 				),
-				'font' => array('bold' => true,'size' => 16,'color' => array(		'rgb' => '000000' ) 
-				) 
+				'font' => array('bold' => true,'size' => 16,'color' => array(		'rgb' => '000000' )
+				)
 		);
 		$data = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
+				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border
 				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER
 				),
-				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ffffff' ) 
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ffffff' )
 				),
-				'font' => array('size' => 13,'color' => array(		'rgb' => '000000' ) 
-				) 
+				'font' => array('size' => 13,'color' => array(		'rgb' => '000000' )
+				)
 		);
 		$action = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
+				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border
 				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT
+				)
 		);
 		$desc = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
+				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border
 				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT
+				)
 		);
 		$objPHPExcel = new \PHPExcel ();
 		$th = array(
-				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 
-				'Service', 'Type', 'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Date de fin prévue', 'Date de clôture', 'Avancements' 
-			);
+				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département',
+				'Service', 'Type', 'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Date de fin prévue', 'Date de clôture', 'Avancements'
+		);
 		$col = "A";
 		$x = 1;
 		foreach($th as $value) {
@@ -382,7 +382,7 @@ class Reporting extends PHPExcelAdvanced {
 		$objPHPExcel->getDefaultStyle ()->getAlignment ()->setWrapText(true);
 		return $sheet;
 	}
-	
+
 	public function synthesePorteur($sheet, $arrData, $statut, $statuts) {
 		$this->setActiveSheetIndex(3);
 		$row = 1;
@@ -397,9 +397,9 @@ class Reporting extends PHPExcelAdvanced {
 		}
 		return $sheet;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param PHPExcel_Worksheet $sheet
 	 * @param array $arrData
 	 * @param array $statut
@@ -410,50 +410,56 @@ class Reporting extends PHPExcelAdvanced {
 	private function writeSyntheseByPorteur($sheet, $arrData, $statut, $statuts, $title, &$row, $couleur) {
 		$debut = $row;
 		$total = array(
-				'nbAbandon'=>0, 'nbDemandeAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 
+				'nbAbandon'=>0, 'nbDemandeAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbActionNouvelle'=>0,
 				'nbEchueNonSoldee'=>0, 'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'totalSoldee'=>0, 'total'=>0
-			);
+		);
 		$columns = array(
-					'B'=>'nbAbandon', 'D'=>'nbDemandeAbandon', 'F'=>'nbFaiteDelai', 'H'=>'nbFaiteHorsDelai', 'J'=>'nbNonEchue', 
-					'L'=>'nbEchueNonSoldee', 'N'=>'nbSoldeeHorsDelais', 'P'=>'nbSoldeeDansLesDelais', 'T'=>'total'
-				);
-		$tColumns = array('C'=>'tAbandon', 'E'=>'tDA', 'G'=>'tFD','I'=>'tFHD' , 'K'=>'tNE', 'M'=>'tENS', 'O'=>'tSHD','Q'=>'tSDD','S'=>'tSolde');
+				'B'=>'total', 'C'=>'nbSoldeeHorsDelais' , 'E'=>'nbSoldeeDansLesDelais', 'I'=>'nbAbandon', 'K'=>'nbDemandeAbandon', 'M'=>'nbFaiteDelai', 'O'=>'nbFaiteHorsDelai', 'Q'=>'nbNonEchue',
+				'S'=>'nbEchueNonSoldee',
+		);
+		$tColumns = array('D'=>'tSHD','F'=>'tSDD', 'H'=>'tSolde', 'J'=>'tAbandon', 'L'=>'tDA', 'N'=>'tFD','P'=>'tFHD' , 'R'=>'tNE', 'T'=>'tENS');
 		$this->setColumnWidth(array('A' => 30, 'L' => 20, 'T' => 20));
 		$this->mergeCells(array(
-				array('B'.$row, 'C'.$row), array('D'.$row, 'E'.$row), array('F'.$row, 'G'.$row), array('H'.$row, 'I'.$row), array('J'.$row, 'K'.$row),  array('L'.$row, 'M'.$row),array('N'.$row, 'O'.$row)
-				     , array('P'.$row, 'Q'.$row), array('R'.$row, 'S'.$row)
-			));
+				array('C'.$row, 'D'.$row), array('E'.$row, 'F'.$row), array('G'.$row, 'H'.$row), array('I'.$row, 'J'.$row), array('K'.$row, 'L'.$row),  array('M'.$row, 'N'.$row),array('O'.$row, 'P'.$row)
+				, array('Q'.$row, 'R'.$row), array('S'.$row, 'T'.$row)
+		));
 		$sheet->setCellValue('A'.$row, sprintf('Synthèse %s par Porteur', $title));
-		$sheet->setCellValue('R'.$row, 'Total soldé');
+		$sheet->setCellValue('G'.$row, 'Total soldé');
 		$this->addRowData($statut, $columns, $row);
 		$row++;
 		foreach($arrData as $data) {
 			$data['totalSoldee'] = $data['nbSoldeeHorsDelais'] + $data['nbSoldeeDansLesDelais'];
-			foreach(array_merge(array('R'=>'totalSoldee'), $columns) as $etat) {
+			foreach(array_merge(array('G'=>'totalSoldee'), $columns) as $etat) {
 				$total[$etat] += $data[$etat];
 			}
 			$data = $this->addPercent($data, array(
 					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tFD'=>'nbFaiteDelai','tFHD'=>'nbFaiteHorsDelai','tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSHD'=>'nbSoldeeHorsDelais','tSDD'=>'nbSoldeeDansLesDelais' ,'tSolde'=>'totalSoldee',
-				), 'total');
-			$this->addRowData($data, array_merge(array('A' => 'libelle', 'R'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+			), 'total');
+			$this->addRowData($data, array_merge(array('A' => 'libelle', 'G'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
 			$row++;
 		}
 		$total = $this->addPercent($total, array(
-					'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tFD'=>'nbFaiteDelai','tFHD'=>'nbFaiteHorsDelai','tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSHD'=>'nbSoldeeHorsDelais','tSDD'=>'nbSoldeeDansLesDelais' ,'tSolde'=>'totalSoldee',
-				), 'total');
-		$sheet->setCellValue('A'.$row, 'Total');
-		$this->addRowData($total, array_merge(array('R'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
+				'tAbandon'=>'nbAbandon', 'tDA'=>'nbDemandeAbandon', 'tFD'=>'nbFaiteDelai','tFHD'=>'nbFaiteHorsDelai','tNE'=>'nbNonEchue', 'tENS'=>'nbEchueNonSoldee', 'tSHD'=>'nbSoldeeHorsDelais','tSDD'=>'nbSoldeeDansLesDelais' ,'tSolde'=>'totalSoldee',
+		), 'total');
+		$sheet->setCellValue('A'.$row, 'Total des actions');
+		$this->addRowData($total, array_merge(array('G'=>'totalSoldee'), array_merge($columns, $tColumns)), $row);
 		$this->applyStyleRanges(array(
-					"A$debut:T$debut", "B$debut:C$row", "D$debut:E$row", "F$debut:G$row" ,"H$debut:I$row", "J$debut:K$row", "L$debut:M$row","N$debut:O$row", "P$debut:Q$row", "R$debut:S$row",
-					"A$debut:A$row", "T$debut:T$row"
-				), array(
-					'outline_border' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM) 
-			));
-		$this->applyStyleRanges(array(sprintf("R%s:S%s", $debut+1, $row)), array('bgcolor' => 'D8FFFF'));
-		$this->applyStyleRanges(array("A$debut:A$row", "A$debut:T$debut", "T$debut:T$row"), array('bgcolor' => $couleur));
+				"A$debut:T$debut", "B$debut:B$row", "C$debut:D$row", "E$debut:F$row" ,"G$debut:H$row", "I$debut:J$row", "K$debut:L$row","M$debut:N$row", "O$debut:P$row", "Q$debut:R$row",
+				"A$debut:A$row", "S$debut:T$row"
+		), array(
+				'outline_border' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM) ,
+		));
+		$this->applyStyleRanges(array(
+				"B$debut:T$debut", "B$debut:B$row", "C$debut:D$row", "E$debut:F$row" ,"G$debut:H$row", "I$debut:J$row", "K$debut:L$row","M$debut:N$row", "O$debut:P$row", "Q$debut:R$row",
+				 "S$debut:T$row"
+		), array(
+				'text_align' => array('horizontal' =>\PHPExcel_Style_Alignment::HORIZONTAL_CENTER)
+		));
+		$this->applyStyleRanges(array(sprintf("G%s:H%s", $debut+1, $row)), array('bgcolor' => 'D8FFFF'));
+		$this->applyStyleRanges(array("A$debut:A$row", "A$debut:T$debut", "B$debut:B$row"), array('bgcolor' => $couleur));
 		$row++;
 	}
-	
+
 	public function syntheseInstance($sheet, $arrData, $statut, $statuts) {
 		$x = 1;
 		$col = 'A';
@@ -461,57 +467,57 @@ class Reporting extends PHPExcelAdvanced {
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ffc000')),
 				'font' => array('bold' => true, 'size' => 13, 'color' => array('rgb' => '000000'))
-			);
+		);
 		$style_instances = array(
 				'font' => array('bold' => true, 'size' => 11, 'color' => array('rgb' => 'ffc000')),
 				'borders' => array(
 						'bottom' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM),
 						'top' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM)
-			));
+				));
 		$style_instances_taux = array(
 				'font' => array('bold' => true, 'size' => 11, 'color' => array('rgb' => 'ffc000')),
 				'borders' => array(
 						'right' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM),
 						'bottom' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM),
 						'top' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM)
-			));
+				));
 		$style_entete_total = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array('rgb' => '000000')),
 				'font' => array('bold' => true,'size' => 13,'color' => array('rgb' => 'ffffff')),
 				'borders' => array('horizontal' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			);
+		);
 		$style_bold = array(
 				'font' => array('bold' => true,'size' => 11,'color' => array('rgb' => '000000')),
 				'borders' => array(
 						'bottom' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM),
 						'top' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM),
 						'right' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM)
-			));
+				));
 		$style_tot = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'font' => array('bold' => true,'size' => 11,'color' => array('rgb' => '000000')),
 				'borders' => array('allborders' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			);
+		);
 		$style_solde = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array('rgb' => '88cc00')),
 				'font' => array('bold' => true,'size' => 11,'color' => array('rgb' => '000000'))
-			);
+		);
 		$style_solde_valeur = array_merge($style_solde, array(
 				'borders' => array('left' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			));
+		));
 		$style_solde_taux = array_merge($style_solde, array(
 				'borders' => array('right' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			));
+		));
 		$style_body_valeur = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'borders' => array('left' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			);
+		);
 		$style_body_taux = array(
 				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
 				'borders' => array('right' => array('style' => \PHPExcel_Style_Border::BORDER_MEDIUM))
-			);
+		);
 		$sheet->setCellValue('A2', "Statut")->getColumnDimension('A')->setAutoSize(true);
 		$size = (sizeof($arrData ['instance'])*2)+1;
 		$n = \PHPExcel_Cell::columnIndexFromString($col);
@@ -540,45 +546,45 @@ class Reporting extends PHPExcelAdvanced {
 		$col ++;
 		$sheet->setCellValue($col . $y, '%')->getColumnDimension($col)->setAutoSize(true);
 		$sheet->getStyle($col. $y)->applyFromArray($style_instances_taux);
-		
+
 		$col = 'A';
 		$x = 3;
 		$i = 1;
 		foreach($statut as $key => $value) {
-			if ($i < 9) {
+			if ($i < 10) {
 				$sheet->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
-				if($i>6)
+				if($i>7)
 					$sheet->getStyle($col . $x)->applyFromArray($style_solde);
-				$col2 = 'B';
-				$valTotal=0;
-				$tauxTotal= 0;
-				$totalGlobale=0;
-				foreach($arrData ['instance'] as $value) {
-					$taux=($value ['data']['total']!=0)?round(($value ['data'] [$key]/$value ['data'] ['total'])*100):0;
-					$sheet->setCellValue($col2 . $x, $value ['data'] [$key]);
+					$col2 = 'B';
+					$valTotal=0;
+					$tauxTotal= 0;
+					$totalGlobale=0;
+					foreach($arrData ['instance'] as $value) {
+						$taux=($value ['data']['total']!=0)?round(($value ['data'] [$key]/$value ['data'] ['total'])*100):0;
+						$sheet->setCellValue($col2 . $x, $value ['data'] [$key]);
+						$sheet->getStyle($col2 . $x)->applyFromArray($style_body_valeur);
+						if($i>7)
+							$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
+							$col2 ++;
+							$sheet->setCellValue($col2 . $x, $taux.'%');
+							$sheet->getStyle($col2 . $x)->applyFromArray($style_body_taux);
+							if($i>7)
+								$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
+								$col2 ++;
+								$valTotal  = $valTotal + round($value ['data'] [$key]);
+								$totalGlobale = $totalGlobale + round($value ['data'] ['total']);
+					}
+					$tauxTotal = ($totalGlobale!=0)?round(($valTotal/$totalGlobale)*100):0;
+					$sheet->setCellValue($col2 . $x, $valTotal);
 					$sheet->getStyle($col2 . $x)->applyFromArray($style_body_valeur);
-					if($i>6)
+					if($i>7)
 						$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
-					$col2 ++;
-					$sheet->setCellValue($col2 . $x, $taux.'%');
-					$sheet->getStyle($col2 . $x)->applyFromArray($style_body_taux);
-					if($i>6)
-						$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
-					$col2 ++;
-					$valTotal  = $valTotal + round($value ['data'] [$key]);
-					$totalGlobale = $totalGlobale + round($value ['data'] ['total']);
-				}
-				$tauxTotal = ($totalGlobale!=0)?round(($valTotal/$totalGlobale)*100):0;
-				$sheet->setCellValue($col2 . $x, $valTotal);
-				$sheet->getStyle($col2 . $x)->applyFromArray($style_body_valeur);
-				if($i>6)
-					$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
-				$col2 ++;
-				$sheet->setCellValue($col2 . $x, $tauxTotal.'%');
-				$sheet->getStyle($col2 . $x)->applyFromArray($style_body_taux);
-				if($i>6)
-					$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
-			} elseif ($i == 9) {
+						$col2 ++;
+						$sheet->setCellValue($col2 . $x, $tauxTotal.'%');
+						$sheet->getStyle($col2 . $x)->applyFromArray($style_body_taux);
+						if($i>7)
+							$sheet->getStyle($col2 . $x)->applyFromArray($style_solde);
+			} elseif ($i == 10) {
 				/* Partie pour la ligne total soldé */
 				$sheet->setCellValue($col . $x, 'Total Soldé')->getColumnDimension($col)->setAutoSize(true);
 				$sheet->getStyle($col . $x)->applyFromArray($style_solde);
@@ -606,7 +612,7 @@ class Reporting extends PHPExcelAdvanced {
 				$sheet->getStyle($col2 . $x)->applyFromArray($style_solde_taux);
 				$x ++;
 				/* Fin Partie pour la ligne total soldé */
-				
+
 				$sheet->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
 				$sheet->getStyle($col . $x)->applyFromArray($style_tot);
 				$col2 = 'B';
@@ -633,7 +639,7 @@ class Reporting extends PHPExcelAdvanced {
 		}
 		return $sheet;
 	}
-	
+
 	/**
 	 * @param array $arrData
 	 * @param array $data

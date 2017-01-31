@@ -205,14 +205,15 @@ class MappingStatistique
 	
 	public function transfertDonnes(&$arrData, &$value=null,$isNull){
 		if($isNull==false){
-		$arrData['data']['nbAbandon'] = intval($value['nbAbandon']);
-		$arrData['data']['nbDemandeAbandon'] = $value['nbDemandeAbandon'];
-		$arrData['data']['nbFaiteDelai'] = $value['nbFaiteDelai'];
-		$arrData['data']['nbFaiteHorsDelai'] = $value['nbFaiteHorsDelai'];
-		$arrData['data']['nbNonEchue'] = $value['nbNonEchue'];
-		$arrData['data']['nbEchueNonSoldee'] = $value['nbEchueNonSoldee'];
-		$arrData['data']['nbSoldeeHorsDelais'] = $value['nbSoldeeHorsDelais'];
-		$arrData['data']['nbSoldeeDansLesDelais'] = $value['nbSoldeeDansLesDelais'];
+		$arrData['data']['nbAbandon'] = isset($value['nbAbandon']) ? $value['nbAbandon'] :0;
+		$arrData['data']['nbDemandeAbandon'] = isset($value['nbDemandeAbandon']) ? $value['nbDemandeAbandon'] :0;
+		$arrData['data']['nbFaiteDelai'] = isset($value['nbFaiteDelai']) ? $value['nbFaiteDelai'] :0;
+		$arrData['data']['nbFaiteHorsDelai'] = isset($value['nbFaiteHorsDelai']) ? $value['nbFaiteHorsDelai'] :0;
+		$arrData['data']['nbNonEchue'] = isset($value['nbNonEchue']) ? $value['nbNonEchue'] :0;
+		$arrData['data']['nbEchueNonSoldee'] = isset($value['nbEchueNonSoldee']) ? $value['nbEchueNonSoldee'] :0 ;
+		$arrData['data']['nbSoldeeHorsDelais'] = isset($value['nbSoldeeHorsDelais']) ? $value['nbSoldeeHorsDelais'] :0;
+		$arrData['data']['nbSoldeeDansLesDelais'] = isset($value['nbSoldeeDansLesDelais']) ? $value['nbSoldeeDansLesDelais']: 0 ;
+		$arrData['data']['nbActionNouvelle'] = isset($value['nbActionNouvelle']) ? $value['nbActionNouvelle'] :0;
 		$arrData['data']['total'] = $value['total'];
 		} else {
 			$arrData['data']['nbAbandon'] = 0;
@@ -222,7 +223,7 @@ class MappingStatistique
 			$arrData['data']['nbNonEchue'] = 0;
 			$arrData['data']['nbEchueNonSoldee'] =0;
 			$arrData['data']['nbSoldeeHorsDelais'] = 0;
-			$arrData['data']['nbSoldeeDansLesDelais'] =0;
+			$arrData['data']['nbActionNouvelle'] =0;
 			$arrData['data']['total'] = 0;
 		}
 	}
@@ -232,7 +233,7 @@ class MappingStatistique
 		$i=0;
 		if(count($params)>0) {
 			foreach($params as $val) {
-				$data[$i]=array(  'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0,
+				$data[$i]=array(  'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbActionNouvelle' => 0,
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
 						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 				);
@@ -255,7 +256,7 @@ class MappingStatistique
 		if(count($params)>0) {
 			foreach($params as $val) {
 				$data[$i]=array(
-						'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 
+						'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbActionNouvelle' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 
 						'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,	'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 					);
 				if(count($requete['data'])>0) {
@@ -273,7 +274,7 @@ class MappingStatistique
 	
 	public function transformRequeteToSimpleNull(&$requete){
 		$data = array('nbDemandeAbandon' => 0, 'nbAbandon'=>0,
-						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
+						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0, 'nbActionNouvelle' => 0,
 						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 				);
 		if(count($requete)>0) {
@@ -332,6 +333,9 @@ class MappingStatistique
 		if($value['etatCourant']==Statut::ACTION_SOLDEE_HORS_DELAI) {
 			$data['nbSoldeeHorsDelais'] = $value['total'];
 		}
+		if($value['etatCourant']==Statut::ACTION_NOUVELLE) {
+			$data['nbActionNouvelle'] = $value['total'];
+		}
 		$data['total'] +=$value['total'];
 		return $data;
 	}
@@ -340,42 +344,46 @@ class MappingStatistique
 		$data['couleur'] =$value['couleur'];
 		if(!isset($data['porteurs'][$value['user_id']])) {
 			$data['porteurs'][$value['user_id']] = array(
-					'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 
+					'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0,  'nbActionNouvelle' => 0,
 					'nbEchueNonSoldee' =>0, 'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
 				);
 			$data['porteurs'][$value['user_id']]['libelle'] = isset($porteurs[$value['user_id']]) ? $porteurs[$value['user_id']] : null;
 		}
 		if($value['etatCourant']==Statut::ACTION_ABANDONNEE) {
-			$data['nbAbandon'] = $value['total'];
+			$data['nbAbandon'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbAbandon'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_DEMANDE_ABANDON) {
-			$data['nbDemandeAbandon'] = $value['total'];
+			$data['nbDemandeAbandon'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbDemandeAbandon'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_FAIT_DELAI) {
-			$data['nbFaiteDelai'] = $value['total'];
+			$data['nbFaiteDelai'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbFaiteDelai'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_FAIT_HORS_DELAI) {
-			$data['nbFaiteHorsDelai'] = $value['total'];
+			$data['nbFaiteHorsDelai'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbFaiteHorsDelai'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_NON_ECHUE){
-			$data['nbNonEchue'] = $value['total'];
+			$data['nbNonEchue'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbNonEchue'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_ECHUE_NON_SOLDEE) {
-			$data['nbEchueNonSoldee'] = $value['total'];
+			$data['nbEchueNonSoldee'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbEchueNonSoldee'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_SOLDEE_DELAI) {
-			$data['nbSoldeeDansLesDelais'] = $value['total'];
+			$data['nbSoldeeDansLesDelais'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbSoldeeDansLesDelais'] = $value['total'];
 		}
 		if($value['etatCourant']==Statut::ACTION_SOLDEE_HORS_DELAI) {
-			$data['nbSoldeeHorsDelais'] = $value['total'];
+			$data['nbSoldeeHorsDelais'] += $value['total'];
 			$data['porteurs'][$value['user_id']]['nbSoldeeHorsDelais'] = $value['total'];
+		}
+		if($value['etatCourant']==Statut::ACTION_NOUVELLE) {
+			$data['nbActionNouvelle'] += $value['total'];
+			$data['porteurs'][$value['user_id']]['nbActionNouvelle'] = $value['total'];
 		}
 		$data['total'] +=$value['total'];
 		$data['porteurs'][$value['user_id']]['total'] +=$value['total'];

@@ -204,6 +204,11 @@ class PHPExcelAdvanced extends \PHPExcel {
 						) 
 				), $range);
 			}
+			if(isset($styleArray['text_align'])) {
+				$this->getActiveSheet()->getStyle($range)->applyFromArray(array(
+						'alignment' =>  $styleArray['text_align']
+				));
+			}
 		}
 	}
 	
