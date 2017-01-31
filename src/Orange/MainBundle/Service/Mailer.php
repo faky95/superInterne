@@ -34,8 +34,13 @@ class Mailer
     public function notifNewTache($to, $tache) {
     	$mail = \Swift_Message::newInstance();
     	$manager = $tache->getActionCyclique()->getAction()->getPorteur()->getSuperior();
+    	$contributeurs = array();
+    	foreach($tache->getActionCyclique()->getAction()->getContributeur() as $contributeur) {
+    		$contributeurs[] = $contributeur->getUtilisateur()->getEmail();
+    	}
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
+	    	->setCc($contributeurs)
  	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
 	    	->setSubject("Nouvelle tache")
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleTache.html.twig', array('tache' => $tache)))
