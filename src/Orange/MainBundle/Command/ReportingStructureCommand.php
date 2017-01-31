@@ -58,16 +58,6 @@ class ReportingStructureCommand extends BaseCommand {
 		$pas = $em->getRepository('OrangeMainBundle:Pas')->listAllPas()->getQuery()->execute();
 		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
 		$per = array();
-		$statuts = array(
-				'nbAbandon' => 'Abandon',
-				'nbDemandeAbandon' => "Demande d'abandon",
-				'nbFaiteDelai' => "Faite dans les délais",
-				'nbFaiteHorsDelai' => "Faite hors délai",
-				'nbNonEchue' => "Non échue",
-				'nbSoldeeHorsDelais' => 'Soldée hors délai',
-				'nbSoldeeDansLesDelais' => "Soldée dans les délais",
-				'total' => "Total" 
-		);
 		foreach($pas as $value) {
 			$per [$value->getId()] = $value->getLibelle();
 		}
@@ -101,16 +91,16 @@ class ReportingStructureCommand extends BaseCommand {
 				$result = $this->getMailer()->sendReport($dest, $sub, $filename);
 				$chemin = LogsMailUtils::LogOnFileMail($result, $sub, $dest);
 			} catch(\Exception $e) {
-				$this->getMailer()->send(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"), array(), 
+				$this->getMailer()->send(array("madiagne.sylla@orange-sonatel.com", "mamekhady.diouf@orange-sonatel.com"), array(), 
 						"Erreur sur le reporting par instance :: ".$envoi->getReporting()->getLibelle(), $e->getMessage()
 					);
 				continue;
 			}
 		}
 		if(! empty($chemin)) {
-			$send = $this->getMailer()->sendLogsMail("Journal sur les reporting par structures", $this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig", array(
+			$this->getMailer()->sendLogsMail("Journal sur les reporting par structures", $this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig", array(
 					'libelle' => " reportings par structure" 
-			)), $chemin);
+				)), $chemin);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

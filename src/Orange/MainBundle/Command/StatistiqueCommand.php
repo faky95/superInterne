@@ -6,7 +6,6 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Command\BaseCommand;
-use Orange\MainBundle\Query\ActionQuery;
 
 class StatistiqueCommand extends BaseCommand
 {
@@ -29,7 +28,6 @@ class StatistiqueCommand extends BaseCommand
 		$tempRow = array('annee' => date("Y", strtotime("-7 day", strtotime($today))));
 		$connexion = $this->get('database_connection');
 		ini_set('memory_limit','256M');
-		$all = $input->getArgument('all');
 		$em = $this->getEntityManager();
 		$stats = $em->getRepository('OrangeMainBundle:Action')->getAllActions();
 		$em->getRepository('OrangeMainBundle:Statistique')->createQueryBuilder('s')->delete()

@@ -48,8 +48,6 @@
 										 <p style="text-align: justify;">{{ entity.action.description }}</p>  
                                 	</ul>
                                 </div>
-                                {{ render(controller('OrangeMainBundle:ActionStatut:traitement', { 'action_id': entity.action.id })) }}
-                                
                                 <div class="you col-lg-12 col-md-6 col-sm-6">                        
 									<div class="panel panel-default">
 									    <div class="panel-heading" style="background:#FFFFFF">
@@ -63,10 +61,11 @@
 									        <table class="table table-bordered">
 									            <thead>
 									              <tr style="background:#FFFFFF" align="center">
-									                <td><strong>Date de début</strong></td>
-									                <td><strong>Date de fin</strong></td>
-									                <td><strong>Etat</strong></td>
-									                <td><strong>Action</strong></td>
+									                <th width="100px"><strong>Référence</strong></th>
+									                <th width="180px"><strong>Date de début</strong></th>
+									                <th width="180px"><strong>Date de fin</strong></th>
+									                <th><strong>Etat</strong></th>
+									                <th width="150px"><strong>Action</strong></th>
 									              </tr>
 									            </thead>
 									            <tbody>
@@ -76,48 +75,54 @@
  										            	{% set tacheStatutKey  = tache.tacheStatut|length - 1 %}
 {#  													{% set statut =  tache.tacheStatut[tacheStatutKey].statut.code %}#}
 														
-														{% if statutTacheCode == 'TACHE_NON_ECHUE_SOLDER' %}
+														{% if statutTacheCode == 'ACTION_SOLDEE_DELAI' %}
 															{% set color = '#DDFDF9' %}
-															{% set libelle = 'tâche non échue soldée' %}
-														{% elseif statutTacheCode == 'TACHE_ECHUE_NON_SOLDER' %}
+															{% set libelle = 'non échue soldée' %}
+														{% elseif statutTacheCode == 'ACTION_ECHUE_NON_SOLDEE' %}
 															{% set color = '#FDF1E9' %}
-															{% set libelle = 'tâche échue non soldée' %}
-														{% elseif statutTacheCode == 'TACHE_NON_ECHUE_NON_SOLDE' %}
+															{% set libelle = 'échue non soldée' %}
+														{% elseif statutTacheCode == 'ACTION_NON_ECHUE' %}
 															{% set color = '#ECFDE9' %}
-															{% set libelle = 'tâche non échue non soldée' %}
-														{% elseif statutTacheCode == 'TACHE_FAITE' %}
-															{% set libelle = 'tâche faite' %}
+															{% set libelle = 'non échue' %}
+														{% elseif statutTacheCode == 'ACTION_FAIT_DELAI' or statutTacheCode == 'ACTION_FAIT_HORS_DELAI' %}
+															{% set libelle = 'faite' %}
 															{% set color = '#E9F1FD' %}
-														{% elseif statutTacheCode == 'TACHE_ECHUE_SOLDER' %}
+														{% elseif statutTacheCode == 'ACTION_SOLDEE_HORS_DELAI' %}
 															{% set color = '#F7FEF1' %}
-															{% set libelle = 'tâche échue soldee' %}
+															{% set libelle = 'échue soldee' %}
+														{% elseif statutTacheCode == 'ACTION_DEMANDE_ABANDON' %}
+															{% set color = '#EAB9B9' %}
+															{% set libelle = "en demande d'abandon" %}
 														{% else %}
 															{% set color = '#FFFFFF' %}
 															{% set libelle = 'non defini' %}
 														{% endif %}
 										              <tr bgcolor={{ color }}>
-										                <td width="200px">{{ tache.dateDebut| localizeddate('full', 'none') }} à  {{ tache.dateDebut|date('H:i:s') }}</td>
-										                <td width="200px">{{ tache.dateCloture| localizeddate('full', 'none') }} à  {{ tache.dateCloture|date('H:i:s') }}</td>
-										                <td width="100px">{{ libelle }}</td>
-										                <td width="200px">
-										                	{% if ( statutTacheCode == 'TACHE_NON_ECHUE_NON_SOLDE' or statutTacheCode == 'TACHE_ECHUE_NON_SOLDER' ) and has_rights('ROLE_PORTEUR') and app.user.id == entity.action.porteur.id and "now"|date('Ymd') >= tache.dateDebut|date('Ymd') %}
-									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'FAITE'})}}" title="Tâche exécutée !">
+										                <td>{{ tache.reference }}</td>
+										                <td>{{ tache.dateDebut| localizeddate('full', 'none') }}</td>
+										                <td>{{ tache.dateInitial| localizeddate('full', 'none') }}</td>
+										                <td>{{ libelle }}</td>
+										                <td>
+										                	{% if(statutTacheCode == 'ACTION_NON_ECHUE' or statutTacheCode == 'ACTION_ECHUE_NON_SOLDEE') and has_rights('ROLE_PORTEUR') and app.user.id == entity.action.porteur.id %}
+									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'EVENEMENT_DEMANDE_SOLDE'})}}" title="Marquer comme faite !">
 																	<button class="btn btn-success">
 																		<span class="icon16  icomoon-icon-thumbs-up white"></span>
-																		Faite
 																	</button>
 																</a>
-															{% elseif statutTacheCode == 'TACHE_FAITE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.action.porteur.id %}
-									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'SOLDER'})}}" title="Solder cette tâche !">
-																	<button class="btn btn-success">
-																		<span class="icon16  icomoon-icon-thumbs-up white"></span>
-																		Soldé
-																	</button>
-																</a>
-																<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'NON_SOLDER'})}}" title="Ne pas solder cette tâche !">
+									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'EVENEMENT_DEMANDE_ABANDON'})}}" title="Demander un abandon !">
 																	<button class="btn btn-warning">
 																		<span class="icon16  icomoon-icon-thumbs-down white"></span>
-																		Non Soldé
+																	</button>
+																</a>
+															{% elseif (statutTacheCode == 'ACTION_FAIT_DELAI' or statutTacheCode == 'ACTION_FAIT_HORS_DELAI' or statutTacheCode == 'ACTION_DEMANDE_ABANDON') and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.action.porteur.id %}
+									                			<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'EVENEMENT_VALIDER'})}}" title="Valider cette demande !">
+																	<button class="btn btn-success">
+																		<span class="icon16  icomoon-icon-thumbs-up white"></span>
+																	</button>
+																</a>
+																<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('tachestatut_new', {'tache_id': tache.id, 'etat': 'EVENEMENT_INVALIDER'})}}" title="Ne pas valider cette demande !">
+																	<button class="btn btn-warning">
+																		<span class="icon16  icomoon-icon-thumbs-down white"></span>
 																	</button>
 																</a>
  											                {% else %}
@@ -131,10 +136,7 @@
  									    </div>
  									</div><!-- End .panel -->
  								</div><!-- End .span12 -->
-                             
- 		                     <!-- Here controller for historique of all actions --> 
- 			                     {{ render(controller('OrangeMainBundle:ActionStatut:historique', { 'action_id': entity.action.id })) }}
- 	                            </div>
+ 	                         </div>
                          </div><!-- End .panel -->
                      </div>
                  </div><!-- End .row -->

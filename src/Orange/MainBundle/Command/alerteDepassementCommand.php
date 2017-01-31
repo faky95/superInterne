@@ -22,24 +22,19 @@ class alerteDepassementCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
-		$states = $this->getContainer()->getParameter('states');
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
 		$data = $this->get('orange.main.data')->mapDataforAlertDepassement($actions);
 		foreach($data['user'] as $user) {
-			$nbr =  count($user['action']);
-			$to = $user['email_porteur'];
-			$cc = array($user['manager'], $user['animateur']);
 			$subject = 	"Notification de rappel d'echeances";
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alertDepassement.html.twig', array(
-						'porteur' => $user['porteur'], 'actions' => $user['action'],'nbr' => $nbr,
+						'porteur' => $user['porteur'], 'actions' => $user['action'],'nbr' => count($user['action']),
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$result = $this->getMailer()->send($to, $cc, $subject, $body);
-			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($to),$cc,$nbr);
+			$result = $this->getMailer()->send($user['email_porteur'], array($user['manager'], $user['animateur']), $subject, $body);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($user['email_porteur']), array($user['manager'], $user['animateur']), count($user['action']));
 		}
-		if (!empty($chemin)){
-			$send = $this->getMailer()->sendLogsMail(
-					"Journal sur les relances des rappels d'échéances ",
+		if(!empty($chemin)) {
+			$this->getMailer()->sendLogsMail("Journal sur les relances des rappels d'échéances",
 					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
 							array('libelle'=>"rappel d'échéances")),$chemin);
 		}

@@ -7,23 +7,14 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\Action;
-use Orange\MainBundle\Form\ActionType;
-use Orange\MainBundle\Entity\TypeStatut;
 use Orange\MainBundle\Entity\Statut;
-use Orange\MainBundle\Utils\SignalisationUtils;
-use Orange\MainBundle\Utils\ActionUtils;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Orange\MainBundle\Criteria\ActionCriteria;
 use Orange\QuickMakingBundle\Controller\BaseController;
 use Doctrine\ORM\QueryBuilder;
-use Orange\MainBundle\Form\LoadingType;
 use Orange\MainBundle\Entity\Utilisateur;
-use Orange\MainBundle\Criteria\StatistiqueActionCriteria;
-use Orange\MainBundle\Criteria\StatistiqueCriteria;
 use Orange\MainBundle\Entity\Reporting;
-use Orange\MainBundle\Form\ReportingType;
 use Orange\MainBundle\Entity\Statistique;
-use Orange\QuickMakingBundle\Annotation\QMLogger;
+
 class StatistiqueController extends BaseController
 {
 
@@ -61,21 +52,20 @@ class StatistiqueController extends BaseController
     }
     
     /**
-     *  @Route("/tableauStatUtilisateur", name="tableauStatUtilisateur")
-     *  @Method("GET")
+     * @Route("/tableauStatUtilisateur", name="tableauStatUtilisateur")
+     * @Method("GET")
      * @Template()
-     *
      */
-    public function tableauStatistiqueUtilisateurAction(){
+    public function tableauStatistiqueUtilisateurAction() {
     	$init=array();
     	$criteria=null;
-    	$em=$this->getDoctrine()->getManager();
-    	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
-    	$bu=$this->getUser()->getStructure()->getBuPrincipal();
-    	$instancesP=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->porteurQueryBuilder($init)->addSelect('i7.libelle')->distinct()->getQuery()->getArrayResult();
+    	$em = $this->getDoctrine()->getManager();
+    	$instancesP = $em->getRepository('OrangeMainBundle:Instance')->porteurQueryBuilder($init)
+    			->addSelect('i7.libelle')->distinct()
+    			->getQuery()->getArrayResult();
     	$statsP = $this->statistiqueByType("instance", Utilisateur::ROLE_PORTEUR, $instancesP, $criteria);
     	
-    	$instancesC=$this->getDoctrine()->getRepository('OrangeMainBundle:instance')->getInstancesEnConributions($this->getUser()->getId());
+    	$instancesC=$em->getRepository('OrangeMainBundle:instance')->getInstancesEnConributions($this->getUser()->getId());
     	$statsC = $this->statistiqueByType("instance", Utilisateur::ROLE_CONTRIBUTEUR, $instancesC, $criteria);
     	
     	$statutsM=$this->getStatus();
@@ -83,10 +73,10 @@ class StatistiqueController extends BaseController
     	
     	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
     		$id=$this->getUser()->getStructure()->getId();
-    		$structures=$this->getDoctrine()->getRepository('OrangeMainBundle:Structure')
+    		$structures=$em->getRepository('OrangeMainBundle:Structure')
     										->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
     		$statsM = $this->statistiqueByType("structure", Utilisateur::ROLE_MANAGER, $structures, $criteria);
-    		foreach ($statsM['taux'] as $key => $taux){
+    		foreach ($statsM['taux'] as $key => $taux) {
     			$statutsM[$key] = $key;
     		}
     	}
@@ -95,17 +85,15 @@ class StatistiqueController extends BaseController
     			'statut'=>$statuts, 'statutM'=>$statutsM, 'statsP'=>$statsP, 'statut'=> $statuts, 'statsC'=>$statsC, 'statsM'=>$statsM, 'nbTaux'=>$this->getNombreTaux(),
     		);
     }
-     
     
     /**
      * @Route("/tableauStatUtilisateurEv", name="tableauStatUtilisateurEv")
-     *  @Method("GET")
+     * @Method("GET")
      * @Template()
-     *
      */
-    public function tableauStatistiqueEvoUtilisateurAction(){
+    public function tableauStatistiqueEvoUtilisateurAction() {
     	$criteria=null;
-    	$index=0; $init=array();
+    	$init=array();
     	$semaines=$this->createArrSemaine();
     	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Statistique');
     	$bu=$this->getUser()->getStructure()->getBuPrincipal();
@@ -118,35 +106,27 @@ class StatistiqueController extends BaseController
     	$dataEvC = $this->container->get('orange.main.calcul')->stats($bu, $reqEvC);
     	$statsEvC = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($dataEvC, 'semaine');
     	$statsEvM=array();
-    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)){
+    	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
     		$id=$this->getUser()->getStructure()->getId();
     		$structures=$this->getDoctrine()->getRepository('OrangeMainBundle:Structure')->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
     		$statsEvM=$this->createTableauEvoByType($structures, "structure",$criteria);
     	}
     	$statsEvAd=array();
-    	if($this->getUser()->hasRole(Utilisateur::ROLE_ADMIN)){
+    	if($this->getUser()->hasRole(Utilisateur::ROLE_ADMIN)) {
     		$structures = $bu->getStructureInDashboardAsArray();
     		$statsEvAd = $this->createTableauEvoByType($structures, "structure",$criteria);
     	}
     
     	$statsEvAn=array();
-    	if($this->getUser()->hasRole(Utilisateur::ROLE_ANIMATEUR)){
+    	if($this->getUser()->hasRole(Utilisateur::ROLE_ANIMATEUR)) {
     		$instances=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->animateurQueryBuilder($init)->addSelect('i3.libelle')->getQuery()->getArrayResult();
     		$statsEvAn = $this->createTableauEvoByType($instances, "instance",$criteria);
     	}
-    
     	$statuts=$this->getStatus();
-    
     	return array(
-    			'statut'=>$statuts,
-    			'statsEvP'=>$reqEvP?$statsEvP:$reqEvP,
-    			'statsEvC'=>$reqEvC?$statsEvC:$reqEvC,
-    			'statsEvM'=>$statsEvM,
-    			'statsEvAd'=>$statsEvAd,
-    			'statsEvAn'=>$statsEvAn,
-    			'semaines'=>$semaines,
-    			'nbTaux'=>$this->getNombreTaux(),
-    	);
+    			'statut'=>$statuts, 'statsEvP'=>$reqEvP?$statsEvP:$reqEvP, 'statsEvC'=>$reqEvC?$statsEvC:$reqEvC, 'statsEvM'=>$statsEvM, 
+    			'statsEvAd'=>$statsEvAd, 'statsEvAn'=>$statsEvAn, 'semaines'=>$semaines, 'nbTaux'=>$this->getNombreTaux(),
+    		);
     }
        
     /**
@@ -154,20 +134,15 @@ class StatistiqueController extends BaseController
      * @Method("GET")
      * @Template()
      */
-    public function tableauStatistiqueAdminAction(){
+    public function tableauStatistiqueAdminAction() {
     	$criteria=null;
     	$structures = $this->getUser()->getstructure()->getBuPrincipal()->getStructureInDashboardAsArray();
     	$stats = $this->statistiqueByType("structure", Utilisateur::ROLE_ADMIN, $structures, $criteria);
     	$statuts=$this->getStatus();
-    	foreach ($this->effectifs as $key => $eff){
+    	foreach ($this->effectifs as $key => $eff) {
     		$statuts[$key] = $eff;
     	}
-    	return array(
-    			'stats'=>$stats,
-    			'statut'=>$statuts,
-    			'effectif'=>$this->effectifs,
-    			'nbTaux'=>$this->getNombreTaux(),
-    	);
+    	return array('stats'=>$stats, 'statut'=>$statuts, 'effectif'=>$this->effectifs, 'nbTaux'=>$this->getNombreTaux());
     }
     
    
@@ -183,17 +158,17 @@ class StatistiqueController extends BaseController
         $stats=$em->getRepository("OrangeMainBundle:Signalisation")->statsGroupByCode()->getQuery()->getArrayResult();
         $statsSign=array('Cloture'=>array(), 'Efficace'=>array(), 'Non efficace'=>array(), 'En cours'=>array(), 'abandonne'=>array());
         $total          = intval($em->getRepository("OrangeMainBundle:Signalisation")->totalSignalisation());
-        foreach ($stats as $stat){
-        	if ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_EFFICACEMENT){
+        foreach ($stats as $stat) {
+        	if ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_EFFICACEMENT) {
         		$val=$statsSign['Efficace']['nombre']=intval($stat['total']);
         		$statsSign['Efficace']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_NON_EFFICACEMENT){
+        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_NON_EFFICACEMENT) {
         		$val=$statsSign['Non efficace']['nombre']=intval($stat['total']);
         		$statsSign['Non efficace']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_VALIDER){
+        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_VALIDER) {
         		$val=$statsSign['En cours']['nombre']=intval($stat['total']);
         		$statsSign['En cours']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_ABANDONNER){
+        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_ABANDONNER) {
         		$val=$statsSign['abandonne']['nombre']=intval($stat['total']);
         		$statsSign['abandonne']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
         	}
@@ -208,18 +183,15 @@ class StatistiqueController extends BaseController
      * @Route("/tableauStatistiqueAnimateur", name="tableauStatistiqueAnimateur")
      * @Template()
      */
-    public function tableauStatistiqueAnimateurAction(Request $request){
+    public function tableauStatistiqueAnimateurAction(Request $request) {
         $criteria=null;
         $data=array();
         $instances=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->animateurQueryBuilder($data)->addSelect('i3.libelle')->getQuery()->getArrayResult();
 		$stats = $this->statistiqueByType("instance", Utilisateur::ROLE_ANIMATEUR, $instances, $criteria);
         $statuts=$this->getStatus();
-        return $this->render("OrangeMainBundle:Statistique:simple_tableau_stats.html.twig",
-        		 array('statut'   => $statuts,
-                       'stats'    =>$stats,
-        		 	   'type'	  =>'instance',
-        		 	   'nbTaux'	  =>$this->getNombreTaux(),
-        ));
+        return $this->render("OrangeMainBundle:Statistique:simple_tableau_stats.html.twig", array(
+        		'statut' => $statuts, 'stats' => $stats, 'type'	=> 'instance', 'nbTaux' => $this->getNombreTaux()
+        	));
     }
     
     /**
@@ -230,7 +202,7 @@ class StatistiqueController extends BaseController
      */
     public function statsGeneraleAction(Request $request,$role=4) {
     	$tabRoles=array(Utilisateur::ROLE_ADMIN, Utilisateur::ROLE_ANIMATEUR, Utilisateur::ROLE_MANAGER,
-    					Utilisateur::ROLE_RAPPORTEUR, Utilisateur::ROLE_PORTEUR, Utilisateur::ROLE_CONTRIBUTEUR );
+    					Utilisateur::ROLE_RAPPORTEUR, Utilisateur::ROLE_PORTEUR, Utilisateur::ROLE_CONTRIBUTEUR);
     	$tabByInstance=array();
     	$tabByStructure=array();
     	$tabCroise=array();
@@ -254,69 +226,60 @@ class StatistiqueController extends BaseController
     	//var_dump($structures);exit;
     	$form=$this->createForm(new ActionCriteria(), null, array('attr'=>array( 'structures'=> $repStruct->getStructureByRole($tabRoles[$role]), 'instances'=>$repInst->getInstanceByRole($tabRoles[$role]) )));
     	$form->handleRequest($request);
-    	if(($request->getMethod()=='POST') && $form->getData()){
+    	if(($request->getMethod()=='POST') && $form->getData()) {
     		$this->get('session')->set('action_criteria', $request->request->get($form->getName()));
-    		if(count($form->getData()->instances)>0){
+    		if(count($form->getData()->instances)>0) {
     			$insts=$form->getData()->instances;
 	    		$instances=array();
-	    		foreach($insts as $k=>$val)
+	    		foreach($insts as $val)
 	    			$instances[]=array('id'=>$val->getId(), 'libelle'=>$val->getLibelle());
     		}
-    		if($form->getData()->getStructure()){
+    		if($form->getData()->getStructure()) {
     			$str=$form->getData()->getStructure()->getId();
     			$structures=$repStruct->getStructureAndStructureDirecteByStructure($str)->getQuery()->getArrayResult();
     		}
     	}
     	$tabByInstance = $this->statistiqueByType('instance', $tabRoles[$role], $instances, $form->getData());
-    	foreach ($tabByInstance['taux'] as $key => $taux){
+    	foreach ($tabByInstance['taux'] as $key => $taux) {
     		$graphe[$key]=array();
     	}
     	$graphe=$this->createGraphe($tabByInstance['instance'],$graphe);
     	if($structures!=null)
     		$tabByStructure= $this->statistiqueByType('structure', $tabRoles[$role], $structures, $form->getData());
-    	if($tabRoles[$role]==Utilisateur::ROLE_MANAGER){
+    	if($tabRoles[$role]==Utilisateur::ROLE_MANAGER) {
     		$graphe=array();
     		foreach ($tabByStructure['taux'] as $key => $taux)
     			$graphe[$key]=array();
     		$graphe=$this->createGraphe($tabByStructure['structure'],$graphe);	
     	}
-    	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR){
+    	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR) {
      			$req=$this->getDoctrine()->getRepository('OrangeMainBundle:Action')->getStatsByStructureInstance($tabRoles[$role],$form->getData());
      			$map=$this->container->get('orange.main.dataStats')->transformRequeteToCroise($req,$structures,$instances);
      			$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
      			$tabCroise = $this->container->get('orange.main.dataStats')->mappingDataStatsCroise($data, 'structure','instance',$structures,$instances);
      			$graphe=$this->createManyGrapheStat($tabCroise,'structure','instance');
     	}
-    	if($tabByInstance['instance']){
+    	if($tabByInstance['instance']) {
     		$tmp_inst = 1;
     	}else{
     		$tmp_inst = 0;
     	}
-    	if ($tabByStructure){
+    	if ($tabByStructure) {
     		$tmp_struct = 1;
     	}else{
     		$tmp_struct = 0;
     	}
     	return array(
-    			'form'=>$form->createView(),
-    			'nbTaux'=>$this->getNombreTaux(),
-    			'tabByInstance'=>$tabByInstance,
-    			'tabByStructure'=>$tabByStructure,
-    			'tabCroise'=>$tabCroise,
-    			'statut'=>$this->getStatus(),
-    			'role'=>$role,
-    			'instances'=>$instances,
-    			'graphe'=>$graphe,
-    			'structures'=>$structures,
-    			'tmp_inst' => $tmp_inst,
-    			'tmp_struct' => $tmp_struct
-    	);
+    			'form'=>$form->createView(), 'nbTaux'=>$this->getNombreTaux(), 'tabByInstance'=>$tabByInstance, 'tabByStructure'=>$tabByStructure, 
+    			'tabCroise'=>$tabCroise, 'statut'=>$this->getStatus(), 'role'=>$role, 'instances'=>$instances, 'graphe'=>$graphe,
+    			'structures'=>$structures, 'tmp_inst' => $tmp_inst, 'tmp_struct' => $tmp_struct
+    		);
     }
     
     /**
      * @param unknown $type
      */
-    public function statistiqueByType($type, $role, $arrType,$criteria){
+    public function statistiqueByType($type, $role, $arrType,$criteria) {
     	$tableau=array();
     	$bu=$this->getUser()->getStructure()->getBuPrincipal();
     	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
@@ -369,20 +332,20 @@ class StatistiqueController extends BaseController
     	$graphe=array();
     	$structures=null;
     	
-    	if ($tabRoles[$role]==Utilisateur::ROLE_ADMIN){
+    	if ($tabRoles[$role]==Utilisateur::ROLE_ADMIN) {
     		$structures=$repStruct->getStructureAndStructureDirecteByStructure($this->getUser()->getStructure()->getRoot())->getQuery()->getArrayResult();
-    	}elseif ($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR){
+    	}elseif ($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR) {
     		$instances=$repInst->animateurQueryBuilder($init)->addSelect('i3.libelle')->getQuery()->getArrayResult();
     		
-    	}elseif ($tabRoles[$role]==Utilisateur::ROLE_MANAGER){
+    	}elseif ($tabRoles[$role]==Utilisateur::ROLE_MANAGER) {
 			$structures=$repStruct->getStructureAndStructureDirecteByStructure($this->getUser()->getStructure()->getId())->getQuery()->getArrayResult();
-    	}elseif($tabRoles[$role]==Utilisateur::ROLE_RAPPORTEUR){
+    	}elseif($tabRoles[$role]==Utilisateur::ROLE_RAPPORTEUR) {
     		$structures=$repStruct->rapporteurQueryBuilder($init)->addSelect('s8.libelle')->getQuery()->getArrayResult();
     	}
     	$form = $this->createForm($this->get('orange.main.statistique_criteria'), null, array('attr'=>array( 'structures'=> $repStruct->getStructureByRole($tabRoles[$role]), 'instances'=>$repInst->getInstanceByRole($tabRoles[$role]) )));
     	$form->handleRequest($request);
     	
-    	if ($tabRoles[$role]==Utilisateur::ROLE_CONTRIBUTEUR){
+    	if ($tabRoles[$role]==Utilisateur::ROLE_CONTRIBUTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 2, $form->getData());
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
     		$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($data, 'semaine');
@@ -390,13 +353,13 @@ class StatistiqueController extends BaseController
     	
     	if(($request->getMethod()=='POST') && $form->getData()) {
     		$this->get('session')->set('statistique_criteria', $request->request->get($form->getName()));
-    		if(count($form->getData()->instances)>0){
+    		if(count($form->getData()->instances)>0) {
     			$insts=$form->getData()->instances;
 	    		$instances=array();
-	    		foreach($insts as $k=>$val)
+	    		foreach($insts as $val)
 	    			$instances[]=array('id'=>$val->getId(), 'libelle'=>$val->getLibelle());
     		}
-    		if($form->getData()->getStructure()!=null){
+    		if($form->getData()->getStructure()!=null) {
     				$str=$form->getData()->getStructure()->getId();
     				$structures=$repStruct->getStructureAndStructureDirecteByStructure($str)->getQuery()->getArrayResult();
     	   }
@@ -405,12 +368,12 @@ class StatistiqueController extends BaseController
     		$stats = $this->createTableauEvoByType($structures, "structure", $form->getData());
 	    	$graphe=$this->createManyGrapheEvo($stats, $structures,'structure');
     	}
-    	if($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR){
+    	if($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR) {
     		$stats = $this->createTableauEvoByType($instances, "instance",$form->getData());
     		$graphe=$this->createManyGrapheEvo($stats, $instances,'instance');
     	}
     	
-    	if($tabRoles[$role]==Utilisateur::ROLE_PORTEUR){
+    	if($tabRoles[$role]==Utilisateur::ROLE_PORTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 1, $form->getData());
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
     		$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($data, 'semaine');
@@ -422,9 +385,9 @@ class StatistiqueController extends BaseController
     		);
     }
     
-    public function mapIds($data){
+    public function mapIds($data) {
     	$array = array();
-    	foreach($data as $value){
+    	foreach($data as $value) {
     		array_push($array, $value['id']);
     	}
     	return $array;
@@ -459,7 +422,7 @@ class StatistiqueController extends BaseController
      * @Route("/reporting_structure", name="reporting_structure")
      * @Template()
      */
-    public function reportingStructureAction(Request $request){
+    public function reportingStructureAction(Request $request) {
     	$em = $this->getDoctrine()->getEntityManager();
     	$queryBuilder =$this->get('session')->get('donnees_reporting_actions_structure' );
     	$query = $em->createQuery($queryBuilder['query']);
@@ -483,7 +446,7 @@ class StatistiqueController extends BaseController
      */
     public function newReportingAction($type)
     {
-		if($type == 2){
+		if($type == 2) {
 			$req = $this->get('session')->get('reporting_instance', array());
 			$query = $this->get('session')->get('donnees_reporting_actions_instance', array());
 			$tp = $req['tp'];
@@ -495,7 +458,7 @@ class StatistiqueController extends BaseController
 		$param  = array();
 		$parameters = array();
 		foreach($query['param'] as $value) {
-			if(is_numeric($value->getValue()) || is_array($value->getValue()) ){
+			if(is_numeric($value->getValue()) || is_array($value->getValue()) ) {
 				$param[$value->getName()] = $value->getValue();
 			}
 			else
@@ -503,7 +466,7 @@ class StatistiqueController extends BaseController
 		}
 		
     	foreach($req['param'] as $value) {
-    		if(is_numeric($value->getValue()) || is_array($value->getValue()) ){
+    		if(is_numeric($value->getValue()) || is_array($value->getValue()) ) {
     			$parameters[$value->getName()] = $value->getValue();
     		}
     		else
@@ -518,11 +481,7 @@ class StatistiqueController extends BaseController
 		$entity->setQuery($query['query']);
 		
     	$form   = $this->createCreateForm($entity,'Reporting');
-    	return array(
-    			'entity' => $entity,
-    			'tp' => $tp,
-    			'form'   => $form->createView(),
-    	);
+    	return array('entity' => $entity, 'tp' => $tp, 'form'   => $form->createView());
     }
     
     /**
@@ -544,28 +503,21 @@ class StatistiqueController extends BaseController
     		$em->persist($entity);
     		$em->flush();
     		// envoie de mail pour notifier de la creation du reporting
-    		$to = $this->getUser()->getEmail();
-    		$result = $this->container->get('orange.main.mailer')->sendNotifReport($to, $entity, $this->getUser());
-    		$this->get('session')->getFlashBag()->add('success', array (
-    				'title' => 'Notification',
-    				'body' => 'le reporting a étè créée avec succes'
-    		));
+    		$this->container->get('orange.main.mailer')->sendNotifReport($this->getUser()->getEmail(), $entity, $this->getUser());
+    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' => 'Le reporting a étè créé avec succés'));
  			return $this->redirect($this->generateUrl('les_reportings'));
-    		
     	}
-    	return $this->render('OrangeMainBundle:Statistique:newReporting.html.twig',
-    			array(
-    					'entity' => $entity,
-    					'form'   => $form->createView(),
+    	return $this->render('OrangeMainBundle:Statistique:newReporting.html.twig', array(
+    					'entity' => $entity, 'form'   => $form->createView(),
     			), new \Symfony\Component\HttpFoundation\Response(null,303));
     }
     
 	
-    public function getSemaines(){
+    public function getSemaines() {
         $semaines=array();
-        for($s=1;$s<=date("W");$s++)
+        for($s=1;$s<=date("W");$s++) {
             $semaines[$s-1]=$s;
-        
+        }
         return $semaines;
     }
 	
@@ -582,21 +534,21 @@ class StatistiqueController extends BaseController
     /**
      * Pour recuperer le nombre de ligne dans les tableaux  
      */
-    public function getNombreTaux(){
+    public function getNombreTaux() {
     	return count($this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->findBy(array('visibilite'=>true, 'bu'=>$this->getUser()->getStructure()->getBuPrincipal())));
     }
     
-    public function createManyGrapheStat($stats,$lib,$lib1){
+    public function createManyGrapheStat($stats,$lib,$lib1) {
     	$graphe=array();
-    	foreach ($stats[$lib] as $key => $values){
+    	foreach ($stats[$lib] as $key => $values) {
     		$graphe[$key]=array();
-    		foreach ($values['taux']  as $cle1 => $taux){
+    		foreach ($values['taux']  as $cle1 => $taux) {
     			$graphe[$key][$cle1]=array();
     		}
     	}
-    	foreach ($stats[$lib] as $key=>$values){
-    		foreach($values[$lib1] as  $cle=>$val){
-    			foreach ($val['data'] as $cle1=>$dt){
+    	foreach ($stats[$lib] as $key=>$values) {
+    		foreach($values[$lib1] as $val) {
+    			foreach ($val['data'] as $cle1=>$dt) {
     				if(isset($graphe[$key][$cle1]))
     					$graphe[$key][$cle1][]=$dt;
     			}
@@ -605,26 +557,26 @@ class StatistiqueController extends BaseController
     	}
     	return  $graphe;
     }
-    public function createGraphe($stats,$graphe){
-    	foreach ($stats as $key=>$values){
+    public function createGraphe($stats,$graphe) {
+    	foreach ($stats as $values) {
     		$i=0;
-    		foreach ($values['data'] as $cle=>$val){
+    		foreach ($values['data'] as $cle=>$val) {
     			if(isset($graphe[$cle]))
     				$graphe[$cle][]=$val;
     		}
     	}
     	return $graphe;
     }
-    public function createManyGrapheEvo($stats,$params,$lib){
+    public function createManyGrapheEvo($stats,$params,$lib) {
     	$graphe=array();
-    	foreach ($params as $par){
+    	foreach ($params as $par) {
     		$graphe[$par['libelle']]=array();
-    		foreach($stats[$lib][$par['libelle']]['taux'] as $key => $values){
+    		foreach($stats[$lib][$par['libelle']]['taux'] as $key => $values) {
     			$graphe[$par['libelle']][$key]=array();
     		}
     	}
-    	foreach ($stats[$lib] as $key=>$values){
-    		foreach($values['semaine'] as  $cle=>$val){
+    	foreach ($stats[$lib] as $key=>$values) {
+    		foreach($values['semaine'] as  $val) {
     			foreach ($val['data'] as $c=>$v)
     				if(isset($graphe[$key][$c]))
     					$graphe[$key][$c][]=$v;
@@ -633,14 +585,14 @@ class StatistiqueController extends BaseController
     	return $graphe;
     }
     
-    public function createGrapheEvo($stats){
+    public function createGrapheEvo($stats) {
     	$graphe=array();
-    	foreach($stats['taux'] as $key=>$value){
+    	foreach($stats['taux'] as $key=>$value) {
     		$graphe[$key]=array();
     	}
-    	foreach ($stats['semaine'] as $key=>$values){
+    	foreach ($stats['semaine'] as $key=>$values) {
     		$i=0;
-    		foreach ($values['data'] as $cle=>$val){
+    		foreach ($values['data'] as $cle=>$val) {
     			if(isset($graphe[$cle]))
     				$graphe[$cle][]=$val;
     		}
@@ -648,9 +600,9 @@ class StatistiqueController extends BaseController
     	return  $graphe;
     }
     
-    public function createArrSemaine(){
+    public function createArrSemaine() {
     	$semaines=array(); $index=0;
-    	for($i=1;$i<=Date('W');$i++){
+    	for($i=1;$i<=Date('W');$i++) {
     		$semaines[$index]['id']=$i;
     		$semaines[$index]['libelle']=$i;
     		$index++;
@@ -658,11 +610,11 @@ class StatistiqueController extends BaseController
     	return $semaines;
     }
     
-    public function getStatus(){
+    public function getStatus() {
     	$formule=$this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->getTauxStats();
     	$statuts=$this->statuts;
     	if(count($formule)>0)
-	    	foreach ($formule as $key=>$form)
+	    	foreach ($formule as $form)
 	    		$statuts[$form['libelle']]=$form['libelle'];
     	return $statuts;
     		
@@ -673,12 +625,12 @@ class StatistiqueController extends BaseController
      * @param string $type 
      * le type est soit instance ou structure
      */
-    public function createTableauEvoByType(&$params, $type,$criteria){
+    public function createTableauEvoByType(&$params, $type,$criteria) {
     	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Statistique');
     	$bu=$this->getUser()->getStructure()->getBuPrincipal();
     	$semaines=$this->createArrSemaine();
     	$stats=array();
-    	switch ($type){
+    	switch ($type) {
     		case 'instance':
     			$req=$rep->getStatistiqueEvolutiveByInstance($criteria)->getQuery()->getArrayResult();
     			$data = $this->container->get('orange.main.calcul')->stats($bu, $req);

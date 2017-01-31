@@ -31,7 +31,7 @@ class nouvelleActionCommand extends BaseCommand {
 			$subject = 'Prise en charge d\'une action';
 			$body = array('action' => $action['body'],
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true));
-            $result = $this->getMailer()->sendRelanceNewAction($to, $cc, $subject, $body);
+            $this->getMailer()->sendRelanceNewAction($to, $cc, $subject, $body);
 		}
 			
 		$output->writeln(utf8_encode('Yes! ça marche'));

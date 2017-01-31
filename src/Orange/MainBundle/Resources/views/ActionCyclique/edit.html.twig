@@ -72,15 +72,15 @@
         </div>
     </div><!-- End .span12 -->
 </div><!-- End .row -->
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: edit_form.action.instance, child: edit_form.action.typeAction, url: path('type_by_instance'), key: 'id' } 
-		%}
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: edit_form.action.instance, child: edit_form.action.domaine, url: path('domaine_by_instance'), key: 'id' } 
-		%}
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: edit_form.action.instance, child: edit_form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
-		%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: edit_form.action.instance, child: edit_form.action.typeAction, url: path('type_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: edit_form.action.instance, child: edit_form.action.domaine, url: path('domaine_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: edit_form.action.instance, child: edit_form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
+%}
 <script type="text/javascript">
 $({{ ('"#'~edit_form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
 $({{ ('"#'~edit_form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();

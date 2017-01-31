@@ -16,14 +16,6 @@ use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
  */
 class Action
 {
-   /** @var Structure
-	*
-	* @ORM\ManyToOne(targetEntity="Structure", inversedBy="action")
-	* @ORM\JoinColumns({
-		*   @ORM\JoinColumn(name="structure_id", referencedColumnName="id")
-		* })
-	*/
-	private $structure;
 	
 	 /**
      * @var integer
@@ -125,6 +117,15 @@ class Action
      * @ORM\Column(name="date_fin_execution", type="date", nullable=true)
      */
     private $dateFinExecut;
+    
+   /** @var Structure
+	*
+	* @ORM\ManyToOne(targetEntity="Structure", inversedBy="action")
+	* @ORM\JoinColumns({
+	*   @ORM\JoinColumn(name="structure_id", referencedColumnName="id")
+	* })
+	*/
+	private $structure;
 
     /**
      * @var TypeAction
@@ -213,7 +214,7 @@ class Action
     private  $isReload;
     
     /**
-     * @ORM\OneToMany(targetEntity="ActionCyclique", mappedBy="action", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="ActionCyclique", mappedBy="action", cascade={"persist"})
      **/
     private $actionCyclique;
         

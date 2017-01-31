@@ -18,9 +18,9 @@
 			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_structure', {'bu_id': bu_id}) }}" method="post" role="form">
 	                {{ form_row(form.libelle,  {'attr': {'class': 'form-control'}}) }}
 					{{ form_row(form.typeStructure,  {'attr': {'class': 'nostyle form-control'}}) }}
-					{% if bu_id is null %}
-					{{ form_row(form.buPrincipal,  {'attr': {'class': 'nostyle form-control'}}) }}
-					{% endif %}
+					<div style="display: {{ has_rights('ROLE_SUPER_ADMIN') ? 'block' : 'none' }};">
+					    {{ form_row(form.buPrincipal,  {'attr': {'class': 'nostyle form-control'}}) }}
+					</div>
 	                {{ form_row(form.parent,  {'attr': {'class': 'nostyle form-control'}}) }}
 					{{ form_row(form.bu, {'attr': {'class': 'select2 form-control'}}) }}
 					{{ form_row(form.rapporteurs, {'attr': {'class': 'select2 form-control'}}) }}

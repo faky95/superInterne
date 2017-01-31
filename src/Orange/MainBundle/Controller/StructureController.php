@@ -81,14 +81,12 @@ class StructureController extends BaseController
      */
     public function newAction($bu_id)
     {
-    	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Structure();
-        $form   = $this->createCreateForm( $entity,'Structure', array('attr'=>array( 'bu_id'=>$bu)));
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        	'bu_id'	 => $bu_id
-        );
+        if($this->getUser()->hasRole('ROLE_SUPER_ADMIN')==false) {
+        	$entity->setBuPrincipal($this->getUser()->getStructure()->getBuPrincipal());
+        }
+        $form   = $this->createCreateForm( $entity, 'Structure');
+        return array('entity' => $entity, 'form'   => $form->createView(), 'bu_id'	 => $bu_id);
     }
     
     /**
@@ -100,43 +98,24 @@ class StructureController extends BaseController
      */
     public function createAction(Request $request, $bu_id)
     {
-    	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
     	$em = $this->getDoctrine()->getManager();
     	$entity = new Structure();
-    	$form = $this->createCreateForm($entity,'Structure', array('attr'=>array( 'bu_id'=>$bu)));
-    	
-    	if($bu_id !== NULL)
-    	{
-    		$bu_id = intval($bu_id);
-    		$form->remove('buPrincipal');
-    		$buPrincipal = $em->getRepository('OrangeMainBundle:Bu')->find($bu_id);
-    		$entity->setBuPrincipal($buPrincipal);
-    	}
-		    	
+    	$form = $this->createCreateForm($entity, 'Structure');
     	$form->handleRequest($request);
-    	
-    	if($this->getRequest()->isMethod("POST"))
-    	{
-    		if ($form->isValid()) 
-    		{
+    	if($this->getRequest()->isMethod("POST")) {
+    		if ($form->isValid()) {
     			$em = $this->getDoctrine()->getManager();
     			$em->persist($entity);
     			$em->flush();
     			$this->get('orange.main.updateStructure')->setStructureForAction();
 				$route =  $this->generateUrl('les_structures');
-				if($form->get('save_and_add')->isClicked())
-				{
+				if($form->get('save_and_add')->isClicked()) {
 					$route =  $this->generateUrl('nouvelle_structure', array('bu_id' => $bu_id));
 				}
     			return $this->redirect($route);
     		}
     	}
-    	
-    	return array(
-    			'entity' => $entity,
-    			'form'   => $form->createView(),
-    			'bu_id'	 => $bu_id
-    	);
+    	return array('entity' => $entity, 'form' => $form->createView(), 'bu_id' => $bu_id);
     }
 
     /**
@@ -149,19 +128,12 @@ class StructureController extends BaseController
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('OrangeMainBundle:Structure')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Structure entity.');
         }
-
         $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
+        return array('entity'      => $entity, 'delete_form' => $deleteForm->createView());
     }
 
     /**
@@ -174,10 +146,9 @@ class StructureController extends BaseController
      */
     public function editAction($id)
     {
-    	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Structure')->find($id);
-        $form = $this->createCreateForm($entity,'Structure', array('attr'=>array( 'bu_id'=>$bu)));
+        $form = $this->createCreateForm($entity, 'Structure');
         $request = $this->get('request');
         if ($request->getMethod() == 'POST') {
         	$form->handleRequest($request);

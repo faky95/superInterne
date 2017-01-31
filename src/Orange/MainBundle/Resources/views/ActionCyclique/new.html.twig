@@ -28,12 +28,12 @@
 							{{ form_widget(form.pas,  {'attr': {'class': 'select form-control ', 'style' : 'width: 100%'}}) }}
                         </div>
                         <div class="form-group">
-						<div >
-							{{ form_widget(form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}
-						</div>
-                        <div >
-				        	{{ form_widget(form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}
-						</div>
+    						<div>
+    							{{ form_widget(form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}
+    						</div>
+                            <div >
+    				        	{{ form_widget(form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}
+    						</div>
                         </div>
                         <div class="form-group">
                             <div>
@@ -60,11 +60,11 @@
 							{{ form_widget(form.action.dateDebut, {'attr': {'class': 'form-control'}}) }}
 							{{ form_widget(form.action.dateInitial, {'attr': {'class': 'form-control'}}) }}
 						</div>
-							{{ form_row(form.action.description) }}
+ 							{{ form_row(form.action.description) }}
 		                	{{ form_widget(form._token) }}
 			        <div class="form-group">
 			        	<div class="col-lg-offset-2 col-lg-9">
-							    {{ form_widget(form.save) }}
+						    {{ form_widget(form.save) }}
 						</div>
 					</div><!-- End .form-group  -->  
 				</form>
@@ -72,39 +72,39 @@
         </div>
     </div><!-- End .span12 -->
 </div><!-- End .row -->
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: form.action.instance, child: form.action.typeAction, url: path('type_by_instance'), key: 'id' } 
-		%}
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: form.action.instance, child: form.action.domaine, url: path('domaine_by_instance'), key: 'id' } 
-		%}
-		{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
-			{parent: form.action.instance, child: form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
-		%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: form.action.instance, child: form.action.typeAction, url: path('type_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: form.action.instance, child: form.action.domaine, url: path('domaine_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: form.action.instance, child: form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
+%}
 <script type="text/javascript">
 $("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
  	$(document).ready(function() {
 	 // $("select").select2();
 	  $("#orange_mainbundle_actioncyclique_pas").change(function(){
-		 if($(this).val()=="3"){
+		 if($(this).val()=="3") {
 			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
-			 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().show();
+			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().show();
 			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
-		 }else if($(this).val()=="1"){
+		 } else if($(this).val()=="1") {
 			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
-			 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
 			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
-		 }else if($(this).val()=="9"){
-				$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
-				 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
-				$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
-		 }else{
-		 $("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
-		 $("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
-		 $("#orange_mainbundle_actioncyclique_iteration").parent().parent().show();
+		 } else if($(this).val()=="9") {
+			$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().hide();
+			$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+			$("#orange_mainbundle_actioncyclique_iteration").parent().parent().hide();
+		 } else {
+    		$("#orange_mainbundle_actioncyclique_dayOfWeek").parent().parent().show();
+    		$("#orange_mainbundle_actioncyclique_dayOfMonth").parent().parent().hide();
+    		$("#orange_mainbundle_actioncyclique_iteration").parent().parent().show();
 		}
 	  });
 	});
- 	</script>
+</script>
 {% endblock %}

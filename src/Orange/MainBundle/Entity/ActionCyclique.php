@@ -22,17 +22,24 @@ class ActionCyclique
     private $id;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Action", inversedBy="actionCyclique", cascade={"persist"})
+     * @var Action
+     * @ORM\OneToOne(targetEntity="Action", inversedBy="actionCyclique", cascade={"persist"})
      * @ORM\JoinColumn(name="action_id", referencedColumnName="id")
      **/
     private $action;
+    
+    /**
+     * @var number
+     * @ORM\Column(name="occurence", type="integer", nullable=false)
+     */
+    private $occurence;
     
     /**
      * @ORM\ManyToOne(targetEntity="Orange\MainBundle\Entity\Pas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="pas_id", referencedColumnName="id")
      * })
-     * @Assert\NotBlank(message="Vous devez chosir la périodicité)
+     * @Assert\NotBlank(message="Vous devez chosir la périodicité")
      */
     private $pas;
     
@@ -81,6 +88,22 @@ class ActionCyclique
     {
         return $this->id;
     }
+	
+	/**
+	 * @return number
+	 */
+	public function getOccurence() {
+		return $this->ocurence;
+	}
+	
+	/**
+	 * @param $occurence
+	 * @return ActionCyclique
+	 */
+	public function setOccurence($occurence) {
+		$this->ocurence = $occurence;
+		return $this;
+	}
 
     /**
      * Set action
@@ -100,6 +123,41 @@ class ActionCyclique
     public function getAction()
     {
         return $this->action;
+    }
+    
+    /**
+     * new tache
+     * @param array $arrPas
+     * @return Tache
+     */
+    public function newTache($arrPas) {
+    	$tache = new Tache();
+    	$tache->setActionCyclique($this);
+    	$this->occurence = $this->occurence ? $this->occurence + 1 : 1;
+    	$tache->setDateDebut(new \DateTime('NOW'));
+    	$pas = $this->pas->getId();
+    	$it = $this->getIteration();
+    	$numJr = $this->getDayOfWeek()->getValeur();
+    	$date = strtotime(date('Y-01-01'));
+    	$num = array('first', 'second', 'third', 'fourth', 'fifth', 'sixth');
+    	$semaine = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday');
+    	if($pas == $arrPas['Hebdomadaire']) {
+    		$dateInitial = date('Y-m-d', strtotime($semaine[$numJr].' next week'));
+    	} elseif($pas == $arrPas['Quinzaine']) {
+    		$dateInitial = date('Y-m-d', strtotime($semaine[$numJr].' this week'));
+    		$dateInitial = date('Y-m-d', strtotime('+'.$it.' week', strtotime($dateInitial)));
+    	} elseif($pas == $arrPas['Mensuelle']) {
+    		$numJr = $this->getDayOfMonth()->getValeur();
+    		$dateInitial = date('Y-m-'.$numJr, strtotime(($numJr < date('j') ? '+1' : 'this').' month'));
+    	} elseif($pas == $arrPas['Trimestrielle']) {
+    		$dateInitial = date('Y-m-d', strtotime($num[$it-1].' '.$semaine[$numJr], $date));
+    	} elseif($pas == $arrPas['Semestrielle']) {
+    		$dateInitial = date('Y-m-d', strtotime($num[$it-1].' '.$semaine[$numJr], $date));
+    	}
+    	$tache->setReference(sprintf('%s-T_%03d', $this->action->getReference(), $this->occurence));
+    	$tache->setDateInitial(new \DateTime($dateInitial));
+    	$this->addTache($tache);
+    	return $tache;
     }
 
     /**

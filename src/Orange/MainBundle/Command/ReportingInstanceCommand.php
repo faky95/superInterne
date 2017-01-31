@@ -32,11 +32,12 @@ class ReportingInstanceCommand extends BaseCommand {
 	public function getStatus($bu){
 		$formule=$this->getEntityManager()->getRepository('OrangeMainBundle:Formule')->getTauxStats($bu);
 		$statuts=$this->statuts;
-		if(count($formule)>0)
-			foreach ($formule as $key=>$form)
+		if(count($formule)>0) {
+			foreach ($formule as $form) {
 				$statuts[$form['libelle']]=$form['libelle'];
-				return $statuts;
-	
+			}
+		}
+		return $statuts;
 	}
 	
 	public function mapIds($data){
@@ -61,16 +62,6 @@ class ReportingInstanceCommand extends BaseCommand {
 		$pas = $em->getRepository('OrangeMainBundle:Pas')->listAllPas()->getQuery()->execute();
 		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
 		$per = array();
-		$statuts = array(
-				'nbAbandon' => 'Abandon',
-				'nbDemandeAbandon' => "Demande d'abandon",
-				'nbFaiteDelai' => "Faite dans les délais",
-				'nbFaiteHorsDelai' => "Faite hors délai",
-				'nbNonEchue' => "Non échue",
-				'nbSoldeeHorsDelais' => 'Soldée hors délai',
-				'nbSoldeeDansLesDelais' => "Soldée dans les délais",
-				'total' => "Total",
-			);
 		foreach ($pas as $value) {
 			$per[$value->getId()] = $value->getLibelle();
 		}
@@ -112,8 +103,8 @@ class ReportingInstanceCommand extends BaseCommand {
 				continue;
 			}
 		}
-		if (!empty($chemin)){
-			$send = $this->getMailer()->sendLogsMail(
+		if(!empty($chemin)) {
+			$this->getMailer()->sendLogsMail(
 					"Journal sur les reporting par instance",
 					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
 							array('libelle'=>" reportings par instance")),$chemin);

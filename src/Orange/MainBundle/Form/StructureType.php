@@ -17,16 +17,20 @@ class StructureType extends AbstractType
      */	
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$bu = isset($options['attr']['bu_id']) ? $options['attr']['bu_id'] : null;
+    	$bu = $builder->getData()->getBuPrincipal();
         $builder->add('libelle', null, array('label' => 'Nom de la structure : ', 'attr' => array('placeholder' => 'Ex: SDA')))
-        		->add('parent', null, array('label' => 'Structure Parente : ', 'attr' => array('class' => 'select'), 'empty_value' => 'Choisir la structure parente ...'))
+        		->add('parent', null, array('label' => 'Structure Parente : ', 'empty_value' => 'Choisir la structure parente ...',
+        				'query_builder' => function($er) {
+        					return $er->filter();
+        				}, 'attr' => array('class' => 'select')
+        		))
         		->add('typeStructure', null, array('label' => 'Type de la structure', 'empty_value' => 'Choisir le type de structure', 'attr' => array('class' => 'select')))
 				->add('buPrincipal', null, array('label' => 'BU principal', 'empty_value' => 'Choisir le BU principal', 'attr' => array('class' => 'select')))
 	            ->add('bu', null, array('label' => 'Choisir les BU associes :', 'empty_value' => 'les bu associés : ', 'by_reference' => false, 'attr' => array('class' => 'select2')
 	            ))->add('rapporteurs', null, array_merge(array('label'=>'Choisir les rapporteurs :', 'empty_value' => '--- Choix Rapporteurs ---',
-            		'query_builder'=>function(UtilisateurRepository $ur)use($bu){
-            				$queryBuilder = $ur->createQueryBuilder('u');
-							return $queryBuilder->innerJoin('u.structure','st')->where('st.buPrincipal='.$bu);
+            		'query_builder' => function($er) use ($bu) {
+            				$queryBuilder = $er->createQueryBuilder('u');
+							return $queryBuilder->innerJoin('u.structure','st')->where('st.buPrincipal= :bu')->setParameter('bu', $bu);
             		}
             	)))
 	            ->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))

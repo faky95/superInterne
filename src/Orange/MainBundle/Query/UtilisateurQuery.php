@@ -86,11 +86,11 @@ class UtilisateurQuery extends BaseQuery {
 		$query= "INSERT INTO utilisateur (`id`, `matricule`, `prenom`, `nom`, 
 											  		`email`, `email_canonical`, `username`, `username_canonical`,
 											  		`telephone`, `structure_id`, `manager`,`enabled`, 
-				  									`salt`,`password`,`locked`,`expired`,`roles`,`credentials_expired`,`first_change_password`)
+				  									`salt`,`password`,`roles`,`first_change_password`)
 								  select t.id, t.matricule, t.prenom, t.nom, 
 								  		t.email, t.email, t.username, t.username, 
 								  		t.telephone, t.structure, t.manager, 1, 
-								  		'5469zpurlvk04wkcggscwskcwo8ksc4', '6aDMsJOTSwb+393p77sYK3jBZ6Ej17XYNt0JV4abXpKwuAesLiGDl3s4lPzNttHD0Ztg05sOcK8J/d0SJnIN+Q==', 0,0,'a:0:{}',0,1
+								  		'5469zpurlvk04wkcggscwskcwo8ksc4', '6aDMsJOTSwb+393p77sYK3jBZ6Ej17XYNt0JV4abXpKwuAesLiGDl3s4lPzNttHD0Ztg05sOcK8J/d0SJnIN+Q==','a:0:{}',1
 								  		from temp_utilisateur t"
 			;
 			$this->connection->prepare($query)->execute();

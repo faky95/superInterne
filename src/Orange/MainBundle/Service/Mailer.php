@@ -27,6 +27,17 @@ class Mailer
 		return $this->mailer->send($mail);
     }
     
+    public function notifNewTache($to, $data) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+	    	->setTo($to)
+	    	->setSubject("Nouvelle tache")
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleTache.html.twig', array('tache' => $data)))
+			->setContentType('text/html')
+			->setCharset('utf-8');
+		return $this->mailer->send($mail);
+    }
+    
     public function notifNewSignalisation($to, $cc, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))

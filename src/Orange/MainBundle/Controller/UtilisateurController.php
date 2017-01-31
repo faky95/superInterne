@@ -20,6 +20,10 @@ use Orange\MainBundle\Form\LoadingType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use DoctrineExtensions\Query\Mysql\Date;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use FOS\UserBundle\FOSUserEvents;
+use FOS\UserBundle\Event\FilterUserResponseEvent;
+use FOS\UserBundle\Event\GetResponseUserEvent;
 
 /**
  * Utilisateur controller.
@@ -37,14 +41,12 @@ class UtilisateurController extends BaseController
     public function indexAction()
     {
     	$this->get('session')->set('utilisateur_criteria', new Request());
-        return array(
-        );
+        return array();
     }
     
     /**
      * Lists  entities.
-     *
-     *@Route("/liste_des_utilisateurs", name="liste_des_utilisateurs")
+     * @Route("/liste_des_utilisateurs", name="liste_des_utilisateurs")
      * @Method("GET")
      * @Template()
      */
@@ -70,19 +72,12 @@ class UtilisateurController extends BaseController
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
-
         $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
+        return array('entity' => $entity, 'delete_form' => $deleteForm->createView());
     }
     
     /**
@@ -96,23 +91,17 @@ class UtilisateurController extends BaseController
     public function transfertAction($id)
     {
     	$em = $this->getDoctrine()->getManager();
-    
     	$entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
     	$actions = $em->getRepository('OrangeMainBundle:Action')->actionsTransfert($id);
     	if (!$entity) {
     		throw $this->createNotFoundException('Unable to find Utilisateur entity.');
     	}
-    
-    
-    	return array(
-    			'entity'      => $entity,
-    	);
+    	return array('entity' => $entity);
     }
     
     
     /**
      * Finds and displays a Utilisateur entity.
-     *
      * @Route("/details_utilisateur_espace/{user_id}/{espace_id}", name="details_utilisateur_espace")
      * @Method("GET")
      * @Template("OrangeMainBundle:Utilisateur:showEspace.html.twig")
@@ -127,18 +116,9 @@ class UtilisateurController extends BaseController
     	if (!$entity) {
     		throw $this->createNotFoundException('Unable to find Utilisateur entity.');
     	}
-    
     	$deleteForm = $this->createDeleteForm($user_id);
-    
-    	return array(
-    			'espace' => $espace,
-    			'entity'      => $entity,
-    			'delete_form' => $deleteForm->createView(),
-    			'actions' => $action
-    	);
+    	return array('espace' => $espace, 'entity' => $entity, 'delete_form' => $deleteForm->createView(), 'actions' => $action);
     }
-    
-  
 
     /**
      * Displays a form to edit an existing Utilisateur entity.
@@ -150,48 +130,37 @@ class UtilisateurController extends BaseController
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        
         $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
-		
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
-        
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.profile.form.factory');
-        
        	$form = $formFactory->createForm();
         $form->setData($entity);
-        
         $form->handleRequest($request);
-        	
-        	if ($form->isValid()) {
-        		/** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
-        		$userManager = $this->get('fos_user.user_manager');
-				if($entity->getIsAdmin()){
-					$entity->addRole('ROLE_ADMIN');
-				}else{
-					$entity->removeRole('ROLE_ADMIN');
-				}        		
-        		$event = new FormEvent($form, $request);
-        		$userManager->updateUser($entity);
-        		if (null === $response = $event->getResponse()) {
-        		   $url = $this->generateUrl('les_utilisateurs');
-        		   $response = new RedirectResponse($url);
-				}
-        		return $response;
-        	}
-        return array(
-            'entity'      => $entity,
-        	'edit_form'   => $form->createView()
-        );
+       	if($form->isValid()) {
+        	/** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+        	$userManager = $this->get('fos_user.user_manager');
+			if($entity->getIsAdmin()){
+				$entity->addRole('ROLE_ADMIN');
+			} else {
+				$entity->removeRole('ROLE_ADMIN');
+			}        		
+        	$event = new FormEvent($form, $request);
+        	$userManager->updateUser($entity);
+        	if(null === $response = $event->getResponse()) {
+        		$url = $this->generateUrl('les_utilisateurs');
+        		$response = new RedirectResponse($url);
+			}
+        	return $response;
+        }
+        return array('entity' => $entity, 'edit_form' => $form->createView());
     }
 
     /**
     * Creates a form to edit a Utilisateur entity.
-    *
     * @param Utilisateur $entity The entity
-    *
     * @return \Symfony\Component\Form\Form The form
     */
     private function createEditForm(Utilisateur $entity)
@@ -200,14 +169,13 @@ class UtilisateurController extends BaseController
             'action' => $this->generateUrl('edition_utilisateur', array('id' => $entity->getId())),
             'method' => 'POST',
         ));
-
         $form->add('submit', 'submit', array('label' => 'Update'));
-
         return $form;
     }
+    
     /**
      * Edits an existing Utilisateur entity.
-     *  @QMLogger(message="Mise à jour utilisateur")
+     * @QMLogger(message="Mise à jour utilisateur")
      * @Route("/{id}/modifier_utilisateur", name="modifier_utilisateur", requirements={ "id"=  "\d+"})
      * @Method("POST")
      * @Template("OrangeMainBundle:Utilisateur:edit.html.twig")
@@ -228,6 +196,7 @@ class UtilisateurController extends BaseController
         }
         return array('entity' => $entity, 'edit_form' => $form->createView());
     }
+    
      /**
      * Deletes a Utilisateur entity.
      * @QMLogger(message="Suppression utilisateur")
@@ -237,40 +206,29 @@ class UtilisateurController extends BaseController
      */
     public function deleteAction(Request $request, $id)
     {
-            $em = $this->getDoctrine()->getManager();
-            $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
-			
-            if ($entity) {
-            	if($entity->isEnabled()==true){
-            		$entity->setEnabled(false);
-            		$em->persist($entity);
-            		$em->flush();
-            		$this->container->get('session')->getFlashBag()->add('sucess', array (
-            				'title' =>'Notification',
-            				'body' => 'Cet utilisateur a  ete desactive! '
-            		));
-            	}else{
-            		$entity->setEnabled(true);
-            		$em->persist($entity);
-            		$em->flush();
-            		$this->container->get('session')->getFlashBag()->add('sucess', array (
-            				'title' =>'Notification',
-            				'body' => 'Cet utilisateur a  ete active! '
-            		));
-            	}
-            	
-            }else{
-                throw $this->createNotFoundException('Unable to find Utilisateur entity.');
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
+        if($entity) {
+           	if($entity->isEnabled()==true) {
+            	$entity->setEnabled(false);
+            	$em->persist($entity);
+            	$em->flush();
+            	$this->container->get('session')->getFlashBag()->add('sucess', array('title' =>'Notification', 'body' => 'Cet utilisateur a  ete desactive! '));
+            } else {
+            	$entity->setEnabled(true);
+            	$em->persist($entity);
+            	$em->flush();
+            	$this->container->get('session')->getFlashBag()->add('sucess', array('title' =>'Notification', 'body' => 'Cet utilisateur a  ete active! '));
             }
-
+        } else {
+            throw $this->createNotFoundException('Unable to find Utilisateur entity.');
+        }
         return $this->redirect($this->generateUrl('les_utilisateurs'));
     }
 
     /**
      * Creates a form to delete a Utilisateur entity by id.
-     *
      * @param mixed $id The entity id
-     *
      * @return \Symfony\Component\Form\Form The form
      */
     private function createDeleteForm($id)
@@ -279,8 +237,7 @@ class UtilisateurController extends BaseController
             ->setAction($this->generateUrl('supprimer_utilisateur', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+            ->getForm();
     }
     
     /**
@@ -290,34 +247,23 @@ class UtilisateurController extends BaseController
      * @Security("has_role('ROLE_ADMIN')")
      */
     public function supprimerAction($id, $etat){
-    
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
-    
     	if (!$entity) {
     		throw $this->createNotFoundException('Cet utilisateur n\'existe pas .');
     	}
-    	 
-    	switch ($etat){
+    	switch ($etat) {
     		case 'activer' :
     			$entity->setEnabled(true);
     			$em->flush();
-    			$this->get('session')->getFlashBag()->add('success', array (
-    					'title' =>'Notification',
-    					'body' => 'L\'utilisateur à été activé avec succes ! '
-    			));
-    			
-    		break;
+    			$this->get('session')->getFlashBag()->add('success', array('title' =>'Notification', 'body' => 'L\'utilisateur à été activé avec succes ! '));
+    			break;
     		case 'desactiver':
     			$entity->setEnabled(false);
     			$em->flush();
-    			$this->get('session')->getFlashBag()->add('success', array (
-    					'title' =>'Notification',
-    					'body' => ' L\'utilisateur à été désactivé avec succes ! '
-    			));
+    			$this->get('session')->getFlashBag()->add('success', array('title' =>'Notification', 'body' => ' L\'utilisateur à été désactivé avec succes ! '));
     		break; 
     	}
-    
     	return $this->redirect($this->generateUrl('utilisateur'));
     }
 	    
@@ -326,7 +272,6 @@ class UtilisateurController extends BaseController
      * @param \Orange\MainBundle\Entity\Utilisateur $entity
      * @return array
      */
-    
     protected function addRowInTable($entity) {
     	return array(
     			$entity->__toString(),
@@ -335,7 +280,7 @@ class UtilisateurController extends BaseController
     			$entity->getUsername(),
     			$this->showEntityStatus($entity, 'etat'),
     			$this->get('orange_main.actions')->generateActionsForUtilisateur($entity)
-    	);
+    		);
     }
     
     /**
@@ -359,7 +304,6 @@ class UtilisateurController extends BaseController
      * @Route("/filtrer_utilisateurs", name="filtrer_utilisateurs")
      * @Template()
      */
-     
     public function filtreAction(Request $request) {
     	$form = $this->createForm(new UtilisateurCriteria());
     	if($request->getMethod()=='POST') {
@@ -368,9 +312,7 @@ class UtilisateurController extends BaseController
     	} else {
     		$this->modifyRequestForForm($request, $this->get('session')->get('utilisateur_criteria'), $form);
     		return array('form' => $form->createView());
-    		 
     	}
-    	 
     }
     
     /*
@@ -388,6 +330,7 @@ class UtilisateurController extends BaseController
     protected function setFilter(QueryBuilder $queryBuilder, $aColumns, Request $request) {
     	parent::setFilter($queryBuilder, array("CONCAT(CONCAT(u.prenom, ' '), u.nom)",  'u.nom', 'u.prenom', 'u.username', 'u.matricule'), $request);
     }
+    
     /**
      * @Route("/chargement_utilisateur", name="chargement_utilisateur")
      * @Template()
@@ -427,7 +370,7 @@ class UtilisateurController extends BaseController
     
     /**
      * @Route("/send_mail", name="send_mail")
-     * @
+     * @Template()
      */
     public function sendMailSupportAction(Request $request){
     	$to=array("mamekhady.diouf@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com");
@@ -441,8 +384,48 @@ class UtilisateurController extends BaseController
     	$chemin=$dossier."/".$file;
     	file_put_contents($chemin, $body);
     	$sendMail = $this->container->get('orange.main.mailer');
-    	$sendMail->send($to, $cc = null, $subject,  $this->renderView("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>$doc)));
+    	$sendMail->send($to, $cc = null, $subject,  $this->renderView("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array(
+    			'file' => $file, 'dossier' => $doc)
+    		));
     	return $this->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>$doc));
+    }
+    
+    /**
+	 * Lists all Action entities.
+	 * @Route("/first_change_password", name="first_change_password")
+	 */
+    public function firstChangePasswordAction(Request $request)  {
+        $user = $this->getUser();
+        if (!is_object($user) || !$user instanceof UserInterface) {
+            throw new AccessDeniedException('This user does not have access to this section.');
+        }
+        /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+        $dispatcher = $this->get('event_dispatcher');
+        $event = new GetResponseUserEvent($user, $request);
+        $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_INITIALIZE, $event);
+        if (null !== $event->getResponse()) {
+            return $event->getResponse();
+        }
+        /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+        $formFactory = $this->get('fos_user.change_password.form.factory');
+        $form = $formFactory->createForm();
+        $form->setData($user);
+        $form->handleRequest($request);
+        if ($form->isValid()) {
+            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+            $userManager = $this->get('fos_user.user_manager');
+            $event = new FormEvent($form, $request);
+            $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
+            $user->setFirstChangePassword(true);
+            $userManager->updateUser($user);
+            if (null === $response = $event->getResponse()) {
+                $url = $this->generateUrl('dashboard');
+                $response = new RedirectResponse($url);
+            }
+            $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_COMPLETED, new FilterUserResponseEvent($user, $request, $response));
+            return $response;
+        }
+        return $this->render('OrangeMainBundle::firstChangePassword.html.twig', array('form' => $form->createView()));
     }
     
 }

@@ -45,5 +45,5 @@ monolog:
 assetic:
     use_controller: "%use_assetic_controller%"
 
-#swiftmailer:
-#    delivery_address: abdouaziz.ndaw@orange-sonatel.com  
+swiftmailer:
+    delivery_address: madiagne.sylla@orange-sonatel.com

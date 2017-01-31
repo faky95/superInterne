@@ -12,22 +12,34 @@ use Orange\MainBundle\Entity\ArchitectureStructure;
 use DoctrineExtensions\Query\Mysql\Date;
 
 class ActionRepository extends BaseRepository {
+	
 	public function ActionWithStructureNull() {
-		return $this->createQueryBuilder('a')->leftJoin('a.instance', 'inst')->leftJoin('a.porteur', 'port')->leftJoin('a.typeAction', 'typ')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")->andWhere("a.structure IS NULL")->getQuery()->getResult();
+		return $this->createQueryBuilder('a')
+			->leftJoin('a.instance', 'inst')
+			->leftJoin('a.porteur', 'port')
+			->leftJoin('a.typeAction', 'typ')
+			->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")
+			->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")
+			->andWhere("a.structure IS NULL")
+			->getQuery()->getResult();
 	}
+	
 	public function getAllActions() {
 		return $this->createQueryBuilder('a')->select('a.etatCourant AS type_statut, inst.id AS instance_id, '.date('W').' as semaine, dom.id AS domaine_id, typ.id AS type_action_id, COUNT(a.id) as nombre,
 				port.id AS porteur_id, struct.id AS structure_id')->leftJoin('a.instance', 'inst')->leftJoin('a.porteur', 'port')->leftJoin('a.structure', 'struct')->leftJoin('a.domaine', 'dom')->leftJoin('a.typeAction', 'typ')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")->groupBy('type_statut, instance_id, domaine_id, type_action_id, porteur_id, structure_id')->getQuery()->getResult();
 	}
+	
 	public function findAll() {
 		// TODO: Auto-generated method stub
 		return $this->filter()->getQuery()->execute();
 	}
+	
 	public function getActions($ids) {
 		return $this->createQueryBuilder('a')->where('a.id IN(:ids)')->setParameters(array(
 				'ids' => $ids 
 		))->getQuery()->getResult();
 	}
+	
 	public function statistiqueUtilisateur($action_liste, $all) {
 		$config = $this->getEntityManager()->getConfiguration();
 		$config->addCustomDatetimeFunction('WEEK', 'DoctrineExtensions\Query\Mysql\Week');
@@ -35,6 +47,7 @@ class ActionRepository extends BaseRepository {
 				'action_liste' => $action_liste 
 		))->getQuery()->getResult();
 	}
+	
 	public function userToAlertRappel($bu, $espace, $projet, $states) {
 		$date = date('Y-m-d');
 		return $this->createQueryBuilder('a')->leftJoin('a.porteur', 'u')->where("a.etatReel LIKE 'ACTION_FAIT_DELAI' OR a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'")->
@@ -44,10 +57,12 @@ class ActionRepository extends BaseRepository {
 		// ->setParameter('en_cours', "%ACT_TRAITEMENT%")
 		getQuery()->execute();
 	}
+	
 	public function userToAlertAnimateur($bu, $espace, $projet) {
 		$queryBuilder = $this->createQueryBuilder('a')->leftJoin('a.porteur', 'u')->leftJoin('a.instance', 'i')->leftJoin('i.animateur', 'an')->andWhere("a.etatReel LIKE 'ACTION_FAIT_DELAI' OR a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'")->orderBy('a.id', 'ASC')->addOrderBy('a.dateAction', 'DESC')->getQuery()->execute();
 		return $queryBuilder;
 	}
+	
 	public function alertAnimateurForReport($bu, $espace, $projet) {
 		$queryBuilder = $this->createQueryBuilder('a')->leftJoin('a.porteur', 'u')->leftJoin('a.instance', 'i')->leftJoin('i.animateur', 'an')->andWhere("a.etatReel LIKE 'ACTION_DEMANDE_REPORT'")->orderBy('a.id', 'ASC')->addOrderBy('a.dateAction', 'DESC')->getQuery()->execute();
 		return $queryBuilder;
@@ -58,7 +73,6 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	public function nouvelleAction($bu, $espace, $projet) {
-		$date = new \DateTime();
 		return $this->createQueryBuilder('a')
 			->innerJoin('a.porteur', 'u')
 			->innerJoin('a.instance', 'i')
@@ -107,16 +121,19 @@ class ActionRepository extends BaseRepository {
 		}
 		return $queryBuilder->getQuery()->getArrayResult();
 	}
+	
 	public function atteintDelai($bu, $espace, $projet) {
 		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.domaine', 'd')->where('a.dateInitial < CURRENT_DATE()')->andWhere("a.etatReel LIKE 'ACTION_ECHUE_NON_SOLDEE'")->orderBy('a.id', 'ASC')->addOrderBy('a.dateAction', 'DESC')->getQuery()->execute();
 		return $queryBuilder;
 	}
+	
 	public function getActionValide($code, $criteria) {
 		$queryBuilder = $this->filter()->andWhere('a.etatReel!=:code')->setParameter('code', $code);
 		if(isset($criteria))
 			$this->filtres($queryBuilder, $criteria, 'a');
 		return $queryBuilder->andWhere("a.etatReel NOT LIKE 'EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE'")->andWhere("a.etatReel NOT LIKE 'EVENEMENT_VALIDATION_MANAGER_ATTENTE'")->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
+	
 	public function getActionValideForExport($code, $criteria) {
 		$queryBuilder = $this->filterExport()->andWhere('a.etatReel!=:code')->setParameter('code', $code);
 		if(isset($criteria))
@@ -987,7 +1004,7 @@ class ActionRepository extends BaseRepository {
 		$arrData = array();
 		$i = 0;
 		if(count($data) > 0)
-			foreach($data as $key => $value) {
+			foreach($data as $value) {
 				if(count($arrData) <= 0) {
 					$arrData [$i] = array(
 							's_id' => $value ['s_id'],
@@ -1096,12 +1113,12 @@ class ActionRepository extends BaseRepository {
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.id')->leftJoin('OrangeMainBundle:Action ', 'a', 'WITH', '1=1')->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.structure', 's1')->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
-			foreach($instances as $key => $data)
+			foreach($instances as $data)
 				$instancesIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('i.id in(:insts)')->setParameter('insts', $instancesIds);
 		} else {
 			$structureIds = array();
-			foreach($structures as $key => $data)
+			foreach($structures as $data)
 				$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('s.id in(:structs)')->setParameter('structs', $structureIds);
 		}
@@ -1172,12 +1189,12 @@ class ActionRepository extends BaseRepository {
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.etatCourant action_etat, COUNT(a.id) total,t.etatCourant tache_etat ,s.libelle, s.id')->leftJoin('OrangeMainBundle:Action ', 'a', 'WITH', '1=1')->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.structure', 's1')->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
-			foreach($instances as $key => $data)
+			foreach($instances as $data)
 				$instancesIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('i.id in(:insts)')->setParameter('insts', $instancesIds);
 		} else {
 			$structureIds = array();
-			foreach($structures as $key => $data)
+			foreach($structures as $data)
 				$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('s.id in(:structs)')->setParameter('structs', $structureIds);
 		}
@@ -1210,7 +1227,7 @@ class ActionRepository extends BaseRepository {
 			$structures = $rep->getStructureAndStructureDirecteByStructure($user->getStructure()->getId())->getQuery()->getArrayResult();
 		
 		$structureIds = array();
-		foreach($structures as $key => $data)
+		foreach($structures as $data)
 			$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.etatCourant action_etat, t.etatCourant tache_etat ,COUNT(a.id) total ,s.libelle f_libelle, i.libelle inst, i.libelle s_libelle, s.id f_id,i.id s_id')->add('from', 'OrangeMainBundle:Action a', true)->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.structure', 's1')->innerJoin('a.instance', 'i')->innerJoin('i.bu', 'b')->leftJoin('i.espace', 'e')->where('s.id in(:structs)')->setParameter('structs', $structureIds)->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere('b.id=s.buPrincipal')->andWhere(' e.id IS NULL');
 		
@@ -1312,7 +1329,7 @@ class ActionRepository extends BaseRepository {
 		$arrData = array();
 		$i = 0;
 		if(count($data) > 0)
-			foreach($data as $key => $value) {
+			foreach($data as $value) {
 				if(count($arrData) <= 0) {
 					$arrData [$i] = array(
 							'total' => intval($value ['total']) 

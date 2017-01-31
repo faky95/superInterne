@@ -492,6 +492,9 @@ class ActionController extends BaseController
     		$this->addFlash('error', "Impossible de voir les détails, cette action n'est pas reconnue");
     		return $this->redirect($this->generateUrl('mes_actions'));
     	}
+    	if($action->getActionCyclique()) {
+    		return $this->redirect($this->generateUrl('actioncyclique_show', array('id' => $action->getActionCyclique()->getId())));
+    	}
         return array('action' => $action, 'espace'=> $id_espace ? $em->getRepository('OrangeMainBundle:Espace')->find($id_espace) : null);
     }
 

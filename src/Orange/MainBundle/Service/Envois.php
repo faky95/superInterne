@@ -1,35 +1,42 @@
 <?php
 namespace Orange\MainBundle\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller;
-use Symfony\Component\Serializer\Encoder\ChainEncoder;
 use Orange\MainBundle\Entity\Envoi;
 
-class Envois{
+class Envois {
 	
 	/**
 	 * @var \Doctrine\ORM\EntityManager
 	 */
 	protected $em;
 	
+	/**
+	 * @var \Orange\MainBundle\Entity\Pas
+	 */
 	protected $pas;
 	
-	public function __construct($pas, $em)
-	{
+	/**
+	 * @param \Orange\MainBundle\Entity\Pas $pas
+	 * @param \Doctrine\ORM\EntityManager $em
+	 */
+	public function __construct($pas, $em) {
 		$this->em = $em;
 		$this->pas = $pas;
 	
 	}
 	
+	/**
+	 * @param \Orange\MainBundle\Entity\Reporting $entity
+	 */
 	public function generateEnvoi($entity) {
 		$date = date('Y-01-01');
 		$date = strtotime($date);
 		$envoi = new Envoi();
 		$periodicite = $entity->getPas()->getId();
 		$type = $entity->getTypeReporting();
-		$semaine = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday' );
+		$semaine = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday');
 		$num = array('first', 'second', 'third', 'fourth', 'fifth', 'sixth');
-		if($periodicite == $this->pas['Journaliere']){
+		if($periodicite == $this->pas['Journaliere']) {
 			$dEnvoi = date('Y-m-d');
 			$dEnvoi = strtotime($dEnvoi);
 			$dateEnvoi = date('Y-m-d', strtotime('+1 day', $dEnvoi));
@@ -38,8 +45,7 @@ class Envois{
 			$envoi->setDateEnvoi(new \DateTime($dateEnvoi));
 			$entity->addEnvoi($envoi);
 			$envoi->setReporting($entity);
-		}
-		elseif ($periodicite == $this->pas['Hebdomadaire']){
+		} elseif($periodicite == $this->pas['Hebdomadaire']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$jours = $semaine[$numJr];
 			$dateEnvoi = date('Y-m-d', strtotime($jours.' this week'));
@@ -48,43 +54,41 @@ class Envois{
 			$envoi->setDateEnvoi(new \DateTime($dateEnvoi));
 			$entity->addEnvoi($envoi);
 			$envoi->setReporting($entity);
-		}
-		elseif ($periodicite == $this->pas['Quinzaine']){
+		} elseif($periodicite == $this->pas['Quinzaine']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$it = $entity->getIteration();
 			$jours = $semaine[$numJr];
 			$dateEnvoi = date('Y-m-d', strtotime($jours.' this week'));
 			$dateEnvoi = strtotime($dateEnvoi);
-			if ($it == 1){
+			if($it == 1) {
 				$dateEnvoi = date('Y-m-d', strtotime('+1 week', $dateEnvoi));
-			}else {
+			} else {
 				$dateEnvoi = date('Y-m-d', strtotime('+2 week', $dateEnvoi));
 			}
 			$envoi->setDateEnvoi(new \DateTime($dateEnvoi));
 			$entity->addEnvoi($envoi);
 			$envoi->setReporting($entity);
 			$envoi->setTypeReporting($type);
-		}
-		elseif ($periodicite == $this->pas['Mensuelle']){
+		} elseif($periodicite == $this->pas['Mensuelle']) {
 			$numJr = $entity->getDayOfMonth()->getValeur();
-			if ($numJr < date('j')){
+			if($numJr < date('j')) {
 				$dateEnvoi = date('Y-m-'.$numJr, strtotime('+1 month'));
-			}
-			else
+			} else {
 				$dateEnvoi = date('Y-m-'.$numJr, strtotime('this month'));
+			}
 			$envoi->setDateEnvoi(new \DateTime($dateEnvoi));
 			$entity->addEnvoi($envoi);
 			$envoi->setReporting($entity);
 			$envoi->setTypeReporting($type);
 		}
-		elseif ($periodicite == $this->pas['Bimestrielle']){
+		elseif($periodicite == $this->pas['Bimestrielle']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$it = $entity->getIteration();
 			$jours = $semaine[$numJr];
 			$n = $num[$it-1];
 			$dateEnvoi = date('Y-m-d', strtotime( $n.' '.$jours, $date));
 			$pas=2;
-			for($i=0; $i<6; $i++){
+			for($i=0; $i<6; $i++) {
 				$d = date('Y-m-d', strtotime("+".($i * $pas)." month",strtotime($dateEnvoi)));
 				$envoi->setDateEnvoi(new \DateTime($d));
 				$envoi->setPeriodicite(4);
@@ -92,14 +96,14 @@ class Envois{
 				$envoi->setTypeReporting($type);
 				$envoi->setReporting($entity);
 			}
-		}elseif ($periodicite == $this->pas['Trimestrielle']){
+		} elseif($periodicite == $this->pas['Trimestrielle']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$it = $entity->getIteration();
 			$jours = $semaine[$numJr];
 			$n = $num[$it-1];
 			$dateEnvoi = date('Y-m-d', strtotime( $n.' '.$jours, $date));
 			$pas=3;
-			for($i=0; $i<4; $i++){
+			for($i=0; $i<4; $i++) {
 				$d = date('Y-m-d', strtotime("+".($i * $pas)." month",strtotime($dateEnvoi)));
 				$envoi->setDateEnvoi(new \DateTime($d));
 				$envoi->setPeriodicite(5);
@@ -107,14 +111,14 @@ class Envois{
 				$entity->addEnvoi($envoi);
 				$envoi->setReporting($entity);
 			}
-		}elseif ($periodicite == $this->pas['Quadrimestrielle']){
+		}elseif($periodicite == $this->pas['Quadrimestrielle']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$it = $entity->getIteration();
 			$jours = $semaine[$numJr];
 			$n = $num[$it-1];
 			$dateEnvoi = date('Y-m-d', strtotime( $n.' '.$jours, $date));
 			$pas=4;
-			for($i=0; $i<3; $i++){
+			for($i=0; $i<3; $i++) {
 				$d = date('Y-m-d', strtotime("+".($i * $pas)." month",strtotime($dateEnvoi)));
 				$envoi->setDateEnvoi(new \DateTime($d));
 				$envoi->setPeriodicite(6);
@@ -122,15 +126,14 @@ class Envois{
 				$envoi->setTypeReporting($type);
 				$envoi->setReporting($entity);
 			}
-		}
-		elseif ($periodicite == $this->pas['Semestrielle']){
+		} elseif($periodicite == $this->pas['Semestrielle']) {
 			$numJr = $entity->getDayOfWeek()->getValeur();
 			$it = $entity->getIteration();
 			$jours = $semaine[$numJr];
 			$n = $num[$it-1];
 			$dateEnvoi = date('Y-m-d', strtotime( $n.' '.$jours, $date));
 			$pas=6;
-			for($i=0; $i<2; $i++){
+			for($i=0; $i<2; $i++) {
 				$d = date('Y-m-d', strtotime("+".($i * $pas)." month",strtotime($dateEnvoi)));
 				$envoi->setDateEnvoi(new \DateTime($d));
 				$envoi->setPeriodicite(7);
@@ -139,7 +142,6 @@ class Envois{
 				$envoi->setReporting($entity);
 			}
 		}
-		
 	}
-}
 	
+}

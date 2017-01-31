@@ -68,4 +68,32 @@ class ActionCycliqueRepository extends BaseRepository {
 				->getQuery()->execute();
 	}
 	
+	/**
+	 * @param number $bu
+	 * @param number $espace
+	 * @param number $projet
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function tacheToGenerate($bu, $espace, $projet) {
+		$queryBuilder = $this->createQueryBuilder('ac')
+			->leftJoin('ac.tache', 't')
+			->innerJoin('ac.action', 'a')
+			->innerJoin('a.instance', 'i')
+			->leftJoin('i.bu', 'b')
+			->leftJoin('i.chantier', 'c')
+			->leftJoin('i.espace', 'e')
+			->groupBy('ac.id')
+			->having('MAX(t.dateInitial) IS NULL OR MAX(t.dateInitial) < :date')->setParameter('date', date('Y-m-d'));
+		if($bu) {
+			$queryBuilder->andWhere('IDENTITY(s.buPrincipal) = :bu')->setParameter('bu', $bu);
+		}
+		if($espace) {
+			$queryBuilder->andWhere('e.id = :espace')->setParameter('espace', $espace);
+		}
+		if($projet) {
+			$queryBuilder->andWhere('IDENTITY(c.projet) = :projet')->setParameter('projet', $projet);
+		}
+		return $queryBuilder->getQuery()->execute();
+	}
+	
 }

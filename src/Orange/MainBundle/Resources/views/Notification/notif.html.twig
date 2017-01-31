@@ -100,7 +100,111 @@
 								                         </table>
 								                         <!-- fin zone -->  
 								
-								
+
+														{% if body.entity.action is defined and body.entity.action is not empty %}
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
+																	  <tbody>
+																	      <tr>
+																	          <td colspan="2">
+																	             <h2 style="color:#FF6600; font-size:22px; padding-top:12px;">
+																	                  Informations sur l'action 
+																	             </h2>
+																	          </td>
+																	      </tr>
+																	  </tbody>
+										                         </table>                      
+										                         <!-- une autre zone de contenu -->
+										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="1">
+																	  <tbody align="left">
+																	      <tr>
+																	          <td width="200" valign="top">
+																	                  <p> <b>Libellé de l'action </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.libelle }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Référence de l'action </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.reference }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Porteur </b></p>
+																	          </td>  
+																	          <td  valign="top">
+																	                  <p> {{ body.entity.action.porteur }}</p>
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Contributeurs</b></p>
+																	          </td>  
+																	          <td valign="top">
+																	          {% if body.entity.action.contributeur is defined and body.entity.action.contributeur is not empty %}
+																	                  <ul>
+																	                  	{% for uncontributeur in body.entity.action.contributeur %}
+																	                      <li> {{ uncontributeur }}</li>
+																	                     {% endfor %}
+																	                  </ul>
+																	          {% else %}
+																	          		  <p> Pas de contributeur .</p>
+																	          {% endif %}
+																	          </td>          
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Domaine</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p> {{ body.entity.action.domaine }} </p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Type d'action</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.typeAction }} </p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Instance</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.instance }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Date de début</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.dateDebut| date("d/m/Y") }}</p>
+																	          </td>           
+																	      </tr>
+																	      <tr>
+																	          <td  width="200" valign="top">
+																	                  <p> <b>Délai Initial</b></p>
+																	          </td>  
+																	         <td  valign="top">
+																	                  <p>{{ body.entity.action.dateInitial| date("d/m/Y") }}</p>
+																	          </td>           
+																	      </tr>
+																	  </tbody>
+										                         </table>
+										                         <table align="right" class="w580"  width="580" cellpadding="0" cellspacing="0" border="0">
+																	  <tbody >
+																	      <p align="right"><em>Pour plus d'infos sur cette action, <a target="_blank" href="{{ url('details_action', {'id': body.entity.action.id}) }}">Cliquez ici</a></em></p>
+																	  </tbody>
+								                         		</table>
+								                         {% endif %}
+								                         
 														{% if body.entity.action is defined and body.entity.action is not empty %}
 										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
 																	  <tbody>

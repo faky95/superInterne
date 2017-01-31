@@ -8,13 +8,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 class rappelActionsCommand extends BaseCommand {
 	
 	protected function configure(){
-			parent::configure();
-			$this->setName($this->getName() . ':rappel_porteur')
-				->addOption('projet', 'p', InputOption::VALUE_OPTIONAL)
-				->addOption('espace', 'es', InputOption::VALUE_OPTIONAL)
-				->addOption('bu', 'b', InputOption::VALUE_OPTIONAL)
-				->setDescription('envoi des rappels aux porteurs');
-		
+		parent::configure();
+		$this->setName($this->getName() . ':rappel_porteur')
+			->addOption('projet', 'p', InputOption::VALUE_OPTIONAL)
+			->addOption('espace', 'es', InputOption::VALUE_OPTIONAL)
+			->addOption('bu', 'b', InputOption::VALUE_OPTIONAL)
+			->setDescription('envoi des rappels aux porteurs');
 	}
 	
 	public function execute(InputInterface $input, OutputInterface $output){
@@ -26,15 +25,12 @@ class rappelActionsCommand extends BaseCommand {
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertRappel($bu, $projet, $espace, $states);
 		$data = $this->get('orange.main.data')->mapDataforAlertDepassement($actions);
 		foreach($data['user'] as $user){
-			$to = 'abdouaziz.ndaw@orange-sonatel.com';
-			$subject = 'Rappel d\'actions';
 			$body = $this->getTemplating()->render('OrangeMainBundle:Action:rappelActions.html.twig', array(
 						'porteur' => $user['nom'], 'actions' => $user['action'],
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$result = $this->getMailer()->sendRappel($to, $subject, $body);
+			$this->getMailer()->sendRappel('madiagne.sylla@orange-sonatel.com', "Rappel d'actions", $body);
 		}
-			
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

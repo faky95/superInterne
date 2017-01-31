@@ -1,8 +1,6 @@
 <?php
-
 namespace Orange\MainBundle\Command;
-use Symfony\Component\Templating\EngineInterface;
-use Symfony\Component\Console\Input\InputArgument;
+
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -26,21 +24,18 @@ class alerteAnimateurCommand extends BaseCommand {
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertAnimateur($bu, $projet, $espace);
 		$data = $this->get('orange.main.data')->mapDataforAlertAnimateur($actions);
-		foreach($data['instance'] as $key => $instance){
+		foreach($data['instance'] as $instance) {
 			$animateurs = array();
 			foreach ($instance['animateurs'] as $animateur){
 				array_push($animateurs, $animateur->getUtilisateur()->getEmail());
 			}
-			$to = $animateurs;
 			$cc = array();
-			$subject = 'Attente de cloture des actions pour '.$instance['instance'];
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alertAnimateur.html.twig', array(
 						'actions' => $instance['action'],'instance' => $instance['instance'],
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$result = $this->getMailer()->sendRappel($to, $cc, $subject, $body);
+			$this->getMailer()->sendRappel($animateurs, $cc, 'Attente de cloture des actions pour '.$instance['instance'], $body);
 		}
-			
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
 }

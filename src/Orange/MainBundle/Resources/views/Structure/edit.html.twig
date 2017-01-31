@@ -20,15 +20,17 @@
 			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_structure', {'id': entity.id}) }}" method="post" role="form">
 	                {{ form_widget(edit_form.libelle,  {'attr': {'class': 'form-control'}}) }}
 					{{ form_widget(edit_form.typeStructure,  {'attr': {'class': 'nostyle form-control'}}) }}
-					{{ form_widget(edit_form.buPrincipal,  {'attr': {'class': 'nostyle form-control'}}) }}
+					<div style="display: {{ has_rights('ROLE_SUPER_ADMIN') ? 'block' : 'none' }};">
+					    {{ form_widget(edit_form.buPrincipal,  {'attr': {'class': 'nostyle form-control'}}) }}
+					</div>
 	                {{ form_widget(edit_form.parent,  {'attr': {'class': 'nostyle form-control'}}) }}
 					{{ form_widget(edit_form.bu, {'attr': {'class': 'select2 form-control'}}) }}
 					{{ form_widget(edit_form.rapporteurs, {'attr': {'class': 'select2 form-control'}}) }}
 					{{ form_widget(edit_form._token) }}
-			       <div class="form-group">
+			       	<div class="form-group">
 			        	<div class="col-lg-offset-3 col-lg-9">
-							    {{ form_widget(edit_form.add) }}
-							    {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						    {{ form_widget(edit_form.add) }}
+						    {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
 						</div>
 					</div><!-- End .form-group  -->   
 				</form>
