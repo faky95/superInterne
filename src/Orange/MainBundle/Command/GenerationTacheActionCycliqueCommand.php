@@ -4,8 +4,8 @@ namespace Orange\MainBundle\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Orange\MainBundle\Entity\ActionCyclique;
-use Symfony\Component\Console\Output\OutputInterface;
 use Orange\MainBundle\Entity\Tache;
+use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerationTacheActionCycliqueCommand extends BaseCommand {
 	
@@ -35,7 +35,7 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 			}
 			$tache = $actionCyclique->newTache($this->getContainer()->getParameter('pas'));
 			$em->persist($tache);
-			$this->get('orange.main.mailer')->notifNewTache(array('madiagne.sylla@orange-sonatel.com'), $tache);
+			$this->get('orange.main.mailer')->notifNewTache(array($actionCyclique->getAction()->getPorteur()->getEmail()), $tache);
 		}
 		$em->flush();
 		//check if they have at least on occurence

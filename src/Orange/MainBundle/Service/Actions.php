@@ -81,7 +81,7 @@ class Actions {
 	 */
 	public function generateActionsForActionCyclique($entity) {
 		$actions = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur l\'action cylclique"><span class="icomoon-icon-eye"></span></a>';
-		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
+		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAction()->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
 		return sprintf($actions, $this->router->generate('actioncyclique_show', array('id'=>$entity->getId())),

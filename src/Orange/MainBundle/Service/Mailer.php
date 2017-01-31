@@ -27,14 +27,23 @@ class Mailer
 		return $this->mailer->send($mail);
     }
     
-    public function notifNewTache($to, $data) {
+    /**
+     * @param array $to
+     * @param \Orange\MainBundle\Entity\Tache $tache
+     */
+    public function notifNewTache($to, $tache) {
     	$mail = \Swift_Message::newInstance();
+    	$manager = $tache->getActionCyclique()->getAction()->getPorteur()->getSuperior();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
+ 	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
 	    	->setSubject("Nouvelle tache")
-	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleTache.html.twig', array('tache' => $data)))
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleTache.html.twig', array('tache' => $tache)))
 			->setContentType('text/html')
 			->setCharset('utf-8');
+    	if($manager) {
+    		$mail->setCc(array($manager->getEmail()));
+    	}
 		return $this->mailer->send($mail);
     }
     
