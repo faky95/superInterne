@@ -137,7 +137,7 @@ class ActionCyclique
     	$tache->setDateDebut(new \DateTime('NOW'));
     	$pas = $this->pas->getId();
     	$it = $this->getIteration();
-    	$numJr = $this->getDayOfWeek()->getValeur();
+    	$numJr = $this->getDayOfWeek() ? $this->getDayOfWeek()->getValeur() : null;
     	$date = strtotime(date('Y-01-01'));
     	$num = array('first', 'second', 'third', 'fourth', 'fifth', 'sixth');
     	$semaine = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday');
