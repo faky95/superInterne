@@ -39,6 +39,7 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 	    	foreach($tache->getActionCyclique()->getAction()->getContributeur() as $contributeur) {
 	    		$contributeurs[] = $contributeur->getUtilisateur()->getEmail();
 	    	}
+	    	exit(var_dump($actionCyclique->getAction()->getPorteur()->getEmail()));
 			$this->get('orange.main.mailer')->notifNewTache(array($actionCyclique->getAction()->getPorteur()->getEmail()), $contributeurs, $tache);
 		}
 		$em->flush();
