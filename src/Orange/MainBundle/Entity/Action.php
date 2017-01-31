@@ -271,7 +271,6 @@ class Action
 	public function __construct(){
 		$this->dateAction = new \DateTime();
 		$this->isDeleted = 0;
-		$this->actionCyclique = new \Doctrine\Common\Collections\ArrayCollection();
 		$this->isReload = false;
 		$this->contributeur = new ArrayCollection();
 		$this->signalisation = new \Doctrine\Common\Collections\ArrayCollection();
