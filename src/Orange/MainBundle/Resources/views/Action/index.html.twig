@@ -4,10 +4,25 @@
 
 {% block content -%}
 <!-- heading -->
+{% set action_url %}
+    {% if code_statut is  defined and code_statut is not empty %} 
+    	{{ path('les_actions_by_statut', {'code_statut': code_statut})  }}
+	{% elseif instance_id is  defined and instance_id is not empty %}
+		{{ path('les_actions_by_instance', {'instance_id': instance_id})  }}
+	{% elseif structure_id is  defined and structure_id is not empty %}
+	    {{ path('les_actions_by_structure', {'structure_id': structure_id})  }}
+	{% elseif espace is defined and espace is not empty %}
+	    {{ path('les_actions_by_espace', {'espace_id': espace.id})  }}
+	{% else %}
+	    {{ path('les_actions') }}
+	{% endif %}
+{% endset %}
 <div class="heading">
 	<h3>{% block page_title %} Liste des actions {% endblock %}   </h3> 
-	{% if  espace is not empty %}  
+	{% if espace is not empty %}  
 		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace } %}
+	{% elseif projet is not empty %}  
+		 {% include 'OrangeMainBundle:Projet:header_projet.html.twig' with {entity: projet } %}
 	{% endif %} 
 </div>
 <!-- End .heading-->
@@ -16,11 +31,17 @@
     	<div class="row">
 			<div class="col-lg-8">
 			{% if espace is not empty %}
-				   {% if  has_rights("ROLE_GESTIONNAIRE_ESPACE") %}
-						<a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace.id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
-						<a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
-				   {% endif %}
-				   		<a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
+				{% if  has_rights("ROLE_GESTIONNAIRE_ESPACE") %}
+					<a href="{{ path('nouvelle_action_to_espace', {'espace_id':espace.id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
+					<a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
+				{% endif %}
+					<a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
+			{% elseif projet is not empty %}
+				{% if  has_rights("ROLE_CHEF_PROJET") %}
+					<a href="{{ path('nouvelle_action_to_projet', {'projet_id': projet.id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
+					<a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
+				{% endif %}
+				<a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
 			{% else %}
 				{% if instance_id is not empty %}
 					<a href="{{ path('nouvelle_action_to_instance', {'instance_id': instance_id}) }}" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
@@ -42,19 +63,7 @@
 				<a href="#minimize" class="maximize" style="display: inline;">Minimize</a>
 	        </div>
 	        <div class="panel-body with-footer" style="display: none;">
-		        <form novalidate="novalidate" class="form-horizontal"
-		        {% if code_statut is  defined and code_statut is not empty %} 
-		          action="{{ path('les_actions_by_statut', {'code_statut': code_statut})  }}"
-		       {% elseif instance_id is  defined and instance_id is not empty %}
-		        action="{{ path('les_actions_by_instance', {'instance_id': instance_id})  }}"
-		        {% elseif structure_id is  defined and structure_id is not empty %}
-		        action="{{ path('les_actions_by_structure', {'structure_id': structure_id})  }}"
-				{% elseif espace is defined and espace is not empty %}
-				action="{{ path('les_actions_by_espace', {'espace_id': espace.id})  }}"
-		       {% else %}
-		        action="{{ path('les_actions') }}"
-		       {% endif %}
-		         method="post">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ action_url }}" method="post">
 		         	<div class="form-group">
 		         	{% if espace is empty %}
 						{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
@@ -136,9 +145,7 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('a[href="#maximize"]').click();
-		$(".instance").change( function() {
-			alert('dddd');
-			});
+		$(".instance").change(function() {});
 	});
 </script>
 	{% include 'OrangeMainBundle:Extra:reloadSelect3.html.twig' with 
@@ -155,19 +162,23 @@
 {% block pagescript %}
 	{{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
-	{% if code_statut is not empty and espace is empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut',{'code_statut':code_statut}), nosorting: {0:0, 6:6} } %}
-	{% elseif code_statut is  defined and code_statut is not empty and espace is  defined and espace is not empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut_espace',{'code_statut':code_statut,'espace_id':espace.id }), nosorting: {0:0, 6:6} } %}
-	{% elseif code is not empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_validees',{'code': code}), nosorting: {0:0, 6:6} } %}		
-	{% elseif instance_id is  defined and instance_id is not  empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_instance',{'instance_id':instance_id}), nosorting: {0:0, 6:6} } %}
-	{% elseif structure_id is  defined and structure_id is not  empty %} 
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_structure',{'structure_id':structure_id}), nosorting: {0:0, 6:6} } %}
+	{% if code_statut is not empty and projet is not empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut_projet',{'code_statut':code_statut, 'projet_id':projet.id}), nosorting: {0:0, 6:6} } %}
+	{% elseif code_statut is not empty and espace is not empty %} 
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut_espace',{'code_statut':code_statut, 'espace_id':espace.id }), nosorting: {0:0, 6:6} } %}
+	{% elseif code_statut is not empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_statut',{'code_statut':code_statut}), nosorting: {0:0, 6:6} } %}
+	{% elseif code is not empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_validees',{'code': code}), nosorting: {0:0, 6:6} } %}		
+	{% elseif instance_id is  defined and instance_id is not  empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_instance',{'instance_id':instance_id}), nosorting: {0:0, 6:6} } %}
+	{% elseif structure_id is  defined and structure_id is not  empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions_by_structure',{'structure_id':structure_id}), nosorting: {0:0, 6:6} } %}
 	{% elseif espace is  defined and espace is not  empty %}
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_by_espace' ,{'espace_id':espace.id}), nosorting: {0:0, 6:6} } %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_by_espace' ,{'espace_id':espace.id}), nosorting: {0:0, 6:6} } %}
+	{% elseif projet is defined and projet is not  empty %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_by_projet' ,{'projet_id':projet.id}), nosorting: {0:0, 6:6} } %}
 	{% else %}
-			{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions'), nosorting: {0:0, 6:6} } %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_des_actions'), nosorting: {0:0, 6:6} } %}
 	{% endif %}
 {% endblock %}

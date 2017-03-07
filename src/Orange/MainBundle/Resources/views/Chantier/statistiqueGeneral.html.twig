@@ -1,0 +1,91 @@
+  <div class="reminder1">
+    <h4>Statistiques G&eacute;n&eacute;rales
+    </h4>
+    <ul>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 icomoon-icon-sigma gray"></span>
+            </div>
+            <span class="number1">{{ entity|number_actions }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_chantier', {chantier_id: entity.id }) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 entypo-icon-checkmark green"></span>
+            </div>
+            {% if req is not empty %}
+            {% set soldee = req['faite délai'] %}
+            {% else %}
+               {% set soldee = 0 %}
+            {% endif %}
+            <span class="number1">{{ soldee }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faite(s)  dans les délais</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_FAIT_DELAI') , chantier_id: entity.id}) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 entypo-icon-checkmark red"></span>
+            </div>
+            {% if req is not empty %}
+            {% set soldee = req['faite hors délai'] %}
+            {% else %}
+               {% set soldee = 0 %}
+            {% endif %}
+            <span class="number1">{{ soldee }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faites(s) hors délais</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_FAIT_HORS_DELAI') , chantier_id: entity.id}) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 icomoon-icon-checkmark-3 green"></span>
+            </div>
+            {% if req is not empty %}
+            {% set soldee = req['soldée delai']|default(0)  %}
+            {% else %}
+               {% set soldee = 0 %}
+            {% endif %}
+            <span class="number1">{{ soldee }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) dans les délais</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_SOLDEE_DELAI') , chantier_id:entity.id}) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 icomoon-icon-checkmark-3 green"></span>
+            </div>
+            {% if req is not empty %}
+            {% set soldee = req['soldée hors delai']|default(0)  %}
+            {% else %}
+               {% set soldee = 0 %}
+            {% endif %}
+            <span class="number1">{{ soldee }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) hors délai</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_SOLDEE_HORS_DELAI') , chantier_id:entity.id}) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16  icomoon-icon-loop-4"></span>
+            </div>
+            <span class="number1">{{ req?req['Non échue']|default(0) }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non Echue(s)</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_NON_ECHUE'), chantier_id:entity.id }) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 entypo-icon-time red"></span>
+            </div>
+            <span class="number1">{{ req?req['Echue non soldée']|default(0) }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;chue(s) non sold&eacute;es</span></span>
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_ECHUE_NON_SOLDEE'), chantier_id:entity.id }) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 icomoon-icon-bubble-cancel"></span>
+            </div>
+            <span class="number1">{{ req?req['Demande Abandon']|default(0) }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demande(s) d&acute;abandon</span></span> 
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_DEMANDE_ABANDON'), chantier_id:entity.id }) }}">D&Eacute;TAILS</a>
+        </li>
+        <li class="clearfix">
+            <div class="icon">
+                <span class="icon16 silk-icon-cancel red"></span>
+            </div>
+            <span class="number1">{{ req?req['Abandonnée']|default(0) }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abandonn&Eacute;e(s)</span></span> 
+            <a class="btn btn-warning" href="{{ path('les_actions_by_statut_chantier', {'code_statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_ABANDONNEE'), chantier_id:entity.id }) }}">D&Eacute;TAILS</a>
+        </li>
+         
+        
+    </ul>
+</div><!-- End .reminder -->

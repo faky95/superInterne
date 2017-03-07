@@ -59,12 +59,8 @@ class Instance
     private  $isDeleted;
     
     /**
-     * @var \Chantier
-     *
-     * @ORM\OneToOne(targetEntity="Chantier", mappedBy="Instance")
-     * @ORM\JoinColumns({
-     *   @ORM\JoinColumn(name="chantier_id", referencedColumnName="id")
-     * })
+     * @var Chantier
+     * @ORM\OneToOne(targetEntity="Chantier", mappedBy="instance")
      */
     private $chantier;
     
@@ -103,8 +99,6 @@ class Instance
      * )
      */
     private $structure;
-    
-
     
     /**
      * @var \Doctrine\Common\Collections\Collection

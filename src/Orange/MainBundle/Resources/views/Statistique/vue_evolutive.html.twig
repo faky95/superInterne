@@ -2,182 +2,182 @@
 {% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
 {% block content %}
  <!-- heading -->
-				<div class="heading">
-					<h3>{% block page_title %} Vue statitique sur les statistiques {% endblock %}</h3>                    
+<div class="heading">
+	<h3>{% block page_title %} Vue statitique sur les statistiques {% endblock %}</h3>                    
+</div>
+<ul class="nav nav-pills monTab">
+   <li {% if role==4 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 4 }) }}">Mes Stats</a></li>
+	{% if has_rights('ROLE_ADMIN') %}
+   <li {% if role==0 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 0 }) }}">Générale</a></li>
+   {% endif %}
+	{% if has_rights('ROLE_MANAGER') %}
+   <li {% if role==2 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 2 }) }}">Mes Collaborateurs</a></li>
+   {% endif %}
+   {% if has_rights('ROLE_ANIMATEUR') %}
+   <li {% if role==1 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 1 }) }}">Mes instances</a></li>
+   {% endif %}
+	{% if has_rights('ROLE_RAPPORTEUR') %}
+   <li {% if role==3 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 3 }) }}">Mes structures</a></li>
+   {% endif %}
+	{% if has_rights('ROLE_CHEF_PROJET') %}
+   <li {% if role==5 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 5 }) }}">Mes espaces</a></li>
+   {% endif %}
+	{% if has_rights('ROLE_CHEF_PROJET') or has_rights('ROLE_CHEF_CHANTIER') %}
+   <li {% if role==6 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 6 }) }}">Mes projets</a></li>
+   {% endif %}
+</ul>
+<div style="margin-top: 0px;">
+     <div class="panel panel-default">
+        <div class="panel-heading"> 
+			<h4> 
+				<span class="icon16 icomoon-icon-filter-2"></span>
+				<span>Filtres </span>
+			</h4>
+			<a href="#minimize" class="minimize" style="display: inline;">Minimize</a>
+        </div>
+        <div class="panel-body">
+         	<form novalidate="novalidate" class="form-horizontal" action="{{ path('statistique_generale_evo', {'role': role }) }}" method="post">
+				<div class="form-group">
+					{{ form_widget(form.utilisateur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 				</div>
-				<ul class="nav nav-pills monTab">
-							   <li {% if role==4 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 4 }) }}">Mes Stats</a></li>
-								{% if has_rights('ROLE_ADMIN') %}
-					   		   <li {% if role==0 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 0 }) }}">Générale</a></li>
-					   		   {% endif %}
-								{% if has_rights('ROLE_MANAGER') %}
-							   <li {% if role==2 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 2 }) }}">Mes Collaborateurs</a></li>
-							   {% endif %}
-							   {% if has_rights('ROLE_ANIMATEUR') %}
-                               <li {% if role==1 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 1 }) }}">Mes instances</a></li>
-                               {% endif %}
-								{% if has_rights('ROLE_RAPPORTEUR') %}
-                               <li {% if role==3 %}class="active"{% endif %}><a href="{{ path('statistique_generale_evo', {'role': 3 }) }}">Mes structures</a></li>
-                               {% endif %}
-               </ul>
-                <div style="margin-top: 0px;">
-			         <div class="panel panel-default">
-					        <div class="panel-heading"> 
-								<h4> 
-									<span class="icon16 icomoon-icon-filter-2"></span>
-									<span>Filtres </span>
-								</h4>
-								<a href="#minimize" class="minimize" style="display: inline;">Minimize</a>
-									        </div>
-									        <div class="panel-body">
-				                             <form novalidate="novalidate" class="form-horizontal" action="{{ path('statistique_generale_evo', {'role': role }) }}" method="post">
-													<div class="form-group">
-														{{ form_widget(form.utilisateur,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-														{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-													</div>
-													<div class="form-group">
-														{{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-														{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
-													</div>
-													<div class="form-group">
-														{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-													</div>
-													<div class="form-group">
-											        	<div class="col-lg-offset-2 col-lg-9">
-															{{ form_widget(form.filtrer) }}
-														</div>
-													</div><!-- End .form-group  -->  
-											</form>
-						</div>
+				<div class="form-group">
+					{{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+					{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+				</div>
+				<div class="form-group">
+					{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+				</div>
+				<div class="form-group">
+		        	<div class="col-lg-offset-2 col-lg-9">
+						{{ form_widget(form.filtrer) }}
 					</div>
-				</div>
-				<ul id="myTab4" class="nav nav-tabs">
-					{% if role==0 or role==2  or role==3 %}
-						<li class="dropdown">
-	                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tableau <b class="caret"></b></a>
-	                            <ul class="dropdown-menu">
-		                              {% set i=0 %}
-		                              {% for cle,lib in stats.structure %} 
-		                              		{% set i=i+1 %}
-		                                    <li><a href="#tabEvAd-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
-		                                     {% set tst1=1 %}
-		                             {% endfor %}
-	                            </ul>
-				         </li>
-				         <li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphe <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                              {% set i=0 %}
-			                              {% for cle,lib in graphe %} 
-			                              		{% set i=i+1 %}
-			                                    <li><a href="#tabEv-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
-			                                     {% set tst1=1 %}
-			                             {% endfor %}
-                                        </ul>
-			             </li>
-					{% endif %}
-					
-					{% if role==1 %}
-							<li class="dropdown">
-	                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes instances<b class="caret"></b></a>
-	                                        <ul class="dropdown-menu">
-	                                              {% set i=0 %}
-					                              {% for cle,lib in stats.instance %} 
-					                              		{% set i=i+1 %}
-					                                    <li><a href="#tabEvAn-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
-					                                     {% set tst1=1 %}
-					                             {% endfor %}
-	                                        </ul>
-				            </li>
-				            <!-- Graphe -->
-					<li class="dropdown">
-                                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphe <b class="caret"></b></a>
-                                        <ul class="dropdown-menu">
-                                              {% set i=0 %}
-			                              {% for cle, lib in stats.instance %} 
-			                              		{% set i=i+1 %}
-			                                    <li><a href="#tabEv-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
-			                                     {% set tst1=1 %}
-			                             {% endfor %}
-                                        </ul>
-			         </li>
-					{% endif %}
-					{% if role==4 %}
-										<li  class=" ">
-	                                        <a href="#porteeEv" data-toggle="tab">Tableau</a>
-	                                    </li>
-	                                    <li><a href="#tabP11" data-toggle="tab">Graphe</a></li>
-					{% endif %}
-				</ul>
-				
-				<!--  content tab -->
-				<div class="tab-content" style="overflow-y: hidden;padding: 0;">
-				{% if role==0 or role==2  or role==3 %}
-			           	  {% if stats is defined and stats is defined %}
-					           	 {% set i=0 %}
-								 {% for cle, stat in stats.structure %}
-											{% set i=i+1 %}
-											<div class="tab-pane fade " id="tabEvAd-{{ i }}">
-												{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
-											</div>
-								{% endfor %}
-				           	{% else %}
-								<div class="alert alert-warning">
-									  <strong>Infos!</strong> Aucune information disponible  ....
-								</div>
-							{% endif %}
-							<!-- graphe -->
-           		     {% set i=0 %}
-							{% for cle, lib in graphe %}
-							{% set i=i+1 %}
-							<div class="tab-pane fade " id="tabEv-{{ i }}">
-							<div id="mychartE-{{ i }}" class="col-lg-11"></div>
-							</div>
-							{% endfor %}
-							
-           		  {% endif %}
-           		  {% if role==1 %}
-           		  	 {% if stats is defined and stats.instance is defined %}
-		           	     {% set i=0 %}
-						 {% for cle, stat in stats.instance %}
-									{% set i=i+1 %}
-									<div class="tab-pane fade " id="tabEvAn-{{ i }}">
-										{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
-									</div>
-						{% endfor %}
-		           	{% else %}
-						<div class="alert alert-warning">
-							  <strong>Infos!</strong> Aucune information disponible  ....
-						</div>
-					{% endif %}
-					{% set i=0 %}
-						{% for instance in stats.instance %}
-						{% set i=i+1 %}
-						<div class="tab-pane fade " id="tabEv-{{ i }}">
-						<div id="mychartE-{{ i }}" class="col-lg-11"></div>
-						</div>
-						{% endfor %}
-           		  {% endif %}
-           		    {% if role==4 %}
-           		     <div class="tab-pane fade in  " id="porteeEv">
-           		      {% if stats is  defined and stats is not empty %}
-              				{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stats , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
-                          {% else %}
-                                      <div class="alert alert-warning">
-                          				 <strong>Infos!</strong> Aucune action en portée ...
-                       				 </div>
-                          {% endif %}
-                       </div>
-                       <div class="tab-pane fade  in" id="tabP11">	
-			                  <div id="mychartEvP" class="col-lg-11"></div>                                   	
-			           </div>
-           		     {% endif %}
-           		     
-				</div>
-               
-                        
+				</div><!-- End .form-group  -->  
+			</form>
+		</div>
+	</div>
+</div>
+<ul id="myTab4" class="nav nav-tabs">
+	{% if role==0 or role==2  or role==3 %}
+		<li class="dropdown">
+          	<a href="#" class="dropdown-toggle" data-toggle="dropdown">Tableau <b class="caret"></b></a>
+        	<ul class="dropdown-menu">
+              {% set i=0 %}
+              {% for cle,lib in stats.structure %} 
+              		{% set i=i+1 %}
+                    <li><a href="#tabEvAd-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+                     {% set tst1=1 %}
+             {% endfor %}
+            </ul>
+         </li>
+         <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphe <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                  {% set i=0 %}
+              {% for cle,lib in graphe %} 
+              		{% set i=i+1 %}
+                    <li><a href="#tabEv-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+                     {% set tst1=1 %}
+             {% endfor %}
+            </ul>
+         </li>
+	{% endif %}
+	{% if role==1 %}
+		<li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Mes instances<b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                  {% set i=0 %}
+                  {% for cle,lib in stats.instance %} 
+                  		{% set i=i+1 %}
+                        <li><a href="#tabEvAn-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+                         {% set tst1=1 %}
+                 {% endfor %}
+            </ul>
+        </li>
+        <!-- Graphe -->
+		<li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Graphe <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                  {% set i=0 %}
+              {% for cle, lib in stats.instance %} 
+              		{% set i=i+1 %}
+                    <li><a href="#tabEv-{{ i }}" data-toggle="tab"> {{ cle }}</a></li>
+                     {% set tst1=1 %}
+             {% endfor %}
+            </ul>
+     </li>
+	{% endif %}
+	{% if role==4 %}
+		<li>
+            <a href="#porteeEv" data-toggle="tab">Tableau</a>
+        </li>
+        <li><a href="#tabP11" data-toggle="tab">Graphe</a></li>
+	{% endif %}
+</ul>
+<!--  content tab -->
+<div class="tab-content" style="overflow-y: hidden;padding: 0;">
+{% if role==0 or role==2  or role==3 %}
+    {% if stats is defined and stats is defined %}
+       	 {% set i=0 %}
+		 {% for cle, stat in stats.structure %}
+			{% set i=i+1 %}
+			<div class="tab-pane fade " id="tabEvAd-{{ i }}">
+				{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+			</div>
+		{% endfor %}
+   	{% else %}
+		<div class="alert alert-warning">
+			  <strong>Infos!</strong> Aucune information disponible  ....
+		</div>
+	{% endif %}
+	<!-- graphe -->
+    {% set i=0 %}
+	{% for cle, lib in graphe %}
+	{% set i=i+1 %}
+	<div class="tab-pane fade " id="tabEv-{{ i }}">
+		<div id="mychartE-{{ i }}" class="col-lg-11"></div>
+	</div>
+	{% endfor %}
+{% endif %}
+{% if role==1 %}
+  	 {% if stats is defined and stats.instance is defined %}
+   	     {% set i=0 %}
+		 {% for cle, stat in stats.instance %}
+			{% set i=i+1 %}
+			<div class="tab-pane fade " id="tabEvAn-{{ i }}">
+				{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stat , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+			</div>
+		{% endfor %}
+   	{% else %}
+		<div class="alert alert-warning">
+			  <strong>Infos!</strong> Aucune information disponible  ....
+		</div>
+	{% endif %}
+	{% set i=0 %}
+		{% for instance in stats.instance %}
+		{% set i=i+1 %}
+		<div class="tab-pane fade " id="tabEv-{{ i }}">
+		<div id="mychartE-{{ i }}" class="col-lg-11"></div>
+		</div>
+		{% endfor %}
+{% endif %}
+{% if role==4 %}
+	<div class="tab-pane fade in  " id="porteeEv">
+    {% if stats is  defined and stats is not empty %}
+		{% include "OrangeMainBundle:Statistique:simple_tableau_evo_stats.html.twig" with {'stats': stats , 'statut':statut, 'type': "one",'nbTaux':nbTaux}  %}
+    {% else %}
+        <div class="alert alert-warning">
+			<strong>Infos!</strong> Aucune action en portée ...
+		</div>
+     {% endif %}
+     </div>
+	<div class="tab-pane fade  in" id="tabP11">	
+    	<div id="mychartEvP" class="col-lg-11"></div>                                   	
+	</div>
+{% endif %}
+</div>
 {% endblock %}
 {% block pagescript %}
- {{ parent() }}
-  {% include 'OrangeMainBundle:Extra:myChart2.html.twig' with {  'graphe':graphe, 'semaines' : semaines,  'role': role }%}
+    {{ parent() }}
+    {% include 'OrangeMainBundle:Extra:myChart2.html.twig' with {  'graphe':graphe, 'semaines' : semaines,  'role': role }%}
 {% endblock %}

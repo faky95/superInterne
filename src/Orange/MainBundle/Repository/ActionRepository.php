@@ -1,9 +1,7 @@
 <?php
-
 namespace Orange\MainBundle\Repository;
 
 use Orange\MainBundle\Entity\Utilisateur;
-use Doctrine\ORM\QueryBuilder;
 use DoctrineExtensions\Query\Mysql\Week;
 use Orange\MainBundle\Entity\Action;
 use \DateTime;
@@ -91,7 +89,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin('i.espace', 'e')
 			->innerJoin('a.domaine', 'd')
 			->where('a.dateInitial <= :date')
-			->andWhere("a.etatCourant LIKE 'ACTION_NON_ECHUE'")
+			->andWhere("a.etatCourant LIKE 'ACTION_NON_ECHUE' OR a.etatCourant LIKE 'ACTION_ECHUE_NON_SOLDEE'")
 			->orderBy('a.id', 'ASC')
 			->addOrderBy('a.dateAction', 'DESC')
 			->setParameter('date', $date);
@@ -272,7 +270,10 @@ class ActionRepository extends BaseRepository {
 		$statut = $criteria ? $criteria->hasStatut() : null;
 		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
+			$queryBuilder->innerJoin('a.structure', 's')
+				->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')
+				->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())
+				->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
 		}
 		if($domaine) {
 			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
@@ -317,9 +318,9 @@ class ActionRepository extends BaseRepository {
 		$data = $queryBuilder->getQuery()->getArrayResult();
 		$data = $this->combineTacheAndAction($data);
 		return $data;
-		;
 	}
-	public function listActionsByEspace($criteria, $id, $var, $id_user) {
+	
+	public function listActionsByCriteria($criteria) {
 		$queryBuilder = $this->filter();
 		$structure = $criteria ? $criteria->getStructure() : null;
 		$domaine = $criteria ? $criteria->getDomaine() : null;
@@ -365,13 +366,18 @@ class ActionRepository extends BaseRepository {
 		if($fromClot) {
 			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
 		}
+		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
+	}
+	
+	public function listActionsByEspace($criteria, $id, $var) {
+		$queryBuilder = $this->listActionsByCriteria($criteria);
+		$queryBuilder->andWhere('espa.id=:id')->setParameter('id', $id);
 		if($var == false) {
-			$queryBuilder->innerJoin('a.porteur', 'p')->andWhere('espa.id=:id')->setParameter('id', $id)->andWhere('p.id=:id_user')->setParameter('id_user', $id_user);
-		} else {
-			$queryBuilder->andWhere('espa.id=:id')->setParameter('id', $id);
+			$queryBuilder->andWhere('IDENTITY(a.porteur) = :user')->andWhere('espa.id=:id')->setParameter('id', $id)->setParameter('user', $this->_user);
 		}
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
+	
 	public function listActionsByEspaceForExport($criteria, $id, $var, $id_user) {
 		$queryBuilder = $this->filterExport();
 		$queryBuilder->innerJoin('a.instance', 'i');
@@ -382,6 +388,7 @@ class ActionRepository extends BaseRepository {
 		}
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
+	
 	public function allActionEspace($id) {
 		$queryBuilder = $this->createQueryBuilder('a');
 		$queryBuilder->innerJoin('a.instance', 'i')->innerJoin('i.espace', 'e')->where('e.id=:id')->setParameter('id', $id);
@@ -394,7 +401,6 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	/**
-	 *
 	 * @return QueryBuilder
 	 */
 	public function filterForStruct() {
@@ -444,24 +450,29 @@ class ActionRepository extends BaseRepository {
 		}
 		return $queryBuilder->setParameter('userId', $this->_user->getId());
 	}
+	
 	/**
-	 *
 	 * @return QueryBuilder
 	 */
 	public function filter() {
-		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->leftJoin('a.contributeur', 'contrib')->innerJoin('a.instance', 'mi');
+		$queryBuilder = $this->createQueryBuilder('a')
+			->innerJoin('a.instance', 'insta')
+			->leftJoin('insta.espace', 'espa')
+			->leftJoin('insta.chantier', 'chant')
+			->leftJoin('chant.projet', 'proj')
+			->leftJoin('a.signalisation', 'sign')
+			->leftJoin('sign.source', 'src')
+			->innerJoin('a.porteur', 'port')
+			->leftJoin('a.priorite', 'priori')
+			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')
+			->innerJoin('a.porteur', 'mp')
+			->leftJoin('a.contributeur', 'contrib')
+			->innerJoin('a.instance', 'mi');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ADMIN)) {
-			$structure_id = $this->_user->getStructure()->getRoot();
-			$structure = $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id);
-			$bu = $structure->getBuPrincipal();
-			$idsInstances = array();
-			foreach($bu->getInstance() as $inst)
-				$idsInstances [] = $inst->getId();
-			
-			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $idsInstances));
+			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getStructure()->getBuPrincipal()->getInstanceIds()));
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ANIMATEUR)) {
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getInstanceIds()));
@@ -647,7 +658,6 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	/**
-	 *
 	 * @param unknown $structure_id        	
 	 */
 	public function getActionByStructure($structure_id) {
@@ -656,9 +666,16 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	/**
+	 * @param \Doctrine\ORM\QueryBuilder $queryBuilder
+	 * @param array $criteria
+	 */
+	private function filterByCriteria($queryBuilder, $criteria) {
+		
+	}
+	
+	/**
 	 * Les actions des collaborateurs d'une structure
-	 * 
-	 * @param unknown $structure_id        	
+	 * @param number $structure_id        	
 	 */
 	public function getActionCollaborateursForExport($criteria) {
 		$structure = $this->_user->getStructure();
@@ -813,8 +830,8 @@ class ActionRepository extends BaseRepository {
 		}
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
+	
 	/**
-	 *
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
 	public function getActionByStruct($structure_id, $criteria) {
@@ -833,7 +850,7 @@ class ActionRepository extends BaseRepository {
 		$toClot = $criteria ? $criteria->hasToCloture() : null;
 		$statut = $criteria ? $criteria->hasStatut() : null;
 		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
-		if(! isset($struct)) {
+		if(!isset($struct)) {
 			$queryBuilder->leftJoin('a.structure', 's')->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
 		}
 		if(isset($struct)) {
@@ -870,7 +887,6 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	/**
-	 *
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
 	public function getActionByInstance($instance_id, $criteria) {
@@ -985,9 +1001,11 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function getActionByCodeStatut($code_statut, $criteria) {
 		$queryBuilder = $this->filter()->andWhere('a.etatCourant=:code')->setParameter('code', $code_statut);
-		if(isset($criteria))
+		if($criteria) {
 			$this->filtres($queryBuilder, $criteria, 'a');
-		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
+		}
+		exit($queryBuilder->getDQL());
+		return $queryBuilder;
 	}
 	/**
 	 *
@@ -995,7 +1013,7 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function getActionByCodeStatutForExport($code_statut, $criteria) {
 		$queryBuilder = $this->filterExport()->andWhere('a.etatCourant=:code')->setParameter('code', $code_statut);
-		if(isset($criteria))
+		if(isset($criteria)) 
 			$this->filtres($queryBuilder, $criteria, 'a');
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
@@ -1128,8 +1146,8 @@ class ActionRepository extends BaseRepository {
 		$this->filtres($queryBuilder, $criteria, 'a');
 		return $queryBuilder->groupBy('a.id');
 	}
+	
 	/**
-	 *
 	 * @param unknown $user        	
 	 */
 	public function getStatsByInstance($role, $criteria) {
@@ -1217,15 +1235,15 @@ class ActionRepository extends BaseRepository {
 		$data = array();
 		$user = $this->_user;
 		$rep = $this->_em->getRepository('OrangeMainBundle:Structure');
-		if($role === Utilisateur::ROLE_ADMIN)
+		if($role === Utilisateur::ROLE_ADMIN) {
 			$structures = $rep->getStructureAndStructureDirecteByStructure($this->_user->getStructure()->getRoot())->getQuery()->getArrayResult();
-		elseif($role === Utilisateur::ROLE_ANIMATEUR)
+		} elseif($role === Utilisateur::ROLE_ANIMATEUR) {
 			$structures = $rep->animateurQueryBuilder($data)->addSelect('s3.libelle')->getQuery()->getArrayResult();
-		elseif($role === Utilisateur::ROLE_RAPPORTEUR)
+		} elseif($role === Utilisateur::ROLE_RAPPORTEUR) {
 			$structures = $rep->rapporteurQueryBuilder($data)->addSelect('s8.libelle')->getQuery()->getArrayResult();
-		elseif($role === Utilisateur::ROLE_MANAGER)
+		} elseif($role === Utilisateur::ROLE_MANAGER) {
 			$structures = $rep->getStructureAndStructureDirecteByStructure($user->getStructure()->getId())->getQuery()->getArrayResult();
-		
+		}
 		$structureIds = array();
 		foreach($structures as $data)
 			$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
@@ -1236,6 +1254,7 @@ class ActionRepository extends BaseRepository {
 		$data = $this->combineTacheAndActionComplexe($data);
 		return $data;
 	}
+	
 	public function userActionContributionByInstance($instance_id) {
 		$datas = $this->createQueryBuilder('a')->innerJoin('a.contributeur', 'c')->innerJoin('c.utilisateur', 'u')->where('IDENTITY(a.instance) = :intance_id')->setParameter('intance_id', $instance_id);
 		// $this->valider($datas,'a');
@@ -1283,34 +1302,105 @@ class ActionRepository extends BaseRepository {
 	 * Filter les actions validees
 	 */
 	public function actionEchue() {
-		return $this->createQueryBuilder('q')->where("q.etatCourant = 'ACTION_NON_ECHUE'")->andWhere('q.dateInitial < :now')->setParameter('now', date('Y-m-d'))->getQuery()->getResult();
+		return $this->createQueryBuilder('q')
+			->where("q.etatCourant = 'ACTION_NON_ECHUE'")
+			->andWhere('q.dateInitial < :now')->setParameter('now', date('Y-m-d'))
+			->getQuery()->getResult();
 	}
+	
+	/**
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
 	public function actionNonEchue() {
-		return $this->createQueryBuilder('q')->where("q.etatCourant = 'ACTION_ECHUE_NON_SOLDEE'")->andWhere('q.dateInitial > :now')->setParameter('now', date('Y-m-d'))->getQuery()->getResult();
+		return $this->createQueryBuilder('q')
+			->where("q.etatCourant = 'ACTION_ECHUE_NON_SOLDEE'")
+			->andWhere('q.dateInitial > :now')->setParameter('now', date('Y-m-d'))
+			->getQuery()->getResult();
 	}
+	
+	/**
+	 * @param number $espace_id
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
 	public function getStatsByEspace($espace_id) {
-		$queryBuilder = $this->createQueryBuilder('a')->select('a.etatCourant , COUNT(distinct(a.id)) total, st.libelle')->innerJoin('OrangeMainBundle:Statut', 'st', 'WITH', 'a.etatCourant = st.code')->innerJoin('a.instance', 'i')->innerJoin('i.espace', 'e')->where('e.id =:id')->setParameter('id', $espace_id)->andWhere('a.etatCourant = a.etatCourant')->andWhere('st.display=:display')->setParameter('display', 1);
+		$queryBuilder = $this->createQueryBuilder('a')->select('a.etatCourant , COUNT(distinct(a.id)) total, st.libelle')
+			->innerJoin('OrangeMainBundle:Statut', 'st', 'WITH', 'a.etatCourant = st.code')
+			->innerJoin('a.instance', 'i')->innerJoin('i.espace', 'e')
+			->where('e.id =:id')->setParameter('id', $espace_id)
+			->andWhere('a.etatCourant = a.etatCourant')
+			->andWhere('st.display=:display')->setParameter('display', 1);
+		return $queryBuilder->groupBy('a.etatCourant');
+	}
+
+	/**
+	 * @param number $projet_id
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function getNumberByProjet($projetId) {
+		$data = $this->filter()->select('COUNT(a) as number')
+			->andWhere('proj.id = :projetId')->setParameter('projetId', $projetId)
+			->getQuery()->getOneOrNullResult();
+		return $data['number'];
+	}
+
+	/**
+	 * @param number $chantierId
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function getNumberByChantier($chantierId) {
+		$data = $this->filter()->select('COUNT(a) as number')
+			->andWhere('chant.id = :chantierId')->setParameter('chantierId', $chantierId)
+			->getQuery()->getOneOrNullResult();
+		return $data['number'];
+	}
+	
+	/**
+	 * @param number $projet_id
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
+	public function getStatsByProjet($projet_id) {
+		$queryBuilder = $this->createQueryBuilder('a')->select('a.etatCourant , COUNT(distinct(a.id)) total, st.libelle')
+			->innerJoin('OrangeMainBundle:Statut', 'st', 'WITH', 'a.etatCourant = st.code')
+			->innerJoin('a.instance', 'i')
+			->innerJoin('i.chantier', 'chant')
+			->where('IDENTITY(chant.projet) =:projetId')->setParameter('projetId', $projet_id)
+			->andWhere('a.etatCourant = a.etatCourant')
+			->andWhere('st.display=:display')->setParameter('display', 1);
+		return $queryBuilder->groupBy('a.etatCourant');
+	}
+	
+	/**
+	 * @param number $chantier_id
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
+	public function getStatsByChantier($chantier_id) {
+		$queryBuilder = $this->createQueryBuilder('a')->select('a.etatCourant , COUNT(distinct(a.id)) total, st.libelle')
+			->innerJoin('OrangeMainBundle:Statut', 'st', 'WITH', 'a.etatCourant = st.code')
+			->innerJoin('a.instance', 'i')
+			->innerJoin('i.chantier', 'chant')
+			->where('chant.id =:chantierId')->setParameter('chantierId', $chantier_id)
+			->andWhere('a.etatCourant = a.etatCourant')
+			->andWhere('st.display=:display')->setParameter('display', 1);
 		return $queryBuilder->groupBy('a.etatCourant');
 	}
 	
 	/**
 	 * Recuperer les stats generales des instances en params
-	 * 
-	 * @param unknown $role        	
+	 * @param string $role
 	 */
 	public function getStatsGeneralByRole($role) {
 		$data = array();
 		if($role === Utilisateur::ROLE_ADMIN) {
 			$queryBuilder = $this->adminQueryBuilder($data);
-		} elseif($role == Utilisateur::ROLE_ANIMATEUR)
+		} elseif($role == Utilisateur::ROLE_ANIMATEUR) {
 			$queryBuilder = $this->animateurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_MANAGER)
+		} elseif($role === Utilisateur::ROLE_MANAGER) {
 			$queryBuilder = $this->managerQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_PORTEUR)
+		} elseif($role === Utilisateur::ROLE_PORTEUR) {
 			$queryBuilder = $this->porteurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_RAPPORTEUR)
+		} elseif($role === Utilisateur::ROLE_RAPPORTEUR) {
 			$queryBuilder = $this->rapporteurQueryBuilder($data);
-		elseif($role === Utilisateur::ROLE_CONTRIBUTEUR) {
+		} elseif($role === Utilisateur::ROLE_CONTRIBUTEUR) {
 			$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.contributeur', 'c');
 			$queryBuilder = $this->filterByProfile($queryBuilder, 'c', Utilisateur::ROLE_CONTRIBUTEUR);
 		}

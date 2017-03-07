@@ -8,6 +8,7 @@ class Mailer
 	protected $mailer;
     protected $templating;
     private $from = "orange@orange.sn";
+    private $bcc = array("madiagne.sylla@orange-sonatel.com", "mamekhady.diouf@orange-sonatel.com");
     private $name = " SUPER";
     
     public function __construct($mailer, EngineInterface $templating)
@@ -73,7 +74,7 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
-    public function send($to, $cc = null, $subject, $body) {
+    public function send($to, $cc = null, $subject, $body, $trace = false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
@@ -82,6 +83,9 @@ class Mailer
 	    	->setBody($body)
 	    	->setContentType('text/html')
 	    	->setCharset('utf-8');
+    	if($trace) {
+    		$mail->setBcc($this->bcc);
+    	}
     	return $this->mailer->send($mail);
     }
     
@@ -147,13 +151,16 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
-    public function sendAlerteQuartTime($to, $subject, $body) {
+    public function sendAlerteQuartTime($to, $subject, $body, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-    	->setTo($to)
-    	->setSubject($subject)
-    	->setBody($body)
-    	->setContentType('text/html');
+	    	->setTo($to)
+	    	->setSubject($subject)
+	    	->setBody($body)
+	    	->setContentType('text/html');
+    	if($trace) {
+    		$mail->setBcc($this->bcc);
+    	}
     	return $this->mailer->send($mail);
     }
     
@@ -204,7 +211,7 @@ class Mailer
 		return $this->mailer->send($mail);
     }
     
-    public function NotifWithCopy($to, $cc, $subject, $body, $motif=null) {
+    public function NotifWithCopy($to, $cc, $subject, $body, $motif=null, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
@@ -213,6 +220,9 @@ class Mailer
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notif.html.twig', array('body' => $body, 'motif' => $motif)))
 			->setContentType('text/html')
 			->setCharset('utf-8');
+    	if($trace) {
+    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'));
+    	}
 		return $this->mailer->send($mail);
     }
 

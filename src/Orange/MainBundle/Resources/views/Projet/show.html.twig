@@ -1,72 +1,76 @@
 {% extends '::base.html.twig' %}
 
 {% block content -%}
-    
-        <!-- Build page from here: -->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default gradient invoice">
-
-                            <div class="panel-heading clearfix">
-
-                                <h4 class="left">
-                                    <span>Details Projet</span>
-                                </h4>
-                                <div class="print">
-                                    <a href="{{ path('edition_projet', {'id':entity.id}) }}" class="tip" title="Modifier le projet"><span class="icon24 icomoon-icon-pencil-3"></span></a>
-                                </div>
-                                  
-
-                            </div>
-                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
-                                <div class="you col-lg-6 col-md-6 col-sm-6" >
-                                    <ul class="list-unstyled">
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libelle: <strong class="red">{{ entity.libelle }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date: <strong class="red">{{ entity.dateCreation|date("d/m/Y")  }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Chef: <strong class="red">{{ entity.chefProjet }}</strong></li>
-                                    </ul>
-                                </div>
-                                <div class="client col-lg-6 col-md-6 col-sm-6">
-                                    <ul class="list-unstyled">
-                                    	
-                                        <li><h3 class="red">Description</h3>
-                                        <p style="text-align: justify;">{{ entity.description }}</p></li>
-
-                                    </ul>
-                                </div>
-                                <div class="clearfix"></div>
-								  <h4 class="left">
-                                    <span>Chantiers</span>
-                                </h4>
-                                <table class="responsive table table-bordered">
-                                    <thead>
-                                      <tr>
-                                        <th>Chantier</th>
-                                        <th>Date</th>
-                                        <th>Actions</th>
-                                      </tr>
-                                    </thead>
-                                    <tbody>
-		                                    {% for chantier in entity.chantierProjet %}
-		                                       <tr>
-		                                        <td>{{ chantier.libelle }}</td>
-		                                        <td>{{ chantier.dateCreation|date("d/m/Y") }}</td> 
-		                                        <td>
-		                                        		<a href="{{ path('details_chantier', {'id':chantier.id}) }}" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
-		                                        		<a href="{{ path('edition_chantier', {'id':chantier.id}) }}" title="Modifier" class="tip"><span class="icon12 icomoon-icon-pencil"></span></a>
-		                                        </td>
-		                                      </tr>
-		                                    {% endfor %} 
-                                    </tbody>
-                                </table>
-
-                                
-                               
-                            </div>
-
-                        </div><!-- End .panel -->
-
-                    </div>
-
-                </div><!-- End .row -->
+<div class="heading">
+	<h3>{% block page_title %} Détails du projet{% endblock %}</h3> 
+</div>
+<!-- Build page from here: -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default gradient invoice">
+            <div class="panel-heading clearfix">
+                <h4 class="left">
+                    <span>Détails du projet</span>
+                </h4>
+                <div class="print">
+                    <a href="{{ path('edition_projet', {id: entity.id}) }}" class="tip" title="Modifier le projet"><span class="icon24 icomoon-icon-pencil-3"></span></a>
+                </div>
+            </div>
+            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                    <ul class="list-unstyled">
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libelle: <strong class="red">{{ entity.libelle }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de création: <strong class="red">{{ entity.dateCreation|date("d/m/Y")  }}</strong></li>
+                    </ul>
+                </div>
+                <div class="client col-lg-6 col-md-6 col-sm-6">
+                    <ul class="list-unstyled">
+                        <li><h3 class="red">Description</h3></li>
+                        <p style="text-align: justify;">{{ entity.description }}</p>
+                    </ul>
+                </div>
+                <div class="you col-lg-12 col-md-12 col-sm-12" >
+                    <ul class="list-unstyled">
+                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Chef de projet: <strong class="red">{{ entity.listAllChefProjet }}</strong></li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+				  <h4 class="left">
+                    <span>Chantiers</span>
+                </h4>
+                <table class="responsive table table-bordered">
+                    <thead>
+                      <tr>
+                        <th>Libellé</th>
+                        <th>Chef de chantier</th>
+                        <th>Date de création</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                    {% for chantier in entity.chantier %}
+                       <tr>
+                            <td>{{ chantier }}</td>
+                            <td>{{ chantier.listChefChantier }}</td>
+                            <td>{{ user.dateCreation|date("d/m/Y") }}</td> 
+                            <td>
+                                <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink"></a> 
+                                <a href="#" title="Afficher" class="tip"><span class="icon12 entypo-icon-eye"></span></a>
+                            </td>
+                        </tr>
+                    {% else %}
+                       <tr>
+                            <td colspan="4" style="color: red;font-weight: bold;"><p style="text-align: center;">Aucun chantier défini</p></td>
+                        </tr>
+                    {% endfor %} 
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- End .panel -->
+    </div>
+</div><!-- End .row -->
 {% endblock %}
+{% block pagescript %}
+{{ parent() }}
+{% endblock %}
+		 	

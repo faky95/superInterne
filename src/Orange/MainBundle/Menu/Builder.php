@@ -15,39 +15,39 @@ class Builder extends ContainerAware
     	$menu->addChild('Accueil', array('route' => 'dashboard', 'label' => 'Accueil', 'attributes' => array('class' => 'icomoon-icon-home')));
        	$user = $this->container->get('security.context')->getToken()->getUser();
        	
-       		//$data = $this->simpleMenu($menu,$user);
-        	if($user->hasRole($user::ROLE_SUPER_ADMIN)) {
-        		$data=$this->superAdminMenu($menu);
-        	} else {
+   		//$data = $this->simpleMenu($menu,$user);
+       	if($user->hasRole($user::ROLE_SUPER_ADMIN)) {
+       		$this->superAdminMenu($menu);
+       	} else {
 	       	if($user->hasRole($user::ROLE_ADMIN)) {
-	       		$data=$this->adminMenu($menu);
+	       		$this->adminMenu($menu);
 	       	}
 	       	if($user->hasRole($user::ROLE_ADMIN && $user::ROLE_MANAGER && $user::ROLE_ANIMATEUR)) {
-	       		$data=$this->adminManagerAnimateurMenu($menu);
+	       		$this->adminManagerAnimateurMenu($menu);
 	       	}
 	       	if($user->hasRole($user::ROLE_ADMIN && $user::ROLE_MANAGER)) {
-	       		$data=$this->adminManagerMenu($menu);
+	       		$this->adminManagerMenu($menu);
 	       	}
 	       	if($user->hasRole($user::ROLE_ADMIN && $user::ROLE_MANAGER)) {
-	       		$data=$this->adminAnimateurMenu($menu);
+	       		$this->adminAnimateurMenu($menu);
 	       	}
 	       	if($user->hasRole($user::ROLE_MANAGER)) {
-	       		$data=$this->managerMenu($menu, $user);
+	       		$this->managerMenu($menu, $user);
 	       	}
 	       	if($user->hasRole($user::ROLE_ANIMATEUR_ONLY)) {
-	       		$data=$this->animateurMenu($menu,$user);
+	       		$this->animateurMenu($menu, $user);
 	       	}
 	       	if($user->hasRole($user::ROLE_PORTEUR)) {
-	       		$data=$this->simpleMenu($menu,$user);
+	       		$this->simpleMenu($menu, $user);
 	       	}
 	       	if($user->hasRole($user::ROLE_SOURCE)) {
-	       		$data=$this->sourceMenu($menu);
+	       		$this->sourceMenu($menu);
 	       	} 
 	       	if($user->hasRole($user::ROLE_RAPPORTEUR)) {
-	       		$data=$this->rapporteurMenu($menu,$user);
+	       		$this->rapporteurMenu($menu, $user);
 	       	}
 	       	if($user->hasRole($user::ROLE_MEMBRE_ESPACE)) {
-	       		$data=$this->membreEspaceMenu($menu,$user);
+	       		$this->membreEspaceMenu($menu, $user);
 	       	}
        	}
        	return $menu;
@@ -99,19 +99,17 @@ class Builder extends ContainerAware
      */
     public function superAdminMenu($menu)
 	{
-		$user = $this->container->get('security.context')->getToken()->getUser();
 		$menu->addChild('Action', array('route' => 'les_actions', 'label' => 'Actions', 'attributes' => array('class' => 'icomoon-icon-wand-2')));
         $menu->addChild('BU', array('route' => 'les_bu', 'label' => 'BU', 'attributes' => array('class' => 'icomoon-icon-wand-2')));
         $menu->addChild('Espace', array('route' => 'les_espaces', 'label' => 'Espaces', 'attributes' => array('class' => 'icomoon-icon-wand-2')));
+        $menu->addChild('Projet', array('route' => 'les_projets', 'label' => 'Projets', 'attributes' => array('class' => ' icomoon-icon-target')));
         $menu->addChild('Structure', array('route' => 'les_structures', 'label' => 'Structure', 'attributes' => array('class' => 'icomoon-icon-grid')));
         $menu->addChild('Utilisateur', array('route' => 'les_utilisateurs', 'label' => 'Utilisateurs', 'attributes' => array('class' => 'entypo-icon-users')));
         $menu->addChild('Domaine', array('route' => 'les_domaine', 'label' => 'Domaine', 'attributes' => array('class' => 'icomoon-icon-earth')));
         $menu->addChild('TypeAction', array('route' => 'les_types_action', 'label' => 'Type Action', 'attributes' => array('class' => 'brocco-icon-type')));
         $menu->addChild('Instance', array('route' => 'les_instance', 'label' => 'Instances', 'attributes' => array('class' => 'icomoon-icon-office')));
 		$menu->addChild('Formule', array('route' => 'les_formules', 'label' => 'Formules', 'attributes' => array('class' => 'silk-icon-plus')));
-		if($user->getStructure()->getBuPrincipal()->getSignalisation() == 1){
-			$menu->addChild('Signalisation', array('route' => 'les_signalisations', 'Label' => 'Signalisation', 'attributes' => array('class' => 'entypo-icon-warning')));
-		}
+		$menu->addChild('Signalisation', array('route' => 'les_signalisations', 'Label' => 'Signalisation', 'attributes' => array('class' => 'entypo-icon-warning')));
         $menu->addChild('Reporting', array('route' => 'les_reportings', 'label' => 'Reporting', 'attributes' => array('class' => 'icomoon-icon-rotate-2')));
         
         $menu['Action']->addChild('ajout_action', array('route' =>'nouvelle_action', 'label' => 'Ajouter une action', 'attributes' => array('class' => 'icomoon-icon-plus')));
@@ -275,32 +273,31 @@ class Builder extends ContainerAware
     }
     
     /**
-     *
      * @param MenuItem $menu
      * @param Utilisateur $user
      * @return MenuItem
      */
-    public function membreEspaceMenu($menu, $user){
+    public function membreEspaceMenu($menu, $user) {
     	$espaces_gest=array();
     	$espaces_mmb=array();
     	$mmb=$user->getMembreEspace();
-    	foreach ($mmb as $me){
-    		if($me->getIsGestionnaire()==true)
+    	foreach ($mmb as $me) {
+    		if($me->getIsGestionnaire()==true) {
     			$espaces_gest[]=$me->getEspace();
-    		else
+    		} else {
     			$espaces_mmb[]=$me->getEspace();
+    		}
     	}
-    	 
     	$menu->addChild('Espace', array('uri' => '#', 'label' => 'Espaces', 'attributes' => array('class' => 'icomoon-icon-stats')));
-    	foreach($espaces_gest as $esp)
+    	foreach($espaces_gest as $esp) {
     		$menu['Espace']->addChild($esp->getLibelle(), array('uri' =>$this->container->get('router')->generate('dashboard_espace',array('espace_id'=>$esp->getId())), 'label' => $esp->getLibelle(), 'attributes' => array('class' => 'icomoon-icon-list')));
-    		 
-    		foreach($espaces_mmb as $esp)
-    			$menu['Espace']->addChild($esp->getLibelle(), array('uri' =>$this->container->get('router')->generate('les_actions_by_espace',array('espace_id'=>$esp->getId())), 'label' => $esp->getLibelle(), 'attributes' => array('class' => 'icomoon-icon-list')));
-    			$menu['Espace']->setChildrenAttribute('class', 'sub');
-    			return $menu;
+    	}
+   		foreach($espaces_mmb as $esp) {
+   			$menu['Espace']->addChild($esp->getLibelle(), array('uri' =>$this->container->get('router')->generate('les_actions_by_espace',array('espace_id'=>$esp->getId())), 'label' => $esp->getLibelle(), 'attributes' => array('class' => 'icomoon-icon-list')));
+   		}
+		$menu['Espace']->setChildrenAttribute('class', 'sub');
+		return $menu;
     }
-    
     
     /**
      * @param MenuItem $menu
@@ -311,7 +308,7 @@ class Builder extends ContainerAware
     	$user = $this->container->get('security.context')->getToken()->getUser();
     	$menu->addChild('Action', array('route' =>'les_actions', 'label' => 'Actions', 'attributes' => array('class' => 'icomoon-icon-wand-2')));
 		
-    	if($user->getStructure()->getBuPrincipal()->getSignalisation() == 1){
+    	if($user->getStructure()->getBuPrincipal()->getSignalisation() == 1) {
     		$menu->addChild('Signalisation', array('route' =>'les_signalisations', 'label' => 'Signalisation', 'attributes' => array('class' => 'entypo-icon-warning')));
     	}
     	

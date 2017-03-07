@@ -12,18 +12,18 @@
         <div id="header">
         	<nav class="navbar navbar-default" role="navigation">
                 <div class="navbar-header">
-		                <a class="navbar-brand" href="dashboard.html">SUPER</a>
-		                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-		                    <span class="sr-only">Toggle navigation</span>
-		                    <span class="icon16 icomoon-icon-arrow-4"></span>
-		                </button>
-		            </div>
+	                <a class="navbar-brand" href="dashboard.html">SUPER</a>
+	                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+	                    <span class="sr-only">Toggle navigation</span>
+	                    <span class="icon16 icomoon-icon-arrow-4"></span>
+	                </button>
+	            </div>
 		     </nav>
         </div><!-- End #header -->
     </div><!-- End .container -->    
     <div class="container">
         <div class="loginContainer">
-            <form action="{{ path("fos_user_security_check") }}"  method="post" class="form-horizontal" action="dashboard.html" id="loginForm" role="form" >
+            <form action="{{ path("fos_user_security_check") }}"  method="post" class="form-horizontal" id="loginForm" role="form" >
 			{% if error %}
 			    <label class="red">{{ error.messageKey|trans(error.messageData, 'security') }}</label>
 			{% endif %}

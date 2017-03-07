@@ -138,13 +138,14 @@
 	                                   		 <li><a href="{{ path('nouvelle_structure') }}"><span class="icon16 icomoon-icon-grid"></span>Structures</a></li>
 	                                   		 <li><a href="{{ path('nouvelle_instance') }}"><span class="icon16 icomoon-icon-office"></span>Instance</a></li>
 	                                   		 <li><a href="{{ path('nouveau_groupe') }}"><span class="icon16 icomoon-icon-people"></span>Groupe</a></li>
-	                                   		 <li><a href="{{ path('nouveau_type_action')}}"><span class="icon16 icomoon-icon-people"></span>un type action</a></li>
-	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine')}}"><span class="icon16 icomoon-icon-earth"></span>un domaine</a></li>
+	                                   		 <li><a href="{{ path('nouveau_type_action')}}"><span class="icon16 icomoon-icon-people"></span>Type d'action</a></li>
+	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine')}}"><span class="icon16 icomoon-icon-earth"></span>Domaine</a></li>
 											 <li><a href="{{ path('nouvelle_formule') }}"><span class="icon16 silk-icon-plus"></span>Formule</a></li>
 	                                    {% endif %}
 	                                	{% if has_rights('ROLE_SUPER_ADMIN') %}
 	                                		 <li><a href="{{ path('nouvel_espace')}}"><span class="icon16 icomoon-icon-office"></span>Espace</a></li>
-	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_bu')}}"><span class="icon16 icomoon-icon-office"></span>une BU</a></li>
+	                                		 <li><a href="{{ path('nouveau_projet')}}"><span class="icon16 icomoon-icon-target"></span>Projet</a></li>
+	                                   		 <li><a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_bu')}}"><span class="icon16 icomoon-icon-office"></span>BU</a></li>
 	                                   	{% endif %}
 	                                    {% if has_rights('ROLE_SOURCE') %}
 		                                    {% if app.user.structure.buPrincipal.signalisation == 1 %}

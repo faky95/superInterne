@@ -22,6 +22,11 @@ class ActionType extends AbstractType
 	private $espaceId;
 	
 	/**
+	 * @var number
+	 */
+	private $chantierId;
+	
+	/**
 	 * @param string $action
 	 */
 	public function __construct($action = null) {
@@ -46,6 +51,12 @@ class ActionType extends AbstractType
     	} elseif($instance && $instance->getEspace()) {
     		$this->action = OrangeMainForms::ACTION_ESPACE;
     		$this->espaceId = $instance->getEspace()->getId();
+    	} elseif(isset($options['attr']['chantier_id']) && $options['attr']['chantier_id']) {
+    		$this->action = OrangeMainForms::ACTION_CHANTIER;
+    		$this->chantierId = $options['attr']['chantier_id'];
+    	} elseif($instance && $instance->getChantier()) {
+    		$this->action = OrangeMainForms::ACTION_CHANTIER;
+    		$this->chantierId = $instance->getChantier()->getId();
     	} else {
     		$this->action = OrangeMainForms::ACTION_BU;
     	}
@@ -157,8 +168,31 @@ class ActionType extends AbstractType
      * @param FormBuilderInterface $builder
      * @param array $options
      */
-    private function buildFormForProjet(FormBuilderInterface $builder, array $options) {
+    private function buildFormForChantier(FormBuilderInterface $builder, array $options) {
+    	$chantier = $this->chantierId;
     	$this->buildMainForm($builder, $options);
+		$builder->add('instance', null, array('label'=>'Instance :', 'query_builder' => function($er) use ($chantier) {
+						return $er->createQueryBuilder('i')->innerJoin('i.chantier', 'c')->where('c.id = :id')->where('c.id = '.$chantier);
+					}, 'empty_value' => "Choisir l'instance ..."
+			))
+			->add('domaine', null, array('label'=>'Domaine :', 'query_builder'=>function($er) use ($chantier) {
+        			$queryBuilder = $er->createQueryBuilder('d');
+           			return $queryBuilder->innerJoin('d.instance', 'i')->innerJoin('i.chantier', 'c')->where('c.id='.$chantier);
+           		}, 'empty_value' => 'Choisissez un domaine ...'
+           	))
+            ->add('typeAction', null, array('label'=>"Type d'action :", 'query_builder'=>function($er) use ($chantier) {
+            			$queryBuilder = $er->createQueryBuilder('t');
+            			return $queryBuilder->innerJoin('t.instance', 'i')->innerJoin('i.chantier', 'c')->where('c.id='.$chantier);
+            		}, 'empty_value' => "Choisissez un type d'action ..."
+            ))
+            ->add('porteur', null, array('label'=>'Porteur :', 'query_builder' => function($er) use($options, $chantier) {
+            		    return $er->getMembreChantier($chantier);
+					}, 'empty_value' => 'Choix le porteur ...'
+            ))
+			->add('tmp_contributeur', 'entity', array('label' => 'Contributeur :', 'query_builder'=>function($er) use ($chantier) {
+						return $er->getMembreChantier($chantier);
+					}, 'empty_value' => 'Choisir les contributeurs', 'multiple' => true, 'class'=>'Orange\MainBundle\Entity\Utilisateur'
+            ));
     }
     
     /**

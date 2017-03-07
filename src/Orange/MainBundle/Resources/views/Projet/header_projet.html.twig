@@ -1,0 +1,19 @@
+
+	<ul class="nav navbar-nav right" style="margin-right:35px;   margin-top: -1px;">
+		<li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Actions">
+             <a href="{{ path('les_actions_by_projet', {'projet_id': entity.id}) }}"><span class="icon16 tip icomoon-icon-wand-2" ></span> 
+             <span class="notification-petit">{{ entity|number_actions }}</span></a>
+        </li> 
+        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Chantiers">
+             <a href="{{ path('les_chantiers_by_projet', {'projet_id': entity.id}) }}"><span class="icon16 tip icomoon-icon-puzzle"></span>
+			 <span class="notification-petit green">{{ entity.chantier.count }}</span></a>
+        </li>  
+        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Domaines">
+             <a href="{{ path('les_domaine_by_projet', {'projet_id': entity.id}) }}"><span class="icon16 tip icomoon-icon-earth"></span>
+			 <span class="notification-petit blue">{{ entity.domaine.count }}</span></a>
+        </li>  
+        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Types">
+             <a href="{{ path('les_types_action_by_projet', {'projet_id': entity.id}) }}"><span class="icon16 tip brocco-icon-type"></span> 
+			 <span class="notification-petit purple">{{ entity.typeAction.count }}</span></a>
+        </li>                      
+     </ul>

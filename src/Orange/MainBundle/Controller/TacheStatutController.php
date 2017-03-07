@@ -269,6 +269,7 @@ class TacheStatutController extends BaseController
 					} else {
 						$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
 					}
+					$tache->getDateCloture(null);
 					break;
 			}
 			if($statut) {

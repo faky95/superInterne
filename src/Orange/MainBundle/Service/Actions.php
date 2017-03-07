@@ -57,13 +57,13 @@ class Actions {
 	 * @return string
 	 */
 	public function generateActionsForAction($entity) {
-		$arrStatut = array(Statut::ACTION_FAIT_DELAI, Statut::ACTION_FAIT_HORS_DELAI, Statut::ACTION_SOLDEE_DELAI, Statut::ACTION_SOLDEE_DELAI);
+		$arrStatut = array(Statut::ACTION_NOUVELLE, Statut::ACTION_ABANDONNEE);
 		$actions = '<div class="btn-group">
 				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>';
 		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
-		if($this->user->hasRole('ROLE_ADMIN') && !in_array($entity->getEtatCourant(), $arrStatut)) {
+		if($this->user->hasRole('ROLE_ADMIN') && in_array($entity->getEtatCourant(), $arrStatut)) {
 			$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Supprimer l\'action">
 				<span class="icomoon-icon-remove-4"></span></a>';
 			//$actions .= '<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'action"><span class="icomoon-icon-remove-4"></span></a></div>';
@@ -316,7 +316,6 @@ class Actions {
 	}
 	
 	/**
-	 *
 	 * @param \Orange\MainBundle\Entity\Espace $entity
 	 * @return string
 	 */
@@ -334,6 +333,42 @@ class Actions {
 				$this->router->generate('edition_espace', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_espace', array('id'=>$entity->getId())),
 				$this->router->generate('dashboard_espace', array('espace_id'=>$entity->getId())));
+	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Projet $entity
+	 * @return string
+	 */
+	public function generateActionsForProjet($entity) {
+		$content = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur l\'espace "><span class="icomoon-icon-eye"></span></a>';
+		if($this->user->hasRole('ROLE_SUPER_ADMIN')) {
+			$content .= '<a class="btn btn-default" href="%s" title="Modifier l\'espace"><span class="icomoon-icon-pencil-3"></span></a>';
+			$content .= '<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'espace"><span class="icomoon-icon-remove-4"></span></a></div>';
+			$content .= '<a class="btn btn-default" href="%s" title="Dashboard de l\'espace"><span class="icomoon-icon-screen-2"></span></a></div>';
+		}
+		return sprintf($content, $this->router->generate('details_projet', array('id' => $entity->getId())),
+				$this->router->generate('edition_projet', array('id' => $entity->getId())),
+				$this->router->generate('supprimer_projet', array('id' => $entity->getId())),
+				$this->router->generate('dashboard_projet', array('id' => $entity->getId()))
+			);
+	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Chantier $entity
+	 * @return string
+	 */
+	public function generateActionsForChantier($entity) {
+		$content = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur le chantier"><span class="icomoon-icon-eye"></span></a>';
+		if($this->user->hasRole('ROLE_SUPER_ADMIN')) {
+			$content .= '<a class="btn btn-default" href="%s" title="Modifier le chantier"><span class="icomoon-icon-pencil-3"></span></a>';
+			$content .= '<a class="btn btn-default" method="delete" href="%s" title="Supprimer le chantier"><span class="icomoon-icon-remove-4"></span></a></div>';
+			$content .= '<a class="btn btn-default" href="%s" title="Dashboard du chantier"><span class="icomoon-icon-screen-2"></span></a></div>';
+		}
+		return sprintf($content, $this->router->generate('details_chantier', array('id' => $entity->getId())),
+				$this->router->generate('edition_chantier', array('id' => $entity->getId())),
+				$this->router->generate('supprimer_chantier', array('id' => $entity->getId())),
+				$this->router->generate('dashboard_chantier', array('id' => $entity->getId()))
+			);
 	}
 	
 }

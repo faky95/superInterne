@@ -73,11 +73,16 @@ class BaseRepository extends EntityRepository implements RepositoryInterface{
 			$queryBuilder->andWhere($alias.'.id IN (:sourceIds)')->setParameter('sourceIds', $sourceIds);
 		} elseif($role && $role==Utilisateur::ROLE_CHEF_PROJET && $this->_user->hasRole(Utilisateur::ROLE_CHEF_PROJET)) {
 			$projetIds = array ();
-			$projets = $this->_user->getProjets();
-			foreach($projets as $projet) {
+			foreach($this->_user->getProjet() as $projet) {
 				$projetIds[] = $projet->getId();
 			}
 			$queryBuilder->andWhere($alias.'.id IN (:projetIds)')->setParameter('projetIds', $projetIds);
+		} elseif($role && $role==Utilisateur::ROLE_CHEF_CHANTIER && $this->_user->hasRole(Utilisateur::ROLE_CHEF_CHANTIER)) {
+			$chantierIds = array ();
+			foreach($this->_user->getChantier() as $chantier) {
+				$chantierIds[] = $chantier->getId();
+			}
+			$queryBuilder->andWhere($alias.'.id IN (:chantierIds)')->setParameter('chantierIds', $chantierIds);
 		} elseif($role && $role==Utilisateur::ROLE_GESTIONNAIRE_ESPACE && $this->_user->hasRole(Utilisateur::ROLE_GESTIONNAIRE_ESPACE)) {
 			$espaceIds = array ();
 			$espaces = $this->_user->getMembreEspace();
@@ -88,7 +93,7 @@ class BaseRepository extends EntityRepository implements RepositoryInterface{
 		} elseif($role && $role==Utilisateur::ROLE_PORTEUR && $this->_user->hasRole(Utilisateur::ROLE_PORTEUR)) {
 			$usrId = $this->_user->getId();
 			$queryBuilder->andWhere($alias.'.id = :usrId')->setParameter('usrId', $usrId);
-		}elseif($role && $role==Utilisateur::ROLE_RAPPORTEUR && $this->_user->hasRole(Utilisateur::ROLE_RAPPORTEUR)) {
+		} elseif($role && $role==Utilisateur::ROLE_RAPPORTEUR && $this->_user->hasRole(Utilisateur::ROLE_RAPPORTEUR)) {
 			$structuresIds = array ();
 			$structures = $this->_user->getRapporteurStructure();
 			$nodes=$this->_em->getRepository('OrangeMainBundle:Structure')->getChildren($structures)->getQuery()->getResult();
@@ -96,7 +101,7 @@ class BaseRepository extends EntityRepository implements RepositoryInterface{
 				$structuresIds[] = $structure->getId();
 			
 			$queryBuilder->andWhere($alias.'.id IN (:structuresIds)')->setParameter('structuresIds', $structuresIds);
-		}elseif($role && $role==Utilisateur::ROLE_CONTRIBUTEUR && $this->_user->hasRole(Utilisateur::ROLE_CONTRIBUTEUR)) {
+		} elseif($role && $role==Utilisateur::ROLE_CONTRIBUTEUR && $this->_user->hasRole(Utilisateur::ROLE_CONTRIBUTEUR)) {
 			$ctrbIds = array ();
 			$contrib = $this->_user->getContributeurs();
 			foreach($contrib as $ctb)

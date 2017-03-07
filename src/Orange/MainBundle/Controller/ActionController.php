@@ -27,6 +27,8 @@ use Orange\MainBundle\Entity\MembreEspace;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Form\ActionType;
 use Orange\MainBundle\OrangeMainForms;
+use Orange\MainBundle\Entity\Projet;
+use Orange\MainBundle\Entity\Chantier;
 
 /**
  * Action controller.
@@ -50,14 +52,18 @@ class ActionController extends BaseController
 	 * @QMLogger(message="Liste des actions")
 	 * @Route("{code}/les_actions_validees", name="les_actions_validees")
 	 * @Route("/les_actions", name="les_actions")
-	 * @Route("{code_statut}/{espace_id}/les_actions_by_statut", name="les_actions_by_statut_espace")
+	 * @Route("{code_statut}/{espace_id}/les_actions_par_statut_espace", name="les_actions_by_statut_espace")
+	 * @Route("{code_statut}/{projet_id}/les_actions_par_statut_projet", name="les_actions_by_statut_projet")
 	 * @Route("{code_statut}/les_actions_by_statut", name="les_actions_by_statut")
 	 * @Route("{instance_id}/les_actions_by_instance", name="les_actions_by_instance")
 	 * @Route("{structure_id}/les_actions_by_structure", name="les_actions_by_structure")
 	 * @Route("{espace_id}/les_actions_by_espace", name="les_actions_by_espace")
+	 * @Route("{projet_id}/les_actions_by_projet", name="les_actions_by_projet")
+	 * @Route("{chantier_id}/les_actions_by_chantier", name="les_actions_by_chantier")
 	 * @Template()
 	 */
-	public function indexAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $espace_id=null, $code=null) {
+	public function indexAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $espace_id=null, $projet_id=null, $chantier_id=null, $code=null) {
+		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria(), null, array('attr'=>array( 'espace_id'=> $espace_id)));
 		$data = $request->get($form->getName());
 		if($request->getMethod()=='POST') {
@@ -70,10 +76,12 @@ class ActionController extends BaseController
 		} else {
 			$this->get('session')->set('action_criteria', new Request());
 		}
-		$espace = $espace_id ? $this->getDoctrine()->getManager()->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
+		$espace		= $espace_id ? $em->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
+		$projet		= $projet_id ? $em->getRepository('OrangeMainBundle:Projet')->find($projet_id) : null;
+		$chantier	= $chantier_id ? $em->getRepository('OrangeMainBundle:Chantier')->find($chantier_id) : null;
 		return array(
 				'form' => $form->createView(), 'code' => $code, 'code_statut' => $code_statut, 'instance_id' => $instance_id, 
-				'structure_id' => $structure_id, 'espace'=> $espace
+				'structure_id' => $structure_id, 'espace'=> $espace, 'projet'=> $projet, 'chantier'=> $chantier
 			);
 	}
 
@@ -135,7 +143,7 @@ class ActionController extends BaseController
 	}
 	
 	/**
-	 * Lists  entities.
+	 * Lists entities.
 	 * @Route("/liste_des_actions", name="liste_des_actions")
 	 * @Route("{code}/liste_des_actions_validees", name="liste_des_actions_validees")
 	 * @Route("{code_statut}/liste_des_actions_by_statut", name="liste_des_actions_by_statut")
@@ -144,24 +152,24 @@ class ActionController extends BaseController
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function listAction(Request $request,$code_statut=null,$instance_id=null,$structure_id=null,$code=null) {
+	public function listAction(Request $request, $code_statut=null, $instance_id=null, $structure_id=null, $code=null) {
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria());
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
-		if($code_statut!=null){
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByCodeStatut($code_statut,$criteria);
-			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByCodeStatutForExport($code_statut,$criteria);
-		}elseif($code!=null){
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionValide($code,$criteria);
-			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionValideForExport($code_statut,$criteria);
-		}elseif($instance_id!=null){
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByInstance($instance_id,$criteria);
-			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByInstanceForExport($instance_id,$criteria);
-		}elseif($structure_id!=null){
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByStruct($structure_id,$criteria);
-			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByStructForExport($structure_id,$criteria);
-		}else{
+		if($code_statut!=null) {
+			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByCodeStatut($code_statut, $criteria);
+			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByCodeStatutForExport($code_statut, $criteria);
+		} elseif($code!=null) {
+			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionValide($code, $criteria);
+			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionValideForExport($code_statut, $criteria);
+		} elseif($instance_id!=null) {
+			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByInstance($instance_id, $criteria);
+			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByInstanceForExport($instance_id, $criteria);
+		} elseif($structure_id!=null) {
+			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionByStruct($structure_id, $criteria);
+			$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionByStructForExport($structure_id, $criteria);
+		} else {
 			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listAllElements($criteria);
 			$queryExport = $em->getRepository('OrangeMainBundle:Action')->listAllElementsForExport($criteria);
 		}
@@ -185,38 +193,58 @@ class ActionController extends BaseController
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
 	}
+	
 	/**
 	 * Lists  entities.
-	 *@Route("/{espace_id}/liste_by_espace", name="liste_by_espace")
-	 *@Route("{code_statut}/{espace_id}/liste_des_actions_by_statut", name="liste_des_actions_by_statut_espace")
+	 * @Route("/{espace_id}/liste_by_espace", name="liste_by_espace")
+	 * @Route("{code_statut}/{espace_id}/liste_des_actions_par_statut_et_espace", name="liste_des_actions_by_statut_espace")
 	 * @Method("GET")
 	 * @Template()
 	 */
-	public function myListEspaceAction(Request $request,$espace_id=null,$code_statut=null) {
+	public function myListEspaceAction(Request $request, $espace_id=null, $code_statut=null) {
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria());
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
 		$espace = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-		$membre=$em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(
-				array('utilisateur' => $this->getUser(), 'espace' => $espace));
+		$membre = $em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $this->getUser(), 'espace' => $espace));
 		$var = $membre->getIsGestionnaire();
-		if($code_statut!=null){
-			$criteria->statut=$code_statut;
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspace($criteria, $espace_id, $var, $this->getUser()->getId());
-			$queryeExport = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspaceForExport($criteria, $espace_id, $var, $this->getUser()->getId());
-		}else{
-			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspace($criteria, $espace_id, $var, $this->getUser()->getId());
-			$queryeExport = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspaceForExport($criteria, $espace_id, $var, $this->getUser()->getId());
+		if($code_statut!=null) {
+			$criteria->statut = $code_statut;
 		}
-		$this->get('session')->set('data', array('query' => $queryeExport->getDql(), 'param' =>$queryeExport->getParameters()));
+		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspace($criteria, $espace_id, $var, $this->getUser()->getId());
+		$queryExport = $em->getRepository('OrangeMainBundle:Action')->listActionsByEspaceForExport($criteria, $espace_id, $var, $this->getUser()->getId());
+		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
 	}
+	
+	/**
+	 * Lists  entities.
+	 * @Route("/{projet_id}/liste_by_projet", name="liste_by_projet")
+	 * @Route("/{chantier_id}/liste_by_chantier", name="liste_by_chantier")
+	 * @Route("{code_statut}/{projet_id}/liste_des_actions_par_statut_et_projet", name="liste_des_actions_by_statut_projet")
+	 * @Route("{code_statut}/{projet_id}/liste_des_actions_par_statut_et_chantier", name="liste_des_actions_by_statut_chantier")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function myListProjetAction(Request $request, $projet_id=null, $chantier_id=null, $code_statut=null) {
+		$em = $this->getDoctrine()->getManager();
+		$form = $this->createForm(new ActionCriteria());
+		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
+		$criteria = $form->getData();
+		if($code_statut!=null) {
+			$criteria->statut = $code_statut;
+		}
+		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listActionsByProjet($criteria, $projet_id, $chantier_id);
+		$queryExport = $em->getRepository('OrangeMainBundle:Action')->listActionsByProjetForExport($criteria, $projet_id, $chantier_id);
+		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
+		return $this->paginate($request, $queryBuilder);
+	}
+	
 	/**
 	 * @Route("/filtrer_actions", name="filtrer_actions")
 	 * @Template()
 	 */
-	 
 	public function filtreAction(Request $request) {
 		$form = $this->createForm(new ActionCriteria());
 		if($request->getMethod()=='POST') {
@@ -245,36 +273,41 @@ class ActionController extends BaseController
 		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
 		return $this->redirect($this->getUploadDir().$filename);
 	}
-	
 		
      /**
      * Creates a new Action entity.
      * @QMLogger(message="Création d'une action")
      * @Route("/creer_action", name="creer_action")
      * @Route("/{espace_id}/creer_action_to_espace", name="creer_action_to_espace")
+     * @Route("/{chantier_id}/creer_action_to_chantier", name="creer_action_to_chantier")
      * @Method("POST")
      * @Template("OrangeMainBundle:Action:new.html.twig")
      */
-    public function createAction(Request $request,$espace_id=null){
+    public function createAction(Request $request, $espace_id=null, $chantier_id=null) {
     	$entity = new Action();
      	$dispatcher = $this->container->get('event_dispatcher');
-     	$espace = null;
+     	$espace = $chantier = null;
     	if($espace_id!=null) {
-    		$espace=$this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+    		$espace = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
+    		$entity->setInstance($espace ? $espace->getInstance() : null);
     		$entity->setInstance($espace->getInstance());
     		$entity->setEtatCourant(Statut::ACTION_NON_ECHUE);
     		$entity->setStatutChange(Statut::ACTION_NON_ECHUE);
     	} else {
     		$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	}
+    	if($chantier_id!=null) {
+    		$chantier = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($chantier_id);
+    		$entity->setInstance($chantier ? $chantier->getInstance() : null);
+    	}
     	$entity->setAnimateur($this->getUser());
-    	$form = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id' => $espace_id)));
+    	$form = $this->createCreateForm($entity, 'Action', array('attr'=>array('espace_id' => $espace_id, 'chantier_id' => $chantier_id)));
     	$form->handleRequest($request);
     	if($entity->getPorteur() && !$espace_id) {
     		$entity->setStructure($entity->getPorteur()->getStructure());
     	}
-    	if ($request->getMethod() == 'POST' ) {
-    		if ($form->isValid()) {
+    	if($request->getMethod()=='POST') {
+    		if($form->isValid()) {
     			$em = $this->getDoctrine()->getManager();
                 $entity->setAnimateur($this->getUser());
                 if($entity->getErq()->getFile()) {
@@ -309,6 +342,8 @@ class ActionController extends BaseController
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action créée avec succès'));
     			if($espace_id) {
     				return $this->redirect($this->generateUrl('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $espace_id)));
+    			} elseif($chantier_id) {
+    				return $this->redirect($this->generateUrl('details_action_chantier', array('id' => $entity->getId(), 'chantier_id' => $chantier_id)));
     			} else {
     				return $this->redirect($this->generateUrl('details_action' ,array('id' => $entity->getId())));
     			}
@@ -329,10 +364,11 @@ class ActionController extends BaseController
      * @Route("/nouvelle_action", name="nouvelle_action")
 	 * @Route("/{instance_id}/nouvelle_action_to_instance", name="nouvelle_action_to_instance")
      * @Route("/{espace_id}/nouvelle_action_to_espace", name="nouvelle_action_to_espace")
+     * @Route("/{chantier_id}/nouvelle_action_to_chantier", name="nouvelle_action_to_chantier")
      * @Method("GET")
      * @Template() 
      */
-    public function newAction($espace_id=null, $instance_id=null) {
+    public function newAction($espace_id=null, $chantier_id=null, $instance_id=null) {
     	$bu = $this->getUser()->getStructure()->getBuPrincipal()->getId();
         $entity = new Action();
         if($espace_id) {
@@ -342,8 +378,17 @@ class ActionController extends BaseController
 	            return $this->redirect($this->generateUrl('dashboard'));
 	        }
       		$entity->setInstance($espace->getInstance());
+        } elseif($chantier_id) {
+       		$chantier = $this->getDoctrine()->getRepository('OrangeMainBundle:Chantier')->find($chantier_id);
+	        if(!$chantier) {
+	            $this->addFlash('error', "Chantier non reconnu");
+	            return $this->redirect($this->generateUrl('dashboard'));
+	        }
+      		$entity->setInstance($chantier->getInstance());
         }
-        $form   = $this->createCreateForm($entity,'Action', array('attr'=>array('espace_id' => $espace_id, 'instance_id' => $instance_id, 'bu_id'=> $bu)));
+        $form = $this->createCreateForm($entity,'Action', array('attr'=>array(
+        		'espace_id' => $espace_id, 'chantier_id' => $chantier_id, 'instance_id' => $instance_id, 'bu_id'=> $bu
+        	)));
         return array('entity' => $entity, 'form' => $form->createView(), 'espace' => isset($espace) ? $espace : null);
     }
     
@@ -573,12 +618,12 @@ class ActionController extends BaseController
      * @Route("/supprimer_action/{id}", name="supprimer_action")
      * @Template("OrangeMainBundle:Action:delete.html.twig")
      * @Method({"GET", "POST"})
-     * @Security("has_role('ROLE_ANIMATEUR') or has_role('ROLE_ADMIN')")
+     * @Security("has_role('ROLE_ADMIN')")
      */
     public function deleteAction(Request $request, $id) {
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Action')->find($id);
-        if (!$entity) {
+        if(!$entity) {
     		$this->addFlash('error', "Impossible de faire cette opération, cette action n'est pas reconnue");
     		return $this->redirect($this->generateUrl('mes_actions'));
         }

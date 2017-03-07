@@ -1,0 +1,80 @@
+{% extends '::base.html.twig' %}
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Tableau de Bord du projet <span style=" color:#ff6600"> {{ entity.libelle }} </span>  {% endblock %}</h3>
+	 {% include 'OrangeMainBundle:Projet:header_projet.html.twig' with {entity: entity } %}
+</div>
+<div class="row">
+<div class="col-lg-7">
+	<div class="panel panel-default chart gradient">
+        <div class="panel-heading">
+            <h4>
+                <span class="icon16 icomoon-icon-bars"></span>
+                <span>Suivi des actions </span>
+            </h4>
+            <a href="#" class="minimize">Reduire</a>
+        </div>
+        <div class="panel-body" style=" padding-bottom:0;">
+             	<div id="pie-chart"></div>
+        </div>
+    </div><!-- End .panel -->
+</div>
+<div class="col-lg-5">
+	{% include 'OrangeMainBundle:Projet:statistiqueGeneral.html.twig' with {entity: entity} %}
+<div>
+{% endblock %}
+{% block pagescript %}
+	{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	<script type="text/javascript">
+	$(function () {
+
+	    $(document).ready(function () {
+		    var datas=[];
+		    i=0;
+	    	{% for lib,val in req %}
+		    	{% if lib != 'total' %}
+		    		datas[{{ loop.index0 }}] = new Object();
+		    		datas[{{ loop.index0 }}].name = '{{ lib|escape('js') }}';
+					datas[{{ loop.index0 }}].y={{ val }};
+				{% endif %}
+			{% endfor %}
+			console.log(datas);
+	        // Build the chart
+	        $('#pie-chart').highcharts({
+	            chart: {
+	                plotBackgroundColor: null,
+	                plotBorderWidth: null,
+	                plotShadow: false,
+	                type: 'pie'
+	            },
+	            title: {
+	                text: 'Suivi des Actions'
+	            },
+	            tooltip: {
+	                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	            },
+	            plotOptions: {
+	                pie: {
+	                    allowPointSelect: true,
+	                    cursor: 'pointer',
+	                    dataLabels: {
+	                        enabled: false
+	                    },
+	                    showInLegend: true
+	                }
+	            },
+	            credits: {
+					enabled : false 	
+	        	},
+	            series: [{
+	                name: 'Taux',
+	                colorByPoint: true,
+	                data: datas
+	            }]
+	        });
+	    });
+	});
+	</script>
+{% endblock %}

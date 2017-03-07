@@ -1,7 +1,6 @@
 <?php 
 namespace Orange\MainBundle\Twig;
 
-use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Security\Core\SecurityContext;
 
 class SecurityExtension extends \Twig_Extension

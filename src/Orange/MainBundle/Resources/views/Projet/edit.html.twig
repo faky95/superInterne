@@ -8,19 +8,18 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 			    <h4> 
-			        <span>Modifier le projet</span>
+			        <span>Edition d'un projet</span>
 			    </h4>
 			</div>
-			<div class="panel-body">
+			<div class="panel-body with-footer">
 			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_projet', {id: entity.id}) }}" method="post" role="form">
 	                {{ form_widget(edit_form.libelle,  {'attr': {'class': 'form-control'}}) }}
 					{{ form_widget(edit_form.description,  {'attr': {'class': 'form-control'}}) }}
 	                {{ form_widget(edit_form.chefProjet, {'attr': {'class': 'nostyle form-control'}}) }}
-	                {{ form_widget(edit_form.tmp_membre,  {'attr': {'class': 'select2 form-control'}}) }}
 	                {{ form_widget(edit_form._token) }}
-			        <div class="form-group">
+			        <div class="form-group form-actions">
 						<div class="col-lg-offset-3 col-lg-9">
-						    <button type="submit" class="btn btn-info">Sauvegarder</button>
+						    <button type="submit" class="btn btn-warning">Sauvegarder</button>
 						    <button type="button" class="btn btn-default">Annuler</button>
 						</div>
 					</div><!-- End .form-group  -->  
@@ -31,6 +30,4 @@
 </div>
 {% endblock %}
 
-{% block pagescript %}
-  
-{% endblock %}
+{% block pagescript %}{% endblock %}

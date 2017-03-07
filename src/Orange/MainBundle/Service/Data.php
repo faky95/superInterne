@@ -351,16 +351,16 @@ class Data extends BaseQuery {
 		}
 		$array = array();
 		$i=0;
-		foreach ($tabActions as $action){
-			if(!isset($array['user'][$action['email']])){
+		foreach ($tabActions as $action) {
+			if(!isset($array['user'][$action['email']])) {
 				$array['user'][$action['email']] = array('porteur' => $action['prenom'].' '.$action['nom'], 'action' => array());
 			}
 			$array['user'][$action['email']]['action'][$i] = $action;
 			$i++;
 		}
-		return isset($array['user'])?$array['user']:array();
-		
+		return isset($array['user']) ? $array['user'] : array();
 	}
+	
 	public function validationAction($actions){
 		$date2 = new \DateTime();
 		$statut= $this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NON_ECHUE));

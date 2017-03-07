@@ -37,7 +37,13 @@ services:
             - {name: twig.extension }
             
     orange.extension:
-        class:        Orange\MainBundle\Twig\OrangeExtension
+        class:     Orange\MainBundle\Twig\OrangeExtension
+        arguments: ["@service_container", "%ids%", "%states%", "%types%"]
+        tags:
+            - {name: twig.extension }
+            
+    action_extension:
+        class:     Orange\MainBundle\Twig\ActionExtension
         arguments: ["@service_container", "%ids%", "%states%", "%types%"]
         tags:
             - {name: twig.extension }

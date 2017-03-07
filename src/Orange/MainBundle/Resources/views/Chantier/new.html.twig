@@ -1,28 +1,45 @@
 {% extends '::base.html.twig' %}
 
-
 {% block content -%}
+<div class="heading">
+	<h3>{% block page_title %} Nouveau chantier au projet <span style="color: #f60;">{{ entity.projet }}</span>{% endblock %}   </h3> 
+	{% include 'OrangeMainBundle:Projet:header_projet.html.twig' with {entity: entity.projet } %}
+</div>
 <div class="row">
 	<div class="col-lg-12">
+    	<div class="row">
+    		<div class="col-lg-8">
+    			 <a href="{{ path('les_chantiers_by_projet', {projet_id: entity.projet.id}) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-list-2 white"></span>Les chantiers</button></a>
+    			 <div class="marginB10"></div>
+    		</div><!-- End .span4 -->
+    	</div>
 		<div class="panel panel-default">
 			<div class="panel-heading">
 			    <h4> 
 			        <span>Ajouter un chantier</span>
 			    </h4>
 			</div>
-			<div class="panel-body">
-			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_chantier') }}" method="post" role="form">
-	                {{ form_row(form.libelle,  {'attr': {'class': 'form-control'}}) }}
-					{{ form_row(form.description,  {'attr': {'class': 'nostyle form-control'}}) }}
-	                {{ form_row(form.projet,  {'attr': {'class': 'select'}}) }}
-	                {{ form_row(form.tmp_membre,  {'attr': {'class': 'select2 form-control'}}) }}
+			<div class="panel-body with-footer">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('creer_chantier', {projet_id: entity.projet.id}) }}" method="post" role="form">
+	                {{ form_row(form.instance.libelle,  {'attr': {'class': 'form-control'}}) }}
+					{{ form_row(form.instance.description,  {'attr': {'class': 'nostyle form-control'}}) }}
+		            <!-- Color picker  -->                      
+					<div class="form-group">
+						<label class="col-lg-3 control-label" for="picker">Couleur :</label>
+						<div class="col-lg-9">
+							<input type="text" id="color" name="{{ form.instance.couleur.vars.full_name }}" value="#123456" class="form-control" />
+							<div class="picker"></div>
+						</div>
+					</div>
+                    <!-- End .ColorPicker  -->
+	                {{ form_row(form.chefChantier,  {'attr': {'class': 'select2 form-control'}}) }}
 	                {{ form_row(form._token) }}
-			             <div class="form-actions">
-							<div class="col-lg-offset-3 col-lg-9">
-							    {{ form_widget(form.add) }}
-							    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
-							</div>
-						</div><!-- End .form-group  -->  
+		            <div class="form-group form-actions">
+						<div class="col-lg-offset-3 col-lg-9">
+						    {{ form_widget(form.add) }}
+						    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  -->  
 				</form>
 			</div>
 		</div><!-- End .panel -->

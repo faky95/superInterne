@@ -7,25 +7,39 @@ use Orange\MainBundle\Entity\Statut;
 
 class UtilisateurRepository extends BaseRepository {
 	
+	/**
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
 	public function getAll() {
-	return parent::findAll();
+		return parent::findAll();
 	}
 	
+	/**
+	 * @param array $ids
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function getUsers($ids) {
+		return $this->createQueryBuilder('u')
+			->where('u.id IN (:ids)')
+			->setParameters(array('ids' => $ids))
+			->getQuery()
+			->getResult();
+	}
+	
+	/**
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function allUsers() {
+		return $this->createQueryBuilder('u')
+			->select('u.id')
+			->getQuery()
+			->getResult();
+	}
 
-	public function getUsers($ids){
-		return $this->createQueryBuilder('u')
-		->where('u.id IN (:ids)')
-		->setParameters(array('ids' => $ids))
-		->getQuery()
-		->getResult();
-	}
-	public function allUsers(){
-		return $this->createQueryBuilder('u')
-		->select('u.id')
-		->getQuery()
-		->getResult();
-	}
-	
+	/**
+	 * {@inheritDoc}
+	 * @see \Doctrine\ORM\EntityRepository::findAll()
+	 */
 	public function findAll() {
 		// TODO: Auto-generated method stub
 		return $this->filter()->andWhere('u.enabled=:enabled')
@@ -40,6 +54,11 @@ class UtilisateurRepository extends BaseRepository {
 		->getQuery()
 		->getResult();
 	}
+	
+	/**
+	 * @param unknown $criteria
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
 	public function listAllElements($criteria){
 		//$user = $this->_user;
 		$queryBuilder = $this->filter();
@@ -62,30 +81,28 @@ class UtilisateurRepository extends BaseRepository {
 		$data = array();$parameters = array();
 		$queryBuilder = $this->createQueryBuilder('u');
 		$queryBuilder->where($queryBuilder->expr()->in('u.id', $this->superAdminQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->adminQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->animateurQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->chefProjetQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->managerQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->porteurQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('u.id', $this->sourceQueryBuilder($data)->getDQL()));
+			->orWhere($queryBuilder->expr()->in('u.id', $this->adminQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('u.id', $this->animateurQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('u.id', $this->chefProjetQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('u.id', $this->managerQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('u.id', $this->porteurQueryBuilder($data)->getDQL()))
+			->orWhere($queryBuilder->expr()->in('u.id', $this->sourceQueryBuilder($data)->getDQL()));
 		foreach($data as $value) {
 			$parameters[$value->getName()] = $value->getValue();
 		}
-		$queryBuilder->setParameters($parameters);
-		return $queryBuilder;
+		return $queryBuilder->setParameters($parameters);
 	}
 	
 	public function getNextId() {
 		$data = $this->createQueryBuilder('u')
-		->select('MAX(u.id) as maxi')
-		->getQuery()->getArrayResult();
+			->select('MAX(u.id) as maxi')
+			->getQuery()->getArrayResult();
 		return (int)$data[0]['maxi'] + 1;
 	}
 	
-	public function getArrayUtilisateur(){
+	public function getArrayUtilisateur() {
 		$utilisateurs= $this->filter()->select('u.id')->getQuery()->getArrayResult();
-		
-		$tabUtilisateur=array();
+		$tabUtilisateur = array();
 		$i=0;
 		foreach ($utilisateurs as $ta){
 			$tabUtilisateur[$i]=$ta['id'];
@@ -94,8 +111,7 @@ class UtilisateurRepository extends BaseRepository {
 		return $tabUtilisateur;
 	}
 	
-	
-/**
+	/**
 	 * @return QueryBuilder
 	 */
 	public function superAdminQueryBuilder(&$data = array()) {
@@ -167,7 +183,7 @@ class UtilisateurRepository extends BaseRepository {
 	 */
 	public function chefProjetQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('u6')->select('u6.id')
-							->innerJoin('u6.projets', 'p6');
+							->innerJoin('u6.projet', 'p6');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'p6', Utilisateur::ROLE_CHEF_PROJET)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}

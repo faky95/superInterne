@@ -34,7 +34,6 @@ class Utilisateur extends BaseUser
 	
     /**
      * @var integer
-     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -43,7 +42,6 @@ class Utilisateur extends BaseUser
 	
     /**
      * @var string
-     *
      * @ORM\Column(name="prenom", type="string", length=100, nullable=true)
      * @Assert\NotBlank(message="Vous devez renseigner le prénom de l'utilisateur ! ")
      */
@@ -51,7 +49,6 @@ class Utilisateur extends BaseUser
 
     /**
      * @var string
-     *
      * @ORM\Column(name="nom", type="string", length=100, nullable=true)
      * @Assert\NotBlank(message="Vous devez renseigner le nom de l'utilisateur ! ")
      */
@@ -59,14 +56,12 @@ class Utilisateur extends BaseUser
 
     /**
      * @var string
-     *
      * @ORM\Column(name="matricule", type="string", length=100, nullable=true)
      */
     protected $matricule;
 
     /**
      * @var string
-     *
      * @ORM\Column(name="telephone", type="string", length=25, nullable=true)
      * @Assert\NotBlank(message="Vous devez renseigner le téléphone de l'utilisateur ! ")
      */
@@ -74,32 +69,27 @@ class Utilisateur extends BaseUser
 
     /**
      * @var boolean
-     *
      * @ORM\Column(name="manager", type="boolean", nullable=true)
      */
     protected $manager;
     
     /**
      * @var boolean
-     *
      * @ORM\Column(name="admin", type="boolean", nullable=true)
      */
     protected $isAdmin;
 
     /**
      * @var Structure
-     *
      * @ORM\ManyToOne(targetEntity="Structure")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="structure_id", referencedColumnName="id")
      * })
      */
     private $structure;
-    
 
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *
      * @ORM\ManyToMany(targetEntity="Instance", mappedBy="instance")
      */
     private $instance;
@@ -109,12 +99,6 @@ class Utilisateur extends BaseUser
      * @ORM\ManyToMany(targetEntity="Groupe", mappedBy="utilisateur")
      */
     private $groupe;
-    
-   
-    /**
-     * @ORM\OneToMany(targetEntity="ActionStatut", mappedBy="utilisateur", cascade={"persist","remove","merge"})
-     */
-    private $actionStatut;
     
     /**
      * @ORM\OneToMany(targetEntity="Animateur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
@@ -132,20 +116,19 @@ class Utilisateur extends BaseUser
     private $sources;
     
     /**
-     * @ORM\OneToMany(targetEntity="Projet", mappedBy="chefProjet", cascade={"persist","remove","merge"})
+     * @ORM\ManyToMany(targetEntity="Projet", mappedBy="chefProjet", cascade={"persist","remove","merge"})
      */
-    private $projets;
+    private $projet;
     
     /**
-     * @ORM\OneToMany(targetEntity="MembreProjet", mappedBy="utilisateur", cascade={"persist","remove","merge"})
+     * @ORM\ManyToMany(targetEntity="Chantier", mappedBy="chefChantier", cascade={"persist","remove","merge"})
      */
-    private $membreProjet;
+    private $chantier;
     
     /**
      * @ORM\OneToMany(targetEntity="MembreEspace", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $membreEspace;
-    
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -170,12 +153,6 @@ class Utilisateur extends BaseUser
      * @ORM\ManyToMany(targetEntity="Structure", mappedBy="rapporteurs")
      */
     private $rapporteurStructure;
-    
-    
-    /**
-     * @ORM\OneToMany(targetEntity="SignalisationStatut", mappedBy="utilisateur", cascade={"persist","remove","merge"})
-     */
-    private $signStatut;
     
     /**
      * @ORM\OneToMany(targetEntity="SignalisationAnimateur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
@@ -363,6 +340,10 @@ class Utilisateur extends BaseUser
     	return $collaborators;
     }
     
+    /**
+     * @param Structure $structure
+     * @return array
+     */
     public function getAllInstances($structure){
     	$ids = array(0);
     	foreach($structure->getInstance() as $value) {
@@ -370,6 +351,7 @@ class Utilisateur extends BaseUser
     	}
     	return $ids;
     }
+    
     /**
      * @return array
      */
@@ -383,20 +365,17 @@ class Utilisateur extends BaseUser
 
     /**
      * Set isAdmin
-     *
      * @param boolean $isAdmin
      * @return Utilisateur
      */
     public function setIsAdmin($isAdmin)
     {
         $this->isAdmin = $isAdmin;
-
         return $this;
     }
 
     /**
      * Get isAdmin
-     *
      * @return boolean 
      */
     public function getIsAdmin()
@@ -406,14 +385,12 @@ class Utilisateur extends BaseUser
 
     /**
      * Set structure
-     *
      * @param \Orange\MainBundle\Entity\Structure $structure
      * @return Utilisateur
      */
     public function setStructure(\Orange\MainBundle\Entity\Structure $structure = null)
     {
         $this->structure = $structure;
-
         return $this;
     }
 
@@ -441,8 +418,10 @@ class Utilisateur extends BaseUser
     		array_push($profil, "Administrateur");
     	} elseif($this->getSources()->count()>0) {
     		array_push($profil, "Source");
-    	} elseif($this->getProjets()->count()>0) {
+    	} elseif($this->getProjet()->count()>0) {
     		array_push($profil, "Chef de projet");
+    	} elseif($this->getChantier()->count()>0) {
+    		array_push($profil, "Chef de chantier");
     	}
     	return $profil;
     }
@@ -468,7 +447,7 @@ class Utilisateur extends BaseUser
     	}elseif(strtoupper($role)==self::ROLE_SOURCE) {
     		return $this->getSources()->count()>0;
     	} elseif(strtoupper($role)==self::ROLE_CHEF_PROJET) {
-    		return $this->getProjets()->count()>0;
+    		return $this->getProjet()->count()>0;
     	} elseif(strtoupper($role)==self::ROLE_GESTIONNAIRE_ESPACE) {
     		$trouve=false;
     		if($this->getMembreEspace()->count()>0)
@@ -490,13 +469,10 @@ class Utilisateur extends BaseUser
 	    	return $res;
     	} elseif(strtoupper($role)==self::ROLE_RAPPORTEUR) {
     		return $this->getRapporteurStructure()->count()>0;
+    	} else {
     	}
-    	else {
-    	}
-    		return false;
-    	}
-    
-  
+    	return false;
+    }
     
     /**
      * @param array $roles
@@ -519,10 +495,10 @@ class Utilisateur extends BaseUser
     	parent::__construct();
         $this->instance = new \Doctrine\Common\Collections\ArrayCollection();
         $this->groupe = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->projet = new \Doctrine\Common\Collections\ArrayCollection();
         $this->animators = new \Doctrine\Common\Collections\ArrayCollection();
         $this->sources = new \Doctrine\Common\Collections\ArrayCollection();
-        $this->projets = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->projet = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->chantier = new \Doctrine\Common\Collections\ArrayCollection();
         $this->action = new \Doctrine\Common\Collections\ArrayCollection();
         $this->reporting = new \Doctrine\Common\Collections\ArrayCollection();
         $this->firstChangePassword = 1;
@@ -538,7 +514,6 @@ class Utilisateur extends BaseUser
     public function addInstance(\Orange\MainBundle\Entity\Instance $instance)
     {
         $this->instance[] = $instance;
-
         return $this;
     }
 
@@ -564,7 +539,6 @@ class Utilisateur extends BaseUser
 
     /**
      * Add groupe
-     *
      * @param \Orange\MainBundle\Entity\Groupe $groupe
      * @return Utilisateur
      */
@@ -596,74 +570,7 @@ class Utilisateur extends BaseUser
     }
 
     /**
-     * Add actionStatut
-     *
-     * @param \Orange\MainBundle\Entity\ActionStatut $actionStatut
-     * @return Utilisateur
-     */
-    public function addActionStatut(\Orange\MainBundle\Entity\ActionStatut $actionStatut)
-    {
-        $this->actionStatut[] = $actionStatut;
-
-        return $this;
-    }
-
-    /**
-     * Remove actionStatut
-     *
-     * @param \Orange\MainBundle\Entity\ActionStatut $actionStatut
-     */
-    public function removeActionStatut(\Orange\MainBundle\Entity\ActionStatut $actionStatut)
-    {
-        $this->actionStatut->removeElement($actionStatut);
-    }
-
-    /**
-     * Get actionStatut
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getActionStatut()
-    {
-        return $this->actionStatut;
-    }
-
-    /**
-     * Add signStatut
-     *
-     * @param \Orange\MainBundle\Entity\SignalisationStatut $signStatut
-     * @return Utilisateur
-     */
-    public function addSignStatut(\Orange\MainBundle\Entity\SignalisationStatut $signStatut)
-    {
-        $this->signStatut[] = $signStatut;
-
-        return $this;
-    }
-
-    /**
-     * Remove signStatut
-     *
-     * @param \Orange\MainBundle\Entity\SignalisationStatut $signStatut
-     */
-    public function removeSignStatut(\Orange\MainBundle\Entity\SignalisationStatut $signStatut)
-    {
-        $this->signStatut->removeElement($signStatut);
-    }
-
-    /**
-     * Get signStatut
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getSignStatut()
-    {
-        return $this->signStatut;
-    }
-
-    /**
      * Add animators
-     *
      * @param \Orange\MainBundle\Entity\Animateur $animators
      * @return Utilisateur
      */
@@ -776,87 +683,76 @@ class Utilisateur extends BaseUser
     }
 
     /**
-     * Get projets
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * Get projet
+     * @return \Doctrine\Common\Collections\ArrayCollection 
      */
-    public function getProjets()
+    public function getProjet()
     {
-        return $this->projets;
+        return $this->projet;
     }
 
     /**
-     * Add projets
-     *
-     * @param \Orange\MainBundle\Entity\Projet $projets
+     * Add projet
+     * @param \Orange\MainBundle\Entity\Projet $projet
      * @return Utilisateur
      */
-    public function addProjet(\Orange\MainBundle\Entity\Projet $projets)
+    public function addProjet(\Orange\MainBundle\Entity\Projet $projet)
     {
-        $this->projets[] = $projets;
-
+        $this->projet[] = $projet;
         return $this;
     }
 
     /**
-     * Remove projets
-     *
-     * @param \Orange\MainBundle\Entity\Projet $projets
+     * Remove projet
+     * @param \Orange\MainBundle\Entity\Projet $projet
      */
-    public function removeProjet(\Orange\MainBundle\Entity\Projet $projets)
+    public function removeProjet(\Orange\MainBundle\Entity\Projet $projet)
     {
-        $this->projets->removeElement($projets);
+        $this->projet->removeElement($projet);
     }
 
     /**
-     * Add membreProjet
-     *
-     * @param \Orange\MainBundle\Entity\MembreProjet $membreProjet
+     * Get chantiers
+     * @return \Doctrine\Common\Collections\ArrayCollection 
+     */
+    public function getChantier()
+    {
+        return $this->chantier;
+    }
+
+    /**
+     * Add chantier
+     * @param \Orange\MainBundle\Entity\Chantier $chantier
      * @return Utilisateur
      */
-    public function addMembreProjet(\Orange\MainBundle\Entity\MembreProjet $membreProjet)
+    public function addChantier(\Orange\MainBundle\Entity\Chantier $chantier)
     {
-        $this->membreProjet[] = $membreProjet;
-
+        $this->chantier[] = $chantier;
         return $this;
     }
 
     /**
-     * Remove membreProjet
-     *
-     * @param \Orange\MainBundle\Entity\MembreProjet $membreProjet
+     * Remove chantiers
+     * @param \Orange\MainBundle\Entity\Projet $chantiers
      */
-    public function removeMembreProjet(\Orange\MainBundle\Entity\MembreProjet $membreProjet)
+    public function removeChantier(\Orange\MainBundle\Entity\Chantier $chantier)
     {
-        $this->membreProjet->removeElement($membreProjet);
-    }
-
-    /**
-     * Get membreProjet
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getMembreProjet()
-    {
-        return $this->membreProjet;
+        $this->chantier->removeElement($chantier);
     }
 
     /**
      * Add membreEspace
-     *
      * @param \Orange\MainBundle\Entity\MembreEspace $membreEspace
      * @return Utilisateur
      */
     public function addMembreEspace(\Orange\MainBundle\Entity\MembreEspace $membreEspace)
     {
         $this->membreEspace[] = $membreEspace;
-
         return $this;
     }
 
     /**
      * Remove membreEspace
-     *
      * @param \Orange\MainBundle\Entity\MembreEspace $membreEspace
      */
     public function removeMembreEspace(\Orange\MainBundle\Entity\MembreEspace $membreEspace)
@@ -866,7 +762,6 @@ class Utilisateur extends BaseUser
 
     /**
      * Get membreEspace
-     *
      * @return \Doctrine\Common\Collections\Collection 
      */
     public function getMembreEspace()
@@ -876,20 +771,17 @@ class Utilisateur extends BaseUser
 
     /**
      * Add rapporteurStructure
-     *
      * @param \Orange\MainBundle\Entity\Structure $rapporteurStructure
      * @return Utilisateur
      */
     public function addRapporteurStructure(\Orange\MainBundle\Entity\Structure $rapporteurStructure)
     {
         $this->rapporteurStructure[] = $rapporteurStructure;
-
         return $this;
     }
 
     /**
      * Remove rapporteurStructure
-     *
      * @param \Orange\MainBundle\Entity\Structure $rapporteurStructure
      */
     public function removeRapporteurStructure(\Orange\MainBundle\Entity\Structure $rapporteurStructure)
@@ -904,11 +796,8 @@ class Utilisateur extends BaseUser
     public function getArrayRapporteurStructure()
     {
     	$arrStructs=array();
-    	$i=0;
-    	$rapp=$this->rapporteurStructure;
-    	foreach($this->rapporteurStructure as $key => $structure){
-    		$arrStructs[$i]=array('id'=>$structure->getId(), 'libelle'=>$structure->getLibelle());
-    		$i++;
+    	foreach($this->rapporteurStructure as $structure){
+    		$arrStructs[] = array('id'=>$structure->getId(), 'libelle'=>$structure->getLibelle());
     	}
     	return $arrStructs;
     }
@@ -1176,9 +1065,8 @@ class Utilisateur extends BaseUser
      * @return array
      */
     public function getInstanceIdsForChefProjet() {
-    	$projets = $this->getProjets();
     	$ids = array();
-    	foreach($projets as $projet) {
+    	foreach($this->getProjet() as $projet) {
     		$chantiers = $projet->getChantier();
     		foreach($chantiers as $chantier) {
     			array_push($ids, $chantier->getInstance()->getId());

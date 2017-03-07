@@ -19,7 +19,7 @@ final class OrangeMainForms
      */
     const ACTION_BU 					= 'orange_main.action.simple';
     const ACTION_ESPACE 				= 'orange_main.action.espace';
-    const ACTION_PROJET 				= 'orange_main.action.projet';
+    const ACTION_CHANTIER 				= 'orange_main.action.chantier';
     const ACTION_CHANGE_STATUT 			= 'orange_main.action.change_statut';
     const ACTION_REAFFECTATION 			= 'orange_main.action.reaffectation';
     const ACTION_CYCLIQUE 				= 'orange_main.action.cyclique';

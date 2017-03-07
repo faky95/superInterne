@@ -83,7 +83,7 @@ class Notification {
 	 */
 	public static function notificationWithCopy($helper, $subject, $membresEmail, $cc, $commentaire, $entity) {
 		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
-		$helper->NotifWithCopy($membresEmail, $cc, $subject, $body, $entity->getCommentaire());
+		$helper->NotifWithCopy($membresEmail, $cc, $subject, $body, $entity->getCommentaire(), $entity instanceof Tache);
 	}
 
 	/**
