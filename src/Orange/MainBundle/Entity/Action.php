@@ -234,6 +234,14 @@ class Action
     private $document;
     
     /**
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
+     * @ORM\JoinColumns({
+     *   @ORM\JoinColumn(name="qualificateur_id", referencedColumnName="id", nullable=true)
+     * })
+     */
+    private $qualificateur;
+    
+    /**
      * @var \Doctrine\Common\Collections\ArrayCollection
      */
     private $tmp_contributeur;
@@ -1124,4 +1132,42 @@ class Action
 		return $ava;
 	}
 	
+
+    /**
+     * Set actionCyclique
+     *
+     * @param \Orange\MainBundle\Entity\ActionCyclique $actionCyclique
+     *
+     * @return Action
+     */
+    public function setActionCyclique(\Orange\MainBundle\Entity\ActionCyclique $actionCyclique = null)
+    {
+        $this->actionCyclique = $actionCyclique;
+
+        return $this;
+    }
+
+    /**
+     * Set qualificateur
+     *
+     * @param \Orange\MainBundle\Entity\Utilisateur $qualificateur
+     *
+     * @return Action
+     */
+    public function setQualificateur(\Orange\MainBundle\Entity\Utilisateur $qualificateur = null)
+    {
+        $this->qualificateur = $qualificateur;
+
+        return $this;
+    }
+
+    /**
+     * Get qualificateur
+     *
+     * @return \Orange\MainBundle\Entity\Utilisateur
+     */
+    public function getQualificateur()
+    {
+        return $this->qualificateur;
+    }
 }

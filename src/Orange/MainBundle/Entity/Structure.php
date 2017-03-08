@@ -657,4 +657,48 @@ class Structure
 	}
 	
 	
+
+    /**
+     * Get utilisateurs
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUtilisateurs()
+    {
+        return $this->utilisateurs;
+    }
+
+    /**
+     * Add action
+     *
+     * @param \Orange\MainBundle\Entity\Action $action
+     *
+     * @return Structure
+     */
+    public function addAction(\Orange\MainBundle\Entity\Action $action)
+    {
+        $this->action[] = $action;
+
+        return $this;
+    }
+
+    /**
+     * Remove action
+     *
+     * @param \Orange\MainBundle\Entity\Action $action
+     */
+    public function removeAction(\Orange\MainBundle\Entity\Action $action)
+    {
+        $this->action->removeElement($action);
+    }
+
+    /**
+     * Get action
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
 }

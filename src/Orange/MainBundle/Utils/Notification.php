@@ -5,6 +5,7 @@ use Orange\MainBundle\Service\Mailer;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Signalisation;
 use Orange\MainBundle\Entity\Tache;
+use Orange\MainBundle\Entity\ActionGenerique;
 
 class Notification {
 	
@@ -111,4 +112,17 @@ class Notification {
 		$body = array ('commentaire' => $commentaire, 'changeSet' => $changeset, 'titre'	=> $subject, 'type' => $type);
 		$helper->Notif($membresEmail, $subject, $body);
 	}
+	
+	/**
+	 * @param Mailer $helper
+	 * @param string $subject
+	 * @param array $membresEmail
+	 * @param string $commentaire
+	 * @param ActionGenerique $entity
+	 */
+	public static function notifActionGenerique($helper, $subject, $membresEmail, $cc=null,$commentaire, $entity) {
+		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
+		$helper->notifActionGenerique($membresEmail,$cc,$subject, $body);
+	}
+	
 }

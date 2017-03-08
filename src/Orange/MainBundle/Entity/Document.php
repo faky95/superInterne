@@ -265,4 +265,14 @@ class Document
     }
 	
 	
+
+    /**
+     * Get nomFichier
+     *
+     * @return string
+     */
+    public function getNomFichier()
+    {
+        return $this->nomFichier;
+    }
 }

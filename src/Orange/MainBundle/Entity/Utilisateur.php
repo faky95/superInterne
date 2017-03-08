@@ -178,6 +178,16 @@ class Utilisateur extends BaseUser
     protected $firstChangePassword;
     
     /**
+     * @ORM\OneToMany(targetEntity="ActionGeneriqueHasStatut", mappedBy="utilisateur", cascade={"persist","remove","merge"})
+     */
+    private $actionGeneriqueHasStatut;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="ActionGeneriqueHasAction", mappedBy="utilisateur", cascade={"persist","remove","merge"})
+     */
+    private $actionGeneriqueHasAction;
+    
+    /**
      * get full name
      */
     public function __toString() {
@@ -1169,5 +1179,73 @@ class Utilisateur extends BaseUser
     public function getReporting()
     {
     	return $this->reporting;
+    }
+
+    /**
+     * Add actionGeneriqueHasStatut
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut
+     *
+     * @return Utilisateur
+     */
+    public function addActionGeneriqueHasStatut(\Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut)
+    {
+        $this->actionGeneriqueHasStatut[] = $actionGeneriqueHasStatut;
+
+        return $this;
+    }
+
+    /**
+     * Remove actionGeneriqueHasStatut
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut
+     */
+    public function removeActionGeneriqueHasStatut(\Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut)
+    {
+        $this->actionGeneriqueHasStatut->removeElement($actionGeneriqueHasStatut);
+    }
+
+    /**
+     * Get actionGeneriqueHasStatut
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActionGeneriqueHasStatut()
+    {
+        return $this->actionGeneriqueHasStatut;
+    }
+
+    /**
+     * Add actionGeneriqueHasAction
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction
+     *
+     * @return Utilisateur
+     */
+    public function addActionGeneriqueHasAction(\Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction)
+    {
+        $this->actionGeneriqueHasAction[] = $actionGeneriqueHasAction;
+
+        return $this;
+    }
+
+    /**
+     * Remove actionGeneriqueHasAction
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction
+     */
+    public function removeActionGeneriqueHasAction(\Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction)
+    {
+        $this->actionGeneriqueHasAction->removeElement($actionGeneriqueHasAction);
+    }
+
+    /**
+     * Get actionGeneriqueHasAction
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActionGeneriqueHasAction()
+    {
+        return $this->actionGeneriqueHasAction;
     }
 }

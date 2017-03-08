@@ -89,6 +89,7 @@ class Statut
      */
     private $actionStatut;
     
+    
     /**
      *
      * @ORM\OneToMany(targetEntity="TacheStatut", mappedBy="statut", cascade={"persist","remove","merge"})
@@ -146,6 +147,18 @@ class Statut
      */
     private $typeStatut;
     
+    /**
+     * @ORM\OneToMany(targetEntity="ActionGeneriqueHasStatut", mappedBy="statut", cascade={"persist", "merge", "remove"})
+     */
+    private $actionGeneriqueHasStatut;
+    
+    /**
+     * @var boolean
+     *
+     * @ORM\Column(name="is_generique", type="boolean",  nullable=true)
+     */
+    private $isGenerique;
+    
     public function __toString(){
     	return $this->libelle;
     }
@@ -156,6 +169,7 @@ class Statut
     public function __construct()
     {
         $this->actionStatut = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->isGenerique = false;
     }
 
     /**
@@ -376,4 +390,38 @@ class Statut
 	
 	
 	
+
+    /**
+     * Add actionGeneriqueHasStatut
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut
+     *
+     * @return Statut
+     */
+    public function addActionGeneriqueHasStatut(\Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut)
+    {
+        $this->actionGeneriqueHasStatut[] = $actionGeneriqueHasStatut;
+
+        return $this;
+    }
+
+    /**
+     * Remove actionGeneriqueHasStatut
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut
+     */
+    public function removeActionGeneriqueHasStatut(\Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueHasStatut)
+    {
+        $this->actionGeneriqueHasStatut->removeElement($actionGeneriqueHasStatut);
+    }
+
+    /**
+     * Get actionGeneriqueHasStatut
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActionGeneriqueHasStatut()
+    {
+        return $this->actionGeneriqueHasStatut;
+    }
 }

@@ -6,6 +6,7 @@ use Orange\MainBundle\Entity\TypeStatut;
 use Orange\MainBundle\Entity\Tache;
 use Orange\MainBundle\Entity\TacheStatut;
 use Orange\MainBundle\Entity\Statut;
+use Orange\MainBundle\Entity\ActionGeneriqueHasStatut;
 
 class ActionUtils {
 	
@@ -21,6 +22,19 @@ class ActionUtils {
 		$statutEntity = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
 		$statutAction = new ActionStatut();
 		$statutAction->setAction($action);
+		$statutAction->setStatut($statutEntity);
+		$statutAction->setUtilisateur($utilisateur);
+		$statutAction->setCommentaire($commentaire);
+			
+		$entityManager->persist($statutAction);
+		$entityManager->flush();
+	}
+	
+	public static function changeStatutActionGenerique($entityManager, $action, $statut, $utilisateur, $commentaire) {
+		$typeStatut = $entityManager->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_ACTION);
+		$statutEntity = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('isGenerique'=>true,'code' => $statut, 'typeStatut' => $typeStatut->getId()));
+		$statutAction = new ActionGeneriqueHasStatut();
+		$statutAction->setActionGenerique($action);
 		$statutAction->setStatut($statutEntity);
 		$statutAction->setUtilisateur($utilisateur);
 		$statutAction->setCommentaire($commentaire);
@@ -277,6 +291,12 @@ class ActionUtils {
 	public static function setReferenceActionSignalisationBis($em, $action, $signalisation) {
 		$action->setReference('S_'.$signalisation->getId().'-'.'A_'.$action->getId());
 		$em->persist($action);
+	}
+	
+	public static function setReferenceActionGenerique($em, $action) {
+		$action->setReference('AG_'.$action->getId());
+		$em->persist($action);
+		$em->flush();
 	}
 	
 }

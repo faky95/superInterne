@@ -55,7 +55,7 @@ class ActionManager
 		
 	}
 	
-	//Création d'actions
+	//Création d'action
 	
 	public function createNewAction($action , $helper) {
 		$emailPorteur = ActionUtils::getEmailPorteur($this->em, $action);

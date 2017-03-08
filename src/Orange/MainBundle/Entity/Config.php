@@ -16,6 +16,9 @@ class Config
 	const MANAGER_CAN_DO_IT 	= 'MANAGER_CAN_DO_IT';
 	const LINK_INSTEAD_OF_ERQ 	= 'LINK_INSTEAD_OF_ERQ';
 	
+	const BU_HAS_CONTROLE_QUALITY   = 'BU_HAS_CONTROLE_QUALITY';
+	const BU_ACTION_GENERIQUE      	= 'BU_ACTION_GENERIQUE';
+	
     /**
      * @var integer
      * @ORM\Column(name="id", type="integer", nullable=false)

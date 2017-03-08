@@ -262,6 +262,7 @@ class InstanceRepository extends BaseRepository{
 				$instances=$this->filter();
 			return $instances;
 		}
+		
 }
 	
 	

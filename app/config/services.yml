@@ -223,6 +223,10 @@ services:
     orange_main.signalisation_manager:
         class: Orange\MainBundle\Model\SignalisationManager
         arguments: ["@doctrine.orm.entity_manager","@service_container", "@security.context"]
+        
+    orange_main.actiongenerique_manager:
+        class: Orange\MainBundle\Model\ActionGeneriqueManager
+        arguments: ["@doctrine.orm.entity_manager","@service_container", "@security.context"]
 
     orange_main.action_listener:
         class: Orange\MainBundle\Listener\ActionListener
@@ -236,6 +240,12 @@ services:
             - {name: kernel.event_subscriber }
         arguments: ["%states%", "@service_container", "@orange.main.mailer"]
         
+    orange_main.actiongenerique_listener:
+        class: Orange\MainBundle\Listener\ActionGeneriqueListener
+        tags:
+            - {name: kernel.event_subscriber }
+        arguments: ["%states%", "@service_container", "@orange.main.mailer"]
+        
     orange_main.action_event:
         class: Orange\MainBundle\Event\ActionEvent
         public : true
@@ -245,6 +255,11 @@ services:
         class: Orange\MainBundle\Event\SignalisationEvent
         public : true
         arguments: ["@security.context", "@orange_main.signalisation_manager"]
+        
+    orange_main.actiongenerique_event:
+        class: Orange\MainBundle\Event\ActionGeneriqueEvent
+        public : true
+        arguments: ["@security.context", "@orange_main.actiongenerique_manager"]
 
     my_service.logger:
         class:     Symfony\Bridge\Monolog\Logger

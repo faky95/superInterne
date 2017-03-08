@@ -217,6 +217,19 @@ class Instance
      *  @ORM\OneToMany(targetEntity="Statistique", mappedBy="type", cascade={"persist","remove","merge"})
      */
     private $statistique;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     *  @ORM\OneToMany(targetEntity="ActionGenerique", mappedBy="instance", cascade={"persist", "merge"})
+     */
+    private $actionGenerique;
+    
+    /**
+     * @var boolean
+     * @ORM\Column(name="is_qualitative", type="boolean", nullable=false)
+     */
+    private $isQualitative;
 
     /**
      * Constructor
@@ -232,6 +245,7 @@ class Instance
         $this->structure = new \Doctrine\Common\Collections\ArrayCollection();
         $this->action = new \Doctrine\Common\Collections\ArrayCollection();
         $this->bu = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->isQualitative = false;
     }
     
 
@@ -960,5 +974,77 @@ class Instance
     		}
     	}
     	return $ids;
+    }
+
+    /**
+     * Set configuration
+     *
+     * @param \Orange\MainBundle\Entity\Configuration $configuration
+     *
+     * @return Instance
+     */
+    public function setConfiguration(\Orange\MainBundle\Entity\Configuration $configuration = null)
+    {
+        $this->configuration = $configuration;
+
+        return $this;
+    }
+
+    /**
+     * Add actionGenerique
+     *
+     * @param \Orange\MainBundle\Entity\ActionGenerique $actionGenerique
+     *
+     * @return Instance
+     */
+    public function addActionGenerique(\Orange\MainBundle\Entity\ActionGenerique $actionGenerique)
+    {
+        $this->actionGenerique[] = $actionGenerique;
+
+        return $this;
+    }
+
+    /**
+     * Remove actionGenerique
+     *
+     * @param \Orange\MainBundle\Entity\ActionGenerique $actionGenerique
+     */
+    public function removeActionGenerique(\Orange\MainBundle\Entity\ActionGenerique $actionGenerique)
+    {
+        $this->actionGenerique->removeElement($actionGenerique);
+    }
+
+    /**
+     * Get actionGenerique
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActionGenerique()
+    {
+        return $this->actionGenerique;
+    }
+
+    /**
+     * Set isQualitative
+     *
+     * @param boolean $isQualitative
+     *
+     * @return Instance
+     */
+    public function setIsQualitative($isQualitative)
+    {
+        $this->isQualitative = $isQualitative;
+
+        return $this;
+    }
+
+    /**
+     * Get isQualitative
+     *
+     * @return boolean
+     */
+    public function getIsQualitative()
+    {
+        return $this->isQualitative;
     }
 }

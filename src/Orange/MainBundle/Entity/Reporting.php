@@ -320,4 +320,14 @@ class Reporting
 	}
 	
 	
+
+    /**
+     * Remove destinataire
+     *
+     * @param \Orange\MainBundle\Entity\Utilisateur $destinataire
+     */
+    public function removeDestinataire(\Orange\MainBundle\Entity\Utilisateur $destinataire)
+    {
+        $this->destinataire->removeElement($destinataire);
+    }
 }

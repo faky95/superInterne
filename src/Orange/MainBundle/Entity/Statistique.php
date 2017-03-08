@@ -781,4 +781,28 @@ class Statistique
     {
         return $this->typeAction;
     }
+
+    /**
+     * Set nbDemandeReport
+     *
+     * @param integer $nbDemandeReport
+     *
+     * @return Statistique
+     */
+    public function setNbDemandeReport($nbDemandeReport)
+    {
+        $this->nbDemandeReport = $nbDemandeReport;
+
+        return $this;
+    }
+
+    /**
+     * Get nbDemandeReport
+     *
+     * @return integer
+     */
+    public function getNbDemandeReport()
+    {
+        return $this->nbDemandeReport;
+    }
 }

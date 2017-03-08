@@ -198,4 +198,28 @@ class SignalisationStatut
         return $this->commentaire;
     }
     
+
+    /**
+     * Set enCours
+     *
+     * @param boolean $enCours
+     *
+     * @return SignalisationStatut
+     */
+    public function setEnCours($enCours)
+    {
+        $this->enCours = $enCours;
+
+        return $this;
+    }
+
+    /**
+     * Get enCours
+     *
+     * @return boolean
+     */
+    public function getEnCours()
+    {
+        return $this->enCours;
+    }
 }

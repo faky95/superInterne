@@ -260,5 +260,16 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
+    public function notifActionGenerique($to, $cc=null,$subject, $body) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+    	->setTo($to)
+    	->setCc(null)
+    	->setSubject(utf8_encode($subject))
+    	->setBody($this->templating->render('OrangeMainBundle:Notification:notifActionGenerique.html.twig', array('body' => $body)))
+    	->setContentType('text/html')
+    	->setCharset('utf-8');
+    	return $this->mailer->send($mail);
+    }
     
 }

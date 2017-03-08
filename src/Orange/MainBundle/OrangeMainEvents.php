@@ -47,4 +47,13 @@ final class OrangeMainEvents
     const SIGNALISATION_EFFICACE				    = 'orange_main.signalisation.efficace';
     const SIGNALISATION_NON_EFFICACE				= 'orange_main.signalisation.non.efficace';
     
+    /**
+     * The action generique events
+     * 
+     */
+    const ACTIONGENERIQUE_NOUVEAU 					 = 'orange_main.actiongenerique.creation';
+    const ACTIONGENERIQUE_MODIFIE			         = 'orange_main.actiongenerique.modification';
+    const ACTIONGENERIQUE_SOLDE 			         = 'orange_main.actiongenerique.solde';
+    
+    
 }
