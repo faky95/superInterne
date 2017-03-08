@@ -30,8 +30,8 @@ class alerteDepassementCommand extends BaseCommand {
 						'porteur' => $user['porteur'], 'actions' => $user['action'],'nbr' => count($user['action']),
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$result = $this->getMailer()->send($user['email_porteur'], array($user['manager'], $user['animateur']), $subject, $body, true);
-			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($user['email_porteur']), array($user['manager'], $user['animateur']), count($user['action']));
+			$result = $this->getMailer()->send($user['email_porteur'], array($user['manager']), $subject, $body, true);
+			$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($user['email_porteur']), array($user['manager']), count($user['action']));
 		}
 		if(!empty($chemin)) {
 			$this->getMailer()->sendLogsMail("Journal sur les relances des rappels d'échéances",
