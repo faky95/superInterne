@@ -478,4 +478,30 @@ class MappingStatistique
 		}
 		return $arrData;
 	}
+	
+	public function mapToHaveLibelle($stats){
+		$req=array('Action Nouvelle'=>0,'faite délai'=>0, 'faite hors délai'=>0, 'soldée delai'=>0,'soldée hors delai'=>0, 'Echue non soldée'=>0, 'Demande Abandon'=>0, 'Abandonnée'=>0, 'Non échue'=>0 );
+		foreach($stats as $stat) {
+			if($stat['etatCourant']== Statut::ACTION_SOLDEE_DELAI) {
+				$req['soldée delai']=$stat['total'];
+			}elseif($stat['etatCourant']== Statut::ACTION_SOLDEE_HORS_DELAI) {
+				$req['soldée hors delai']=$stat['total'];
+			}elseif($stat['etatCourant']== Statut::ACTION_FAIT_DELAI) {
+				$req['faite délai']=$stat['total'];
+			}elseif($stat['etatCourant']== Statut::ACTION_FAIT_HORS_DELAI) {
+				$req['faite hors délai']=$stat['total'];
+			}elseif ($stat['etatCourant']== Statut::ACTION_ECHUE_NON_SOLDEE) {
+				$req['Echue non soldée']=$stat['total'];
+			}elseif ($stat['etatCourant']== Statut::ACTION_DEMANDE_ABANDON) {
+				$req['Demande Abandon']=$stat['total'];
+			}elseif ($stat['etatCourant']== Statut::ACTION_ABANDONNEE) {
+				$req['Abandonnée']=$stat['total'];
+			}elseif ($stat['etatCourant']== Statut::ACTION_NON_ECHUE) {
+				$req['Non échue']=$stat['total'];
+			}elseif ($stat['etatCourant']== Statut::ACTION_NOUVELLE) {
+				$req['Action Nouvelle']=$stat['total'];
+			}
+		}
+		return $req;
+	}
 }

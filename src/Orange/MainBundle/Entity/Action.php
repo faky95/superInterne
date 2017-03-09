@@ -256,6 +256,11 @@ class Action
      * 
      */
     private $statutChange;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="ActionGeneriqueHasAction", mappedBy="action", cascade={"persist", "merge", "remove"})
+     */
+    private $actionGeneriqueHasAction;
 
     public $toDebut;
     
@@ -1169,5 +1174,39 @@ class Action
     public function getQualificateur()
     {
         return $this->qualificateur;
+    }
+
+    /**
+     * Add actionGeneriqueHasAction
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction
+     *
+     * @return Action
+     */
+    public function addActionGeneriqueHasAction(\Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction)
+    {
+        $this->actionGeneriqueHasAction[] = $actionGeneriqueHasAction;
+
+        return $this;
+    }
+
+    /**
+     * Remove actionGeneriqueHasAction
+     *
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction
+     */
+    public function removeActionGeneriqueHasAction(\Orange\MainBundle\Entity\ActionGeneriqueHasAction $actionGeneriqueHasAction)
+    {
+        $this->actionGeneriqueHasAction->removeElement($actionGeneriqueHasAction);
+    }
+
+    /**
+     * Get actionGeneriqueHasAction
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getActionGeneriqueHasAction()
+    {
+        return $this->actionGeneriqueHasAction;
     }
 }

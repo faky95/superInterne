@@ -1,0 +1,189 @@
+{% extends '::base.html.twig' %}
+
+{% block content -%}
+                <!-- Build page from here: -->
+                <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Action Générique :: {{ action.reference }} {% endblock %}</h3> 
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+                            <div class="panel-heading clearfix">
+                                <h4 class="left">
+                                    <span class="red"> Informations de l'action générique <strong> {{ action.reference }} </strong></span>
+                                </h4>
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ action.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement : <strong class="red">{{ action.dateAction| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ action.dateDebut| date("d/m/Y")  }}</strong></li>
+                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ action.porteur  }}</strong></li>
+                                	      <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| date("d/m/Y")  }}</strong></li>
+                                    </ul>
+                                 </div>    
+                                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">
+                                		 <li><h3 class="red">Description</h3></li>
+										 <p style="text-align: justify;">{{ action.description }}</p>  
+                                	</ul>
+                                </div>
+                            </div>
+                        </div><!-- End .panel -->
+                    </div>
+                </div><!-- End .row -->
+                <div class="row">
+                <div class="col-lg-7">
+                	<div class="panel panel-default chart gradient">
+                                            <div class="panel-heading">
+                                                <h4>
+                                                    <span class="icon16 icomoon-icon-bars"></span>
+                                                    <span>Suivi des actions </span>
+                                                </h4>
+                                                <a href="#" class="minimize">Reduire</a>
+                                            </div>
+                                            <div class="panel-body" style=" padding-bottom:0;">
+                                                 	<div id="pieChart"></div>
+                                            </div>
+                                        </div><!-- End .panel -->
+                
+                </div>
+                <div class="col-lg-5">
+                	  <div class="reminder1">
+                            <h4>Statistiques G&eacute;n&eacute;rales
+                            </h4>
+                            <ul>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 icomoon-icon-sigma gray"></span>
+                                    </div>
+                                    <span class="number1">{{ action.actionGeneriqueHasAction.count() }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total</span></span>
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 icomoon-icon-loop-4 green"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['Action Nouvelle'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action(s) nouvelle(s) </span></span> 
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 entypo-icon-checkmark green"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['faite délai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faite(s)  dans les délais</span></span>
+                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 entypo-icon-checkmark red"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['faite hors délai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faites(s) hors délais</span></span>
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 icomoon-icon-checkmark-3 green"></span>
+                                    </div>
+
+                                    <span class="number1">{{ stats['soldée delai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) dans les délais</span></span>
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 icomoon-icon-checkmark-3 green"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['soldée hors delai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) hors délai</span></span>
+                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16  icomoon-icon-loop-4"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['Non échue'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non Echue(s)</span></span>
+                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 entypo-icon-time red"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['Echue non soldée'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;chue(s) non sold&eacute;es</span></span>
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 icomoon-icon-bubble-cancel"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['Demande Abandon'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demande(s) d&acute;abandon</span></span> 
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                <li class="clearfix">
+                                    <div class="icon">
+                                        <span class="icon16 silk-icon-cancel red"></span>
+                                    </div>
+                                    <span class="number1">{{ stats['Abandonnée'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abandonn&Eacute;e(s)</span></span> 
+                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                </li>
+                                 
+                                
+                            </ul>
+                        </div><!-- End .reminder -->
+                <div>
+{% endblock %}
+{% block pagescript %}
+	{{ parent() }}
+	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
+	<script type="text/javascript">
+	$(function () {
+
+	    $(document).ready(function () {
+		    var datas=[];
+		    i=0;
+	    	{% for lib,val in stats %}
+		    		datas[{{ loop.index0 }}] = new Object();
+		    		datas[{{ loop.index0 }}].name = '{{ lib|escape('js') }}';
+					datas[{{ loop.index0 }}].y={{ val }};
+			{% endfor %}
+	        // Build the chart
+	        $('#pieChart').highcharts({
+	            chart: {
+	                plotBackgroundColor: null,
+	                plotBorderWidth: null,
+	                plotShadow: false,
+	                type: 'pie'
+	            },
+	            title: {
+	                text: 'Suivi des Actions'
+	            },
+	            tooltip: {
+	                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+	            },
+	            plotOptions: {
+	                pie: {
+	                    allowPointSelect: true,
+	                    cursor: 'pointer',
+	                    dataLabels: {
+	                        enabled: false
+	                    },
+	                    showInLegend: true
+	                }
+	            },
+	            credits: {
+					enabled : false 	
+	        	},
+	            series: [{
+	                name: 'Taux',
+	                colorByPoint: true,
+	                data: datas
+	            }]
+	        });
+	    });
+	});
+	</script>
+{% endblock %}
+
+
+		 	

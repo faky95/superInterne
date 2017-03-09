@@ -179,6 +179,13 @@ class Bu
     private $parametrage;
     
     /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\OneToMany(targetEntity="BuHasConfig", mappedBy="bu")
+     */
+    private $configBu;
+    
+    /**
      * Constructor
      */
     public function __construct()
@@ -557,4 +564,38 @@ class Bu
 	
 	
 	
+
+    /**
+     * Add configBu
+     *
+     * @param \Orange\MainBundle\Entity\BuHasConfig $configBu
+     *
+     * @return Bu
+     */
+    public function addConfigBu(\Orange\MainBundle\Entity\BuHasConfig $configBu)
+    {
+        $this->configBu[] = $configBu;
+
+        return $this;
+    }
+
+    /**
+     * Remove configBu
+     *
+     * @param \Orange\MainBundle\Entity\BuHasConfig $configBu
+     */
+    public function removeConfigBu(\Orange\MainBundle\Entity\BuHasConfig $configBu)
+    {
+        $this->configBu->removeElement($configBu);
+    }
+
+    /**
+     * Get configBu
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getConfigBu()
+    {
+        return $this->configBu;
+    }
 }
