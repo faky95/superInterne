@@ -21,8 +21,8 @@
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ action.libelle }}</strong></li>
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement : <strong class="red">{{ action.dateAction| date("d/m/Y")  }}</strong></li>
                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ action.dateDebut| date("d/m/Y")  }}</strong></li>
-                                         <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ action.porteur  }}</strong></li>
-                                	      <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ action.porteur  }}</strong></li>
+                                	    <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ action.dateInitial| date("d/m/Y")  }}</strong></li>
                                     </ul>
                                  </div>    
                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
@@ -61,28 +61,28 @@
                                         <span class="icon16 icomoon-icon-sigma gray"></span>
                                     </div>
                                     <span class="number1">{{ action.actionGeneriqueHasAction.count() }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Total</span></span>
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a  class="btn btn-warning" href="{{ path('actions_by_actiongenerique', {id:action.id} ) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 icomoon-icon-loop-4 green"></span>
                                     </div>
                                     <span class="number1">{{ stats['Action Nouvelle'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Action(s) nouvelle(s) </span></span> 
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_NOUVELLE') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 entypo-icon-checkmark green"></span>
                                     </div>
                                     <span class="number1">{{ stats['faite délai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faite(s)  dans les délais</span></span>
-                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_FAIT_DELAI') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 entypo-icon-checkmark red"></span>
                                     </div>
                                     <span class="number1">{{ stats['faite hors délai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Faites(s) hors délais</span></span>
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_FAIT_HORS_DELAI') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
@@ -90,42 +90,42 @@
                                     </div>
 
                                     <span class="number1">{{ stats['soldée delai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) dans les délais</span></span>
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_SOLDEE_DELAI') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 icomoon-icon-checkmark-3 green"></span>
                                     </div>
                                     <span class="number1">{{ stats['soldée hors delai'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Sold&eacute;e(s) hors délai</span></span>
-                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_SOLDEE_HORS_DELAI') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16  icomoon-icon-loop-4"></span>
                                     </div>
                                     <span class="number1">{{ stats['Non échue'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Non Echue(s)</span></span>
-                                    <a class="btn btn-warning" href="">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_NON_ECHUE') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 entypo-icon-time red"></span>
                                     </div>
                                     <span class="number1">{{ stats['Echue non soldée'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&Eacute;chue(s) non sold&eacute;es</span></span>
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_ECHUE_NON_SOLDEE') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 icomoon-icon-bubble-cancel"></span>
                                     </div>
                                     <span class="number1">{{ stats['Demande Abandon'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Demande(s) d&acute;abandon</span></span> 
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_DEMANDE_ABANDON') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                 <li class="clearfix">
                                     <div class="icon">
                                         <span class="icon16 silk-icon-cancel red"></span>
                                     </div>
                                     <span class="number1">{{ stats['Abandonnée'] }}<span  style="color: black;font-weight: lighter;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Abandonn&Eacute;e(s)</span></span> 
-                                    <a class="btn btn-warning" href="#">D&Eacute;TAILS</a>
+                                    <a class="btn btn-warning" href="{{ path('actions_by_actiongenerique_statut', {id:action.id,'statut': constant('Orange\\MainBundle\\Entity\\Statut::ACTION_ABANDONNEE') }) }}">D&Eacute;TAILS</a>
                                 </li>
                                  
                                 

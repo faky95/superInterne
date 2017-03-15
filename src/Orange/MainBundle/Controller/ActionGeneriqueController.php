@@ -13,6 +13,9 @@ use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\OrangeMainEvents;
 use Orange\MainBundle\Criteria\ActionGeneriqueCriteria;
+use Orange\MainBundle\Entity\Action;
+use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
+use Orange\MainBundle\Criteria\ActionCriteria;
 
 /**
  * ActionGenerique controller
@@ -27,6 +30,7 @@ class ActionGeneriqueController extends BaseController
 	public function indexAction(Request $request)
 	{
 		$em = $this->getDoctrine()->getManager();
+		$this->get('session')->set('actiongenerique_criteria', array());
 		$form = $this->createForm(new ActionGeneriqueCriteria());
 		if($request->getMethod()=="POST"){
 		       $this->modifyRequestForForm($request, array(), $form);
@@ -47,6 +51,7 @@ class ActionGeneriqueController extends BaseController
 		$queryBuilder = $em->getRepository('OrangeMainBundle:ActionGenerique')->listAllElements($criteria);
 		return $this->paginate($request, $queryBuilder);
 	}
+	
 	
 	/**
 	 * @Route("/nouvelle_actiongenerique", name="nouvelle_actiongenerique")
@@ -108,7 +113,7 @@ class ActionGeneriqueController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $repo= $em->getRepository('OrangeMainBundle:ActionGenerique');
         $entity = $repo->find($id);
-        $stats = $repo->getSimpleActionByActionGenerique($id)->getQuery()->getArrayResult();
+        $stats = $repo->getStatsSimpleActionByActionGenerique($id)->getQuery()->getArrayResult();
         $map= $this->container->get('orange.main.dataStats')->mapToHaveLibelle($stats);
 
         if (!$entity) 
@@ -171,6 +176,7 @@ class ActionGeneriqueController extends BaseController
     /**
      * @Route("/{id}/supprimer_actiongenerique", name="supprimer_actiongenerique")
      * @Method({"POST","GET"})
+     * @Template()
      */
     public function deleteAction(Request $request, $id)
     {
@@ -181,18 +187,64 @@ class ActionGeneriqueController extends BaseController
     	if (!$entity) 
     		throw $this->createNotFoundException('L\'action générique n\'existe pas.');
     	
-    	
         if($request->getMethod()=="POST"){
-        	if($entity->getActionGeneriqueHasAction()->count()>0)
-        		$this->get('session')->getFlashBag()->add('error', array('title' => 'Notification', 'body' =>  'Impossible de supprimer cette action générique!'));
-        	else {	   
+        		$conn = $this->get('database_connection');
+        		$query  = sprintf("delete  from action_generique_has_action where action_id=%s;",$id);
+        		$query .= sprintf("delete  from action_generique_has_statut where action_id=%s;",$id);
+        		$exec = $conn->prepare($query)->execute();
 	            $em->remove($entity);
 	            $em->flush();
 	            $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action générique supprimée avec succés!'));
-        	}
-        	return $this->redirect($this->generateUrl('les_actiongeneriques'));
+	            return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
         }
         return array('id'=>$id);
+    }
+    
+    /**
+     * @Route("/{id}/actions_by_actiongenerique", name="actions_by_actiongenerique")
+     * @Route("/{id}/{statut}/actions_by_actiongenerique_statut", name="actions_by_actiongenerique_statut")
+     * @Method({"GET","POST"})
+     * @Template()
+     */
+    public function actionByGeneriqueAction(Request $request, $id,$statut=null)
+    {
+    	$em = $this->getDoctrine()->getManager();
+    	$criteria = new ActionCriteria();
+    	$entity = $em->getRepository('OrangeMainBundle:ActionGenerique')->find($id);
+    	$entityStatut = null;
+    	$form = $this->createForm($criteria);
+    	
+    	if($statut!=null)
+    		$entityStatut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode($statut);
+    	
+    	if($request->getMethod()=="POST"){
+    		$this->modifyRequestForForm($request, array(), $form);
+    		$this->get('session')->set('actiongenerique_criteria', $request->request->get($form->getName()));
+    	}
+    	return array('form'=>$form->createView(), 'entity'=>$entity, 'statut'=>$entityStatut);
+    }
+    
+    /**
+     * @Route("/{id}/listeaction_by_actiongenerique", name="listeaction_by_actiongenerique")
+     * @Route("/{id}/{statut}/listeaction_by_actiongenerique_statut", name="listeaction_by_actiongenerique_statut") 
+     */
+    public function listeByGeneriqueAction(Request $request, $id,$statut=null){
+    	
+    	if($request->isXmlHttpRequest()==false)
+    		throw new AccessDeniedException("Accés non autorisé");
+    	
+    	$em = $this->getDoctrine()->getManager();
+    	$criteria = null;
+    	$form = $this->createForm(new ActionCriteria());
+    	$this->modifyRequestForForm($request, $this->get('session')->get('actiongenerique_criteria'), $form);
+    	$criteria=$form->getData();
+    	if($statut!=null){
+    		$entityStatut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode($statut);
+    		$criteria->statut = $entityStatut;
+    	}
+    	
+    	$queryBuilder = $em->getRepository('OrangeMainBundle:ActionGenerique')->getActionByActionGenerique($criteria,$id);
+    	return $this->paginate($request, $queryBuilder, 'addRowInTableForSimpleAction');
     }
 
     
@@ -209,5 +261,21 @@ class ActionGeneriqueController extends BaseController
            		$this->get('orange_main.actions')->generateActionsForActionGenerique($entity)
            		
            );	
+    }
+    
+    /**
+     *
+     * @param Action $entity
+     */
+    public function addRowInTableForSimpleAction($entity){
+    	return array(
+    			'<span align="center" style="margin-left: 15px; width:20px; height:20px; background:'.($entity->getPriorite()?$entity->getPriorite()->getCouleur():'') .'">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+    			$entity->getReference(),
+    			$entity->getInstance()->__toString(),
+    			$entity->getLibelle(),
+    			$entity->getPorteur()->getPrenom().' '.$entity->getPorteur()->getNom(),
+    			$this->showEntityStatus($entity, 'etat'),
+    			$this->get('orange_main.actions')->generateActionsForAction($entity)
+    	);
     }
 }
