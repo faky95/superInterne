@@ -120,7 +120,7 @@ class ActionGenerique
     
 	public function __construct(){
 		$this->dateAction = new \DateTime();
-		$this->statut = Statut::ACTION_EN_COURS;
+		$this->statut = Statut::ACTION_NON_ECHUE;
 	}
     
 

@@ -73,6 +73,19 @@ class Query {
 				return $statement->fetchAll();
 	}
 	
+	public function orienterManyActions($datas){
+		$connection = $this->container->get('database_connection');
+		$ids =  is_array($datas['ids'])==true ? $datas['ids'] : array($datas['ids']);
+		$user = $datas['user'];
+		$actionGenerique = $datas['actiongenerique'];
+		$query="";
+		foreach ($ids as $id)
+			$query .= "INSERT INTO `action_generique_has_action`(`action_id`, `utilisateur_id`, `date`, `commentaire`, `actionGenerique_id`) VALUES
+					   (".$id.",".$user->getId().", NOW(), 'Orientation avec succés!', ".$actionGenerique->getId()." );";
+		
+		$connection->prepare($query)->execute();
+	}
+	
 	
 	
 }

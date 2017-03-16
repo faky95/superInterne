@@ -258,27 +258,14 @@ class ActionGeneriqueController extends BaseController
     public function orientationAction(Request $request, $data){
     	$em = $this->getDoctrine()->getEntityManager();
     	$ids = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
-    	/** @var Action $entity */
-    	$entity = $em->getRepository('OrangeMainBundle:Action')->find($ids);
-    	$form   = $this->createCreateForm($entity, 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
+    	$action = new Action();
+    	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
     	if($request->getMethod()=="POST"){
-   		    $form->handleRequest($request);
-   		    if($form->isValid()){
-   		    	if(is_array($ids)==false){ //une action 
-   		    		$entity->orienter($entity->getActionGenerique(),$this->getUser());
-   		    		$em->persist($entity);
-   		    		$em->flush();
-   		    	}else{ // plusieurs actions
-   		    		
-   		    	}
+   		        $form->handleRequest($request);
+       		    $datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
+   		        $this->get('orange.main.query')->orienterManyActions($datas);
+   		        $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
    		    	return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
-   		    }else{// formulaire non valide
-   		    	var_dump($form->getErrors());
-   		    	return $this->render('OrangeMainBundle:ActionGenerique:orientation.html.twig', array(
-   		    				'data'   => $data,
-   		    				'form'   => $form->createView(),
-   		    		), new \Symfony\Component\HttpFoundation\Response(null,303));
-   		    }
     	}
     	return array('data'=> $data,'form'=>$form->createView());
     }

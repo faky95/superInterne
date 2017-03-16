@@ -1,9 +1,9 @@
 // document ready function
 $(document).ready(function() { 	
+
 	//------------- Check all checkboxes  -------------//
 	
 	$("#masterCh").click(function() {
-		console.log('jhdfgk');
 		var checkedStatus = $(this).find('span').hasClass('checked');
 		$("#checkAll tr .chChildren input:checkbox").each(function() {
 			this.checked = checkedStatus;
@@ -15,8 +15,6 @@ $(document).ready(function() {
 				}
 		});
 	});
-	
-	
 
 });//End document ready functions
 

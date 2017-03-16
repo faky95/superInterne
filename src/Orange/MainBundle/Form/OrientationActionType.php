@@ -24,15 +24,15 @@ class OrientationActionType extends AbstractType
 							$ids    = $options['attr']['ids'];
 							$queryBuilder = $ir->createQueryBuilder('a');
 							$queryBuilder->leftJoin('a.actionGeneriqueHasAction', 'aha')
-										 ->leftJoin('aha.action', 'act')
-					                     ->andWhere('a.porteur=:user')->setParameter('user', $user)
-					                     ->andWhere('a.statut=:statut')->setParameter('statut', Statut::ACTION_NON_ECHUE);
+					                     ->where('IDENTITY(a.porteur) = :user')->setParameter('user', $user->getId())
+					                     ->andWhere('a.statut  = :statut')->setParameter('statut', Statut::ACTION_NON_ECHUE);
 							if(is_array($ids)==false)
-								return $queryBuilder->andWhere('act.id != :id')->setParameter('id', $ids);
+								$queryBuilder->andWhere('IDENTITY(aha.action) != :id or aha.id is null')->setParameter('id', $ids);
 							else{
 								$values = implode(',', $ids);
-								return $queryBuilder->andWhere('act.id not in (:id) ')->setParameter('id', $values);
+								$queryBuilder->andWhere('IDENTITY(aha.action) not in (:id) or aha.id is null')->setParameter('id', $ids);
 							}
+							return $queryBuilder;
 					}
 			))
 			->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))

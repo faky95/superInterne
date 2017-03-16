@@ -3,6 +3,8 @@
 namespace Orange\MainBundle\Service;
 
 use Orange\MainBundle\Entity\Statut;
+use Orange\MainBundle\Entity\Action;
+use Orange\MainBundle\Entity\ActionGenerique;
 class Actions {
 	const ACTION_TEMPLATE = '<span class="tip" ><a title="%s" href="%s"><img src="%s" /></a></span>';
 	const ACTION_MODAL_TEMPLATE = '<span class="tip" ><a title="%" href="#myModal" class="actionLink" modal-url="%s" data-target="#myModal" data-toggle="modal"><img src="%s" /></a></span>';
@@ -371,6 +373,11 @@ class Actions {
 			);
 	}
 	
+	/**
+	 * 
+	 * @param ActionGenerique $entity
+	 * @return string
+	 */
 	public function generateActionsForActionGenerique($entity) {
 		$actions = '<div class="btn-group">
 				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>';
@@ -383,6 +390,18 @@ class Actions {
 				$this->router->generate('edition_actiongenerique', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_actiongenerique', array('id'=>$entity->getId()))
 				);
+	}
+	
+	/**
+	 * 
+	 * @param Action $entity
+	 */
+	public function showCheckBoxForOrientationAction($entity){
+		if($entity->getActionGeneriqueHasAction()->count()==0){
+			return '<input type="checkbox" name="datas[]" class="styled chkbox" value="'.$entity->getId().'"  >';
+		}else{
+			return "";
+		}
 	}
 	
 }

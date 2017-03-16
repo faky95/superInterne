@@ -7,7 +7,7 @@
        	<span>Orientation vers une action générique</span>
 	</h4>
 </div>
-<form class="form-horizontal" action="{{ path('orienter_action', {'data': data }) }}" method="POST" novalidate="novalidate" role="form">
+<form class="form-horizontal" action="{{ path('orienter_action', {'data': data }) }}" method="POST" novalidate="validate" role="form">
 	<div class="panel-body">
 		{{ form_row(form.actionGenerique,  {'attr': {'class': 'form-control'}}) }}
 		{{ form_widget(form._token) }}

@@ -275,3 +275,7 @@ services:
         class: Orange\MainBundle\Service\ActionCorrect
         public : true
         arguments: ["@security.context", "@doctrine.orm.entity_manager", "@orange.main.mailer"]
+        
+    orange.main.query:
+        class: Orange\MainBundle\Service\Query
+        arguments: ["@service_container"]

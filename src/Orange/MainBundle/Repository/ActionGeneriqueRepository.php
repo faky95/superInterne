@@ -24,6 +24,10 @@ class ActionGeneriqueRepository extends BaseRepository {
 		if($this->_user->hasRole(Utilisateur::ROLE_ADMIN)) {
 			$queryBuilder->orWhere('s.buPrincipal=:bu')->setParameter('bu',  $this->_user->getStructure()->getBuPrincipal());
 		}
+		if($this->_user->hasRole(Utilisateur::ROLE_PORTEUR)) {
+			$queryBuilder->orWhere('u=:user')->setParameter("user", $this->_user);
+		}
+		
 		return $queryBuilder;
 	}
 	

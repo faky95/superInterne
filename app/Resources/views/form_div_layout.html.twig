@@ -363,8 +363,14 @@
 // 			$('.dataTables_length select').uniform();
 			$('.dataTables_paginate > ul').addClass('pagination');
 			$('.dataTables_filter>label>input').addClass('form-control');
+			{% if checkbox is defined %}
+		      $('table.dataTable tbody tr').each(function(){
+			      $(this).find('td:eq(0)').addClass('chChildren');
+			      });
+		    {% endif %}
 	    	addEventActionLink();
 	    }, fnRowCallback: function( nRow, aData, iDisplayIndex ) {
+    		    
 	    }
 	};
 	var dtOptions = [];

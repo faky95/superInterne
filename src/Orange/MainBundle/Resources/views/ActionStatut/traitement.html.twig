@@ -190,13 +190,13 @@
                 	{{ change_statut_button }}
 				{% endif %}
 			{% endif %}
-			{% if entity.porteur==app.user %}
-				<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('orienter_action', {data:entity.id}) }}" title="Réorienter vers une action générique ">
-					<button class="btn btn-danger">
-						<span class="icon16  icomoon-icon-exit white"></span>Réorienter vers une action générique 
-					</button>
-				</a>
-			{% endif %}
+    			{% if entity.porteur==app.user and entity.actionGeneriqueHasAction.count()==0 %}
+    				<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('orienter_action', {data:entity.id}) }}" title="Réorienter vers une action générique ">
+    					<button class="btn btn-danger">
+    						<span class="icon16  icomoon-icon-exit white"></span>Réorienter vers une action générique 
+    					</button>
+    				</a>
+    			{% endif %}
 	    </div>
 	</div><!-- End .panel -->
 </div><!-- End .col-lg-12 -->

@@ -699,7 +699,7 @@ class ActionController extends BaseController
      */
     protected function addRowInTableWithCheckBox($entity) {
     	return array(
-    			'<input type="checkbox" name="datas[]" class="styled" value="'.$entity->getId().'" style="opacity: 0;" >',
+    			$this->get('orange_main.actions')->showCheckBoxForOrientationAction($entity),
     			'<span align="center" style="margin-left: 15px; width:20px; height:20px; background:'.($entity->getPriorite()?$entity->getPriorite()->getCouleur():'') .'">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
     			$entity->getReference(),
     			$entity->getInstance()->__toString(),
