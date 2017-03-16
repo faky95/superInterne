@@ -145,11 +145,11 @@ class ActionGeneriqueHasAction
     /**
      * Set actionGenerique
      *
-     * @param \Orange\MainBundle\Entity\Statut $actionGenerique
+     * @param \Orange\MainBundle\Entity\ActionGenerique $actionGenerique
      *
      * @return ActionGeneriqueHasAction
      */
-    public function setActionGenerique(\Orange\MainBundle\Entity\Statut $actionGenerique)
+    public function setActionGenerique(\Orange\MainBundle\Entity\ActionGenerique $actionGenerique)
     {
         $this->actionGenerique = $actionGenerique;
 
@@ -159,7 +159,7 @@ class ActionGeneriqueHasAction
     /**
      * Get actionGenerique
      *
-     * @return \Orange\MainBundle\Entity\Statut
+     * @return \Orange\MainBundle\Entity\ActionGenerique
      */
     public function getActionGenerique()
     {

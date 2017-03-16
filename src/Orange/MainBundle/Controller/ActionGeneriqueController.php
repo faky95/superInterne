@@ -16,6 +16,9 @@ use Orange\MainBundle\Criteria\ActionGeneriqueCriteria;
 use Orange\MainBundle\Entity\Action;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Orange\MainBundle\Criteria\ActionCriteria;
+use Orange\MainBundle\Form\OrientationActionType;
+use Orange\MainBundle\Entity\ActionGeneriqueHasAction;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * ActionGenerique controller
@@ -245,6 +248,39 @@ class ActionGeneriqueController extends BaseController
     	
     	$queryBuilder = $em->getRepository('OrangeMainBundle:ActionGenerique')->getActionByActionGenerique($criteria,$id);
     	return $this->paginate($request, $queryBuilder, 'addRowInTableForSimpleAction');
+    }
+    
+    /**
+     * @Route("/{data}/orienter_action", name="orienter_action")
+     * @Method({"GET","POST"})
+     * @Template()
+     */
+    public function orientationAction(Request $request, $data){
+    	$em = $this->getDoctrine()->getEntityManager();
+    	$ids = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
+    	/** @var Action $entity */
+    	$entity = $em->getRepository('OrangeMainBundle:Action')->find($ids);
+    	$form   = $this->createCreateForm($entity, 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
+    	if($request->getMethod()=="POST"){
+   		    $form->handleRequest($request);
+   		    if($form->isValid()){
+   		    	if(is_array($ids)==false){ //une action 
+   		    		$entity->orienter($entity->getActionGenerique(),$this->getUser());
+   		    		$em->persist($entity);
+   		    		$em->flush();
+   		    	}else{ // plusieurs actions
+   		    		
+   		    	}
+   		    	return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
+   		    }else{// formulaire non valide
+   		    	var_dump($form->getErrors());
+   		    	return $this->render('OrangeMainBundle:ActionGenerique:orientation.html.twig', array(
+   		    				'data'   => $data,
+   		    				'form'   => $form->createView(),
+   		    		), new \Symfony\Component\HttpFoundation\Response(null,303));
+   		    }
+    	}
+    	return array('data'=> $data,'form'=>$form->createView());
     }
 
     

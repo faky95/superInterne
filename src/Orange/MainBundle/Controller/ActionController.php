@@ -191,7 +191,7 @@ class ActionController extends BaseController
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->myActions($criteria, $this->getUser());
 		$queryExport = $em->getRepository('OrangeMainBundle:Action')->listAllElementsForExport($criteria, $this->getUser());
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
-		return $this->paginate($request, $queryBuilder);
+		return $this->paginate($request, $queryBuilder ,'addRowInTableWithCheckBox');
 	}
 	
 	/**
@@ -690,6 +690,24 @@ class ActionController extends BaseController
      			$this->showEntityStatus($entity, 'etat'),
       			$this->get('orange_main.actions')->generateActionsForAction($entity)
     		);
+    }
+    
+    /**
+     * @todo retourne le nombre d'enregistrements renvoyer par le r�sultat de la requ�te
+     * @param \Orange\MainBundle\Entity\Action $entity
+     * @return array
+     */
+    protected function addRowInTableWithCheckBox($entity) {
+    	return array(
+    			'<input type="checkbox" name="datas[]" class="styled" value="'.$entity->getId().'" style="opacity: 0;" >',
+    			'<span align="center" style="margin-left: 15px; width:20px; height:20px; background:'.($entity->getPriorite()?$entity->getPriorite()->getCouleur():'') .'">&nbsp;&nbsp;&nbsp;&nbsp;</span>',
+    			$entity->getReference(),
+    			$entity->getInstance()->__toString(),
+    			$entity->getLibelle(),
+    			$entity->getPorteur()->getPrenom().' '.$entity->getPorteur()->getNom(),
+    			$this->showEntityStatus($entity, 'etat'),
+    			$this->get('orange_main.actions')->generateActionsForAction($entity)
+    	);
     }
     
     /**

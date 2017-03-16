@@ -261,6 +261,12 @@ class Action
      * @ORM\OneToMany(targetEntity="ActionGeneriqueHasAction", mappedBy="action", cascade={"persist", "merge", "remove"})
      */
     private $actionGeneriqueHasAction;
+    
+    /**
+     * @var \Orange\MainBundle\Entity\ActionGenerique
+     *
+     */
+    private $actionGenerique;
 
     public $toDebut;
     
@@ -1208,5 +1214,22 @@ class Action
     public function getActionGeneriqueHasAction()
     {
         return $this->actionGeneriqueHasAction;
+    }
+    
+    public function getActionGenerique(){
+    	return $this->actionGenerique;
+    }
+    
+    public function setActionGenerique($actionGenerique){
+    	 $this->actionGenerique =$actionGenerique;
+    	 return $this;
+    }
+    public function orienter($actionGenerique,$user){
+    	$actionGeneriqueHasAction = new ActionGeneriqueHasAction();
+    	$actionGeneriqueHasAction->setAction($this);
+    	$actionGeneriqueHasAction->setActionGenerique($actionGenerique);
+    	$actionGeneriqueHasAction->setCommentaire("Ajouté!");
+    	$actionGeneriqueHasAction->setUtilisateur($user);
+    	$this->addActionGeneriqueHasAction($actionGeneriqueHasAction);
     }
 }

@@ -16,12 +16,13 @@ class ActionGeneriqueRepository extends BaseRepository {
 	public function filter() {
 		$queryBuilder = $this->createQueryBuilder('a')
 		->innerJoin('a.porteur', 'u')
+		->innerJoin('u.structure', 's')
 		->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.statut');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_ADMIN)) {
-			$queryBuilder->orWhere('u.buPrincipal=:bu')->setParameter('bu',  $this->_user->getStructure()->getBuPrincipal());
+			$queryBuilder->orWhere('s.buPrincipal=:bu')->setParameter('bu',  $this->_user->getStructure()->getBuPrincipal());
 		}
 		return $queryBuilder;
 	}

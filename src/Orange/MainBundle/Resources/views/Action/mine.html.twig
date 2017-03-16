@@ -76,6 +76,7 @@
 			    <table id="actionTable" cellpadding="0" cellspacing="0" border="0" class=" display table table-bordered" width="100%">
 			        <thead>
 			            <tr>
+			               <th id="masterCh" class="ch"><input id="checkAll" type="checkbox" name="checkbox" value="all" class="styled" style="opacity: 0;"></th>
 			               <th>Priorité</th>
 						   <th width="60px">Référence</th>
 			               <th width="200px">Instance</th>
@@ -87,7 +88,7 @@
 			        </thead>
 			        <tbody>
 			        	<tr>
-			        		<td colspan="7">Chargement des donnees ...</td>
+			        		<td colspan="8">Chargement des donnees ...</td>
 			        	</tr>
 			        </tbody>
 			    </table>
@@ -99,13 +100,17 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('a[href="#maximize"]').click();
+		$('#actionTable tbody tr td').each(function() {
+			$(this).attr('style','background:red');
+		});
+		
 	});
 </script>
-
 {% endblock %}
 
 {% block pagescript %}
 	{{ parent() }}
+	<script type="text/javascript" src="{{ asset('bundles/orangemain/js/tables.js') }}"></script>
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
 	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_de_mes_actions'), nosorting: {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6} } %}
 {% endblock %}
