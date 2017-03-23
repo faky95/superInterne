@@ -424,4 +424,28 @@ class Statut
     {
         return $this->actionGeneriqueHasStatut;
     }
+
+    /**
+     * Set isGenerique
+     *
+     * @param boolean $isGenerique
+     *
+     * @return Statut
+     */
+    public function setIsGenerique($isGenerique)
+    {
+        $this->isGenerique = $isGenerique;
+
+        return $this;
+    }
+
+    /**
+     * Get isGenerique
+     *
+     * @return boolean
+     */
+    public function getIsGenerique()
+    {
+        return $this->isGenerique;
+    }
 }

@@ -19,6 +19,7 @@
 					{% if has_rights('ROLE_RAPPORTEUR') %}
                     <li {% if role==3 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 3 }) }}">Mes structures</a></li>
                     {% endif %}
+                    <li {% if role is not defined and role is empty %}class="active"{% endif %}><a href="{{ path('stats_actiongenerique') }}"> Mes actions Génériques</a></li>
                </ul>
                 <div style="margin-top: 0px;">
 			         <div class="panel panel-default">
@@ -47,6 +48,12 @@
 									{% endif %}
 										{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%', 'help' : 'Choisissez les instances à afficher'}}) }}
 									</div>
+                                    {% if role is  defined and role is not empty and role!=4%}
+    									<div class="form-group">
+    									    {{ form_widget(form.actionsGeneriques,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%', 'help' : 'Choisissez les actions génériques à afficher'}}) }}
+    									    {{ form_widget(form.hasActionGenerique, {'attr': {'class': 'nostyle'}}) }}
+    									</div>
+									{% endif %}
 									<div class="form-group">
 							        	<div class="col-lg-offset-2 col-lg-9">
 											{{ form_widget(form.filtrer) }}

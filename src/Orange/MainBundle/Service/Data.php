@@ -167,6 +167,7 @@ class Data extends BaseQuery {
 	}
 	
 	public function mapDataforAlertDepassement($actions){
+		$repo= $this->em->getRepository('OrangeMainBundle:ActionGenerique');
 		$today = new \DateTime();
 		$data = array();
 		$i=0;
@@ -183,7 +184,8 @@ class Data extends BaseQuery {
 					'manager' => $action->getPorteur()->getSuperior()? $action->getPorteur()->getSuperior()->getEmail():$action->getPorteur()->getEmail(), 'instance' => $action->getInstance()->getLibelle(),
 					'reference' => $action->getReference(), 'jours' => $a, 'delai' => $action->getDateInitial()->format('d-m-Y'),
 					'libelle' => $action->getLibelle(), 'id' => $action->getId(),
-					'animateur'=>$action->getAnimateur()->getEmail()
+					'animateur'=>$action->getAnimateur()->getEmail(), 
+					'action_generique'=>($action->getActionGeneriqueHasAction()->count()>0 ? $action->getActionGeneriqueHasAction()->first()->getActionGenerique(): null)
 			); 
 			$i++;
 		}
@@ -198,8 +200,17 @@ class Data extends BaseQuery {
 			$array['user'][$value['user_id']]['manager'] = $value['manager'];
 			$array['user'][$value['user_id']]['animateur'] = $value['animateur'];
 			$array['user'][$value['user_id']]['action'][$i] = array('id'  => $value['id'], 'reference' => $value['reference'], 'libelle' => $value['libelle'],
-					'instance' => $value['instance'], 'delai' => $value['delai'], 'jours' => $value['jours']
+					'instance' => $value['instance'], 'delai' => $value['delai'], 'jours' => $value['jours'],
+					'action_generique'=>$value['action_generique']
 			);
+			if($value['action_generique']!=null){
+				if(!isset($array['user'][$value['user_id']]['action_generique'][$value['action_generique']->getId()])) {
+				    $stats = $repo->getStatsSimpleActionByActionGenerique($value['action_generique']->getId())->getQuery()->getArrayResult();
+				    $map= $this->container->get('orange.main.dataStats')->mapToHaveLibelle($stats);
+				    $array['user'][$value['user_id']]['action_generique'][$value['action_generique']->getId()] =
+				    array('ref'=>$value['action_generique']->getReference(), 'stats'=>$map,'nbActions'=>$value['action_generique']->getActionGeneriqueHasAction()->count());
+				}
+			}
 			$i++;
 		}
 		return $array;

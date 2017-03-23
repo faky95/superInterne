@@ -24,6 +24,9 @@
         }    
         td[class=w20]{ display:none; }    
     } 
+    .orange{
+	  color:#ff6600; 
+	}
 
     </style>
    
@@ -86,7 +89,7 @@
 															            Bonjour {{ porteur }} ,<br><br>
 															           	<span style="color: red;"> Ceci est un mail de notification des échéances des actions.</span><br><br>
 																		<br>
-																		<table class="w580" width="580" cellspacing="0" cellpadding="0" border="1">
+																		<table class="w580" width="580" cellspacing="0" cellpadding="2" border="1">
 																		  <tr>
 																		    <th>Référence</th>
 																		    <th>Libellé</th>
@@ -94,9 +97,14 @@
 																		    <th>Echéances</th>
 																		    <th>Instance</th>
 																		  </tr>
+																		{% set actions = data['action'] %}
 																		{% for action in actions %}
 																			<tr>
-																				<td><a style="color: #ff6600; text-decoration: none" href="{{ url('details_action', { 'id': action['id']}) }}">{{ action['reference'] }}</a></td>
+																				<td style="text-align:center;"><a style="color: #ff6600; text-decoration: none" href="{{ url('details_action', { 'id': action['id']}) }}">{{ action['reference'] }}</a>
+																				{% if action['action_generique'] !=null %}
+																					<br><span style="font-size:12px">rattaché à l'action générique </span><br><a style="color: #ff6600; text-decoration: none" href="{{ url('details_actiongenerique', { 'id': action['action_generique'].id}) }}">{{ action['action_generique'].reference }}</a>
+																				{% endif %}
+																				</td>
 																				<td>{{ action['libelle'] }}</td>
 																				<td>{{ action['delai'] }}</td>
 																				<td>Jour J {{ action['jours'] }}</td>
@@ -107,13 +115,47 @@
 																		<br><br>
 																		<b>Veuillez solder vos actions ou bien changer leur date d'échéance</b>
 																		<br><br>
-																		Merci.
 															              </div>
 															          </td>
 															      </tr>
-															      <tr>
-															          <td class="w580"  width="580" height="1" bgcolor="#c7c5c5"></td>
+															     <tr>
+															          <td class="w580"  width="580" height="1" bgcolor="#c7c5c5">
+															          </td>
 															      </tr>
+															      {% if data['action_generique'] is defined and data['action_generique'] is not empty %}
+																   <tr>
+																      <br>
+																	  <td style="text-align:center; color:#ff6600;padding: 15px;font-weight:bold"><u>Infos globales sur les actions génériques</u></td>
+																	  <br><br>
+															      </tr>
+															      <tr>
+															          <td >
+																	   <table class="w580" width="580" cellspacing="0" cellpadding="3" border="1">
+																	   {% set actionsGenerique = data['action_generique'] %}
+																	        {% for ag in actionsGenerique %}
+    																		    <tr ><td colspan="3" style="background: #e6e6e6;text-align:center; padding: 3px;">Action générique <b class="orange">{{ ag['ref'] }}</b></td></tr>
+    																			<tr style="background:#f7f7f7">
+    																		    <th>Statut</th>
+    																		    <th >Nombre d'actions</th>
+    																		    <th>Pourcentage</th>
+    																		    </tr>
+                                                                                {% for lib,val in ag['stats'] %}
+    																		      <tr>
+        																		    <th>{{ lib }}</th>
+        																		    <td style="text-align:center">{{ val }}</td>
+        																		    <td style="text-align:center">{{ (val*100) / ag['nbActions'] ~ '%'  }}</td>
+        																		   </tr>
+    																		    {% endfor  %}
+    																		    <tr class="orange" style="background:#f7f7f7">
+        																		    <th>Total</th>
+        																		    <th >{{  ag['nbActions'] }}</th>
+        																		    <th>100%</th>
+    																		    </tr>
+																		    {% endfor %}
+																		 </table>
+																		</td>
+																   </tr>
+																   {% endif %}
 															  </tbody>
 								                         </table>
 								                         <!-- fin zone -->  

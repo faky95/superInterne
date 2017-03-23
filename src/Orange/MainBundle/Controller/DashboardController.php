@@ -19,7 +19,7 @@ class DashboardController extends Controller {
 	CONST NBSEM=53;
 	
 	/**
-	 * Tableau de bord 
+	 * Tableau de bord
 	 * @QMLogger(message="Page d'accueil")
 	 * @Route("/", name="dashboard")
 	 * @Method("GET")

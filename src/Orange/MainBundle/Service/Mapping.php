@@ -11,6 +11,7 @@ use Gedmo\DoctrineExtensions;
 use Doctrine\ORM\Query\Expr;
 use DateTime;
 use Doctrine\DBAL\Types\VarDateTimeType;
+use Orange\MainBundle\Entity\Action;
 
 class Mapping 
 {
@@ -110,6 +111,7 @@ public function exportAction($data, $dataStatut){
 	public function mapDataforAlertDepassement($actions){
 		$today = new \DateTime();
 		$data = array();
+		/** @var Action $action */
 		foreach ($actions as $action){
 			$di = $action->getDateInitial();
 			$dateDiff = $di->diff($today);
@@ -121,7 +123,8 @@ public function exportAction($data, $dataStatut){
 					'manager' => $action->getPorteur()->getSuperior() ? $action->getPorteur()->getSuperior()->getEmail(): '',
 					'instance' => $action->getInstance()->getLibelle(),
 					'reference' => $action->getReference(), 'jours' => $a.$dateDiff->days, 'delai' => $action->getDateInitial()->format('d-m-Y'),
-					'libelle' => $action->getLibelle(), 'id' => $action->getId()
+					'libelle' => $action->getLibelle(), 'id' => $action->getId() ,
+					'ref_actiongenerique' => ($action->getActionGeneriqueHasAction()->count()>0 ? $action->getActionGeneriqueHasAction()->first()->getActionGenerique(): null)
 			);
 		}
 		$array = array();

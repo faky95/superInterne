@@ -284,6 +284,10 @@ class Action
     
     public $instances;
     
+    public $hasActionGenerique;
+    
+    public $actionsGeneriques;
+    
 	public function __construct(){
 		$this->dateAction = new \DateTime();
 		$this->isDeleted = 0;

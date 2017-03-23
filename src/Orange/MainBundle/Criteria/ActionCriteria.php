@@ -9,6 +9,8 @@ use Orange\MainBundle\Repository\TypeActionRepository;
 use Orange\MainBundle\Repository\UtilisateurRepository;
 use Orange\MainBundle\Repository\StructureRepository;
 use Orange\MainBundle\Repository\InstanceRepository;
+use Orange\MainBundle\Entity\ActionGenerique;
+use Orange\MainBundle\Repository\ActionGeneriqueRepository;
 
 class ActionCriteria extends AbstractCriteria
 {
@@ -73,6 +75,12 @@ class ActionCriteria extends AbstractCriteria
 						}
 					}
             	))
+            	->add('actionsGeneriques', 'entity', array('class' => 'OrangeMainBundle:ActionGenerique', 'label' => 'Actions Génériques', 'multiple'=>true, 'attr' => array('class' => 'select2')
+            			,'query_builder' => function(ActionGeneriqueRepository $agr){
+            					return $agr->filter();
+            			}
+            			))
+            	->add('hasActionGenerique', 'checkbox', array('label' => 'Rattaché à des actions génériques ?', 'required' => false))
 		        ->add('filtrer', 'submit', array('label' => 'Filtrer', 'attr' => array('class' => 'btn btn-warning submitLink')))
 		        ->add('effacer', 'submit', array('label' => 'Effacer', 'attr' => array('class' => 'btn btn-danger submitLink')));
     }

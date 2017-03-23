@@ -195,6 +195,35 @@ class StatistiqueController extends BaseController
     }
     
     /**
+     * @Route("/stats_actiongenerique", name="stats_actiongenerique")
+     * @Template("OrangeMainBundle:Statistique:stats_actiongenerique.html.twig")
+     *
+     */
+    public function statsGeneriqueAction(Request $request){
+    	$repoInst=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance');
+    	$graphe = array();
+    	$bu=$this->getUser()->getStructure()->getBuPrincipal();
+    	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:ActionGenerique');
+    	$form=$this->createForm(new ActionCriteria(), null, array('attr'=>array('instances'=>$repoInst->getInstanceByRole(Utilisateur::ROLE_PORTEUR) )));
+    	$form->handleRequest($request);
+    	if(($request->getMethod()=='POST') && $form->getData()) 
+    		$this->get('session')->set('action_criteria', $request->request->get($form->getName()));
+    	
+    	$result =$rep->getMesStatsByActionGenerique($form->getData())->getQuery()->getArrayResult();
+    	$refsAction = array_map(function($tag) {
+			    		return array('id' => $tag['id'],'libelle' => $tag['libelle']);
+			    	}, $result);
+        $map  = $this->get('orange.main.dataStats')->transformRequeteToSimple($result, $refsAction);
+        $data = $this->get('orange.main.calcul')->stats($bu, $map); 
+        $tableau = $this->get('orange.main.dataStats')->mappingDataStats($data, 'action_generique',$refsAction);
+        foreach ($tableau['taux'] as $key => $taux) {
+        	$graphe[$key]=array();
+        }
+        $graphe=$this->createGraphe($tableau['action_generique'],$graphe);
+    	return array('form'=>$form->createView(),'nbTaux'=>$this->getNombreTaux(), 'stats'=>$tableau, 'statut'=>$this->getStatus(),'graphe'=>$graphe);
+    }
+    
+    /**
      * @Route("/{role}/statistique_generale", name="statistique_generale")
      * @Route("/vue_statique", name="vue_statique")
      * @Template("OrangeMainBundle:Statistique:vue_statique.html.twig")
@@ -223,7 +252,6 @@ class StatistiqueController extends BaseController
     	if($tabRoles[$role]==Utilisateur::ROLE_ANIMATEUR || $tabRoles[$role]==Utilisateur::ROLE_MANAGER) {
     	     $structures=$repStruct->getStructureByRole($tabRoles[$role])->getQuery()->getArrayResult();
     	}
-    	//var_dump($structures);exit;
     	$form=$this->createForm(new ActionCriteria(), null, array('attr'=>array( 'structures'=> $repStruct->getStructureByRole($tabRoles[$role]), 'instances'=>$repInst->getInstanceByRole($tabRoles[$role]) )));
     	$form->handleRequest($request);
     	if(($request->getMethod()=='POST') && $form->getData()) {

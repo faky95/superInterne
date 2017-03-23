@@ -1297,6 +1297,19 @@ class ActionRepository extends BaseRepository {
 		if($criteria->hasFromCloture()) {
 			$queryBuilder->andWhere($alias.'.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $criteria->hasToCloture())->setParameter('from', $criteria->hasFromCloture());
 		}
+		if(count($criteria->actionsGeneriques) > 0 || $criteria->hasActionGenerique) {
+			    $queryBuilder->leftJoin($alias.'.actionGeneriqueHasAction', 'gha')
+			                 ->leftJoin('gha.actionGenerique', 'ag');
+				if(count($criteria->actionsGeneriques) > 0) {
+					$agIDs = array();
+					foreach($criteria->instances as $val)
+						$agIDs [] = $val->getId();
+						$queryBuilder->andWhere('ag.id in(:agIds)')->setParameter('agIds', $agIDs);
+				}
+				if($criteria->hasActionGenerique) {
+					$queryBuilder->andWhere('ag.id is not null');
+				}
+		}
 	}
 	/**
 	 * Filter les actions validees

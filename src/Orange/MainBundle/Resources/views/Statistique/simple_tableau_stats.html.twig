@@ -1,37 +1,44 @@
 {% if type=="structure" %}
 {% set rspan=statut|length-nbTaux %}
-			<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
-			<tr>
-						<thead>
-						     <th style="padding: 15px 100px;">Statut</th>
-						          {% for struct in stats.structure %}
-										<th>{{ struct.libelle }}</th>
-								  {% endfor %}
-						 </thead>
-			</tr>
-				{% for key, st in statut %}
-					 	<tr	 class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
-					 		{% if loop.index < rspan %}
-				 				<td >{{ st }}</td>
-				 				{% for value in stats.structure %}
-				 					<td >{{ value.data[key] }}</td> 
-					 			{% endfor %}
-								{% elseif loop.index == rspan %}
-							 		  	<td  style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
-						 				{% for value in stats.structure %}
-						 					<td style=" text-align:center; font-weight:bold;color: #ff6600;" >{{ value.data[key] }}</td> 
-							 			{% endfor %}
-							 	{% else %}
-					 			<td style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
-				 				{% for value in stats.structure %}
-				 					<td style=" text-align:center; font-weight:bold;color: #ff6600;">{{ value.data[key]~'%' }}</td> 
-					 			{% endfor %}
-					 		{% endif %}
-					 	</tr>
-					{% endfor %}
-			</table>
+    {% if stats is not empty and stats.structure is not empty  %}
+    			<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
+    			<tr>
+    						<thead>
+    						     <th style="padding: 15px 100px;">Statut</th>
+    						          {% for struct in stats.structure %}
+    										<th>{{ struct.libelle }}</th>
+    								  {% endfor %}
+    						 </thead>
+    			</tr>
+    				{% for key, st in statut %}
+    					 	<tr	 class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
+    					 		{% if loop.index < rspan %}
+    				 				<td >{{ st }}</td>
+    				 				{% for value in stats.structure %}
+    				 					<td >{{ value.data[key] }}</td> 
+    					 			{% endfor %}
+    								{% elseif loop.index == rspan %}
+    							 		  	<td  style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
+    						 				{% for value in stats.structure %}
+    						 					<td style=" text-align:center; font-weight:bold;color: #ff6600;" >{{ value.data[key] }}</td> 
+    							 			{% endfor %}
+    							 	{% else %}
+    					 			<td style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
+    				 				{% for value in stats.structure %}
+    				 					<td style=" text-align:center; font-weight:bold;color: #ff6600;">{{ value.data[key]~'%' }}</td> 
+    					 			{% endfor %}
+    					 		{% endif %}
+    					 	</tr>
+    					{% endfor %}
+    			</table>
+    {% else %}
+       <div class="alert alert-warning">
+		  <strong>Infos!</strong> Aucunes infos disponibles ....
+		</div>
+    {% endif %}
 {% else %}
 {% set rspan=statut|length-nbTaux %}
+    {% if stats is not empty and stats.instance is not empty  %}
 			<table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
 					<tr>
 							<thead>
@@ -62,4 +69,9 @@
 					 	</tr>
 					{% endfor %}
 				</table>
+    {% else %}
+       <div class="alert alert-warning">
+		  <strong>Infos!</strong> Aucunes infos disponibles ....
+		</div>
+    {% endif %}
 {% endif %}

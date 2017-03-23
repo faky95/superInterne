@@ -123,6 +123,9 @@ class ActionGenerique
 		$this->statut = Statut::ACTION_NON_ECHUE;
 	}
     
+	public function __toString(){
+		return $this->libelle;
+	}
 
     /**
      * Get id
