@@ -5,6 +5,8 @@ namespace Orange\MainBundle\Utils;
 use Orange\MainBundle\Entity\SignalisationStatut;
 use Orange\MainBundle\Entity\TypeStatut;
 use Orange\MainBundle\Entity\SignalisationAnimateur;
+use Orange\MainBundle\Entity\SignalisationReformulation;
+use Orange\MainBundle\Entity\Signalisation;
 
 class SignalisationUtils {
 	
@@ -95,5 +97,27 @@ class SignalisationUtils {
 		$signalisation->setReference('S_'.$signalisation->getId());
 		$em->persist($signalisation);
 		$em->flush();
+	}
+	/**
+	 * 
+	 * @param unknown $entityManager
+	 * @param unknown $utilisateur
+	 * @param Signalisation $signalisation
+	 */
+	
+	static function createReformulationSignalisation($entityManager, $utilisateur, $signalisation )
+	{
+		$reformulation = new SignalisationReformulation();
+		$reformulation->setLibelle($signalisation->getLibelle());
+		$reformulation->setDescription($signalisation->getDescription());
+		$reformulation->setInstance($signalisation->getInstance());
+		$reformulation->setDomaine($signalisation->getDomaine());
+		$reformulation->setSite($signalisation->getSite());
+		$reformulation->setSource($signalisation->getSource());
+		$reformulation->setTypeSignalisation($signalisation->getTypeSignalisation());
+		$reformulation->setSignalisation($signalisation);
+	
+		$entityManager->persist($reformulation);
+		$entityManager->flush();
 	}
 }

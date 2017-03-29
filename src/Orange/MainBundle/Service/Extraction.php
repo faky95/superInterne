@@ -236,7 +236,7 @@ class Extraction extends \PHPExcel {
 			);
 		$th = array(
 				'Référence Signalisation', 'Instance', 'Périmétre', 'Domaine', 'Type', 'Libellé', 'Description',
-				'Source', 'Date de signalisation', 'Direction', 'Pôle', 'Département', 'Service', 'Statut', 'Action(s)' 
+				'Source', 'Date de signalisation', 'Direction', 'Pôle', 'Département', 'Service', 'Statut', 'Action(s)', 'Motif d\'invalidation' 
 			);
 		$col = "A";
 		$x = 1;

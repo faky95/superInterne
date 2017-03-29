@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Mapping\Fixture\Xml\Status;
 
 /**
  * Signalisation controller.
@@ -568,6 +569,37 @@ class SignalisationController extends BaseController
         $response = new Response();
         $response->headers->set('Content-Type', 'application/json');
         return $response->setContent(json_encode($output));
+    }
+    
+    /**
+     * @QMLogger(message="Reformulation d'une signalisation")
+     * @Route("/{id}/reformulation_signalisation", name="reformulation_signalisation")
+     * @Template()
+     */
+    public function reformulationAction(Request $request, $id) {
+    	$em = $this->getDoctrine()->getManager();
+    	$dispatcher = $this->get('event_dispatcher');
+    	$old = $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
+    	if(!$entity || ($entity && $entity->getEtatCourant() != Statut::SIGNALISATION_INVALIDER)) {
+    		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
+    		return $this->redirect($this->generateUrl('les_signalisations'));
+    	}
+    	$form = $this->createCreateForm($entity, 'Signalisation', array(
+    			'attr' => array('user_id' => $this->getUser()->getId(), 'structure_id' => $this->getUser()->getStructure()->getId())
+    	));
+    	if ($request->getMethod() == 'POST') {
+    		$form->handleRequest($request);
+    		if ($form->isValid()) {
+    			SignalisationUtils::createReformulationSignalisation($em, $this->getUser(), $old);
+    			SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::NOUVELLE_SIGNALISATION, $entity, "Reformulation de la signalisation. En attente de prise en charge !");
+    			$em->persist($entity);
+    			$em->flush();
+    			$event = $this->get('orange_main.signalisation_event')->createForSignalisation($entity);
+    			$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_REFORMULATION, $event);
+    			return $this->redirect($this->generateUrl('details_signalisation', array('id' => $id)));
+    		}
+    	}
+    	return array('entity' => $entity, 'form' => $form->createView());
     }
     
     protected function setFilter(QueryBuilder $queryBuilder, $aColumns, Request $request) {

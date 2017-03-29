@@ -19,6 +19,7 @@ use Orange\MainBundle\Criteria\ActionCriteria;
 use Orange\MainBundle\Form\OrientationActionType;
 use Orange\MainBundle\Entity\ActionGeneriqueHasAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Orange\MainBundle\Entity\Config;
 
 /**
  * ActionGenerique controller
@@ -34,6 +35,8 @@ class ActionGeneriqueController extends BaseController
 	{
 		$em = $this->getDoctrine()->getManager();
 		$this->get('session')->set('actiongenerique_criteria', array());
+		$user =$this->getUser();
+		$this->denyAccessUnlessGranted('liste', new ActionGenerique(), 'accés non autorisé!');
 		$form = $this->createForm(new ActionGeneriqueCriteria());
 		if($request->getMethod()=="POST"){
 		       $this->modifyRequestForForm($request, array(), $form);
@@ -64,8 +67,15 @@ class ActionGeneriqueController extends BaseController
 	public function newAction()
 	{
 		$entity = new ActionGenerique();
+		
 		$form   = $this->createCreateForm($entity,'ActionGenerique');
+		$this->denyAccessUnlessGranted('create', $entity, 'accés non autorisé!');
 	
+		if(!$this->getUser()->hasRole("ROLE_ADMIN")){
+			$form->remove('porteur');
+			$entity->setPorteur($this->getUser());
+		}
+		
 		return array(
 				'entity' => $entity,
 				'form'   => $form->createView(),
@@ -84,6 +94,12 @@ class ActionGeneriqueController extends BaseController
 		$dispatcher = $this->get('event_dispatcher');
 		
 		$form = $this->createCreateForm($entity,'ActionGenerique');
+		
+		if(!$this->getUser()->hasRole("ROLE_ADMIN")){
+			$form->remove('porteur');
+			$entity->setPorteur($this->getUser());
+		}
+		
 		$form->handleRequest($request);
 	
 		if ($form->isValid()) {
@@ -116,6 +132,7 @@ class ActionGeneriqueController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $repo= $em->getRepository('OrangeMainBundle:ActionGenerique');
         $entity = $repo->find($id);
+        $this->denyAccessUnlessGranted('read', $entity, 'accés non autorisé!');
         $stats = $repo->getStatsSimpleActionByActionGenerique($id)->getQuery()->getArrayResult();
         $map= $this->container->get('orange.main.dataStats')->mapToHaveLibelle($stats);
 
@@ -139,6 +156,11 @@ class ActionGeneriqueController extends BaseController
     {
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:ActionGenerique')->find($id);
+        
+        if(!$this->getUser()->hasRole("ROLE_ADMIN"))
+        	$form->remove('porteur');
+        	
+        $this->denyAccessUnlessGranted('update', $entity, 'accés non autorisé!');
         if (!$entity) {
         	throw $this->createNotFoundException('L\'action générique n\'existe pas.');
         }
@@ -163,6 +185,10 @@ class ActionGeneriqueController extends BaseController
         	throw $this->createNotFoundException('L\'action générique n\'existe pas.');
 
         $editForm = $this->createCreateForm($entity,'ActionGenerique');
+
+        if(!$this->getUser()->hasRole("ROLE_ADMIN"))
+        	$editForm->remove('porteur');
+        
         $editForm->handleRequest($request);
         if ($editForm->isValid()) {
             $em->flush();
@@ -186,6 +212,7 @@ class ActionGeneriqueController extends BaseController
     	$em = $this->getDoctrine()->getManager();
     	/** @var ActionGenerique $entity */
     	$entity = $em->getRepository('OrangeMainBundle:ActionGenerique')->find($id);
+    	$this->denyAccessUnlessGranted('delete', $entity, 'accés non autorisé!');
     	
     	if (!$entity) 
     		throw $this->createNotFoundException('L\'action générique n\'existe pas.');
@@ -214,6 +241,7 @@ class ActionGeneriqueController extends BaseController
     	$em = $this->getDoctrine()->getManager();
     	$criteria = new ActionCriteria();
     	$entity = $em->getRepository('OrangeMainBundle:ActionGenerique')->find($id);
+    	$this->denyAccessUnlessGranted('liste', $entity, 'accés non autorisé!');
     	$entityStatut = null;
     	$form = $this->createForm($criteria);
     	
@@ -259,18 +287,17 @@ class ActionGeneriqueController extends BaseController
     	$em = $this->getDoctrine()->getEntityManager();
     	$ids = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
     	$action = new Action();
+    	$this->denyAccessUnlessGranted('orienter', new ActionGenerique(), 'accés non autorisé!');
     	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
     	if($request->getMethod()=="POST"){
-   		        $form->handleRequest($request);
-       		    $datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
-   		        $this->get('orange.main.query')->orienterManyActions($datas);
-   		        $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
-   		    	return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
+    		$form->handleRequest($request);
+    		$datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
+    		$this->get('orange.main.query')->orienterManyActions($datas);
+    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
+    		return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
     	}
     	return array('data'=> $data,'form'=>$form->createView());
-    }
-
-    
+    }    
     /**
      * 
      * @param ActionGenerique $entity

@@ -39,6 +39,7 @@ class ProfileFormType extends BaseType
 			->add('prenom', null, array('label' => 'Prenom :'))
 			->add('email', 'email', array('label' => 'Adresse Email :'))
 			->add('telephone', null, array('label' => 'Telephone :'))
+			->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?'))
 			->add('manager', 'checkbox', array(
 				    'label' => 'Est-il manager ?',
 					'required' => true ))

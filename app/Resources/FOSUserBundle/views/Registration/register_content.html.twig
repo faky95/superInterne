@@ -41,6 +41,11 @@
 			            	{{ form_widget(form.manager, {'attr': {'class': 'nostyle'}}) }}
 			            	{{ form_widget(form.isAdmin, {'attr': {'class': 'nostyle'}}) }}
 			            </div><!-- End .form-group  -->
+                        {% if has_rights('ROLE_SUPER_ADMIN') or (has_rights('ROLE_ADMIN') and app.user.structure.buPrincipal.hasConfig('BU_ACTION_GENERIQUE')) %}
+    			            <div class="form-group" id="agAuth">
+    			            	{{ form_widget(form.canCreateActionGenerique, {'attr': {'class': 'nostyle'}}) }}
+    			            </div><!-- End .form-group  -->
+    			        {% endif %}
 					{{ form_widget(form._token) }}
 		            <div class="form-group form-actions">
 		                <div class="col-lg-offset-2">

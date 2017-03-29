@@ -33,7 +33,6 @@ class Signalisation
      */
 	private $libelle;
         
-        
        /**
 	 * @var string
 	 *
@@ -194,6 +193,11 @@ class Signalisation
 	public $toDateSignale;
 	
 	public $fromDateSignale;
+	
+	/**
+	 * @ORM\OneToMany(targetEntity="SignalisationReformulation", mappedBy="signalisation", cascade={"persist","remove","merge"})
+	 */
+	private $reformulation;
 	
 	
     /**
@@ -637,12 +641,39 @@ class Signalisation
 		return $this;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
     
+
+    /**
+     * Add reformulation
+     *
+     * @param \Orange\MainBundle\Entity\SignalisationReformulation $reformulation
+     *
+     * @return Signalisation
+     */
+    public function addReformulation(\Orange\MainBundle\Entity\SignalisationReformulation $reformulation)
+    {
+        $this->reformulation[] = $reformulation;
+
+        return $this;
+    }
+
+    /**
+     * Remove reformulation
+     *
+     * @param \Orange\MainBundle\Entity\SignalisationReformulation $reformulation
+     */
+    public function removeReformulation(\Orange\MainBundle\Entity\SignalisationReformulation $reformulation)
+    {
+        $this->reformulation->removeElement($reformulation);
+    }
+
+    /**
+     * Get reformulation
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getReformulation()
+    {
+        return $this->reformulation;
+    }
 }

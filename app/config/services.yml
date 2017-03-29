@@ -171,6 +171,13 @@ services:
         tags:
             - { name: security.voter }
             
+    security.access.actiongenerique_voter:
+        class:      Orange\MainBundle\Security\Authorization\Voter\ActionGeneriqueVoter
+        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
+        public:     false
+        tags:
+            - { name: security.voter }
+            
     orange.main.calcul:
         class: Orange\MainBundle\Service\Calcul
         arguments: ["@doctrine.orm.entity_manager", "@service_container"]

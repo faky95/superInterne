@@ -21,8 +21,7 @@ class ActionGeneriqueType extends AbstractType
             ->add('dateDebut', 'date', array('label' => 'Date de Début :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('dateInitial', 'date', array('label' => 'Date fin :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             ->add('statut')
-            ->add('porteur', null, array('label'=>'Porteur :', 'empty_value' => "Choisir le porteur ..."
-            		))
+            ->add('porteur', null, array('label'=>'Porteur :', 'query_builder' => function($er)  {return $er->filter();}, 'empty_value' => 'Choix le porteur ...'))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
        		->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));
         ;

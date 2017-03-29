@@ -51,6 +51,13 @@
 				<div class="form-group">
 					<a href="#" title="Recharger les actions de cette signalisation !"><button id="reload" class="btn btn-warning"><span class="icon16 icomoon-icon-redo-2 white"></span>Recharger les actions</button></a>
 				</div>
+			{% elseif statut == 'SIGN_INVALIDE' and app.user.id == entity.source.utilisateur.id %}
+				<div class="form-group">
+		        	<p>{{ entity.signStatut[entity.signStatut|length - 1].commentaire }}</p>
+		    	</div>
+				<div class="form-group">
+					<a href="{{ path("reformulation_signalisation", {id:entity.id}) }}" title="Reformuler cette signalisation !"><button id="reload" class="btn btn-primary"><span class="icon16 icomoon-icon-redo-2 white"></span>Reformuler la signalisation</button></a>
+				</div>
 			{% else %}
 	    		<div class="form-group">
 	    			{% if entity.signStatut[entity.signStatut|length - 1].commentaire is defined and entity.signStatut[entity.signStatut|length - 1].commentaire is not empty %}
@@ -58,6 +65,36 @@
 		        	{% endif %}
 		    	</div>
 	    	{% endif %}
+	    	{% if entity.reformulation|length %}
+	    	<div class="you col-lg-12 col-md-6">
+                <div class="todo">
+                    <h4 class="red">Reformulations</h4>
+                    <ul>
+                        <li class="clearfix">
+                            <div class="txt" style="width: 95%;font-weight: bold;text-align: center;">
+                            	<span class="by" style="width: 45%;display: inline-block;">Auteur</span>
+                                <span class="date" style="width: 30%;display: inline-block;">Date reformulation</span>
+                                <span style="width: 20%;display: inline-block;">Afficher détails</span
+                            </div>
+                        </li>
+    	    	{% for reform in entity.reformulation %}
+                    <li class="clearfix">
+                        <div class="txt" style="width: 95%;text-align: center;">
+                            	<span class="" style="width: 45%;display: inline-block;">{{ reform.source }}</span>
+                            	<span style="width: 30%;display: inline-block;">{{ reform.date ? reform.date|date('d/m/Y') : '-'  }}</span>
+                                <span style="width: 20%;display: inline-block;text-align: center;">
+                                    <a href="#myModal" title="Afficher l'ancienne formulation de la signalisation" data-toggle="modal" data-target="#myModal" class="tip actionLink" modal-url="{{ path('details_reformulation', {id:reform.id}) }}">
+                                    	<span class="icon12 icomoon-icon-eye"></span>
+                                    </a>
+                                </span>
+                        </div>
+                        
+                    </li>
+                {% endfor %}
+                </ul>
+                </div>
+               </div>
+            {% endif %}
 	    </div>
 	</div><!-- End .panel -->
 </div><!-- End .col-lg-12 -->

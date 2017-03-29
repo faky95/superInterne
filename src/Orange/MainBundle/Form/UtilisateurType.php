@@ -20,6 +20,7 @@ class UtilisateurType extends BaseType {
             ->add('manager', null, array('label'=> 'Est Manager? :'))
             ->add('structure', null, array('label'=> 'Structure :'))
             ->add('isAdmin', null, array('label'=> 'Est Admin? :'))
+            ->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?'))
             ->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
             ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));
     }

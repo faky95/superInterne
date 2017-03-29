@@ -7,6 +7,7 @@ use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Utils\InstanceUtils;
 use Orange\MainBundle\Query\BaseQuery;
 use Orange\MainBundle\Entity\InstanceHasTypeAction;
+use Orange\MainBundle\Entity\Signalisation;
 
 class Data extends BaseQuery {
 	
@@ -110,6 +111,9 @@ class Data extends BaseQuery {
 		}
 		$array = array();
 		$i=0;
+		/**
+		 * @var Signalisation $value
+		 */
 		foreach ($data as $value) {
 			$action = "";
 			$j=1;
@@ -117,7 +121,7 @@ class Data extends BaseQuery {
 				$action .= $j.') '.$act->getReference()."\n";
 				$j++;
 			}
-			$array[$i] = array('reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent() ? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
+			$array[$i] = array( 'reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent() ? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
 								'Domaine' => $value->getDomaine()?$value->getDomaine()->__toString():'',
 								'Type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->__toString().'#'.$value->getTypeSignalisation()->getCouleur():'##ffffff',
@@ -125,7 +129,8 @@ class Data extends BaseQuery {
 								'source' => $value->getSource()->getUtilisateur()->getCompletNom(),'date_signale' =>  $value->getDateSignale()->format('d-m-Y'),'direction' => $value->getSource()->getUtilisateur()->getDirection(),
 								'pole' => $value->getSource()->getUtilisateur()->getPole(),'departement' => $value->getSource()->getUtilisateur()->getDepartement(),
 								'service' => $value->getSource()->getUtilisateur()->getService(),
-								'statut' => $arrayStatutSign[$value->getEtatCourant()], 'action' => $action
+								'statut' => $arrayStatutSign[$value->getEtatCourant()], 'action' => $action ,
+					            'motif' => ($value->getEtatCourant()==Statut::SIGNALISATION_INVALIDER ? $value->getSignStatut()->last()->getCommentaire() : 'aucun')
 				);
 			$i++;
 		}

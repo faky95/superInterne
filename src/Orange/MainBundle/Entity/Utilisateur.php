@@ -31,6 +31,7 @@ class Utilisateur extends BaseUser
 	const ROLE_RAPPORTEUR 						= 'ROLE_RAPPORTEUR';
 	const ROLE_CONTRIBUTEUR						= 'ROLE_CONTRIBUTEUR';
 	const ROLE_ANIMATEUR_ONLY					= 'ROLE_ANIMATEUR_ONLY';
+	const ROLE_ANIMATEUR_ACTIONGENERIQUE		= 'ROLE_ANIMATEUR_ACTIONGENERIQUE';
 	
     /**
      * @var integer
@@ -186,6 +187,12 @@ class Utilisateur extends BaseUser
      * @ORM\OneToMany(targetEntity="ActionGeneriqueHasAction", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $actionGeneriqueHasAction;
+    
+    /**
+     * @var boolean
+     * @ORM\Column(name="can_create_actiongenerique", type="boolean", nullable=true)
+     */
+    private $canCreateActionGenerique;
     
     /**
      * get full name
@@ -479,7 +486,10 @@ class Utilisateur extends BaseUser
 	    	return $res;
     	} elseif(strtoupper($role)==self::ROLE_RAPPORTEUR) {
     		return $this->getRapporteurStructure()->count()>0;
+    	} elseif(strtoupper($role)==self::ROLE_ANIMATEUR_ACTIONGENERIQUE) {
+    		return $this->canCreateActionGenerique;
     	} else {
+    		
     	}
     	return false;
     }
@@ -1247,5 +1257,29 @@ class Utilisateur extends BaseUser
     public function getActionGeneriqueHasAction()
     {
         return $this->actionGeneriqueHasAction;
+    }
+
+    /**
+     * Set canCreateActionGenerique
+     *
+     * @param boolean $canCreateActionGenerique
+     *
+     * @return Utilisateur
+     */
+    public function setCanCreateActionGenerique($canCreateActionGenerique)
+    {
+        $this->canCreateActionGenerique = $canCreateActionGenerique;
+
+        return $this;
+    }
+
+    /**
+     * Get canCreateActionGenerique
+     *
+     * @return boolean
+     */
+    public function getCanCreateActionGenerique()
+    {
+        return $this->canCreateActionGenerique;
     }
 }

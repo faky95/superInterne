@@ -17,6 +17,7 @@ class RegistrationFormType extends BaseType
 			->add('telephone', null, array('label' => 'Téléphone :'))
 			->add('manager', 'checkbox', array('label' => 'Est-il manager ?', 'required' => true ))
 			->add('isAdmin', 'checkbox', array('label' => 'Est-il un administrateur ?', 'required' => true))
+			->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?', 'required' => true))
 			->add('structure', null, array('label' => 'Structure :', 'empty_value' => 'Choisir la structure ---', 'required' => true))
 			->add('matricule', null, array('label' => 'Matricule :'))
 			->add('plainPassword', 'repeated', array(

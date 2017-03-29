@@ -28,6 +28,11 @@
                        	{{ form_widget(edit_form.manager, {'attr': {'class': 'nostyle'}}) }}
                        	{{ form_widget(edit_form.isAdmin, {'attr': {'class': 'nostyle'}}) }}
                   	</div><!-- End .form-group  -->
+                  	{% if entity.structure.buPrincipal.hasConfig('BU_ACTION_GENERIQUE') %}
+    			            <div class="form-group" id="agAuth">
+    			            	{{ form_widget(edit_form.canCreateActionGenerique, {'attr': {'class': 'nostyle'}}) }}
+    			            </div><!-- End .form-group  -->
+    			        {% endif %}
 				  	{{ form_widget(edit_form._token) }}
                     <div class="form-group form-actions">
                         <div class="col-lg-offset-2">
