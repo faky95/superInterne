@@ -1,0 +1,170 @@
+{% extends '::base.html.twig' %}
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+{% block content %}
+ <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Vue statique sur les statistiques {% endblock %}</h3>                    
+				</div>
+				<ul class="nav nav-pills monTab">
+					<li><a href="{{ path('statistique_generale', {'role': 4 }) }}">Mes Stats</a></li>
+					{% if has_rights('ROLE_ADMIN') %}
+						<li><a href="{{ path('statistique_generale', {'role': 0 }) }}">Générale</a></li>
+					{% endif %}
+					{% if has_rights('ROLE_MANAGER') %}
+					<li><a href="{{ path('statistique_generale', {'role': 2 }) }}">Mes Collaborateurs</a></li>
+					{% endif %}
+					{% if has_rights('ROLE_ANIMATEUR') %}
+                    <li><a href="{{ path('statistique_generale', {'role': 1 }) }}">Mes instances</a></li>
+                    {% endif %}
+					{% if has_rights('ROLE_RAPPORTEUR') %}
+                    <li><a href="{{ path('statistique_generale', {'role': 3 }) }}">Mes structures</a></li>
+                    {% endif %}
+                    <li class="active"><a href="{{ path('stats_actiongenerique') }}">Mes Actions Génériques</a></li>
+               </ul>
+                <div style="margin-top: 0px;">
+			         <div class="panel panel-default">
+					        <div class="panel-heading"> 
+								<h4> 
+									<span class="icon16 icomoon-icon-filter-2"></span>
+									<span>Filtres </span>
+								</h4>
+								<a href="#minimize" class="minimize" style="display: inline;">Minimize</a>
+									        </div>
+									        <div class="panel-body">
+									        
+                             <form novalidate="novalidate" class="form-horizontal" action="#" method="post">
+									<div class="form-group">
+										{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+										{{ form_widget(form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+									</div>
+									<div class="form-group">
+										{{ form_widget(form.instances,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%', 'help' : 'Choisissez les instances à afficher'}}) }}
+									</div>
+									<div class="form-group">
+							        	<div class="col-lg-offset-2 col-lg-9">
+											{{ form_widget(form.filtrer) }}
+										</div>
+									</div><!-- End .form-group  -->  
+							</form>
+						</div>
+					</div>
+				</div>
+               <ul id="myListTab0" class="nav nav-tabs pattern">
+              {% set rspan=statut|length-nbTaux %}
+                                    <li class="active"><a href="#tabAG" data-toggle="tab">Tableau</a></li>
+                                  	<li><a href="#tabS" data-toggle="tab">Graphe</a></li>
+               </ul>
+
+                 <div class="tab-content" style="padding: 0; overflow-y:hidden;">
+ 									<div class="tab-pane fade active in " id="tabAG">
+ 									{% if stats is not empty and stats.action_generique is not empty  %}
+         									 <table cellpadding="0" cellspacing="0" border="0" class="table table-bordered" width="100%">		
+                                					<tr>
+                            							<thead>
+                                                               <th style="padding: 15px 100px;">Statut</th>
+                                                               {% for action in stats.action_generique %}
+                            										<th>{{ action.libelle }}</th>
+                            								   {% endfor %}
+                                                         </thead>
+                                					</tr>
+                                					{% for key, st in statut %}
+                                					 	<tr	 class="{% if loop.index<rspan %}even{% else %} odd{% endif %}">
+                                					 		{% if loop.index < rspan %}
+                                				 				<td >{{ st }}</td>
+                                				 				{% for value in stats.action_generique %}
+                                				 					<td >{{ value.data[key] }}</td> 
+                                					 			{% endfor %}
+                                							{% elseif loop.index == rspan %}
+                        							 		  	<td  style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
+                        						 				{% for value in stats.action_generique %}
+                        						 					<td style=" text-align:center; font-weight:bold;color: #ff6600;" >{{ value.data[key] }}</td> 
+                        							 			{% endfor %}
+                                							 {% else %}
+                                					 			<td style=" font-weight:bold;color: #ff6600;">{{ st }}</td>
+                                				 				{% for value in stats.action_generique %}
+                                				 					<td style=" text-align:center; font-weight:bold;color: #ff6600;">{{ value.data[key]~'%' }}</td> 
+                                					 			{% endfor %}
+                                					 		{% endif %}
+                                					 	</tr>
+                                					{% endfor %}
+                                				</table>
+                        				{% else %}
+                       						  <div class="alert alert-warning">
+                								  <strong>Infos!</strong> Aucunes infos disponibles ....
+                								</div>
+                		       			{% endif %}
+                                    </div>
+ 									<div class="tab-pane fade " id="tabS">
+                                    	<div id="mychartAg" class="col-lg-11"></div>  
+                                    </div>
+                 </div>
+                        
+{% endblock %}
+{% block pagescript %}
+ {{ parent() }}
+<script type="text/javascript">
+    series=[];
+    var categories = [];
+	{% for value in stats.action_generique %}
+	   categories[{{ loop.index0 }}] = '{{ value.libelle }}';
+	{% endfor %}
+	
+    var i=0;
+    {% for libelle, data in graphe %}
+    			series[{{ loop.index0 }}] = new Object();
+    			series[{{ loop.index0 }}].name = '{{ libelle|escape('js')  }}';
+    {% endfor %}
+    
+    {% for libelle, data in graphe %}
+    	series[{{ loop.index0 }}].data = [];
+		{%  for cle, val in data  %}
+					series[{{ loop.parent.loop.index0 }}].data.push({{ val }});
+		{% endfor %}
+	{% endfor %}
+$("#mychartAg").highcharts({
+	colors: ['#f0ad4e', '#5cb85c','#353535'],
+    chart: {
+        type: 'column'
+    },
+credits: {
+		enabled : false 	
+},
+lang: {
+	downloadJPEG: 'Télécharger sous image JPEG',
+	downloadPNG: 'Télécharger sous image PNG',
+	downloadSVG: 'Télécharger sous image SVG',
+	downloadPDF: 'Télécharger sous document PDF',
+	printChart: 'Imprimer le graphe',
+	contextButtonTitle: 'Télécharger le graphe'
+},
+plotOptions: {
+     column: {
+         stacking: 'normal'
+     }},
+
+    title: {
+        text: 'Suivi des actions '
+    },
+
+    xAxis: {
+        categories: categories
+    },
+
+    yAxis: {
+        allowDecimals: false,
+        min: 0,
+        title: {
+            text: 'Nombre d\'action'
+        }
+    },
+
+    tooltip: {
+        formatter: function () {
+            return '<b>' + this.x + '</b><br/>' +
+                this.series.name + ': ' + this.y +'%';
+        }
+    },
+    series: series
+});
+</script>
+{% endblock %}

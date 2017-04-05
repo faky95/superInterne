@@ -1,0 +1,58 @@
+{% extends '::base.html.twig' %}
+{% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+{% block content -%}
+	<!-- heading -->
+	<div class="heading">
+		<h3>{% block page_title %} Reformulation d'une  signalisation {% endblock %}</h3>                    
+	</div>
+	<!-- End .heading-->
+    <div class="row">
+		<div class="col-lg-12">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+				    <h4> 
+				        <span>Reformulation Signalisation</span>
+				    </h4>
+				</div>
+				<div class="panel-body">
+				    <form novalidate="novalidate" class="form-horizontal" action="{{ path('reformulation_signalisation', {id: entity.id}) }}" method="post" role="form">
+						<div class="form-group">
+							{{ form_widget(form.libelle, {'attr': {'class': 'form-control'}}) }}
+							{{ form_widget(form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+							{{ form_widget(form.typeSignalisation,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+		                </div>
+						<div class="form-group">
+		                	{{ form_widget(form.dateConstat) }}
+		                 	{{ form_widget(form.constatateur, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+		                </div>
+                        <div class="form-group">
+                            {{ form_widget(form.site, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+		               	{{ form_row(form.description) }}
+		               	{{ form_widget(form._token) }}
+					    <div class="form-group">
+			        		<div class="col-lg-offset-2 col-lg-9">
+							    {{ form_widget(form.save) }}
+							    {{ form_widget(form.cancel, {attr: {class: 'btn btn-die'}}) }}
+							</div>
+						</div><!-- End .form-group  -->  
+					</form>
+				</div>
+			</div><!-- End .panel -->
+		</div><!-- End .span12 -->
+	</div>
+{% endblock %}
+
+{% block pagescript %}
+    {{ parent() }}
+	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: form.instance, child: form.typeSignalisation, url: path('typesignalisation_by_instance'), key: 'id' } 
+	    %}
+	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: form.instance, child: form.domaine, url: path('domaine_signalisation_by_instance'), key: 'id' }
+	    %}
+{% endblock %}

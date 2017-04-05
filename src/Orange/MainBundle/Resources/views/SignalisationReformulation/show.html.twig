@@ -1,0 +1,61 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Detais reformulation</span>
+	</h4>
+</div>
+	<div class="panel-body">
+		<table class="responsive table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Avant reformulation </th>
+                <th>Aprés reformulation</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>libellé</th>
+                <td>{{ entity.libelle }}</td>
+                <td>{{ entity.signalisation.libelle }}</td>
+              </tr>
+              <tr>
+                 <th>Site</th>
+                 <td>{{ entity.site }}</td>
+                 <td>{{ entity.signalisation.site }}</td>
+              </tr>
+              <tr>
+                <th>Date Constat</th>
+                 <td>{{ entity.dateConstat|date('d/m/Y') }}</td>
+                <td>{{ entity.signalisation.dateConstat|date('d/m/Y') }}</td>
+              </tr>
+              <tr>
+                <th>Périmetre</th>
+                <td>{{ entity.instance }}</td>
+                <td>{{ entity.signalisation.instance }}</td>
+              </tr>
+              <tr>
+                <th>Domaine</th>
+                <td>{{ entity.domaine }}</td>
+                <td>{{ entity.signalisation.domaine }}</td>
+              </tr>
+              <tr>
+                <th>Type</th>
+                 <td>{{ entity.typeSignalisation }}</td>
+                <td>{{ entity.signalisation.typeSignalisation }}</td>
+              </tr>
+              <tr>
+                <th>Description</th>
+                <td>{{ entity.description }}</td>
+                <td>{{ entity.signalisation.description }}</td>
+              </tr>
+            </tbody>
+        </table>
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-3 col-lg-9">
+		</div>
+	</div>

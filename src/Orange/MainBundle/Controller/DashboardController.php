@@ -86,6 +86,9 @@ class DashboardController extends Controller {
 	*/
 	public function testAction() {
 		$em = $this->getDoctrine()->getManager();
+// 		$actions = $em->getRepository('OrangeMainBundle:Action')->alertAnimateurGlobal(1, null, null)->getQuery()->execute();
+// 		$data = $this->get('orange.main.data')->mapDataforAlertAnimateurGlobal($actions);
+// 		var_dump($data);exit;
 		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
 		$reporting = $em->getRepository('OrangeMainBundle:Reporting')->find(89);
 		$query = $em->createQuery($reporting->getRequete());

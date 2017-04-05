@@ -70,6 +70,20 @@ class ActionRepository extends BaseRepository {
 		return $queryBuilder;
 	}
 	
+	public function alertAnimateurGlobal($bu, $espace, $projet){
+		$queryBuilder = $this->createQueryBuilder ( 'a' )
+		                     ->leftJoin ( 'a.porteur', 'u' )
+		                     ->leftJoin ( 'a.instance', 'i' )
+		                     ->leftJoin ( 'i.animateur', 'an' )
+		                     ->where ( "   a.etatReel LIKE 'ACTION_DEMANDE_ABANDON' OR 
+		                     		       a.etatReel LIKE 'ACTION_DEMANDE_REPORT' OR 
+		                     		       a.etatReel LIKE 'ACTION_FAIT_DELAI' OR 
+		                     		       a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'" )
+		                     ->orderBy ( 'a.id', 'ASC' )
+		                     ->addOrderBy ( 'a.dateAction', 'DESC' );
+		return $queryBuilder;
+	}
+	
 	public function nouvelleAction($bu, $espace, $projet) {
 		return $this->createQueryBuilder('a')
 			->innerJoin('a.porteur', 'u')

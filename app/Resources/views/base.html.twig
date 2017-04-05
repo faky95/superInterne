@@ -133,6 +133,9 @@
 	                                    	 <li><a href="{{ path('nouvelle_action') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action</a></li>
 	                                    	 <li><a href="{{ path('actioncyclique_new') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action cyclique</a></li>
 	                                    {% endif %}
+	                                    {% if app.user.structure.buPrincipal.hasConfig('BU_ACTION_GENERIQUE') and (has_rights('ROLE_ADMIN') or has_rights('ROLE_ANIMATEUR_ACTIONGENERIQUE')) %}
+	                                    	 <li><a href="{{ path('nouvelle_actiongenerique') }}"><span class="icon16 icomoon-icon-wand-2"></span>Action générique</a></li>
+	                                    {% endif %}
 										{% if has_rights('ROLE_ADMIN') %}
 	                                   		 <li><a href="{{ path('fos_user_registration_register') }}"><span class="icon16 entypo-icon-users"></span>Utilisateur</a></li>
 	                                   		 <li><a href="{{ path('nouvelle_structure') }}"><span class="icon16 icomoon-icon-grid"></span>Structures</a></li>

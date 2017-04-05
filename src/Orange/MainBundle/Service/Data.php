@@ -8,6 +8,7 @@ use Orange\MainBundle\Utils\InstanceUtils;
 use Orange\MainBundle\Query\BaseQuery;
 use Orange\MainBundle\Entity\InstanceHasTypeAction;
 use Orange\MainBundle\Entity\Signalisation;
+use Orange\MainBundle\Entity\Action;
 
 class Data extends BaseQuery {
 	
@@ -180,7 +181,7 @@ class Data extends BaseQuery {
 			$di = $action->getDateInitial();
 			$dateDiff = $di->diff($today);
 			if ($di < $today){
-				$a = '+'.$dateDiff->days;
+				$a = '+'.$dateDiff->days;    
 			}elseif($dateDiff->days == 0){
 				$a = $dateDiff->days;
 			}else 
@@ -221,6 +222,40 @@ class Data extends BaseQuery {
 		return $array;
 	}
 	
+	public function mapDataforAlertAnimateurGlobal($actions){
+	  $data = array();
+	  /** @var Action $action */
+	  foreach ($actions as $action){
+	  	foreach ($action->getInstance()->getAnimateur() as $animateur){
+	  		if(!isset($data[$animateur->getUtilisateur()->getId()]))
+	  			$data[$animateur->getUtilisateur()->getId()]= array('email'=>$animateur->getUtilisateur()->getEmail(),
+	  					 											'manager'=>$animateur->getUtilisateur()->getSuperior() ? $animateur->getUtilisateur()->getSuperior()->getEmail(): null,
+	  					                                            'action' => array('demande_abandon'=>  array('libelle'=>"Actions en demande d'abandon", 'data'=>array()),
+	  					                                            		          'demande_report' =>  array('libelle'=>"Actions en demande de report", 'data'=>array()),
+	  					                                                              'faite'          =>  array('libelle'=>"Actions en attente de Cloture", 'data'=>array())));
+	   			switch ($action->getEtatReel()){
+	   				case Statut::ACTION_DEMANDE_ABANDON:
+	   					if(!array_key_exists ($action->getId(), $data[$animateur->getUtilisateur()->getId()]['action']['demande_abandon']['data']))
+	   					      $data[$animateur->getUtilisateur()->getId()]['action']['demande_abandon']['data'][$action->getId()]=$action ;
+	   				break;
+	   					
+	   				case Statut::ACTION_DEMANDE_REPORT:
+	   					if(!array_key_exists($action->getId(), $data[$animateur->getUtilisateur()->getId()]['action']['demande_report']['data']))
+	   						$data[$animateur->getUtilisateur()->getId()]['action']['demande_report']['data'][$action->getId()]=$action ;
+	   				break;
+	   					
+	   				case Statut::ACTION_FAIT_HORS_DELAI:
+	   				case Statut::ACTION_FAIT_DELAI:
+	   					if(!array_key_exists($action->getId(), $data[$animateur->getUtilisateur()->getId()]['action']['faite']['data']))
+	   						$data[$animateur->getUtilisateur()->getId()]['action']['faite']['data'][$action->getId()]=$action ;
+	   				break;
+	   			}
+	  	}
+	  }
+	  
+	  return $data;
+	}
+	
 	public function mapDataforAlertAnimateur($actions){
 		$data = array();
 		foreach ($actions as $action){
@@ -243,6 +278,7 @@ class Data extends BaseQuery {
 		}
 		return $array;
 	}
+	
 	public function nouvelleSignalisation($signs){
 		$data = array();
 		foreach ($signs as $sign){

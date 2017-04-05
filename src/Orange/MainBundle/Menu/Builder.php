@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Knp\Menu\MenuItem;
 use Orange\MainBundle\Entity\Utilisateur;
 use Symfony\Component\Routing\RequestContext;
+use Orange\MainBundle\Entity\Config;
 
 class Builder extends ContainerAware
 {
@@ -49,6 +50,7 @@ class Builder extends ContainerAware
 	       	if($user->hasRole($user::ROLE_MEMBRE_ESPACE)) {
 	       		$this->membreEspaceMenu($menu, $user);
 	       	}
+	       	
        	}
        	return $menu;
        	
@@ -165,6 +167,8 @@ class Builder extends ContainerAware
     	$menu['Action']->addChild('importer_action', array('route' =>'chargement_action', 'label' => 'Importer des actions', 'attributes' => array('class' => 'icomoon-icon-download')));
     	//$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE)==true)
+    			$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'cut-icon-reload ')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
 
 		$menu['Structure']->addChild('liste_structure', array('route' =>'les_structures', 'label' => 'Liste des structures', 'attributes' => array('class' => 'icomoon-icon-list')));
@@ -219,6 +223,8 @@ class Builder extends ContainerAware
     	$menu['Action']->addChild('mes_action', array('route' =>'mes_actions', 'label' => 'Mes actions', 'attributes' => array('class' => 'icomoon-icon-list')));
     	//$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE) && $user->hasRole(Utilisateur::ROLE_ANIMATEUR_ACTIONGENERIQUE) )
+    		$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'cut-icon-reload ')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
     	
     	return $menu;

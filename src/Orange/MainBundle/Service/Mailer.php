@@ -167,11 +167,11 @@ class Mailer
     public function sendRappel($to, $cc = null, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-	    	->setTo($to)
-	    	->setCc($cc)
-	    	->setSubject($subject)
-	    	->setBody($body)
-	    	->setContentType('text/html');
+	    	 ->setTo($to)
+	    	 ->setCc($cc)
+	    	 ->setSubject($subject)
+	    	 ->setBody($body)
+	    	 ->setContentType('text/html');
     	return $this->mailer->send($mail);
     }
     
