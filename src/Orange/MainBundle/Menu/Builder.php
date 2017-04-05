@@ -79,6 +79,8 @@ class Builder extends ContainerAware
     	$menu['Action']->addChild('importer_action', array('route' =>'chargement_action', 'label' => 'Importer des actions', 'attributes' => array('class' => 'icomoon-icon-download')));
     //	$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE)==true)
+    		$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'cut-icon-reload ')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
     
     	$menu['Instance']->addChild('ajout_instance', array('route' => 'nouvelle_instance', 'label' => 'Ajouter une instance', 'attributes' => array('class' => 'icomoon-icon-plus')));
@@ -120,6 +122,7 @@ class Builder extends ContainerAware
         $menu['Action']->addChild('importer_action', array('route' =>'chargement_action', 'label' => 'Importer des actions', 'attributes' => array('class' => 'icomoon-icon-download')));
         //$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
         $menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+        $menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'cut-icon-reload ')));
         $menu['Action']->setChildrenAttribute('class', 'sub');
 
 		$menu['Structure']->addChild('liste_structure', array('route' =>'les_structures', 'label' => 'Liste des structures', 'attributes' => array('class' => 'icomoon-icon-list')));
@@ -223,7 +226,7 @@ class Builder extends ContainerAware
     	$menu['Action']->addChild('mes_action', array('route' =>'mes_actions', 'label' => 'Mes actions', 'attributes' => array('class' => 'icomoon-icon-list')));
     	//$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
-    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE) && $user->hasRole(Utilisateur::ROLE_ANIMATEUR_ACTIONGENERIQUE) )
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE) && ($user->hasRole(Utilisateur::ROLE_ANIMATEUR_ACTIONGENERIQUE) || $user->hasRole(Utilisateur::ROLE_ADMIN) )  )
     		$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'cut-icon-reload ')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
     	
@@ -248,6 +251,8 @@ class Builder extends ContainerAware
     	$menu['Action']->addChild('importer_action', array('route' =>'chargement_action', 'label' => 'Importer des actions', 'attributes' => array('class' => 'icomoon-icon-download')));
     //	$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE) && ($user->hasRole(Utilisateur::ROLE_ANIMATEUR_ACTIONGENERIQUE) || $user->hasRole(Utilisateur::ROLE_ADMIN) )  )
+    		$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'icomoon-icon-list')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
     	if($user->getStructure()->getBuPrincipal()->getSignalisation() == 1){
     		$menu->addChild('Signalisation', array('route' => 'les_signalisations', 'Label' => 'Signalisation', 'attributes' => array('class' => 'entypo-icon-warning')));
@@ -317,11 +322,12 @@ class Builder extends ContainerAware
     	if($user->getStructure()->getBuPrincipal()->getSignalisation() == 1) {
     		$menu->addChild('Signalisation', array('route' =>'les_signalisations', 'label' => 'Signalisation', 'attributes' => array('class' => 'entypo-icon-warning')));
     	}
-    	
     	$menu['Action']->addChild('liste_action', array('route' =>'les_actions', 'label' => 'Liste des actions', 'attributes' => array('class' => 'icomoon-icon-list')));
     	$menu['Action']->addChild('mes_action', array('route' =>'mes_actions', 'label' => 'Mes actions', 'attributes' => array('class' => 'icomoon-icon-list')));
     	//$menu['Action']->addChild('action_perso', array('uri' =>'#', 'label' => 'Mes actions perso', 'attributes' => array('class' => 'icomoon-icon-user')));
     	$menu['Action']->addChild('action_cyclique', array('route' =>'actioncyclique', 'label' => 'Action cyclique', 'attributes' => array('class' => 'cut-icon-reload ')));
+    	if($user->getStructure()->getBuPrincipal()->hasconfig(Config::BU_ACTION_GENERIQUE) && ($user->hasRole(Utilisateur::ROLE_ANIMATEUR_ACTIONGENERIQUE) || $user->hasRole(Utilisateur::ROLE_ADMIN) )  )
+    		$menu['Action']->addChild('action_generique', array('route' =>'les_actiongeneriques', 'label' => 'Action générique', 'attributes' => array('class' => 'icomoon-icon-list ')));
     	$menu['Action']->setChildrenAttribute('class', 'sub');
     	return $menu;
     }

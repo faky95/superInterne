@@ -73,6 +73,7 @@ class ActionRepository extends BaseRepository {
 	public function alertAnimateurGlobal($bu, $espace, $projet){
 		$queryBuilder = $this->createQueryBuilder ( 'a' )
 		                     ->leftJoin ( 'a.porteur', 'u' )
+		                     ->leftJoin ( 'u.structure', 's' )
 		                     ->leftJoin ( 'a.instance', 'i' )
 		                     ->leftJoin ( 'i.animateur', 'an' )
 		                     ->where ( "   a.etatReel LIKE 'ACTION_DEMANDE_ABANDON' OR 
@@ -81,6 +82,9 @@ class ActionRepository extends BaseRepository {
 		                     		       a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'" )
 		                     ->orderBy ( 'a.id', 'ASC' )
 		                     ->addOrderBy ( 'a.dateAction', 'DESC' );
+        if($bu) {
+             $queryBuilder->andWhere('IDENTITY(s.buPrincipal) = :bu')->setParameter('bu', $bu);
+        }
 		return $queryBuilder;
 	}
 	
