@@ -27,6 +27,7 @@
 		                {{ form_row(form.libelle,  {'attr': {'class': 'form-control'}}) }}
                         {% if has_rights('ROLE_ADMIN') %}
 						    {{ form_row(form.porteur, {'attr': {'class': 'nostyle form-control'}}) }}
+						{% endif %}
 						{{ form_row(form.dateDebut, {'attr': {'class': 'form-control'}}) }}
 						{{ form_row(form.dateInitial, {'attr': {'class': 'form-control'}}) }}
    					    {{ form_row(form.description) }}

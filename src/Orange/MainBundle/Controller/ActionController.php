@@ -739,7 +739,7 @@ class ActionController extends BaseController
      * @Method({"POST","GET"})
      * @Template()
      */
-    public function importAction(Request $request, $espace_id=null) {
+    public function importAction(Request $request, $espace_id=null, $action_generique_id=null) {
     	$em   = $this->getDoctrine()->getManager();
     	$array =  array();
         $form = $this->createForm(new LoadingType());

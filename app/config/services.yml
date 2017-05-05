@@ -266,7 +266,7 @@ services:
     orange_main.actiongenerique_event:
         class: Orange\MainBundle\Event\ActionGeneriqueEvent
         public : true
-        arguments: ["@security.context", "@orange_main.actiongenerique_manager"]
+        arguments: ["@security.context", "@orange_main.actiongenerique_manager", "@orange_main.action_manager"]
 
     my_service.logger:
         class:     Symfony\Bridge\Monolog\Logger

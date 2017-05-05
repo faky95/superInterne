@@ -26,24 +26,30 @@ class ActionGeneriqueEvent extends UserEvent
     private $actionGeneriqueManager;
     
     /**
+     * @var ActionManager
+     */
+    private $actionManager;
+    
+    /**
      * @var \Orange\MainBundle\Entity\ActionGenerique
      */
     private $actionGenerique;
     
     /**
-     * @var \Orange\MainBundle\Entity\ActionStatut
+     * @var \Orange\MainBundle\Entity\ActionGeneriqueHasStatut
      */
-    private $actionStatut;
+    private $actionGeneriqueStatut;
 
     /**
      * @param SecurityContext $context
      * @param Request $request
      * @param ActionGeneriqueManager $am
      */
-    public function __construct(SecurityContext $security_context, ActionGeneriqueManager $am = null)
+    public function __construct(SecurityContext $security_context, ActionGeneriqueManager $am = null, ActionManager $actMan)
     {
     	$this->security_context = $security_context;
         $this->actionGeneriqueManager = $am;
+        $this->actionManager  = $actMan;
     }
     
     /**
@@ -70,6 +76,15 @@ class ActionGeneriqueEvent extends UserEvent
     {
         return $this->actionGeneriqueManager;
     }
+    
+    /**
+     *
+     * @return \Orange\MainBundle\Model\ActionManager
+     */
+    public function getActionManager()
+    {
+    	return $this->actionManager;
+    }
 
     /**
      * set suivi
@@ -85,6 +100,22 @@ class ActionGeneriqueEvent extends UserEvent
      */
     public function getActionGenerique() {
     	return $this->actionGenerique;
+    }
+    
+    /**
+     * 
+     * @return \Orange\MainBundle\Entity\ActionGeneriqueHasStatut
+     */
+    public function getActionGeneriqueStatut(){
+    	return $this->actionGeneriqueStatut;
+    }
+    
+    /**
+     * 
+     * @param \Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueStatut
+     */
+    public function setActionGeneriqueStatut(\Orange\MainBundle\Entity\ActionGeneriqueHasStatut $actionGeneriqueStatut){
+    	$this->actionGeneriqueStatut = $actionGeneriqueStatut;
     }
     
 	
