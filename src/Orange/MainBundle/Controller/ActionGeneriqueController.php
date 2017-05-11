@@ -19,6 +19,7 @@ use Orange\MainBundle\Criteria\ActionCriteria;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Doctrine\DBAL\DBALException;
+use Orange\MainBundle\Entity\Config;
 
 /**
  * ActionGenerique controller
@@ -35,7 +36,7 @@ class ActionGeneriqueController extends BaseController
 	{
 		$em = $this->getDoctrine()->getManager();
 		$this->get('session')->set('actiongenerique_criteria', array());
-		$user =$this->getUser();
+		$user = $this->getUser();
 		$this->denyAccessUnlessGranted('liste', new ActionGenerique(), 'accés non autorisé!');
 		$form = $this->createForm(new ActionGeneriqueCriteria());
 		if($request->getMethod()=="POST"){

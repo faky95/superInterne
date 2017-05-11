@@ -32,7 +32,7 @@ class ActionUtils {
 	
 	public static function changeStatutActionGenerique($entityManager, $action, $statut, $utilisateur, $commentaire) {
 		$typeStatut = $entityManager->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_ACTION);
-		$statutEntity = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('isGenerique'=>true,'code' => $statut, 'typeStatut' => $typeStatut->getId()));
+		$statutEntity = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
 		$statutAction = new ActionGeneriqueHasStatut();
 		$statutAction->setActionGenerique($action);
 		$statutAction->setStatut($statutEntity);

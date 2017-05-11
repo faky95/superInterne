@@ -74,7 +74,9 @@ class ActionGeneriqueVoter extends AbstractVoter {
 				}
 			break;
 			case self::LISTE:
-				return $user->getStructure()->getBuPrincipal()->hasConfig(Config::BU_ACTION_GENERIQUE);
+				if($user->getStructure()->getBuPrincipal()->hasConfig(Config::BU_ACTION_GENERIQUE)==true){
+					return true;
+				}
 			break;
 			case self::ORIENTER:
 				if ($user->getId() == $action->getPorteur()->getId()) {

@@ -600,9 +600,9 @@ class Bu
     }
     
     public function hasConfig($param){
-    	$result = count($this->configBu	->filter(function($data) use ($param){
+    	$result = $this->configBu	->filter(function($data) use ($param){
     					return $data->getConfig()->getCode() == strtoupper($param);
-                  }))>0;
-    	return $result;
+                  });
+    	return count($result)>0;
     }
 }

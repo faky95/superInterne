@@ -25,6 +25,7 @@ class InstanceRepository extends BaseRepository{
 		}
 		return $queryBuilder;
 	}
+	
 	public function filter() {
 					$data = array();$parameters = array();
 		$queryBuilder = $this->createQueryBuilder('i');
@@ -59,17 +60,16 @@ class InstanceRepository extends BaseRepository{
 	public function listAllElements() {
 		$queryBuilder = $this->filtrer()
 			->select('partial i.{id, libelle, description},
-					partial ty.{id, libelle},
-					partial dom.{id, libelleDomaine},
-					partial ani.{id}, partial uti.{id, prenom, nom},
-					partial ta.{id,type}')
+					  partial ty.{id, libelle},
+					  partial dom.{id, libelleDomaine},
+					  partial ani.{id}, partial uti.{id, prenom, nom},
+					  partial ta.{id,type}')
 			->leftJoin('i.typeInstance', 'ty')
 			->leftJoin('i.animateur', 'ani')
 			->leftJoin('ani.utilisateur', 'uti')
 			->leftJoin('i.domaine', 'dom')
 			->leftJoin('i.typeAction', 'ta');
-		//->addGroupBy('i.id');
-		return $queryBuilder;
+		return $queryBuilder->groupBy('i.id');
 	}
 	public function getIds() {
 		$ids = array();
