@@ -4,6 +4,7 @@ namespace Orange\MainBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
+use Doctrine\Common\Collections\Collection;
 
 /**
  * Action Générique
@@ -548,4 +549,21 @@ class ActionGenerique
     {
         return $this->porteur;
     }
+    
+    public function isFaisable(){
+    	$res = $this->actionGeneriqueHasAction->filter(function($ags){
+    		if($ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_ABANDON || $ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_REPORT)
+    			return true;
+    	});
+    	return $this->actionGeneriqueHasAction->count()>0 && count($res)==0;
+    }
+    
+    public function isSoldable(){
+    	$res = $this->actionGeneriqueHasAction->filter(function($ags){
+		    		if(!in_array($ags->getAction()->getEtatReel(), array(Statut::ACTION_SOLDEE_DELAI , Statut::ACTION_SOLDEE_HORS_DELAI, Statut::ACTION_ABANDONNEE)))
+		    			return true;
+		    	});
+    	return count($res)==0;
+    }
+    
 }

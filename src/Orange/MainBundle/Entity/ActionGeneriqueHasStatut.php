@@ -56,7 +56,7 @@ class ActionGeneriqueHasStatut
     private $commentaire;
     
     public function __construct(){
-    	$this->dateOrientation = new \DateTime();
+    	$this->dateStatut= new \DateTime();
     }
     
 	
@@ -119,29 +119,6 @@ class ActionGeneriqueHasStatut
         return $this->commentaire;
     }
 
-    /**
-     * Set action
-     *
-     * @param \Orange\MainBundle\Entity\Action $action
-     *
-     * @return ActionGeneriqueHasAction
-     */
-    public function setAction(\Orange\MainBundle\Entity\Action $action)
-    {
-        $this->action = $action;
-
-        return $this;
-    }
-
-    /**
-     * Get action
-     *
-     * @return \Orange\MainBundle\Entity\Action
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
 
     /**
      * Set actionGenerique

@@ -396,7 +396,7 @@ class Actions {
 	 * @param Action $entity
 	 */
 	public function showCheckBoxForOrientationAction($entity){
-		if($entity->getActionGeneriqueHasAction()->count()==0){
+		if($entity->getActionGeneriqueHasAction()->count()==0 && $entity->getActionCyclique()==null){
 			return '<input type="checkbox" name="datas[]" class="styled chkbox" value="'.$entity->getId().'"  >';
 		}else{
 			return "";

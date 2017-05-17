@@ -55,6 +55,10 @@ final class OrangeMainEvents
     const ACTIONGENERIQUE_NOUVEAU 					 = 'orange_main.actiongenerique.creation';
     const ACTIONGENERIQUE_MODIFIE			         = 'orange_main.actiongenerique.modification';
     const ACTIONGENERIQUE_SOLDE 			         = 'orange_main.actiongenerique.solde';
+    const ACTIONGENERIQUE_FAITE 					 = 'orange_main.actiongenerique.faite';
+    const ACTIONGENERIQUE_ABANDON		             = 'orange_main.actiongenerique.abandon';
+    const ACTIONGENERIQUE_ANNULE_DEMANDEABANDON	     = 'orange_main.actiongenerique.annule.demandeabandon';
+    const ACTIONGENERIQUE_ANNULE_DEMANDEREPORT	     = 'orange_main.actiongenerique.annule.demandereport';
     
     
 }

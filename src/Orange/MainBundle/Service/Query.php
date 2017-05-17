@@ -3,6 +3,8 @@ namespace Orange\MainBundle\Service;
 
 use Orange\MainBundle\Entity\Utilisateur;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Doctrine\DBAL\DBALException;
+use Orange\MainBundle\Entity\ActionGenerique;
 
 class Query {
 		
@@ -74,18 +76,30 @@ class Query {
 	}
 	
 	public function orienterManyActions($datas){
-		$connection = $this->container->get('database_connection');
-		$ids =  is_array($datas['ids'])==true ? $datas['ids'] : array($datas['ids']);
-		$user = $datas['user'];
+		$connection  =  $this->container->get('database_connection');
+		$ids         =  is_array($datas['ids'])==true ? $datas['ids'] : array($datas['ids']);
+		$stringfyIds =  implode(',', $ids);
+		$user        =  $datas['user'];
+		/** @var ActionGenerique $actionGenerique */
 		$actionGenerique = $datas['actiongenerique'];
-		$query="";
+		$sql     = "SELECT reference from action where date_initial > '".$actionGenerique->getDateInitial()->format("Y-m-d")."'  and id in (".$stringfyIds.")";
+		$results = $connection->fetchAll($sql);
+		if(count($results)>0) {
+			if(count($ids)>1){
+				$refs    = implode(' ; ', array_column($results, 'reference'));
+				$message = "Les délais initials des actions ({$refs}) doivent être <=  celui de l'action générique. ";
+			}else {
+				$message = "Le délai initial de l'action doit être inférieur ou égal à celui de l'action générique. ";
+			}
+			throw new DBALException($message);
+		}
+		$query = "";
 		foreach ($ids as $id)
 			$query .= "INSERT INTO `action_generique_has_action`(`action_id`, `utilisateur_id`, `date`, `commentaire`, `actionGenerique_id`) VALUES
 					   (".$id.",".$user->getId().", NOW(), 'Orientation avec succés!', ".$actionGenerique->getId()." );";
 		
 		$connection->prepare($query)->execute();
 	}
-	
 	
 	
 }

@@ -1,28 +1,17 @@
 <?php
-
 /**
- * This file is part of the FOSCommentBundle package.
- *
- * (c) FriendsOfSymfony <http://friendsofsymfony.github.com/>
- *
- * This source file is subject to the MIT license that is bundled
- * with this source code in the file LICENSE.
+ * @Maxady();
  */
 
 namespace Orange\MainBundle\Listener;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Orange\MainBundle\OrangeMainEvents;
 use FOS\UserBundle\Mailer\Mailer;
 use Orange\MainBundle\Event\ActionGeneriqueEvent;
+use Orange\MainBundle\OrangeMainEvents;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 
-/**
- * Responsible for setting a permalink for each new Thread object.
- *
- * @author Thibault Duplessis <thibault.duplessis@gmail.com
- */
 class ActionGeneriqueListener implements EventSubscriberInterface
 {
     
@@ -46,7 +35,10 @@ class ActionGeneriqueListener implements EventSubscriberInterface
     public static function getSubscribedEvents()
     {
         return array(
-        		OrangeMainEvents::ACTIONGENERIQUE_NOUVEAU			=> 'onCreateAction'
+        		OrangeMainEvents::ACTIONGENERIQUE_NOUVEAU			=> 'onCreateAction',
+        		OrangeMainEvents::ACTIONGENERIQUE_FAITE             => 'onFaiteAction',
+        		OrangeMainEvents::ACTIONGENERIQUE_SOLDE             => 'onSoldeAction',
+        		OrangeMainEvents::ACTIONGENERIQUE_ABANDON           => 'onAbandonAction'
         	);
     }
 
@@ -55,5 +47,20 @@ class ActionGeneriqueListener implements EventSubscriberInterface
     	return isset($ext) ? $ext : false;
     }
     
+    public function onFaiteAction(ActionGeneriqueEvent $event){
+    	$ext = $event->getActionGeneriqueManager()->faiteAction($event->getActionGenerique(), $this->helper);
+    	return isset($ext) ? $ext : false;
+    	
+    }
+    
+    public function onSoldeAction(ActionGeneriqueEvent $event){
+    	$ext = $event->getActionGeneriqueManager()->solderAction($event->getActionGenerique(), $this->helper);
+    	return isset($ext) ? $ext : false;
+    }
+    
+    public function onAbandonAction(ActionGeneriqueEvent $event){
+    	$ext = $event->getActionGeneriqueManager()->abandonAction($event->getActionGenerique(), $this->helper);
+    	return isset($ext) ? $ext : false;
+    }
    
 }

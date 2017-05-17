@@ -99,6 +99,10 @@ class ActionStatutController extends BaseController
 				$em->flush();
 				$event = $this->get('orange_main.action_event')->createForAction($action);
 				$dispatcher->dispatch(OrangeMainEvents::ACTION_CLOTURE, $event);
+				if($action->getActionGeneriqueHasAction()->count()>0 && $action->getActionGeneriqueHasAction()->last()->getActionGenerique()->isSoldable()){
+					$evtAG = $this->get('orange_main.actiongenerique_event')->createForActionGenerique($action->getActionGeneriqueHasAction()->last()->getActionGenerique());
+				    $dispatcher->dispatch(OrangeMainEvents::ACTIONGENERIQUE_SOLDE, $evtAG);
+				}
 				return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $action_id))));
 			} else {
 				return $this->render('OrangeMainBundle:ActionStatut:solder.html.twig', array(

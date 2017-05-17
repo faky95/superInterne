@@ -16,9 +16,9 @@ use Orange\MainBundle\Criteria\ActionGeneriqueCriteria;
 use Orange\MainBundle\Entity\Action;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Orange\MainBundle\Criteria\ActionCriteria;
-use Orange\MainBundle\Form\OrientationActionType;
-use Orange\MainBundle\Entity\ActionGeneriqueHasAction;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Doctrine\DBAL\DBALException;
 use Orange\MainBundle\Entity\Config;
 
 /**
@@ -27,6 +27,7 @@ use Orange\MainBundle\Entity\Config;
 class ActionGeneriqueController extends BaseController
 {
 	/**
+	 * @QMLogger(message="Liste des actions génériques")
 	 * @Route("/les_actiongeneriques", name="les_actiongeneriques")
 	 * @Method({"GET","POST"})
 	 * @Template()
@@ -35,7 +36,7 @@ class ActionGeneriqueController extends BaseController
 	{
 		$em = $this->getDoctrine()->getManager();
 		$this->get('session')->set('actiongenerique_criteria', array());
-		$user =$this->getUser();
+		$user = $this->getUser();
 		$this->denyAccessUnlessGranted('liste', new ActionGenerique(), 'accés non autorisé!');
 		$form = $this->createForm(new ActionGeneriqueCriteria());
 		if($request->getMethod()=="POST"){
@@ -46,6 +47,7 @@ class ActionGeneriqueController extends BaseController
 	}
 	
 	/**
+	 * @QMLogger(message="Chargement Ajax des actions génériques")
 	 * @Route("/liste_des_actiongeneriques", name="liste_des_actiongeneriques")
 	 */
 	public function listeAction(Request $request){
@@ -60,6 +62,7 @@ class ActionGeneriqueController extends BaseController
 	
 	
 	/**
+	 * @QMLogger(message="Afficher formulaire de creation d'une action générique")
 	 * @Route("/nouvelle_actiongenerique", name="nouvelle_actiongenerique")
 	 * @Method("GET")
 	 * @Template()
@@ -83,6 +86,7 @@ class ActionGeneriqueController extends BaseController
 	}
 	
 	/**
+	 * @QMLogger(message="Envoi des données du formulaire de creation d'une action générique")
 	 * @Route("/creer_actiongenerique", name="creer_actiongenerique")
 	 * @Method("POST")
 	 * @Template("OrangeMainBundle:ActionGenerique:new.html.twig")
@@ -123,6 +127,7 @@ class ActionGeneriqueController extends BaseController
 
 
     /**
+     * @QMLogger(message="Afficher détails d'une action générique")
      * @Route("/details_actiongenerique/{id}", name="details_actiongenerique")
      * @Method("GET")
      * @Template()
@@ -147,7 +152,8 @@ class ActionGeneriqueController extends BaseController
 
     /**
      * Displays a form to edit an existing ActionGenerique entity.
-     *
+     * 
+     * @QMLogger(message="Affichage du formulaire de modification d'une action générique")
      * @Route("/{id}/edition_actiongenerique", name="edition_actiongenerique")
      * @Method("GET")
      * @Template()
@@ -157,22 +163,25 @@ class ActionGeneriqueController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:ActionGenerique')->find($id);
         
-        if(!$this->getUser()->hasRole("ROLE_ADMIN"))
-        	$form->remove('porteur');
         	
         $this->denyAccessUnlessGranted('update', $entity, 'accés non autorisé!');
         if (!$entity) {
         	throw $this->createNotFoundException('L\'action générique n\'existe pas.');
         }
+        
         $editForm = $this->createCreateForm($entity,'ActionGenerique');
+        if(!$this->getUser()->hasRole("ROLE_ADMIN"))
+        	$editForm->remove('porteur');
         return array(
             'entity'      => $entity,
-            'form'   => $editForm->createView(),
+            'form'        => $editForm->createView(),
         );
     }
 
    
     /**
+     * @QMLogger(message="Envoi des données du formulaire de modification d'une action générique")
+     * 
      * @Route("/{id}/modifier_actiongenerique", name="modifier_actiongenerique")
      * @Method("POST")
      * @Template("OrangeMainBundle:ActionGenerique:edit.html.twig")
@@ -260,19 +269,20 @@ class ActionGeneriqueController extends BaseController
      * @Route("/{id}/{statut}/listeaction_by_actiongenerique_statut", name="listeaction_by_actiongenerique_statut") 
      */
     public function listeByGeneriqueAction(Request $request, $id,$statut=null){
-    	
     	if($request->isXmlHttpRequest()==false)
     		throw new AccessDeniedException("Accés non autorisé");
     	
     	$em = $this->getDoctrine()->getManager();
     	$criteria = null;
     	$form = $this->createForm(new ActionCriteria());
-    	$this->modifyRequestForForm($request, $this->get('session')->get('actiongenerique_criteria'), $form);
-    	$criteria=$form->getData();
+    	
     	if($statut!=null){
-    		$entityStatut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode($statut);
+    		$criteria = new Action();
+    		$entityStatut = $em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>$statut));
     		$criteria->statut = $entityStatut;
     	}
+    	$this->modifyRequestForForm($request, $this->get('session')->get('actiongenerique_criteria'), $form);
+    	$criteria=$form->getData();
     	
     	$queryBuilder = $em->getRepository('OrangeMainBundle:ActionGenerique')->getActionByActionGenerique($criteria,$id);
     	return $this->paginate($request, $queryBuilder, 'addRowInTableForSimpleAction');
@@ -284,20 +294,25 @@ class ActionGeneriqueController extends BaseController
      * @Template()
      */
     public function orientationAction(Request $request, $data){
-    	$em = $this->getDoctrine()->getEntityManager();
-    	$ids = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
+    	$em     = $this->getDoctrine()->getEntityManager();
+    	$ids    = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
     	$action = new Action();
-    	$this->denyAccessUnlessGranted('orienter', new ActionGenerique(), 'accés non autorisé!');
     	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
-    	if($request->getMethod()=="POST"){
+    	if($request->getMethod() == "POST"){
     		$form->handleRequest($request);
-    		$datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
-    		$this->get('orange.main.query')->orienterManyActions($datas);
-    		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
-    		return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
+    		try {
+    			$datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
+    			$this->get('orange.main.query')->orienterManyActions($datas);
+    			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
+    			return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
+    		} catch (DBALException $e) { 
+    			$this->get('session')->getFlashBag()->add('error', array ('title' => 'Message d\'erreur', 'body' => nl2br($e->getMessage())));
+    			return new JsonResponse(array('url' => $this->generateUrl('mes_actions')));
+    		}
     	}
     	return array('data'=> $data,'form'=>$form->createView());
-    }    
+    }  
+   
     /**
      * 
      * @param ActionGenerique $entity

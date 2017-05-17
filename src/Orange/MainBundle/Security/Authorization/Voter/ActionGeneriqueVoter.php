@@ -18,6 +18,8 @@ class ActionGeneriqueVoter extends AbstractVoter {
 	const UPDATE 	 = 'update';
 	const DELETE	 = 'delete';
 	const ORIENTER	 = 'orienter';
+	const ABANDONNE  = 'abandonne';
+	const FAITE      = 'faite'; 
 	
 	private $em;
 	
@@ -29,7 +31,7 @@ class ActionGeneriqueVoter extends AbstractVoter {
 	}
 	
 	protected function getSupportedAttributes() {
-		return array(self::CREATE, self::READ, self::UPDATE, self::DELETE,self::LISTE,self::ORIENTER);
+		return array(self::CREATE, self::READ, self::UPDATE, self::DELETE,self::LISTE,self::ORIENTER, self::ABANDONNE,self::FAITE);
 	}
 	
 	protected function getSupportedClasses() {
@@ -62,22 +64,34 @@ class ActionGeneriqueVoter extends AbstractVoter {
 				}
 			break;
 			case self::UPDATE:
-				if ($user->hasRole('ROLE_ADMIN') || ($user->getId()==$action->getAnimateur()->getId() && $user->hasRole('ROLE_ANIMATEUR_ACTIONGENERIQUE'))) {
+				if ($user->hasRole('ROLE_ADMIN') || $user->getId()==$action->getAnimateur()->getId()) {
 					return true;
 				}
 			break;
 			case self::DELETE:
-				if ($user->hasRole('ROLE_ADMIN') || ($user->getId()==$action->getAnimateur()->getId() && $user->hasRole('ROLE_ANIMATEUR_ACTIONGENERIQUE'))) {
+				if ($user->hasRole('ROLE_ADMIN') || $user->getId()==$action->getAnimateur()->getId()) {
 					return true;
 				}
 			break;
 			case self::LISTE:
-				return $user->getStructure()->getBuPrincipal()->hasConfig(Config::BU_ACTION_GENERIQUE);
+				if($user->getStructure()->getBuPrincipal()->hasConfig(Config::BU_ACTION_GENERIQUE)==true){
+					return true;
+				}
 			break;
 			case self::ORIENTER:
 				if ($user->getId() == $action->getPorteur()->getId()) {
 					return true;
 				}
+			break;
+			case self::ABANDONNE:
+				if ($user->getId() == $action->getAnimateur()->getId()) {
+					return true;
+				}
+			break;
+		    case self::FAITE:
+					if ($user->getId() == $action->getPorteur()->getId()) {
+						return true;
+					}
 			break;
 		}
 		return false;

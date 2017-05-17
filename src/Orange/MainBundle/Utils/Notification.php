@@ -125,4 +125,11 @@ class Notification {
 		$helper->notifActionGenerique($membresEmail,$cc,$subject, $body);
 	}
 	
+	public static function notificationWithCopyFromArray($datas,$helper) {
+		foreach ($datas as $value){
+		       $body = array ('commentaire' => $datas['content'], 'entity' => $datas['entity'], 'titre'	=> $datas['title']);
+		       self::notificationWithCopy($helper, $datas['title'], $datas['to'], $datas['cc'], $datas['content'],  $datas['entity']);
+		}
+	}
+	
 }
