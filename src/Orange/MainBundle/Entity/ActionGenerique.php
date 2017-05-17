@@ -3,12 +3,10 @@ namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
 
 /**
  * Action Générique
- *
  * @ORM\Table(name="action_generique")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ActionGeneriqueRepository")
  * @ACAssert

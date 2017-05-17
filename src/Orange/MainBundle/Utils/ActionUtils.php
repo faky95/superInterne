@@ -99,7 +99,7 @@ class ActionUtils {
 	}
 
 	public static function reportDelai($entityManager, $entity) {
-		$dateReport = $entity->getAction()->setDateCloture($entity->getDate());
+		$entity->getAction()->setDateCloture($entity->getDate());
 		$entityManager->persist($entity->getAction());
 		$entityManager->flush();
 	}
@@ -247,7 +247,7 @@ class ActionUtils {
 	public static function getActionMembresEmail($em, $entity) {
 		$membreEmail = array();
 		$allActionStatut = $em->getRepository("OrangeMainBundle:ActionStatut")->findByAction($entity->getId());
-		$lastActionStatut = $allActionStatut[count($allActionStatut) - 1];
+		$allActionStatut[count($allActionStatut) - 1];
 		$porteur = $entity->getPorteur();
 		array_push($membreEmail, $porteur->getEmail());
 		$contributeur = $entity->getContributeur();
@@ -264,7 +264,7 @@ class ActionUtils {
 				}
 			}
 		}
-		$manager = $em->getRepository('OrangeMainBundle:Utilisateur')->findOneBy( array(
+		$manager = $em->getRepository('OrangeMainBundle:Utilisateur')->findOneBy(array(
 				'structure' => $porteur->getStructure()->getId(), 'manager' => true
 			));
 		if($manager) {

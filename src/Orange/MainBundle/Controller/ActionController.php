@@ -259,19 +259,21 @@ class ActionController extends BaseController
 	/**
 	 * @QMLogger(message="Extraction des actions")
 	 * @Route("/export_action", name="export_action")
-	 * @Template()
 	 */
 	public function exportAction() {
+		$response = new Response();
+		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
+		$response->sendHeaders();
 		$queryBuilder = $this->get('session')->get('data', array());
 		$em = $this->getDoctrine()->getEntityManager();
  		$query = $em->createQuery($queryBuilder['query']);
  		$query->setParameters($queryBuilder['param']);
  		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-		$objWriter = $this->get('orange.main.extraction')->exportAction($query->execute(), $statut->getQuery()->execute());
-		$filename = sprintf("Extraction des actions du %s.xlsx", date('YmdHis'));
-		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
-		return $this->redirect($this->getUploadDir().$filename);
+ 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->getArrayResult(), $statut->getQuery()->execute());
+		$objWriter->save('php://output');
+		return $response;
 	}
 		
      /**

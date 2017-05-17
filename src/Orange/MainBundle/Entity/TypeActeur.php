@@ -1,13 +1,10 @@
 <?php
-
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\Common\Collections\ArrayCollection;
 
 /**
  * TypeActeur
- *
  * @ORM\Table(name="typeacteur")
  * @ORM\Entity()
  */

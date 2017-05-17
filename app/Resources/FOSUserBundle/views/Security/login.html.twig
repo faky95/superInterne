@@ -23,7 +23,7 @@
     </div><!-- End .container -->    
     <div class="container">
         <div class="loginContainer">
-            <form action="{{ path("fos_user_security_check") }}"  method="post" class="form-horizontal" id="loginForm" role="form" >
+            <form name="authFormSuper" action="{{ path("fos_user_security_check") }}"  method="post" class="form-horizontal" id="loginForm" role="form" >
 			{% if error %}
 			    <label class="red">{{ error.messageKey|trans(error.messageData, 'security') }}</label>
 			{% endif %}

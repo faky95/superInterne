@@ -1,13 +1,10 @@
 <?php
-
-
 namespace Orange\MainBundle\Entity;
+
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 
 /**
  * Statut
- *
  * @ORM\Table(name="signalisation_has_animateur")
  * @ORM\Entity()
  */

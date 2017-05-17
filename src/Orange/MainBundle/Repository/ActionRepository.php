@@ -539,19 +539,40 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function filterExport() {
 		return $this->filter()->select('partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
-															partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
-															partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
-															partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure}, 
-															partial av.{id, description}, partial struct.{id},
-															partial archStruct.{id, service, departement, pole, direction} ')->leftJoin('a.contributeur', 'cont')->leftJoin('insta.espace', 'esp')->leftJoin('cont.utilisateur', 'cuser')->leftJoin('a.avancement', 'av')->leftJoin('a.structure', 'struct')->leftJoin('struct.architectureStructure', 'archStruct')->innerJoin('a.typeAction', 'type')->leftJoin('a.domaine', 'dom')->groupBy('a.id');
+										partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
+										partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
+										partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure}, 
+										partial av.{id, description}, partial struct.{id},
+										partial archStruct.{id, service, departement, pole, direction} ')
+			->leftJoin('a.contributeur', 'cont')
+			->leftJoin('insta.espace', 'esp')
+			->leftJoin('cont.utilisateur', 'cuser')
+			->leftJoin('a.avancement', 'av')
+			->leftJoin('a.structure', 'struct')
+			->leftJoin('struct.architectureStructure', 'archStruct')
+			->innerJoin('a.typeAction', 'type')
+			->leftJoin('a.domaine', 'dom')
+			->groupBy('a.id');
 	}
 	public function filterExportReporting($idActions) {
 		return $this->filterAction()->select('partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
-															partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
-															partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
-															partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure},
-															partial av.{id, description}, partial struct.{id},
-															partial archStruct.{id, service, departement, pole, direction} ')->leftJoin('a.contributeur', 'cont')->leftJoin('insta.espace', 'esp')->leftJoin('cont.utilisateur', 'cuser')->leftJoin('a.avancement', 'av')->leftJoin('a.structure', 'struct')->leftJoin('struct.architectureStructure', 'archStruct')->innerJoin('a.typeAction', 'type')->leftJoin('a.domaine', 'dom')->groupBy('a.id')->andWhere('a.id IN(:ids)')->setParameter('ids', $idActions)->getQuery()->getResult();
+											partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
+											partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
+											partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure},
+											partial av.{id, description}, partial struct.{id},
+											partial archStruct.{id, service, departement, pole, direction} ')
+			->leftJoin('a.contributeur', 'cont')
+			->leftJoin('insta.espace', 'esp')
+			->leftJoin('cont.utilisateur', 'cuser')
+			->leftJoin('a.avancement', 'av')
+			->leftJoin('a.structure', 'struct')
+			->leftJoin('struct.architectureStructure', 'archStruct')
+			->innerJoin('a.typeAction', 'type')
+			->leftJoin('a.domaine', 'dom')
+			->groupBy('a.id')
+			->andWhere('a.id IN(:ids)')
+			->setParameter('ids', $idActions)
+			->getQuery()->getResult();
 	}
 	
 	/**

@@ -1,14 +1,11 @@
 <?php
-
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
 
 /**
  * Domaine
- *
  * @ORM\Table(name="reporting")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ReportingRepository")
  */

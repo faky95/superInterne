@@ -15,7 +15,10 @@
 		<div class="form-group">
 			{{ form_widget(form.dateFinExecut,  {'attr': {'class': 'datepicker'}}) }}
 		</div>
-		{{ form_row(form.commentaire)}} 
+		{{ form_row(form.commentaire)}}
+		<div class="todo">
+			<h4>Le(s) ERQ(s) <a href="#myModal" class="icon tip" title="Nouvel ERQ"><span class="icon16 icomoon-icon-plus-2"></span></a></h4>
+		</div>
 		{{ form_widget(form.erq)}} 
 		{{ form_widget(form._token) }}
 		<!-- End .form-group  -->

@@ -4,10 +4,6 @@ namespace Orange\MainBundle\Criteria;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
-use Orange\MainBundle\Repository\DomaineRepository;
-use Orange\MainBundle\Repository\TypeActionRepository;
-use Orange\MainBundle\Repository\UtilisateurRepository;
-use Orange\MainBundle\Repository\StructureRepository;
 use Orange\MainBundle\Repository\InstanceRepository;
 
 class ActionGeneriqueCriteria extends AbstractCriteria

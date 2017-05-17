@@ -1,12 +1,9 @@
 <?php
-
 namespace Orange\MainBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormEvent;
 use Orange\MainBundle\Entity\TypeInstance;
 use Orange\MainBundle\Repository\UtilisateurRepository;
 use Orange\MainBundle\Repository\DomaineRepository;
@@ -28,7 +25,6 @@ class InstanceType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$data=array();
         $builder
             ->add('libelle',null, array('label' => 'Libelle :'))
             ->add('couleur', null, array('label' => 'Couleur :'))
@@ -86,7 +82,7 @@ class InstanceType extends AbstractType
 									'class'=>'Orange\MainBundle\Entity\Structure',
             						'label' => 'Structures :',
             						'empty_value' => 'Choisir les structures',
-									'query_builder'=>function(StructureRepository $sr)use ($data){
+									'query_builder'=>function(StructureRepository $sr) {
 										return $sr->createQueryBuilder('s');
 									}
             				))

@@ -1,7 +1,6 @@
 <?php
 namespace Orange\MainBundle\Query;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class UtilisateurQuery extends BaseQuery {
 
 	public function createTable($next_id) {

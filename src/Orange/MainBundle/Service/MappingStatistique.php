@@ -205,26 +205,21 @@ class MappingStatistique
 	
 	public function transfertDonnes(&$arrData, &$value=null,$isNull){
 		if($isNull==false){
-		$arrData['data']['nbAbandon'] = isset($value['nbAbandon']) ? $value['nbAbandon'] :0;
-		$arrData['data']['nbDemandeAbandon'] = isset($value['nbDemandeAbandon']) ? $value['nbDemandeAbandon'] :0;
-		$arrData['data']['nbFaiteDelai'] = isset($value['nbFaiteDelai']) ? $value['nbFaiteDelai'] :0;
-		$arrData['data']['nbFaiteHorsDelai'] = isset($value['nbFaiteHorsDelai']) ? $value['nbFaiteHorsDelai'] :0;
-		$arrData['data']['nbNonEchue'] = isset($value['nbNonEchue']) ? $value['nbNonEchue'] :0;
-		$arrData['data']['nbEchueNonSoldee'] = isset($value['nbEchueNonSoldee']) ? $value['nbEchueNonSoldee'] :0 ;
-		$arrData['data']['nbSoldeeHorsDelais'] = isset($value['nbSoldeeHorsDelais']) ? $value['nbSoldeeHorsDelais'] :0;
-		$arrData['data']['nbSoldeeDansLesDelais'] = isset($value['nbSoldeeDansLesDelais']) ? $value['nbSoldeeDansLesDelais']: 0 ;
-		$arrData['data']['nbActionNouvelle'] = isset($value['nbActionNouvelle']) ? $value['nbActionNouvelle'] :0;
-		$arrData['data']['total'] = $value['total'];
+			$arrData['data']['nbAbandon'] = isset($value['nbAbandon']) ? $value['nbAbandon'] :0;
+			$arrData['data']['nbDemandeAbandon'] = isset($value['nbDemandeAbandon']) ? $value['nbDemandeAbandon'] :0;
+			$arrData['data']['nbFaiteDelai'] = isset($value['nbFaiteDelai']) ? $value['nbFaiteDelai'] :0;
+			$arrData['data']['nbFaiteHorsDelai'] = isset($value['nbFaiteHorsDelai']) ? $value['nbFaiteHorsDelai'] :0;
+			$arrData['data']['nbNonEchue'] = isset($value['nbNonEchue']) ? $value['nbNonEchue'] :0;
+			$arrData['data']['nbEchueNonSoldee'] = isset($value['nbEchueNonSoldee']) ? $value['nbEchueNonSoldee'] :0 ;
+			$arrData['data']['nbSoldeeHorsDelais'] = isset($value['nbSoldeeHorsDelais']) ? $value['nbSoldeeHorsDelais'] :0;
+			$arrData['data']['nbSoldeeDansLesDelais'] = isset($value['nbSoldeeDansLesDelais']) ? $value['nbSoldeeDansLesDelais']: 0 ;
+			$arrData['data']['nbActionNouvelle'] = isset($value['nbActionNouvelle']) ? $value['nbActionNouvelle'] :0;
+			$arrData['data']['total'] = $value['total'];
 		} else {
-			$arrData['data']['nbAbandon'] = 0;
-			$arrData['data']['nbDemandeAbandon'] = 0;
-			$arrData['data']['nbFaiteDelai'] = 0;
-			$arrData['data']['nbFaiteHorsDelai'] = 0;
-			$arrData['data']['nbNonEchue'] = 0;
-			$arrData['data']['nbEchueNonSoldee'] =0;
-			$arrData['data']['nbSoldeeHorsDelais'] = 0;
-			$arrData['data']['nbActionNouvelle'] =0;
-			$arrData['data']['total'] = 0;
+			$arrData['data'] = array(
+					'nbActionNouvelle' => 0, 'nbNonEchue' => 0, 'nbEchueNonSoldee' => 0, 'nbAbandon' => 0, 'nbDemandeAbandon' => 0, 
+					'nbAbandon' => 0, 'nbFaiteDelai' => 0, 'nbFaiteHorsDelai' => 0, 'nbSoldeeDansLesDelais' => 0, 'nbSoldeeHorsDelais' => 0, 'total' => 0
+				);
 		}
 	}
 	

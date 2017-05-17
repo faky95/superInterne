@@ -39,7 +39,6 @@ class InstanceRepository extends BaseRepository{
 		foreach($data as $value) {
 			$parameters[$value->getName()] = $value->getValue();
 		}
-		
 		return $queryBuilder->setParameters($parameters);
 	}
 	
@@ -53,24 +52,21 @@ class InstanceRepository extends BaseRepository{
 	
 	/**
 	 * Methode utilise pour charger la liste des actions
-	 * @param unknown $criteria
-	 * @param unknown $porteur
+	 * @return \Doctrine\ORM\QueryBuilder
 	 */
 	public function listAllElements() {
 		$queryBuilder = $this->filtrer()
-			->select('partial i.{id, libelle, description},
-					partial ty.{id, libelle},
-					partial dom.{id, libelleDomaine},
-					partial ani.{id}, partial uti.{id, prenom, nom},
-					partial ta.{id,type}')
+			->select('partial i.{ id, libelle, description }, partial a.{ id }, partial d.{ id, libelleDomaine }, partial ta.{ id, type }, COUNT(a.id) as number')
 			->leftJoin('i.typeInstance', 'ty')
 			->leftJoin('i.animateur', 'ani')
-			->leftJoin('ani.utilisateur', 'uti')
-			->leftJoin('i.domaine', 'dom')
+			->leftJoin('ani.utilisateur', 'u')
+			->leftJoin('i.action', 'a')
+			->leftJoin('i.domaine', 'd')
 			->leftJoin('i.typeAction', 'ta');
-		//->addGroupBy('i.id');
+			//->groupBy('i.id');
 		return $queryBuilder;
 	}
+	
 	public function getIds() {
 		$ids = array();
 		$data = $this->createQueryBuilder('i')->select('i.id')->getQuery()->getResult();

@@ -1,5 +1,4 @@
 <?php
-
 namespace Orange\MainBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
@@ -16,14 +15,10 @@ class ActionStatutType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('erq', new DocumentType())
+        $builder->add('erq', 'collection', array('type' => new DocumentType(), 'allow_add' => true, 'by_reference' => false))
             ->add('commentaire', null,array('label'=>'Commentaire'))
             ->add('dateFinExecut', 'date', array(
-            		'label' => 'Date',
-            		'widget' => 'single_text',
-            		'input'  => 'datetime',
-            		'format' => 'dd/MM/yyyy',
-            		'attr' => array('class' => 'datepicker'),
+            		'label' => 'Date', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy', 'attr' => array('class' => 'datepicker'),
             ))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
             ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel', 'data-dismiss'=>'modal')));
@@ -35,8 +30,8 @@ class ActionStatutType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Orange\MainBundle\Entity\ActionStatut'
-        ));
+	            'data_class' => 'Orange\MainBundle\Entity\ActionStatut'
+	        ));
     }
 
     /**
@@ -44,6 +39,6 @@ class ActionStatutType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_actionstatut';
+        return 'actionstatut';
     }
 }

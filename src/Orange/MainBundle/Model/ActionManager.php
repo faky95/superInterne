@@ -1,10 +1,6 @@
 <?php
-
 namespace Orange\MainBundle\Model;
 
-use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Connection;
-use Doctrine\ORM\Configuration;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Utils\Notification;
 use Orange\MainBundle\Entity\Statut;

@@ -76,7 +76,6 @@ class ActionQuery extends BaseQuery {
 	 * @return number
 	 */
 	public function updateTable($users, $instances, $statuts, $lesMails) {
-		$etats = array('en cours','soldee','abandonnee','action nouvelle');
 		$query='';
 		$erreurAction = null;
 		$query .= "UPDATE temp_action t, utilisateur u SET t.email = u.id WHERE LOWER(TRIM(u.email)) LIKE LOWER(TRIM(t.email));";
@@ -122,11 +121,11 @@ class ActionQuery extends BaseQuery {
 			if(ctype_digit($resultsAction[$i]['email'])==false) {
 				$erreurAction .= sprintf("Le porteur à la ligne %s n'existe pas<br>", $i+2);
 			}
-			if(!empty($membres)){
-				if(!in_array($resultsAction[$i]['email'], $membres)) {
-					$erreurAction .= sprintf("Le porteur à la ligne %s n'est pas membre dans l'espace.<br>", $i+2);
-				}
-			}
+// 			if(!empty($membres)){
+// 				if(!in_array($resultsAction[$i]['email'], $membres)) {
+// 					$erreurAction .= sprintf("Le porteur à la ligne %s n'est pas membre dans l'espace.<br>", $i+2);
+// 				}
+// 			}
 			if(ctype_digit($resultsAction[$i]['domaine'])==false) {
 				$erreurAction .= sprintf("Le domaine à la ligne %s n'existe pas<br>", $i+2);
 			}
@@ -194,12 +193,11 @@ class ActionQuery extends BaseQuery {
 					  WHERE t.id is not null;";
 		}
 		$query2 = "";
-		$test = 0;
 		$resultsAction = $this->connection->fetchAll("SELECT id , contributeur from temp_action ");
 		for($i=0; $i<count($resultsAction);$i++) {
 			$id=$resultsAction[$i]['id'];
 			$idsContrib=\explode(',', $resultsAction[$i]['contributeur']);
-			foreach ($idsContrib as $key=>$val){
+			foreach ($idsContrib as $val){
 				if(strlen($val)>0){
 					$query2.="INSERT INTO contributeur (`id` ,`action_id`,`utilisateur_id`) values";
 					$query2 .= "(null,".$id.",".$val.");";

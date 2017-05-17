@@ -11,12 +11,8 @@
 
 namespace Orange\MainBundle\Event;
 
-use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Orange\MainBundle\Model\ActionManager;
-use Orange\MainBundle\Model\StatistiqueManager;
 use Symfony\Component\Security\Core\SecurityContext;
-use Orange\MainBundle\Entity\Action;
 use FOS\UserBundle\Event\UserEvent;
 use Orange\MainBundle\Model\SignalisationManager;
 

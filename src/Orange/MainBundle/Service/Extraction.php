@@ -3,6 +3,10 @@ namespace Orange\MainBundle\Service;
 
 class Extraction extends \PHPExcel {
 
+	/**
+	 * @param array $arrData
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
 	public function exportUser($arrData) {
 		$default_border = array(
 				'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -13,112 +17,57 @@ class Extraction extends \PHPExcel {
 		);
 		$style_th = array(
 				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
+						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
+					),
 				'alignment' => array(
 						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
+					),
 				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => '7FC6BC' 
-						) 
-				),
+						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '7FC6BC') 
+					),
 				'font' => array(
-						'bold' => true,
-						'size' => 14,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
+						'bold' => true, 'size' => 14, 'color' => array('rgb' => '000000') 
+			));
 		$data = array(
 				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
+						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
+					),
 				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
+						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+					),
 				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => 'ffffff' 
-						) 
-				),
+						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ffffff')
+					),
 				'font' => array(
-						'bold' => false,
-						'size' => 11,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
+						'bold' => false, 'size' => 11, 'color' => array('rgb' => '000000') 
+			));
 		$green = array(
 				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
+						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
+					),
 				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
+						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+					),
 				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => '00ff00' 
-						) 
-				),
+						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '00ff00')
+					),
 				'font' => array(
-						'bold' => true,
-						'size' => 12,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
+						'bold' => true, 'size' => 12, 'color' => array('rgb' => '000000')
+			));
 		$red = array(
 				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
+						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
+					),
 				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
+						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
+					),
 				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => 'ff0000' 
-						) 
-				),
+						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff0000') 
+					),
 				'font' => array(
-						'bold' => true,
-						'size' => 12,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
-		
-		$objPHPExcel = new \PHPExcel();
-		$th = array(
-				'Prénom',
-				'Nom',
-				'Structure',
-				'Profil',
-				'Etat' 
-		);
+						'bold' => true, 'size' => 12, 'color' => array('rgb' => '000000') 
+			));
+		$th = array('Prénom', 'Nom', 'Structure', 'Profil', 'Etat');
 		$col = "A";
 		$x = 1;
 		foreach($th as $value) {
@@ -154,6 +103,12 @@ class Extraction extends \PHPExcel {
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
 	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $dataStatut
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
 	public function exportAction($arrData, $dataStatut) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
@@ -193,25 +148,37 @@ class Extraction extends \PHPExcel {
 		}
 		$tableau = array();
 		foreach($arrData as $value) {
+			$contributeurs = null;
+			$j=1;
+			foreach ($value['contributeur'] as $contributeur) {
+				$contributeurs= $contributeurs."\n".$j.'. '.$contributeur['utilisateur']['prenom'].' '.$contributeur['utilisateur']['nom'];
+				$j++;
+			}
+			$avancements = null;
+			$j=1;
+			foreach ($value['avancement'] as $avancement) {
+				$avancements = $avancements."\n".$j.'. '.$avancement['description'];
+				$j++;
+			}
 			$tableau[] = array(
-					$value->getReference(),
-					$value->getInstance() ? $value->getInstance()->__toString() : ' ',
-					$value->getLibelle(),
-					$value->getDescription(),
-					$value->getPriorite() ? $value->getPriorite()->__toString() : ' ',
-					$value->getPorteur() ? $value->getPorteur()->getCompletNom() : ' ',
-					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDirection() : ' ',
-					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getPole() : ' ',
-					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDepartement() : ' ',
-					$value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getService() : ' ',
-					$value->getTypeAction() ? $value->getTypeAction()->__toString() : ' ',
-					$arrayStatut [$value->getEtatReel()],
-					$value->getDomaine() ? $value->getDomaine()->__toString() : ' ',
-					$value->getAllContributeur(),
-					$value->getDateDebut() ? $value->getDateDebut()->format('d-m-Y') : '',
-					$value->getDateInitial() ? $value->getDateInitial()->format('d-m-Y') : '',
-					$value->getDateFinExecut() ? $value->getDateFinExecut()->format('d-m-Y') : 'En Cours',
-					$value->getAllAvancement()
+					$value['reference'],
+					$value['instance']['libelle'],
+					$value['libelle'],
+					$value['description'],
+					$value['priorite']['libelle'],
+					$value['porteur']['prenom'].' '.$value['porteur']['nom'],
+					$value['structure']['architectureStructure']['direction'],
+					$value['structure']['architectureStructure']['pole'],
+					$value['structure']['architectureStructure']['departement'],
+					$value['structure']['architectureStructure']['service'],
+					$value['typeAction']['type'],
+					$arrayStatut [$value['etatReel']],
+					$value['domaine']['libelleDomaine'],
+					$contributeurs,
+					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
+					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
+					$value['dateFinExecut'] ? $value['dateFinExecut']->format('d-m-Y') : 'En Cours',
+					$avancements
 				);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
@@ -329,6 +296,11 @@ class Extraction extends \PHPExcel {
 		$objWriter->setLineEnding("\r\n");
 		return $objWriter;
 	}
+	
+	/**
+	 * @param array $arrData
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
 	public function exportInstance($arrData) {
 		$default_border = array(
 				'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -361,55 +333,6 @@ class Extraction extends \PHPExcel {
 						) 
 				) 
 		);
-		$data = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array(
-								'rgb' => 'ffffff' 
-						) 
-				),
-				'font' => array(
-						'size' => 13,
-						'color' => array(
-								'rgb' => '000000' 
-						) 
-				) 
-		);
-		$action = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
-		$desc = array(
-				'borders' => array(
-						'top' => $default_border,
-						'bottom' => $default_border,
-						'left' => $default_border,
-						'right' => $default_border 
-				),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
-		$objPHPExcel = new \PHPExcel();
 		$th = array(
 				'Instance',
 				'Type d\'insatnce',

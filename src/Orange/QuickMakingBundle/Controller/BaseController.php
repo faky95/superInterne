@@ -75,7 +75,7 @@ class BaseController extends Controller {
 				"iTotalRecords" => $totalNumber,//$pagination->getTotalItemCount(),
 				"iTotalDisplayRecords" => $totalNumber,//$pagination->getTotalItemCount(),
 				"aaData" => $aaData
-		);
+			);
 		$response = new JsonResponse($output);
 		return $response;
 	}
@@ -137,7 +137,8 @@ class BaseController extends Controller {
 	 * @return integer
 	 */
 	protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName) {
-	  	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))->getQuery()->execute();
+	  	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))
+	  		->getQuery()->execute();
 	  	return $data[0]['number'];
 	}
 	

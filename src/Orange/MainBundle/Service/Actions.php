@@ -179,24 +179,23 @@ class Actions {
 	
 	/**
 	 * @param \Orange\MainBundle\Entity\Instance $entity
+	 * @param number $nbActions
 	 * @return string
 	 */
-	public function generateActionsForInstance($entity) {
+	public function generateActionsForInstance($entity, $nbActions = 0) {
 		$render = '<div class="btn-group">
 				     <a class="btn btn-default" href="%s" title="Détails sur l\'instance "><span class="icomoon-icon-eye"></span></a>';
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) {
 			$render = $render.'<a class="btn btn-default" href="%s" title="Modifier l\'instance"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
-		if(($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) && $entity->getAction()->Count() == 0 ) {
-			$render = $render.'<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'instance "><span class="icomoon-icon-remove-4"></span></a>
-											</div>';
+		if(($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) && $nbActions == 0 ) {
+			$render = $render.'<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'instance "><span class="icomoon-icon-remove-4"></span></a></div>';
 		}
 		return sprintf($render, $this->router->generate('details_instance', array('id'=>$entity->getId())),
 				$this->router->generate('edition_instance', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_instance', array('id'=>$entity->getId()))
 			);
 	}
-	
 	
 	/**
 	 * @param \Orange\MainBundle\Entity\Groupe $entity

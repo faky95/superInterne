@@ -102,11 +102,11 @@ class SignalisationManager
 	// reformulation signalisation
 	public function reformulationSignalisation($entity, $helper){
 		$instance = $entity->getInstance();
-		$source = $entity->getSource();
+		//$source = $entity->getSource();
 		$destinataire = InstanceUtils::animateursEmail($this->em, $instance);
-		$animateur = $instance->getAnimateur()->count()==0
-		? $instance->getParent()->getAnimateur()->get(0)->getUtilisateur()->getNomComplet()
-		: $instance->getAnimateur()->get(0)->getUtilisateur()->getNomComplet();
+// 		$animateur = $instance->getAnimateur()->count()==0
+// 			? $instance->getParent()->getAnimateur()->get(0)->getUtilisateur()->getNomComplet()
+// 			: $instance->getAnimateur()->get(0)->getUtilisateur()->getNomComplet();
 		$subject     = 'Reformulation signalisation';
 		$commentaire = 'La signalisation a été reformulée par '.$this->user->getCompletNom().'. En dessous les informations sur la reformulation. ';
 		$this->updateEtatSignalisation($this->em, Statut::NOUVELLE_SIGNALISATION, $entity);

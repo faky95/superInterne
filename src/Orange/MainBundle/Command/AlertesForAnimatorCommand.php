@@ -4,7 +4,6 @@ namespace Orange\MainBundle\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Orange\MainBundle\Utils\LogsMailUtils;
 
 class AlertesForAnimatorCommand extends BaseCommand {
 	

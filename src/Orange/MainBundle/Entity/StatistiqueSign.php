@@ -2,12 +2,9 @@
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Translation\Tests\String;
 
 /**
  * Statistique
- *
  * @ORM\Table(name="statistiqueSign")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\StatistiqueSignRepository")
  */

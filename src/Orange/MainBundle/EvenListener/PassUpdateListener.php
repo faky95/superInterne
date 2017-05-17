@@ -29,7 +29,7 @@ class PassUpdateListener
     
     public function onCheckExpired(GetResponseEvent $event)
     {
-    	$em = $this->container->get('doctrine.orm.entity_manager');
+    	//$em = $this->container->get('doctrine.orm.entity_manager');
         if (($this->security_context->getToken()) && ($this->security_context->isGranted('IS_AUTHENTICATED_FULLY') ) ) 
         {
             $route_name = $event->getRequest()->get('_route');

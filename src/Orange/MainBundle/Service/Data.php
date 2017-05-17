@@ -38,16 +38,13 @@ class Data extends BaseQuery {
 		return $users;
 	}
 	
-	public function exportInstance($data){
+	public function exportInstance($data) {
 		$array = array();
 		$i = 0;
-		foreach ($data as $value) {
-			$j=1;
-			$z=1;
-			$k=1;
-			$anim = "";
-			$dom = "";
-			$ty = "";
+		foreach($data as $value) {
+			$value = $value[0];
+			$j = $z = $k = 1;
+			$anim = $dom = $ty = null;
 			foreach ($value->getAnimateur() as $animateur){
 				$anim = $anim."\n".$j.'. '.$animateur->getUtilisateur()->getCompletNom();
 				$j++;

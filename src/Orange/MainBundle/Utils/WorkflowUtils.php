@@ -1,16 +1,19 @@
 <?php
-
 namespace Orange\MainBundle\Utils;
 
-use Orange\MainBundle\Entity\SignalisationStatut;
 use Orange\MainBundle\Entity\ActionStatut;
-use Orange\MainBundle\Entity\TypeStatut;
-use Orange\MainBundle\Entity\Tache;
-use Orange\MainBundle\Entity\TacheStatut;
 use Orange\MainBundle\Entity\Statut;
+use Orange\MainBundle\Entity\Utilisateur;
+use Doctrine\ORM\EntityManager;
 
 class WorkflowUtils {
 
+	/**
+	 * @param /Orange/QuickMakingBundle/Model/EntityManager $entityManager
+	 * @param /Orange/MainBundle/Entity/ActionStatut $actionStatut
+	 * @param /Orange/MainBundle/Entity/Utilisateur $currentUser
+	 * @return string[]
+	 */
 	public static function actionWorkflow($entityManager, $actionStatut, $currentUser)
 	{
 		$now = new \DateTime ();
@@ -23,18 +26,15 @@ class WorkflowUtils {
 		$porteur = $action->getPorteur();
 		$actionStatutCode = $actionStatut->getStatut()->getCode();
 		
-		switch ($previousStatutCode){
+		switch ($previousStatutCode) {
 			
 			case Statut::ACTION_NOUVELLE:
-				if($actionStatutCode === Statut::VALIDER)
-				{
+				if($actionStatutCode === Statut::VALIDER) {
 					$NextStep = Statut::ACTION_NON_ECHUE;
 					$subject = 'Prise en charge de l\'action';
 					$commentaire = 'Le ' . $now . ' . La prise en charge de l\'action a été confirmé par ' . $porteur . '
 									L\'action est en cours de traitement. ';
-				}
-				elseif ($actionStatutCode === Statut::INVALIDER)
-				{
+				} elseif ($actionStatutCode === Statut::INVALIDER) {
 					$NextStep = Statut::EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE;
 					$subject = 'Contre proposition sur l\'action';
 					$commentaire = 'Le ' . $now . ' . ' . $porteur . ', porteur désigné dans le traitement de l\'action :' . $action->getLibelle() . '
@@ -45,18 +45,15 @@ class WorkflowUtils {
 			break;
 			case Statut::EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE:
 				$subject = 'Contre proposition sur l\'action: Retour de l\'animateur ';
-				if($actionStatutCode === Statut::VALIDER)
-				{
+				if($actionStatutCode === Statut::VALIDER) {
 					$NextStep = Statut::ACTION_NON_ECHUE;
 					$commentaire = 'Le ' . $now . ', l\'animateur  ' . $animateur . ' a effectué un retour favorable suite à la proposition de '.$porteur.'
 									sur la prise en charge de l\'action. Ses objections seront prises en compte dans la modification de l\'action. Il est
 									demandé à '.$animateur.' de modifier l\'action en prenant en compte ces dernières remarques.';
-				}
-				elseif ($actionStatutCode === Statut::INVALIDER)
-				{
+				} elseif ($actionStatutCode === Statut::INVALIDER && $porteur) {
 					$NextStep = Statut::EVENEMENT_VALIDATION_MANAGER_ATTENTE;
 					$commentaire = 'Le ' . $now . ', l\'animateur  ' . $animateur . ' a effectué un retour non favorable suite à la proposition de '.$porteur.'
-									sur la prise en charge de l\'action. Il est demandé à '.$manager.', responsable hierarchique de '.$porteur.'. 
+									sur la prise en charge de l\'action. Il est demandé à '.$porteur->getManager().', responsable hierarchique de '.$porteur.'. 
 									de faire arbritage entre les différentes propositions.';
 					
 				}

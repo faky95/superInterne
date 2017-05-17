@@ -5,7 +5,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Security\Core\SecurityContext;
 use Orange\MainBundle\Entity\Statut;
 
 class OrientationActionType extends AbstractType
@@ -29,7 +28,6 @@ class OrientationActionType extends AbstractType
 							if(is_array($ids)==false)
 								$queryBuilder->andWhere('IDENTITY(aha.action) != :id or aha.id is null')->setParameter('id', $ids);
 							else{
-								$values = implode(',', $ids);
 								$queryBuilder->andWhere('IDENTITY(aha.action) not in (:id) or aha.id is null')->setParameter('id', $ids);
 							}
 							return $queryBuilder;

@@ -5,13 +5,11 @@ namespace Orange\MainBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Orange\MainBundle\Repository\UtilisateurRepository;
 
 class StructureType extends AbstractType
 {
 	
-	
-        /**
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */	

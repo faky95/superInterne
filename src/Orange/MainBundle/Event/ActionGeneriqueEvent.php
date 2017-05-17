@@ -12,7 +12,6 @@
 namespace Orange\MainBundle\Event;
 
 use Symfony\Component\HttpFoundation\Request;
-use Orange\MainBundle\Model\ActionManager;
 use Symfony\Component\Security\Core\SecurityContext;
 use Orange\MainBundle\Entity\Action;
 use FOS\UserBundle\Event\UserEvent;

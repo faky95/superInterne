@@ -3,9 +3,7 @@ namespace Orange\MainBundle\Criteria;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 use Orange\MainBundle\Entity\Utilisateur;
-use Orange\MainBundle\Repository\UtilisateurRepository;
 use Orange\MainBundle\Entity\Structure;
 use Orange\MainBundle\Repository\StructureRepository;
 

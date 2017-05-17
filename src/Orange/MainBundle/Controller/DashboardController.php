@@ -85,31 +85,10 @@ class DashboardController extends Controller {
 	 * @Route("/testst", name="test")
 	*/
 	public function testAction() {
-		$em = $this->getDoctrine()->getManager();
-// 		$actions = $em->getRepository('OrangeMainBundle:Action')->alertAnimateurGlobal(1, null, null)->getQuery()->execute();
-// 		$data = $this->get('orange.main.data')->mapDataforAlertAnimateurGlobal($actions);
-// 		var_dump($data);exit;
-		$etats = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
-		$reporting = $em->getRepository('OrangeMainBundle:Reporting')->find(89);
-		$query = $em->createQuery($reporting->getRequete());
-		$query->setParameters(unserialize($reporting->getParameter()));
-// 		if ($reporting->getQuery()) {
-			$query2 = $em->createQuery($reporting->getQuery());
-			$query2->setParameters(unserialize($reporting->getParameter()));
-			//$idActions = $this->mapIds($query2->execute());
-// 			$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
-			$actions = array();
-// 		}
-		$req = $this->get('orange.main.dataStats')->combineTacheAndActionByPorteur($query->getArrayResult());
-		$arrType=unserialize($reporting->getArrayType());
-		$map= $this->get('orange.main.dataStats')->transformRequeteToPorteur($req, $arrType);
-		$bu = $reporting->getUtilisateur()->getStructure()->getBuPrincipal();
-		$data = $this->get('orange.main.calcul')->stats($bu, $map);
-		$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance', $arrType, $bu);
-		$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
-		$filename = $reporting->getLibelle().date("Y-m-d_H-i").'.xlsx';
-		$objWriter->save($this->get('kernel')->getRootDir()."//..//web//upload//reporting//$filename");
-		return $this->redirect(sprintf('/super/web/upload/reporting/%s', $filename));
+		for($i=0;$i<40;$i++) {
+			$this->get('orange.main.mailer')->send(array('madiagne.sylla@orange-sonatel.com' => 'Madiagne SYLLA'), null, 'test SUPER', sprintf('Action %s', $i));
+		}
+		return $this->redirect($this->generateUrl('dashboard'));
 	} 
 	
 	/**

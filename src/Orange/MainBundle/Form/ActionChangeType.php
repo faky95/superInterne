@@ -4,14 +4,6 @@ namespace Orange\MainBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Orange\MainBundle\Repository\InstanceRepository;
-use Orange\MainBundle\Entity\Domaine;
-use Orange\MainBundle\Repository\DomaineRepository;
-use Orange\MainBundle\Entity\TypeAction;
-use Orange\MainBundle\Repository\TypeActionRepository;
-use Orange\MainBundle\Repository\UtilisateurRepository;
 use Doctrine\ORM\EntityRepository;
 
 class ActionChangeType extends AbstractType

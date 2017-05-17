@@ -14,9 +14,7 @@ namespace Orange\MainBundle\Listener;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Orange\MainBundle\OrangeMainEvents;
-use Orange\MainBundle\Event\ActionEvent;
 use FOS\UserBundle\Mailer\Mailer;
-use Orange\MainBundle\Entity\ActionGenerique;
 use Orange\MainBundle\Event\ActionGeneriqueEvent;
 
 

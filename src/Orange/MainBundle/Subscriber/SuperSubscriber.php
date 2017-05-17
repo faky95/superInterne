@@ -54,7 +54,7 @@ class SuperSubscriber implements EventSubscriber
     		$uow = $entityManager->getUnitOfWork();
     		$uow->computeChangeSets();
     		$changeset = $uow->getEntityChangeSet($entity);
-            $updatedValue = array('libelle', 'dateInitial', 'instance', 'domaine', 'porteur', 'typeAction', 'priorite');
+            //$updatedValue = array('libelle', 'dateInitial', 'instance', 'domaine', 'porteur', 'typeAction', 'priorite');
             if(!empty($changeset['libelle']) || !empty($changeset['dateInitial']) || !empty($changeset['instance']) || !empty($changeset['domaine'])
             	|| !empty($changeset['porteur']) || !empty($changeset['typeAction']) || !empty($changeset['priorite']))
             {

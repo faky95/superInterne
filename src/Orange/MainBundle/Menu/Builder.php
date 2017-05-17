@@ -5,7 +5,6 @@ use Knp\Menu\FactoryInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Knp\Menu\MenuItem;
 use Orange\MainBundle\Entity\Utilisateur;
-use Symfony\Component\Routing\RequestContext;
 use Orange\MainBundle\Entity\Config;
 
 class Builder extends ContainerAware

@@ -58,7 +58,6 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	public function nouvelleAction($bu, $espace, $projet) {
-		$date = new \DateTime();
 		return $this->createQueryBuilder('a')
 			->innerJoin('a.porteur', 'u')
 			->innerJoin('a.instance', 'i')
@@ -987,7 +986,7 @@ class ActionRepository extends BaseRepository {
 		$arrData = array();
 		$i = 0;
 		if(count($data) > 0)
-			foreach($data as $key => $value) {
+			foreach($data as $value) {
 				if(count($arrData) <= 0) {
 					$arrData [$i] = array(
 							's_id' => $value ['s_id'],
@@ -1096,12 +1095,12 @@ class ActionRepository extends BaseRepository {
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.id')->leftJoin('OrangeMainBundle:Action ', 'a', 'WITH', '1=1')->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.structure', 's1')->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
-			foreach($instances as $key => $data)
+			foreach($instances as $data)
 				$instancesIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('i.id in(:insts)')->setParameter('insts', $instancesIds);
 		} else {
 			$structureIds = array();
-			foreach($structures as $key => $data)
+			foreach($structures as $data)
 				$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('s.id in(:structs)')->setParameter('structs', $structureIds);
 		}
@@ -1173,12 +1172,12 @@ class ActionRepository extends BaseRepository {
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.etatCourant action_etat, COUNT(a.id) total,t.etatCourant tache_etat ,s.libelle, s.id')->leftJoin('OrangeMainBundle:Action ', 'a', 'WITH', '1=1')->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.structure', 's1')->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
-			foreach($instances as $key => $data)
+			foreach($instances as $data)
 				$instancesIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('i.id in(:insts)')->setParameter('insts', $instancesIds);
 		} else {
 			$structureIds = array();
-			foreach($structures as $key => $data)
+			foreach($structures as $data)
 				$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 			$queryBuilder->andWhere('s.id in(:structs)')->setParameter('structs', $structureIds);
 		}
@@ -1211,7 +1210,7 @@ class ActionRepository extends BaseRepository {
 			$structures = $rep->getStructureAndStructureDirecteByStructure($user->getStructure()->getId())->getQuery()->getArrayResult();
 		
 		$structureIds = array();
-		foreach($structures as $key => $data)
+		foreach($structures as $data)
 			$structureIds [] = \is_object($data) ? $data->getId() : $data ['id'];
 		$queryBuilder = $rep->createQueryBuilder('s')->select('a.etatCourant action_etat, t.etatCourant tache_etat ,COUNT(a.id) total ,s.libelle f_libelle, i.libelle inst, i.libelle s_libelle, s.id f_id,i.id s_id')->add('from', 'OrangeMainBundle:Action a', true)->leftJoin('a.actionCyclique', 'acl')->leftJoin('acl.tache', 't')->innerJoin('a.structure', 's1')->innerJoin('a.instance', 'i')->innerJoin('i.bu', 'b')->leftJoin('i.espace', 'e')->where('s.id in(:structs)')->setParameter('structs', $structureIds)->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')->andWhere('b.id=s.buPrincipal')->andWhere(' e.id IS NULL');
 		
@@ -1313,7 +1312,7 @@ class ActionRepository extends BaseRepository {
 		$arrData = array();
 		$i = 0;
 		if(count($data) > 0)
-			foreach($data as $key => $value) {
+			foreach($data as $value) {
 				if(count($arrData) <= 0) {
 					$arrData [$i] = array(
 							'total' => intval($value ['total']) 

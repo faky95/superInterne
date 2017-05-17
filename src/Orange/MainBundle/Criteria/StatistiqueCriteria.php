@@ -4,8 +4,6 @@ namespace Orange\MainBundle\Criteria;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Security\Core\SecurityContext;
-use Orange\MainBundle\Repository\StructureRepository;
-use Orange\MainBundle\Repository\InstanceRepository;
 
 class StatistiqueCriteria extends AbstractCriteria
 {
@@ -24,8 +22,6 @@ class StatistiqueCriteria extends AbstractCriteria
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$structures=(isset($options['attr']['structures']))?$options['attr']['structures']:null;
-    	$instances=(isset($options['attr']['instances']))?$options['attr']['instances']:null;
     	$week = array();
     	for($i=1;$i<=52;$i++){
     		$week[$i] = sprintf('S%02d', $i);

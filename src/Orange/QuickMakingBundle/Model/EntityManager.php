@@ -1,9 +1,7 @@
 <?php
-
 namespace Orange\QuickMakingBundle\Model;
 
 use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Connection;
 use Doctrine\ORM\Configuration;
 
 

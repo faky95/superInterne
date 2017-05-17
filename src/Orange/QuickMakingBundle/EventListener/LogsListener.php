@@ -1,11 +1,9 @@
 <?php
 namespace Orange\QuickMakingBundle\EventListener;
 
-use Orange\QuickMakingBundle\Entity\Logs;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Event\PostFlushEventArgs;
-use Orange\QuickMakingBundle\Entity\Operation;
 
 class LogsListener {
 

@@ -1,8 +1,8 @@
 <?php
-
 namespace Orange\QuickMakingBundle\Twig;
 
-use Orange\MainBundle\Entity\Notification;
+use Orange\MainBundle\Utils\Notification;
+
 class ParameterExtension extends \Twig_Extension
 {
 

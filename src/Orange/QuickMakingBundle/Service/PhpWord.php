@@ -10,6 +10,6 @@ namespace Orange\QuickMakingBundle\Service;
  * @name PHP_Word
  */
      
-abstract class PhpWord extends \PhpOffice\PhpWord\PhpWord {
+abstract class PhpWord /*extends \PhpOffice\PhpWord\PhpWord*/ {
 
 }

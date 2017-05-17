@@ -229,28 +229,6 @@ class Reporting extends PHPExcelAdvanced {
 				'font' => array('bold' => true,'size' => 16,'color' => array(		'rgb' => '000000' ) 
 				) 
 		);
-		$data = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
-				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-				),
-				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID,'color' => array(		'rgb' => 'ffffff' ) 
-				),
-				'font' => array('size' => 13,'color' => array(		'rgb' => '000000' ) 
-				) 
-		);
-		$action = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
-				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
-		$desc = array(
-				'borders' => array('top' => $default_border,'bottom' => $default_border,'left' => $default_border,'right' => $default_border 
-				),
-				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT 
-				) 
-		);
 		$objPHPExcel = new \PHPExcel ();
 		$th = array(
 				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 
@@ -525,7 +503,6 @@ class Reporting extends PHPExcelAdvanced {
 		$sheet->mergeCells($deb . $x . ':' . $fin . $x)->getStyle($deb . $x)->applyFromArray($style_entete_total);
 		$col = 'B';
 		$y = 2;
-		$z=3;
 		foreach($arrData ['instance'] as $value) {
 			$sheet->setCellValue($col . $y, $value ['libelle'])->getColumnDimension($col)->setAutoSize(true);
 			$sheet->getStyle($col . $y)->applyFromArray($style_instances);
@@ -583,7 +560,6 @@ class Reporting extends PHPExcelAdvanced {
 				$sheet->getStyle($col . $x)->applyFromArray($style_solde);
 				$col2 = 'B';
 				$totalSolde = 0;
-				$tauxSolde = 0;
 				$totalGlobale=0;
 				foreach($arrData ['instance'] as $data) {
 					$solde = round($data ['data'] ['nbSoldeeHorsDelais']  + $data ['data'] ['nbSoldeeDansLesDelais']);

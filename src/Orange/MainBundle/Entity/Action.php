@@ -1018,15 +1018,32 @@ class Action
         $this->animateur = $animateur;
         return $this;
     }
-
+    
     /**
      * Get animateur
-     *
+     * @return \Orange\MainBundle\Entity\Utilisateur
+     */
+    public function getAnimateurAtLast()
+    {
+    	$animateur = null;
+    	if($this->actionStatut->count()==0) {
+    		return null;
+    	}
+    	foreach($this->actionStatut as $actionStatut) {
+    		if($actionStatut->getUtilisateur()!=$actionStatut->getAction()->getPorteur()) {
+    			$animateur = $actionStatut->getUtilisateur();
+    		}
+    	}
+    	return $animateur;
+    }
+    
+    /**
+     * Get animateur
      * @return \Orange\MainBundle\Entity\Utilisateur
      */
     public function getAnimateur()
     {
-        return $this->animateur;
+    	return $this->animateur;
     }
     
     /**

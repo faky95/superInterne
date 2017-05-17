@@ -126,9 +126,9 @@ class InstanceController extends BaseController
     private function createEditForm(Instance $entity)
     {
         $form = $this->createForm(new InstanceType(), $entity, array(
-            'action' => $this->generateUrl('modifier_instance', array('id' => $entity->getId())),
-            'method' => 'PUT',
-        ));
+	            'action' => $this->generateUrl('modifier_instance', array('id' => $entity->getId())),
+	            'method' => 'PUT',
+	        ));
         $form->add('submit', 'submit', array('label' => 'Update'));
         return $form;
     }
@@ -190,32 +190,22 @@ class InstanceController extends BaseController
     {
     	$em = $this->getDoctrine()->getManager();
     	$entity = $em->getRepository('OrangeMainBundle:Instance')->find($id);
-    
-    	if ($entity) {
-    		$les_fils=$em->getRepository('OrangeMainBundle:Instance')->findBy(array('parent'=>$entity));
-    		if($entity->getAction()->count()>0){
-    			$this->container->get('session')->getFlashBag()->add('failed', array (
-    					'title' =>'Notification', 'body' => 'Cette instance a des actions ! '
-    				));
-    		}
-    		if($les_fils){
-    			$this->container->get('session')->getFlashBag()->add('failed', array (
-    					'title' =>'Notification', 'body' => 'Cette instance a des sous instances ! '
-    				));
-    		}
-    		if($les_fils==null && $entity->getAction()->count()==0){
-    			$em->remove($entity);
-    			$em->flush();
-    			$this->container->get('session')->getFlashBag()->add('success', array (
-    					'title' =>'Notification', 'body' => 'Cette instance a ete supprime avec succes ! '
-    				));
-    		}
-    		 
-    	}else
-    		$this->container->get('session')->getFlashBag()->add('success', array (
-    				'title' =>'Notification', 'body' => 'Instance inexistante ! '
-    			));
-    		return $this->redirect($this->generateUrl('les_instance'));
+    	if ($entity==null) {
+    		$this->addFlash('success', array('title' =>'Notification', 'body' => 'Instance inexistante ! '));
+    	}
+    	$les_fils=$em->getRepository('OrangeMainBundle:Instance')->findBy(array('parent'=>$entity));
+    	if($entity->getAction()->count()>0) {
+    		$this->addFlash('failed', array('title' =>'Notification', 'body' => 'Cette instance a des actions ! '));
+    	}
+    	if($les_fils) {
+    		$this->addFlash('failed', array('title' =>'Notification', 'body' => 'Cette instance a des sous instances ! '));
+    	}
+    	if($les_fils==null && $entity->getAction()->count()==0) {
+    		$em->remove($entity);
+    		$em->flush();
+    		$this->addFlash('success', array('title' =>'Notification', 'body' => 'Cette instance a ete supprime avec succes ! '));
+    	}
+    	return $this->redirect($this->generateUrl('les_instance'));
     }
     
     /**
@@ -231,6 +221,19 @@ class InstanceController extends BaseController
     	$queryBuilder = $em->getRepository('OrangeMainBundle:Instance')->listAllElements();
     	$this->get('session')->set('data', array('query' => $queryBuilder->getDql(), 'param' =>$queryBuilder->getParameters()));
     	return $this->paginate($request, $queryBuilder);
+    }
+    
+    /**
+     * @todo retourne le nombre d'enregistrements renvoyer par le résultat de la requête
+     * @param QueryBuilder $queryBuilder
+     * @return integer
+     */
+    protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName) {
+    	exit('waaaaa');
+    	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))
+	    	->resetDQLPart('groupBy')
+	    	->getQuery()->execute();
+    	return $data[0]['number'];
     }
 
     /**
@@ -275,15 +278,15 @@ class InstanceController extends BaseController
     }
     
     /**
-     * @todo retourne le nombre d'enregistrements renvoyer par le rÃ©sultat de la requÃªte
+     * @todo retourne le nombre d'enregistrements renvoyer par le rÃ©sultat de la requete
      * @param \Orange\MainBundle\Entity\Instance $entity
      * @return array
      */
     protected function addRowInTable($entity) {
     	return array(
-    			$entity->getLibelle(),
-    			$entity->getDescription(),
-    			$this->get('orange_main.actions')->generateActionsForInstance($entity)
+    			$entity[0]->getLibelle(),
+    			$entity[0]->getDescription(),
+    			$this->get('orange_main.actions')->generateActionsForInstance($entity[0], $entity['number'])
     		);
     }
     

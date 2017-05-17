@@ -1,14 +1,10 @@
 <?php
-
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
-use phpDocumentor\Reflection\Types\String_;
 
 /**
  * Tache
- *
  * @ORM\Table(name="tache")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\TacheRepository")
  */

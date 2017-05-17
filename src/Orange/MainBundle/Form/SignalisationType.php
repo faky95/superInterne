@@ -6,11 +6,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use  Orange\MainBundle\EvenListener\AddSousInstanceSubscriber;
-use Doctrine\ORM\QueryBuilder;
-use Doctrine\ORM\EntityManager;
 use Orange\MainBundle\Repository\InstanceRepository;
 
 class SignalisationType extends AbstractType
@@ -21,16 +16,14 @@ class SignalisationType extends AbstractType
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-    	$user_id 		= $options['attr']['user_id'];
     	$structure_id 	= $options['attr']['structure_id'];
-        $builder
-            ->add('libelle',null,array('label'=>'Libellé :'))
+        $builder->add('libelle',null,array('label'=>'Libellé :'))
             ->add('description',null,array('label'=>'Description :'))
             ->add('site',null,array('label'=>'Site :'))
             ->add('instance', null, array(
             		'label' => 'Périmètre :',
             		'empty_value' => '--- Choisir le périmètre ---',
-            		'query_builder' => function(InstanceRepository $er ) use ( $user_id ) {
+            		'query_builder' => function(InstanceRepository $er ) {
             			return $er->filterForSignalisation();
             		}
             ))

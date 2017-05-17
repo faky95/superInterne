@@ -1,11 +1,9 @@
 <?php
-
 namespace Orange\MainBundle\EvenListener;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 use Doctrine\ORM\EntityRepository;
 use Orange\MainBundle\Entity\Instance;
 

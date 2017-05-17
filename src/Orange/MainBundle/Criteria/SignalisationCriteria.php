@@ -5,7 +5,6 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Orange\MainBundle\Repository\InstanceRepository;
 use Doctrine\ORM\EntityRepository;
-use Symfony\Component\Security\Core\SecurityContext;
 use Orange\MainBundle\Repository\DomaineRepository;
 use Orange\MainBundle\Repository\TypeActionRepository;
 use Orange\MainBundle\Repository\UtilisateurRepository;
@@ -20,9 +19,6 @@ class SignalisationCriteria extends AbstractCriteria
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$user =(isset($options['attr']['user']))?$options['attr']['user']:null;
-		$structure_id = $user->getStructure()->getId();
-		
     	$builder
     		->add('perimetre', 'entity', array('class'=>'Orange\MainBundle\Entity\Instance',
     			'label' => 'Périmètre :',

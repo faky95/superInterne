@@ -1,8 +1,6 @@
 <?php
 namespace Orange\MainBundle\Service;
 
-use Symfony\Bundle\FrameworkBundle\Controller;
-use Symfony\Component\Serializer\Encoder\ChainEncoder;
 
 class Extraction extends \PHPExcel {
 	public function exportUser($arrData){
@@ -80,7 +78,6 @@ class Extraction extends \PHPExcel {
 				));
 		
 		
-		$objPHPExcel = new \PHPExcel();
 		$th = array('Prénom', 'Nom', 'Structure', 'Profil', 'Etat');
 		$col = "A";
 		$x=1;
@@ -140,42 +137,6 @@ class Extraction extends \PHPExcel {
 						'size' => 16,
 						'color' => array('rgb' => '000000')
 				));
-		$data = array(
-				'borders' => array('top' => $default_border
-						,'bottom' => $default_border
-						,'left' => $default_border
-						,'right' => $default_border),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER,
-				),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID,
-						'color' => array('rgb'=>'ffffff'),
-				),
-				'font' => array(
-						'size' => 13,
-						'color' => array('rgb' => '000000')
-				));
-		$action = array(
-				'borders' => array('top' => $default_border
-						,'bottom' => $default_border
-						,'left' => $default_border
-						,'right' => $default_border),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-				));
-		$desc = array(
-				'borders' => array('top' => $default_border
-						,'bottom' => $default_border
-						,'left' => $default_border
-						,'right' => $default_border),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_TOP,
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
-				));
-		$objPHPExcel = new \PHPExcel();
 		$th = array('Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type',
 				'Statut', 'Domaine' ,'Contributeurs', 'Date de début' ,'Date de fin prévue' ,'Date de clôture','Avancements' 
 		);
@@ -447,7 +408,6 @@ class Extraction extends \PHPExcel {
 						'size' => 12,
 						'color' => array('rgb' => '000000')
 				));
-		$objPHPExcel = new \PHPExcel();
 		$th = array('Référence', 'Instance', 'Périmétre', 'Domaine', 'Type', 'Libellé', 'Description', 'Source', 'Date de signalisation', 'Direction', 'Pôle', 'Département', 'Service','Statut');
 		$col = "A";
 		$x=1;
