@@ -15,7 +15,7 @@ class nouvelleSignalisationCommand extends BaseCommand {
 	public function execute(InputInterface $input, OutputInterface $output){
 		$em = $this->getEntityManager();
 		$signs = $em->getRepository('OrangeMainBundle:Signalisation')->nouvelleSignalisation();
-		$data = $this->get('orange.main.data')->nouvelleSignalisation($signs);
+		$data = $this->getMapping()->getRelance()->nouvelleSignalisation($signs);
 		foreach($data['instance'] as $instance){
             $animateurs = array();
 			foreach ($instance['animateurs'] as $animateur){

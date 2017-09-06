@@ -23,7 +23,7 @@ class ValidationActionCommand extends BaseCommand {
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->nouvelleAction($bu, $projet, $espace);
-		$this->get('orange.main.data')->validationAction($actions);
+		$this->getMapping()->getRelance()->setEntityManager($em)->validationAction($actions);
 			
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

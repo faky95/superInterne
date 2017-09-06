@@ -109,7 +109,7 @@ class Extraction extends \PHPExcel {
 	 * @param array $dataStatut
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
-	public function exportAction($arrData, $dataStatut , $divers = array()) {
+	public function exportAction($arrData, $dataStatut, $arrAvancement = array()) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
 			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
@@ -150,26 +150,15 @@ class Extraction extends \PHPExcel {
 		foreach($arrData as $value) {
 			$contributeurs = null;
 			$j=1;
-			$contrib =null;
-			if(isset($divers['contributeur']) && $divers['contributeur']!=null)
-				$contrib = array_filter($divers['contributeur'], function($object)use($value){
-					return $object->getAction()->getId() == $value['id'];
-				});
-			
-			foreach ($contrib as $contributeur) {
-				$contributeurs= $contributeurs."  \n  ".$j.'. '.$contributeur->getUtilisateur()->getPrenom().' '.$contributeur->getUtilisateur()->getNom();
+			foreach ($value['contributeur'] as $contributeur) {
+				$contributeurs= $contributeurs."\n".$j.'. '.$contributeur['utilisateur']['prenom'].' '.$contributeur['utilisateur']['nom'];
 				$j++;
 			}
 			$avancements = null;
-			$j=1;   
-			$avcts =null;
-			if(isset($divers['avancement']) && $divers['avancement']!=null)
-				$avcts = array_filter($divers['avancement'], function($object)use($value){
-					return $object->getAction()->getId() == $value['id'];
-				});
-			
-			foreach ($avcts as $avancement) {
-				$avancements = $avancements."  \n  ".$j.'. '.$avancement->getDescription();
+			$j=1;
+			//var_dump($value['avancement']);echo '<br />';
+			foreach ($value['avancement'] as $avancement) {
+				$avancements = $avancements."\n".$j.'. '.$avancement['description'];
 				$j++;
 			}
 			$tableau[] = array(
@@ -193,6 +182,7 @@ class Extraction extends \PHPExcel {
 					$avancements
 				);
 		}
+		//exit;
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;

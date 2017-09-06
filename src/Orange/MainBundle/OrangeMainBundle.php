@@ -10,4 +10,14 @@ class OrangeMainBundle extends Bundle
 	{
 		return 'FOSUserBundle';
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\HttpKernel\Bundle\Bundle::boot()
+	 */
+	public function boot() {
+		// TODO: Auto-generated method stub
+		$ids	= $this->container->getParameter('ids');
+		\Orange\MainBundle\Entity\TypeNotification::$ids = $ids['typeNotification'];
+	}
 }

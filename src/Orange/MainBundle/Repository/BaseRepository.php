@@ -115,5 +115,12 @@ class BaseRepository extends EntityRepository implements RepositoryInterface{
 		return $queryBuilder;
 	}
 	
+	/**
+	 * check empty array
+	 * @param array $data
+	 */
+	protected function checkEmptyArray($data = array()) {
+		return count($data)==0 ? array(0) : $data;
+	}
 	
  }

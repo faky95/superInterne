@@ -32,7 +32,7 @@ class ActionQuery extends BaseQuery {
 	
 	public function loadTable($fileName, $web_dir,$next_id,$isCorrective) {
 		$newPath = $this->loadDataFile($fileName, 'action', $web_dir);
-		$erreurAction = null;
+		/*$erreurAction = null;
 		$handle = fopen($newPath, 'r');
 		$numberColumns = count(fgetcsv($handle, null, ';'));
 		$index = 1;
@@ -45,29 +45,28 @@ class ActionQuery extends BaseQuery {
 		fclose($handle);
 		if($erreurAction) {
 			throw new ORMException($erreurAction);
-		}
+		}*/
 		/*Insertion du chargement du fichier téléchargé dans la table temporaire*/
-		if($isCorrective==0)
+		if($isCorrective==0) {
 				$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
 						CHARACTER SET latin1
-						FIELDS TERMINATED BY  ';'
+						FIELDS TERMINATED BY  ';' ENCLOSED BY  '".'"'."'
 						LINES TERMINATED BY  '\\r\\n'
 						IGNORE 1 LINES
-						(`prenoms`, `email`,`instance`, `contributeur`,
-						`statut` ,`type_action`,`domaine`,
-						`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
-						";
-		else 
+						(`prenoms`, `email`,`instance`, `contributeur`, `statut` ,`type_action`,`domaine`, @date_debut, @date_initial, @date_cloture,
+						`libelle`, `description`,`priorite`) set date_debut = STR_TO_DATE(@date_debut, '%d/%m/%Y'), 
+						date_initial = STR_TO_DATE(@date_initial, '%d/%m/%Y'), date_cloture = STR_TO_DATE(@date_cloture, '%d/%m/%Y')";
+		} else {
 				$query="LOAD DATA LOCAL INFILE '$newPath' INTO TABLE temp_action
 						CHARACTER SET latin1
-						FIELDS TERMINATED BY  ';'
+						FIELDS TERMINATED BY  ';' ENCLOSED BY  '".'"'."'
 						LINES TERMINATED BY  '\\r\\n'
 						IGNORE 1 LINES
 						(`reference`,`prenoms`, `email`,`instance`, `contributeur`,
 						`statut` ,`type_action`,`domaine`,
-						`date_debut`,`date_initial`,`date_cloture`,`libelle`, `description`,`priorite`);
-						";
-			
+						@date_debut, @date_initial, @date_cloture,`libelle`, `description`,`priorite`) set date_debut = STR_TO_DATE(@date_debut, '%d/%m/%Y'), 
+						date_initial = STR_TO_DATE(@date_initial, '%d/%m/%Y'), date_cloture = STR_TO_DATE(@date_cloture, '%d/%m/%Y');";
+		}
 		 $this->connection->prepare($query)->execute();
 	}
 	
@@ -87,9 +86,16 @@ class ActionQuery extends BaseQuery {
 		$query .= "UPDATE temp_action t INNER JOIN utilisateur u ON u.email LIKE t.email SET t.email = u.id;";
 		$query .= "UPDATE temp_action t LEFT JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = NULL WHERE p.id IS NULL;";
 		$query .= "UPDATE temp_action t INNER JOIN priorite p ON p.libelle LIKE t.priorite SET t.priorite = p.id;";
+		for($i = 0; $i < count($this->special_char); $i ++) {
+			if($this->special_char[$i]=="'") {
+				$query .= 'UPDATE temp_action SET instance = REPLACE(instance, "'.$this->special_char[$i].'", "'.$this->replacement_char[$i].'");';
+			} else {
+				$query .= "UPDATE temp_action SET instance = REPLACE(instance, '".$this->special_char[$i]."', '{$this->replacement_char[$i]}');";
+			}
+		}
 		//$query .= "UPDATE temp_action t, statut st SET t.statut = st.id WHERE t.statut LIKE st.etat;";
 		$query .= "UPDATE temp_action t, statut st SET t.code_statut = st.code WHERE LOWER(TRIM(t.statut)) LIKE LOWER(TRIM(st.statut));";
-		$query .= "UPDATE temp_action t INNER JOIN instance i ON i.libelle LIKE t.instance SET t.instance = i.id;";
+		$query .= "UPDATE temp_action t INNER JOIN instance i ON i.code LIKE t.instance SET t.instance = i.id;";
 		$query .= "UPDATE temp_action t INNER JOIN domaine d ON d.libelle_domaine LIKE LOWER(TRIM(t.domaine)) INNER JOIN instance_has_domaine ihd ON ihd.domaine_id = d.id AND ihd.instance_id = t.instance SET t.domaine = d.id;";
 		$query .= "UPDATE temp_action t INNER JOIN type_action ta ON ta.type LIKE LOWER(TRIM(t.type_action))  INNER JOIN instance_has_type_action iht ON iht.type_action_id = ta.id AND iht.instance_id = t.instance SET t.type_action = ta.id;";
 		$this->connection->prepare($query)->execute();
@@ -105,15 +111,9 @@ class ActionQuery extends BaseQuery {
 					break;
 				}
 			}if(!$resultsAction[$i]['date_initial']){
-				$erreurAction .= sprintf("Le délai initial à la ligne %s n'est pas renseigné<br>", $i+2);
+				$erreurAction .= sprintf("Le délai initial à la ligne %s n'est pas valide ou n'est pas renseigné<br>", $i+2);
 			}if(!$resultsAction[$i]['date_debut']){
-				$erreurAction .= sprintf("La date de début à la ligne %s n'est pas renseigné<br>", $i+2);
-			}
-			if(preg_match("/[a-z]/i", $resultsAction[$i]['date_debut'])){
-				$erreurAction .= sprintf("Le format de la date de début à la ligne %s n'existe pas<br>", $i+2);
-			}
-			if(preg_match("/[a-z]/i", $resultsAction[$i]['date_initial'])){
-				$erreurAction .= sprintf("Le format du délai initial à la ligne %s n'existe pas<br>", $i+2);
+				$erreurAction .= sprintf("La date de début à la ligne %s n'est pas valide ou n'est pas renseignée<br>", $i+2);
 			}
 			if($contributeurId) {
 				$erreurAction .= sprintf("L'e-mail du contributeur à la ligne %s n'existe pas<br>", $i+2);
@@ -137,6 +137,8 @@ class ActionQuery extends BaseQuery {
 			}
 			if(is_null($resultsAction[$i]['code_statut'])) {
 				$erreurAction .= sprintf("Le statut à la ligne %s n'existe pas<br>", $i+2);
+			} elseif(in_array($resultsAction[$i]['code_statut'], array(Statut::ACTION_SOLDEE, Statut::ACTION_ABANDONNEE)) && !$resultsAction[$i]['date_cloture']) {
+				$erreurAction .= sprintf("La date de cloture à la ligne %s n'est pas valide ou n'est pas renseignée<br>", $i+2);
 			}
 			if($resultsAction[$i]['priorite'] && ctype_digit($resultsAction[$i]['priorite'])==false) {
 				$erreurAction .= sprintf("La priorité à la ligne %s n'existe pas<br>", $i+2);
@@ -144,7 +146,6 @@ class ActionQuery extends BaseQuery {
 		}
 		if($erreurAction) {
 			throw new ORMException($erreurAction);
-			
 		}
 		$id = array();
 		foreach ($resultsAction as $value){
@@ -157,25 +158,22 @@ class ActionQuery extends BaseQuery {
 	 * @param unknown $nouvelle_statut
 	 * @param \Orange\MainBundle\Entity\Utilisateur $current_user
 	 */
-	public function migrateData($nouvelle_statut, $current_user,$isCorrective) {
+	public function migrateData($nouvelle_statut, $current_user, $isCorrective) {
 		$ref = $isCorrective==0 ? "CONCAT('A_', t.id)" : "CONCAT(t.reference, CONCAT('-A_', t.id))";
-		$query = "update temp_action t
-                set t.code_statut =
-				CASE
-				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')<STR_TO_DATE(t.date_cloture,'%d/%m/%Y') ) or (t.date_cloture='' and STR_TO_DATE(t.date_initial, '%d/%m/%Y')<NOW())) THEN '" . Statut::ACTION_SOLDEE_HORS_DELAI . "'
-				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')>=STR_TO_DATE(t.date_cloture,'%d/%m/%Y') ) or (t.date_cloture!='' and STR_TO_DATE(t.date_initial, '%d/%m/%Y')>=NOW() )) THEN '" . Statut::ACTION_SOLDEE_DELAI . "'
-				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')<NOW() THEN '" . Statut::ACTION_ECHUE_NON_SOLDEE . "'
-				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and STR_TO_DATE(t.date_initial,'%d/%m/%Y')>=NOW() THEN '" . Statut::ACTION_NON_ECHUE . "'
+		$query = "update temp_action t set t.code_statut = CASE
+				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and t.date_initial < t.date_cloture ) or (t.date_cloture='' and t.date_initial < NOW())) THEN '" . Statut::ACTION_SOLDEE_HORS_DELAI . "'
+				WHEN t.code_statut = '" . Statut::ACTION_SOLDEE . "' and ((t.date_cloture!='' and t.date_initial >= t.date_cloture ) or (t.date_cloture!='' and t.date_initial >= NOW() )) THEN '" . Statut::ACTION_SOLDEE_DELAI . "'
+				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and t.date_initial<NOW() THEN '" . Statut::ACTION_ECHUE_NON_SOLDEE . "'
+				WHEN t.code_statut = '" . Statut::ACTION_EN_COURS . "' and t.date_initial>=NOW() THEN '" . Statut::ACTION_NON_ECHUE . "'
 				END
 				where t.code_statut = '" . Statut::ACTION_SOLDEE . "' or t.code_statut = '" . Statut::ACTION_EN_COURS . "';";
 		
 		$query .= "INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`, 
 						   			`libelle`, `description`, `date_action`, `date_debut`, 
-									`date_initial`, `date_cloture`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`, 
+									`date_initial`, `date_cloture`, `date_fin_execution`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`, 
 									`animateur_id`) 
 					select t.id,".$ref.", t.priorite, t.type_action, 
-								  	 t.libelle, t.description, CURRENT_TIMESTAMP(), STR_TO_DATE(date_debut, '%d/%m/%Y'),
-								  	 STR_TO_DATE(date_initial, '%d/%m/%Y'), STR_TO_DATE(date_cloture, '%d/%m/%Y'), 
+								  	 t.libelle, t.description, CURRENT_TIMESTAMP(), date_debut, date_initial, date_cloture, date_cloture, 
 				                     t.domaine,  t.instance, t.code_statut, t.code_statut, t.email," . $current_user->getId () . "
 								  	 from temp_action t;";
 		

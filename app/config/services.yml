@@ -4,6 +4,7 @@ services:
         class: Orange\MainBundle\Service\Logger
         tags:
             - { name: monolog.logger, channel: info } 
+            
     orange.annotation_listener:
         class: Orange\QuickMakingBundle\EventListener\AnnotationListener
         arguments: ["@service_container"]
@@ -113,10 +114,6 @@ services:
             
     form_errors:
         class: Orange\MainBundle\Service\FormErrors
-        
-    orange.main.mapping:
-        class: Orange\MainBundle\Service\Mapping
-        arguments: ["@service_container"]
 
     orange.main.extraction:
         class: Orange\MainBundle\Service\Extraction
@@ -181,10 +178,6 @@ services:
     orange.main.calcul:
         class: Orange\MainBundle\Service\Calcul
         arguments: ["@doctrine.orm.entity_manager", "@service_container"]
-
-    orange.main.data:
-        class: Orange\MainBundle\Service\Data
-        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
         
     orange.main.reporting:
         class: Orange\MainBundle\Service\Reporting
@@ -193,6 +186,7 @@ services:
     orange.main.change_statut:
         class: Orange\MainBundle\Service\ChangeStatut
         arguments: ["@doctrine.orm.entity_manager"]
+        
     orange.force_passupdate:
         class: Orange\MainBundle\EvenListener\PassUpdateListener
         arguments: ["@router", "@security.context", "@session", "@service_container"]
@@ -213,10 +207,6 @@ services:
         
     orange.main.updateStructure:
         class: Orange\MainBundle\Service\UpdateStructure
-        arguments: ["@doctrine.orm.entity_manager", "@service_container"]
-        
-    orange.main.dataStats:
-        class: Orange\MainBundle\Service\MappingStatistique
         arguments: ["@doctrine.orm.entity_manager", "@service_container"]
         
     app.exception_controller:

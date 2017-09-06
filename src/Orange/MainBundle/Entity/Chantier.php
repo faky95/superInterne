@@ -69,7 +69,6 @@ class Chantier
 
     /**
      * Get id
-     *
      * @return integer 
      */
     public function getId()

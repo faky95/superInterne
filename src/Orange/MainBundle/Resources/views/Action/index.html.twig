@@ -45,10 +45,11 @@
 			{% else %}
 				{% if instance_id is not empty %}
 					<a href="{{ path('nouvelle_action_to_instance', {'instance_id': instance_id}) }}" target="_blank"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
+				 <a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
 				{% elseif has_rights('ROLE_ANIMATEUR_ONLY') or has_rights('ROLE_ADMIN') %}
 					<a href="{{ path('nouvelle_action') }}" ><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter une action </button></a>
-				{% endif %}
 				 <a href="{{ path('chargement_action') }}"><button class="btn btn-primary"><span class="icon16 icomoon-icon-download white"></span>Importer des actions</button></a>
+				{% endif %}
 				 <a href="{{ path('export_action') }}"><button class="btn btn-success"><span class="icon16 entypo-icon-export white"></span>Exporter les actions</button></a>
 			{% endif %} 
 				 <div class="marginB10"></div>

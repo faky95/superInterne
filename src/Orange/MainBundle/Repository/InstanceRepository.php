@@ -52,18 +52,23 @@ class InstanceRepository extends BaseRepository{
 	
 	/**
 	 * Methode utilise pour charger la liste des actions
+	 * @param boolean $export
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
-	public function listAllElements() {
-		$queryBuilder = $this->filtrer()
-			->select('partial i.{ id, libelle, description }, partial a.{ id }, partial d.{ id, libelleDomaine }, partial ta.{ id, type }, COUNT(a.id) as number')
+	public function listAllElements($export = false) {
+		$queryBuilder = $this->filtrer();
+		if($export) {
+			$queryBuilder->select('partial i.{ id, libelle, description }, partial d.{ id, libelleDomaine }, partial ani.{ id }, partial u.{ id, prenom, nom }, partial ta.{ id, type }')
 			->leftJoin('i.typeInstance', 'ty')
 			->leftJoin('i.animateur', 'ani')
 			->leftJoin('ani.utilisateur', 'u')
-			->leftJoin('i.action', 'a')
 			->leftJoin('i.domaine', 'd')
 			->leftJoin('i.typeAction', 'ta');
-			//->groupBy('i.id');
+		} else {
+			$queryBuilder->select('partial i.{ id, libelle, description }, COUNT(a.id) as number')
+				->leftJoin('i.action', 'a')
+				->groupBy('i.id');
+		}
 		return $queryBuilder;
 	}
 	

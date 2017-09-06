@@ -23,7 +23,7 @@ class alerteQuartTimeCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$actions = $this->getEntityManager()->getRepository('OrangeMainBundle:Action')->alertQuartTime($bu, $projet, $espace);
-		$tabUsersActions= $this->get('orange.main.data')->actionQuartTime($actions);
+		$tabUsersActions= $this->getMapping()->getRelance()->actionQuartTime($actions);
 		foreach ($tabUsersActions as $key => $user) {
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alerteQuartTime.html.twig', array(
 					'porteur' => $user['porteur'], 'actions' => $user['action'], 'tour' => $tour,

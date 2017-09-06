@@ -86,6 +86,7 @@ class Utilisateur extends BaseUser
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="structure_id", referencedColumnName="id")
      * })
+     * @Assert\NotBlank(message="Vous devez renseigner la structure de l'utilisateur ! ")
      */
     private $structure;
 
@@ -201,7 +202,16 @@ class Utilisateur extends BaseUser
     	return $this->prenom.' '.strtoupper($this->nom).' [ '.$this->getDirection().' ]';
     }
 	
-
+    /**
+     * @param number $id
+     * @return Utilisateur
+     */
+	public static function newWithId($id) {
+		$self = new self;
+		$self->id = $id;
+		return $self;
+	}
+    
     /**
      * Get id
      * @return integer 
@@ -1128,7 +1138,7 @@ class Utilisateur extends BaseUser
     	foreach($data as $animator) {
     		array_push($ids, $animator->getInstance()->getId());
     	}
-    	return $ids;
+    	return count($ids)!=0 ? $ids : array(-1);
     }
     
     /**

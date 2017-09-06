@@ -130,7 +130,7 @@ class UtilisateurController extends BaseController
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
+        $entity = $em->getRepository('OrangeMainBundle:Membre')->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
@@ -293,7 +293,7 @@ class UtilisateurController extends BaseController
     	$em = $this->getDoctrine()->getEntityManager();
     	$query = $em->createQuery($queryBuilder['query']);
     	$query->setParameters($queryBuilder['param']);
-    	$data = $this->get('orange.main.data')->exportUtilisateur($query->execute());
+    	$data = $this->getMapping()->getExtraction()->exportUtilisateur($query->execute());
     	$objWriter = $this->get('orange.main.extraction')->exportUser($data);
     	$filename = sprintf("Extraction des utilisateurs du %s.xlsx", date('d-m-Y à H:i:s'));
     	$objWriter->save($this->get('kernel')->getWebDir()."/upload/user/$filename");

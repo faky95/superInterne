@@ -5,7 +5,11 @@ use Symfony\Component\Templating\EngineInterface;
 
 class Mailer
 {
+	/**
+	 * @var \Swift_Mailer
+	 */
 	protected $mailer;
+	
     protected $templating;
     private $from = "orange@orange.sn";
     private $bcc = array("madiagne.sylla@orange-sonatel.com", "mamekhady.diouf@orange-sonatel.com");
@@ -116,13 +120,26 @@ class Mailer
     public function sendReport($to, $subject, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
+    	->setTo($to)
+    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+    	->setSubject($subject)
+    	->setBody($this->templating->render('OrangeMainBundle:Notification:reporting.html.twig'))
+    	->setContentType('text/html')
+    	->setCharset('utf-8')
+    	->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
+    	return $this->mailer->send($mail);
+    }
+    
+    public function sendExportAction($to, $subject, $file) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
-			->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
 	    	->setSubject($subject)
-	    	->setBody($this->templating->render('OrangeMainBundle:Notification:reporting.html.twig'))
-			->setContentType('text/html')
-			->setCharset('utf-8')
-    		->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:exportAction.html.twig'))
+	    	->setContentType('text/html')
+	    	->setCharset('utf-8')
+	    	->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
     	return $this->mailer->send($mail);
     }
     

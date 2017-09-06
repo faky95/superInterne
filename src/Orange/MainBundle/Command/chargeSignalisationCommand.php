@@ -15,7 +15,7 @@ class chargeSignalisationCommand extends BaseCommand {
 	public function execute(InputInterface $input, OutputInterface $output) {
 		$em = $this->getEntityManager();
 		$signs = $em->getRepository('OrangeMainBundle:Signalisation')->signalisationACharger();
-		$data = $this->get('orange.main.data')->nouvelleSignalisation($signs);
+		$data = $this->getMapping()->getRelance()->nouvelleSignalisation($signs);
 		$animateurs = array();
 		foreach($data['instance'] as $instance) {
 			foreach ($instance['animateurs'] as $animateur){

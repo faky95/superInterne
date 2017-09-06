@@ -90,7 +90,7 @@ class SignalisationController extends BaseController
 		$query = $em->createQuery($queryBuilder['query']);
 		$query->setParameters($queryBuilder['param']);
 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatutSign();
-		$data = $this->get('orange.main.data')->exportSignalisation($query->execute(),  $statut->getQuery()->execute());
+		$data = $this->getMapping()->getExtraction()->exportSignalisation($query->execute(),  $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);
 		$filename = sprintf("Extraction_des_signalisations_du_%s.xlsx", date('d-m-Y'));
 		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
@@ -107,7 +107,7 @@ class SignalisationController extends BaseController
 		$queryBuilder = $this->get('session')->get('canevas', array());
 		$query = $em->createQuery($queryBuilder['query']);
 		$query->setParameters($queryBuilder['param']);
-		$data = $this->get('orange.main.data')->exportCanevas($query->execute());
+		$data = $this->getMapping()->getExtraction()->exportCanevas($query->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
 		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
         $response->headers->set('Content-Type', 'text/csv; charset=ISO-8859-1;');
@@ -559,8 +559,10 @@ class SignalisationController extends BaseController
     		$arrData = array();
     	} elseif($parent && $parent->getConfiguration()) {
     		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listDomaineByInstance($parent, $instance->getLibelle());
+    	} elseif($parent) {
+    		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($parent->getId());
     	} else {
-        	$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
+    		$arrData = $em->getRepository('OrangeMainBundle:Domaine')->listByInstance($instance->getId());
     	}
         $output = array(0 => array('id' => null, 'libelle' => 'Choisir un domaine  ...'));
         foreach ($arrData as $data) {

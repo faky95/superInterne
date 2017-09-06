@@ -29,6 +29,7 @@ use Orange\MainBundle\Form\ActionType;
 use Orange\MainBundle\OrangeMainForms;
 use Orange\MainBundle\Entity\Projet;
 use Orange\MainBundle\Entity\Chantier;
+use Orange\MainBundle\Entity\Extraction;
 
 /**
  * Action controller.
@@ -43,7 +44,7 @@ class ActionController extends BaseController
 		$bu = $projet = $espace = array();
 		$em = $this->getDoctrine()->getManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
-		$this->get('orange.main.data')->mapDataforAlertDepassement($actions);
+		$this->getMapping()->getRelance()->setEntityManager($em)->mapDataforAlertDepassement($actions);
 		return array();
 	}
 
@@ -261,22 +262,24 @@ class ActionController extends BaseController
 	 * @Route("/export_action", name="export_action")
 	 */
 	public function exportAction() {
+		$em = $this->getDoctrine()->getEntityManager();
 		$response = new Response();
 		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
 		$response->sendHeaders();
 		$queryBuilder = $this->get('session')->get('data', array());
-		$em = $this->getDoctrine()->getManager();
+		if($queryBuilder['totalNumber'] > 10000) {
+			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']));
+			$em->persist($extraction);
+			$em->flush();
+			$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
+			return $this->redirect($this->getRequest()->headers->get('referer'));
+		}
  		$query = $em->createQuery($queryBuilder['query']);
  		$query->setParameters($queryBuilder['param']);
- 		$statut        = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
- 		$actions       = $query->getArrayResult();
- 		$ids           = array_column($actions, 'id');
- 		$contributeurs = $em->getRepository('OrangeMainBundle:Contributeur')->findContributeursForManyAction($ids);
- 		$avancement    = $em->getRepository('OrangeMainBundle:ActionAvancement')->findForManyAction($ids);
-  		$divers        = array('contributeur'=>$contributeurs,'avancement'=>$avancement);
+ 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
- 		$objWriter = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute(),$divers);
+ 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->getArrayResult(), $statut->getQuery()->execute());
 		$objWriter->save('php://output');
 		return $response;
 	}
@@ -412,6 +415,7 @@ class ActionController extends BaseController
     	$form   = $this->createCreateForm($entity, 'ActionChange');
     	if($request->isMethod('POST')) {
     		$form->handleRequest($request);
+    		var_dump($form->getErrorsAsString());exit;
     		if($form->isValid()) {
     			$this->get('orange.main.change_statut')->ChangeStatutAction($entity, $this->getUser());
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Statut changé avec succés.'));
@@ -598,6 +602,7 @@ class ActionController extends BaseController
         $statut = new ActionStatut();
         $today = new \DateTime();
         if($request->getMethod() == 'POST') {
+        	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         	$form->handleRequest($request);
         	if($form->isValid()) {
         		if($entity->getDateInitial() > $today){
@@ -748,6 +753,7 @@ class ActionController extends BaseController
      */
     public function importAction(Request $request, $espace_id=null, $action_generique_id=null) {
     	$em   = $this->getDoctrine()->getManager();
+    	$this->denyAccessUnlessGranted('import', new Action(), 'Unauthorized access!');
     	$array =  array();
         $form = $this->createForm(new LoadingType());
         $form->add('isCorrective','hidden');
@@ -776,7 +782,7 @@ class ActionController extends BaseController
                 $this->get('session')->getFlashBag()->add('success', array (
                 		'title' => 'Notification',
                 		'body' => "Le chargement s'est effectué avec succés! Nombre d'actions chargées:  $nbr"
-                ));
+                	));
                 return $this->redirect($this->generateUrl('les_actions'));
             } catch(ORMException $e) {
             	$this->get('session')->getFlashBag()->add('error', array ('title' => 'Message d\'erreur', 'body' => nl2br($e->getMessage())));
@@ -872,6 +878,7 @@ class ActionController extends BaseController
     	foreach ($structs as $struct){
     		array_push($structures, $struct->getId());
     	}
+    	exit($em->getRepository('OrangeMainBundle:Utilisateur')->listByInstance($structures)->getQuery()->getSQL());
     	$arrData = $em->getRepository('OrangeMainBundle:Utilisateur')->listByInstance($structures)->getQuery()->execute();
     	$output = array(0 => array('id' => null, 'libelle' => 'Choisir un porteur ...'));
     	foreach ($arrData as $data) {
@@ -892,10 +899,10 @@ class ActionController extends BaseController
         $output = array(0 => array('id' => null, 'libelle' => 'Choisir un type  ...'));
         foreach ($arrData as $data) {
             $output[] = array('id' => $data['id'], 'libelle' => $data['type']);
-      }
-      $response = new Response();
-      $response->headers->set('Content-Type', 'application/json');
-      return $response->setContent(json_encode($output));
+      	}
+     	$response = new Response();
+      	$response->headers->set('Content-Type', 'application/json');
+      	return $response->setContent(json_encode($output));
     }
     
     /**

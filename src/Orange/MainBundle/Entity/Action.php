@@ -247,13 +247,13 @@ class Action
     private $tmp_contributeur;
     
     /**
-     * @var \Orange\MainBundle\Entity\Document
+     * @var Document
      */
     private $erq;
     
     /**
      * @var \Orange\MainBundle\Entity\Statut
-     * 
+     * @Assert\NotBlank(message="Choisissez le statut de l'action ")
      */
     private $statutChange;
     

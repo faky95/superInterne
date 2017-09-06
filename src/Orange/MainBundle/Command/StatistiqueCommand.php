@@ -37,7 +37,7 @@ class StatistiqueCommand extends BaseCommand
 			->getQuery()
 			->execute();
 		if(!empty($stats)) {
-			$statistiquePorteur = $this->get('orange.main.mapping')->mapStatistiqueByInstance($stats);
+			$statistiquePorteur = $this->getMapping()->getReporting()->mapStatistiqueByInstance($stats);
 			$tempRow['type_id'] 				= 1;
 			$statistiquerow = $this->emplileStatutRow($statistiquePorteur, $tempRow);
 			foreach($statistiquerow as $row) {

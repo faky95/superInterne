@@ -17,9 +17,11 @@
 		</div>
 		{{ form_row(form.commentaire)}}
 		<div class="todo">
-			<h4>Le(s) ERQ(s) <a href="#myModal" class="icon tip" title="Nouvel ERQ"><span class="icon16 icomoon-icon-plus-2"></span></a></h4>
+			<h4>Le(s) ERQ(s) <a href="#myModal" style="float: right;"><span class="icon12 cut-icon-plus"></span></a>
 		</div>
-		{{ form_widget(form.erq)}} 
+		{% for erqForm in form.erq %}
+		    <div>{{ form_widget(erqForm.file)}}</div> 
+		{% endfor %}
 		{{ form_widget(form._token) }}
 		<!-- End .form-group  -->
 	</div>

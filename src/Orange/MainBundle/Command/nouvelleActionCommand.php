@@ -23,9 +23,8 @@ class nouvelleActionCommand extends BaseCommand {
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->nouvelleAction($bu, $projet, $espace);
-		$data = $this->get('orange.main.data')->relanceNewAction($actions);
-		foreach($data as $action)
-        {
+		$data = $this->getMapping()->getRelance()->relanceNewAction($actions);
+		foreach($data as $action) {
             $to = $action['emailPorteur'];
 			$cc = array($action['emailManager'], $action['emailAnimateur']); 
 			$subject = 'Prise en charge d\'une action';

@@ -19,6 +19,7 @@ class ReportingStructureCommand extends BaseCommand {
 			'nbSoldeeDansLesDelais' => "Soldée dans les délais",
 			'total' => "Total" 
 	);
+	
 	protected function configure() {
 		parent::configure();
 		$this->setName($this->getName() . ':reporting_structure')
@@ -49,6 +50,7 @@ class ReportingStructureCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
+		$reportingMapping = $this->getMapping()->getReporting();
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiStructure($bu, $espace, $projet);
 		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting();
 		$mapUsers = array();
@@ -74,12 +76,12 @@ class ReportingStructureCommand extends BaseCommand {
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
-				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
+				$req = $reportingMapping->combineTacheAndAction($query->getArrayResult());
 				$arrType = unserialize($envoi->getReporting()->getArrayType());
-				$map = $this->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+				$map = $reportingMapping->transformRequeteToSimple($req, $arrType);
 				$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
 				$data = $this->get('orange.main.calcul')->stats($bu, $map);
-				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'structure', $arrType, $bu);
+				$data = $reportingMapping->mappingDataStats($data, 'structure', $arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportingstructureAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle() . '-' . date("Y-m-d_H-i") . '.xlsx';
 				$i = 0;

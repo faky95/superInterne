@@ -22,7 +22,7 @@ class demandeAbandonCommand extends BaseCommand {
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->alertAnimateurForAbandon($bu, $projet, $espace);
-		$data = $this->get('orange.main.data')->mapDataforAlertAnimateur($actions);
+		$data = $this->getMapping()->getRelance()->mapDataforAlertAnimateur($actions);
 		foreach($data['instance'] as $instance) {
             $animateurs = array();
 			foreach ($instance['animateurs'] as $animateur){

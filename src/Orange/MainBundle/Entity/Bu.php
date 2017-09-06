@@ -423,7 +423,7 @@ class Bu
     	foreach($this->instance as $instance) {
     		$ids[] = $instance->getId();
     	}
-        return $ids;
+        return count($ids)!=0 ? $ids : array(-1);
     }
 
     /**

@@ -1,5 +1,4 @@
 <?php
-
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -9,12 +8,11 @@ use Orange\MainBundle\Entity\Source;
 
 /**
  * Instance
- *
  * @Gedmo\Tree(type="nested")
  * @ORM\Table(name="instance")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\InstanceRepository")
  */
-class Instance
+class Instance extends BaseEntity
 {
     /**
      * @var integer
@@ -23,17 +21,20 @@ class Instance
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    private $id;
+	private $id;
 	
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="libelle", type="string", length=45, nullable=false)
-     * 
-     * @Assert\NotBlank()
-     * 
-     */
-    private $libelle;
+	/**
+	 * @var string
+	 * @ORM\Column(name="libelle", type="string", length=45, nullable=false)
+	 * @Assert\NotBlank()
+	 */
+	private $libelle;
+	
+	/**
+	 * @var string
+	 * @ORM\Column(name="code", type="string", length=45, nullable=false)
+	 */
+	private $code;
 
     /**
      * @var string
@@ -267,8 +268,8 @@ class Instance
      */
     public function setLibelle($libelle)
     {
+    	$this->code = $this->removeSpecialChar($libelle);
         $this->libelle = $libelle;
-
         return $this;
     }
 

@@ -141,6 +141,14 @@ class Actions {
 	}
 	
 	/**
+	 * @param \Orange\MainBundle\Entity\Notification $entity
+	 * @return string
+	 */
+	public function generateActionsForNotification($entity) {
+		return null;
+	}
+	
+	/**
 	 * @param \Orange\MainBundle\Entity\Reporting $entity
 	 * @return string
 	 */

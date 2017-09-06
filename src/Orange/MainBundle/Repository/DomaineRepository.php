@@ -28,7 +28,7 @@ class DomaineRepository extends BaseRepository{
 		->orWhere($queryBuilder->expr()->in('d.id', $this->animateurQueryBuilder($data)->getDQL()))
 		->orWhere($queryBuilder->expr()->in('d.id', $this->chefProjetQueryBuilder($data)->getDQL()))
 		->orWhere($queryBuilder->expr()->in('d.id', $this->managerQueryBuilder($data)->getDQL()))
-		->orWhere($queryBuilder->expr()->in('d.id', $this->porteurQueryBuilder($data)->getDQL()))
+		//->orWhere($queryBuilder->expr()->in('d.id', $this->porteurQueryBuilder($data)->getDQL()))
 		->orWhere($queryBuilder->expr()->in('d.id', $this->sourceQueryBuilder($data)->getDQL()));
 		foreach($data as $value) {
 			$parameters[$value->getName()] = $value->getValue();

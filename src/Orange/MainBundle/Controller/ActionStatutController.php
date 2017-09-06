@@ -361,8 +361,11 @@ class ActionStatutController extends BaseController
 		$date = date('Y-m-d');
     	$entity = new ActionStatut();
     	$em = $this->getDoctrine()->getManager();
+    	$entity->setErq(new \Doctrine\Common\Collections\ArrayCollection());
+    	$entity->getErq()->add(new \Orange\MainBundle\Entity\Document());
+    	$entity->getErq()->add(new \Orange\MainBundle\Entity\Document());
     	$form = $this->createCreateForm($entity,'ActionStatut');
-		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
+    	$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		if($request->getMethod() == 'POST') {
 			$form->handleRequest($request);
 			if($form->isValid()) {
@@ -370,17 +373,15 @@ class ActionStatutController extends BaseController
 					if($action->getDateInitial()->format('Y-m-d') >= $entity->getDateFinExecut()->format('Y-m-d')){
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
-					}
-					else{
+					} else {
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_HORS_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
 					}
-				}else{
+				} else {
 					if($action->getDateInitial()->format('Y-m-d') >= $date){
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
-					}
-					else{
+					} else {
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_HORS_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
 					}
