@@ -7,7 +7,7 @@ use Doctrine\ORM\Mapping as ORM;
  * Contributeur d'une action
  *
  * @ORM\Table(name="contributeur")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ContributeurRepository")
  */
 class Contributeur
 {

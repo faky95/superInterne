@@ -266,12 +266,17 @@ class ActionController extends BaseController
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
 		$response->sendHeaders();
 		$queryBuilder = $this->get('session')->get('data', array());
-		$em = $this->getDoctrine()->getEntityManager();
+		$em = $this->getDoctrine()->getManager();
  		$query = $em->createQuery($queryBuilder['query']);
  		$query->setParameters($queryBuilder['param']);
- 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+ 		$statut        = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+ 		$actions       = $query->getArrayResult();
+ 		$ids           = array_column($actions, 'id');
+ 		$contributeurs = $em->getRepository('OrangeMainBundle:Contributeur')->findContributeursForManyAction($ids);
+ 		$avancement    = $em->getRepository('OrangeMainBundle:ActionAvancement')->findForManyAction($ids);
+  		$divers        = array('contributeur'=>$contributeurs,'avancement'=>$avancement);
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
- 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->getArrayResult(), $statut->getQuery()->execute());
+ 		$objWriter = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute(),$divers);
 		$objWriter->save('php://output');
 		return $response;
 	}

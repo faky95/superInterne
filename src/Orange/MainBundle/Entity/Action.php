@@ -294,6 +294,7 @@ class Action
 		$this->isReload = false;
 		$this->contributeur = new ArrayCollection();
 		$this->signalisation = new \Doctrine\Common\Collections\ArrayCollection();
+		$this->avancement = new ArrayCollection();
 		$this->tmp_contributeur  = new ArrayCollection();
 		$this->groupe = new ArrayCollection();
 		$this->reference = "ACTION_".$this->getId().strtoupper(ActionUtils::random(10));
