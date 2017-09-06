@@ -109,7 +109,7 @@ class Extraction extends \PHPExcel {
 	 * @param array $dataStatut
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
-	public function exportAction($arrData, $dataStatut) {
+	public function exportAction($arrData, $dataStatut, $arrAvancement = array()) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
 			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
@@ -156,6 +156,7 @@ class Extraction extends \PHPExcel {
 			}
 			$avancements = null;
 			$j=1;
+			//var_dump($value['avancement']);echo '<br />';
 			foreach ($value['avancement'] as $avancement) {
 				$avancements = $avancements."\n".$j.'. '.$avancement['description'];
 				$j++;
@@ -181,6 +182,7 @@ class Extraction extends \PHPExcel {
 					$avancements
 				);
 		}
+		//exit;
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;

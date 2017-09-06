@@ -8,17 +8,12 @@ class FormErrors
         return $this->getErrors($form);
     }
 
-    private function getErrors($form)
-    {
+    private function getErrors($form) {
         $errors = array();
-
-        if ($form instanceof \Symfony\Component\Form\Form) {
-
+        if($form instanceof \Symfony\Component\Form\Form) {
             foreach ($form->getErrors() as $error) {
-
                 $errors[] = $error->getMessage();
             }
-
             foreach ($form->all() as $key => $child) {
                 /** @var $child \Symfony\Component\Form\Form */
                 if ($err = $this->getErrors($child)) {
@@ -26,7 +21,6 @@ class FormErrors
                 }
             }
         }
-
         return $errors;
     }
 }

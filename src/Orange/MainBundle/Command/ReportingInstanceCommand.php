@@ -53,6 +53,7 @@ class ReportingInstanceCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
+		$reportingMapping = $this->getMapping()->getReporting();
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiInstance($bu, $espace, $projet);
 		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting($bu, $espace, $projet);
 		$mapUsers = array();
@@ -80,12 +81,12 @@ class ReportingInstanceCommand extends BaseCommand {
 					$idActions = $this->mapIds($query2->execute());
 					$actions = $em->getRepository('OrangeMainBundle:Action')->filterExportReporting($idActions);
 				}
-				$req = $this->get('orange.main.dataStats')->combineTacheAndAction($query->getArrayResult());
+				$req = $reportingMapping->combineTacheAndAction($query->getArrayResult());
 				$arrType=unserialize($envoi->getReporting()->getArrayType());
-				$map= $this->get('orange.main.dataStats')->transformRequeteToSimple($req,$arrType );
+				$map= $reportingMapping->transformRequeteToSimple($req,$arrType );
 				$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
 				$data = $this->get('orange.main.calcul')->stats($bu, $map);
-				$data = $this->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType, $bu);
+				$data = $reportingMapping->mappingDataStats($data, 'instance',$arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().date("Y-m-d_H-i").'.xlsx';
 				$i=0;
@@ -106,8 +107,8 @@ class ReportingInstanceCommand extends BaseCommand {
 		if(!empty($chemin)) {
 			$this->getMailer()->sendLogsMail(
 					"Journal sur les reporting par instance",
-					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig",
-							array('libelle'=>" reportings par instance")),$chemin);
+					$this->getTemplating()->render("OrangeMainBundle:Relance:logsMailSend.html.twig", array('libelle'=>" reportings par instance")), $chemin
+				);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

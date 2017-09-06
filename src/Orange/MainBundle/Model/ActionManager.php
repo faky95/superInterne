@@ -127,7 +127,7 @@ class ActionManager
 		$emailContributeur = ActionUtils::getEmailContributeur($this->em, $action);
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Action non soldee';
-		$commentaire = '. L\'action n\'a pas été soldée par ' . $this->user->getCompletNom() . '. Merci de retraiter l\'action';
+		$commentaire = 'L\'action n\'a pas été soldée par '.$this->user->getCompletNom().'. Merci de retraiter l\'action';
 		$emailPorteur = array($emailPorteur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);

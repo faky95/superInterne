@@ -93,18 +93,19 @@ class StatistiqueController extends BaseController
      */
     public function tableauStatistiqueEvoUtilisateurAction() {
     	$criteria=null;
-    	$init=array();
-    	$semaines=$this->createArrSemaine();
+    	$init = array();
+    	$reportingMapping = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager());
+    	$semaines = $this->createArrSemaine();
     	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Statistique');
     	$bu=$this->getUser()->getStructure()->getBuPrincipal();
     	$user=$this->getUser();
     	$reqEvP=$rep->getStatsUserBySemaine($user, 1, $criteria);
     	$dataEvP = $this->container->get('orange.main.calcul')->stats($bu, $reqEvP);
-    	$statsEvP = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($dataEvP, 'semaine');
+    	$statsEvP = $reportingMapping->mappingDataStatsEvo($dataEvP, 'semaine');
     
     	$reqEvC=$rep->getStatsUserBySemaine($user, 2, $criteria);
     	$dataEvC = $this->container->get('orange.main.calcul')->stats($bu, $reqEvC);
-    	$statsEvC = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($dataEvC, 'semaine');
+    	$statsEvC = $reportingMapping->mappingDataStatsEvo($dataEvC, 'semaine');
     	$statsEvM=array();
     	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
     		$id=$this->getUser()->getStructure()->getId();
@@ -213,9 +214,9 @@ class StatistiqueController extends BaseController
     	$refsAction = array_map(function($tag) {
 			    		return array('id' => $tag['id'],'libelle' => $tag['libelle']);
 			    	}, $result);
-        $map  = $this->get('orange.main.dataStats')->transformRequeteToSimple($result, $refsAction);
+        $map  = $this->getMapping()->getReporting()->transformRequeteToSimple($result, $refsAction);
         $data = $this->get('orange.main.calcul')->stats($bu, $map); 
-        $tableau = $this->get('orange.main.dataStats')->mappingDataStats($data, 'action_generique',$refsAction);
+        $tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'action_generique',$refsAction);
         foreach ($tableau['taux'] as $key => $taux) {
         	$graphe[$key]=array();
         }
@@ -282,19 +283,20 @@ class StatistiqueController extends BaseController
     	}
     	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR) {
      			$req=$this->getDoctrine()->getRepository('OrangeMainBundle:Action')->getStatsByStructureInstance($tabRoles[$role],$form->getData());
-     			$map=$this->container->get('orange.main.dataStats')->transformRequeteToCroise($req,$structures,$instances);
+     			$map = $this->getMapping()->getReporting()->transformRequeteToCroise($req,$structures,$instances);
      			$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
-     			$tabCroise = $this->container->get('orange.main.dataStats')->mappingDataStatsCroise($data, 'structure','instance',$structures,$instances);
+     			$tabCroise = $this->getMapping()->getReporting()->setEntityManager($this->getMapping()->getReporting())
+     				->mappingDataStatsCroise($data, 'structure', 'instance', $structures, $instances);
      			$graphe=$this->createManyGrapheStat($tabCroise,'structure','instance');
     	}
     	if($tabByInstance['instance']) {
     		$tmp_inst = 1;
-    	}else{
+    	} else {
     		$tmp_inst = 0;
     	}
     	if ($tabByStructure) {
     		$tmp_struct = 1;
-    	}else{
+    	} else {
     		$tmp_struct = 0;
     	}
     	return array(
@@ -314,11 +316,11 @@ class StatistiqueController extends BaseController
     	if($type=='instance') {
     		$rq = $rep->getStatsByInstance($role, $criteria);
     		$reqActions = $rep->getStatsByInstance2($role, $criteria);
-    		$req =$this->container->get('orange.main.dataStats')-> combineTacheAndActionByPorteur($rq->addGroupBy('u.id')->getQuery()->getArrayResult());
-    		$map= $this->container->get('orange.main.dataStats')->transformRequeteToPorteur($req, $arrType);
+    		$req = $this->getMapping()->getReporting()->combineTacheAndActionByPorteur($rq->addGroupBy('u.id')->getQuery()->getArrayResult());
+    		$map = $this->getMapping()->getReporting()->transformRequeteToPorteur($req, $arrType);
     		
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
-    		$tableau = $this->container->get('orange.main.dataStats')->mappingDataStats($data, 'instance',$arrType);
+    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'instance',$arrType);
     		$this->get('session')->set('donnees_reporting_actions_instance', array('query'=>$reqActions->getDQL(), 'param'=>$reqActions->getParameters()));
     		$this->get('session')->set('donnees_reporting_instance', array('data'=>$tableau, 'req'=>$rq->getDQL(), 'role' => $role, 'param'=>$rq->getParameters()));
     		$this->get('session')->set('reporting_instance', array(
@@ -328,14 +330,14 @@ class StatistiqueController extends BaseController
     	} else {
     		$rq=$rep->getStatsByStructure($role, $criteria);
     		$reqActions=$rep->getStatsByStructure2($role, $criteria);
-    		$req =$this->container->get('orange.main.dataStats')-> combineTacheAndAction($rq->getQuery()->getArrayResult());
-    		$mapM= $this->container->get('orange.main.dataStats')->transformRequeteToSimple($req, $arrType);
+    		$req =$this->getMapping()->getReporting()-> combineTacheAndAction($rq->getQuery()->getArrayResult());
+    		$mapM= $this->getMapping()->getReporting()->transformRequeteToSimple($req, $arrType);
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $mapM);
-    		$tableau = $this->container->get('orange.main.dataStats')->mappingDataStats($data, 'structure',$arrType);
+    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'structure',$arrType);
     		$this->get('session')->set('donnees_reporting_actions_structure',array('query'=>$reqActions->getDQL() , 'param'=>$reqActions->getParameters()));
     		$this->get('session')->set('donnees_reporting_structure',array('data'=>$tableau, 'req'=>$rq->getDQL(), 'param'=>$rq->getParameters() ));
     		$this->get('session')->set('reporting_structure',array('req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 1, 'arrType' => serialize($arrType)));
-    		$this->get('session')->set('type',array('valeur' => 1));
+    		$this->get('session')->set('type', array('valeur' => 1));
     	}
     	return $tableau;
     }
@@ -376,7 +378,7 @@ class StatistiqueController extends BaseController
     	if ($tabRoles[$role]==Utilisateur::ROLE_CONTRIBUTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 2, $form->getData());
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
-    		$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($data, 'semaine');
+    		$stats = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($data, 'semaine');
     	}
     	
     	if(($request->getMethod()=='POST') && $form->getData()) {
@@ -404,7 +406,7 @@ class StatistiqueController extends BaseController
     	if($tabRoles[$role]==Utilisateur::ROLE_PORTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 1, $form->getData());
     		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
-    		$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($data, 'semaine');
+    		$stats = $this->getMapping()->getReporting()->mappingDataStatsEvo($data, 'semaine');
     		$graphe=$this->createGrapheEvo($stats);
     	}
     	return array(
@@ -488,17 +490,17 @@ class StatistiqueController extends BaseController
 		foreach($query['param'] as $value) {
 			if(is_numeric($value->getValue()) || is_array($value->getValue()) ) {
 				$param[$value->getName()] = $value->getValue();
-			}
-			else
+			} else {
 				$param[$value->getName()] = $value->getValue()->getId();
+			}
 		}
 		
     	foreach($req['param'] as $value) {
     		if(is_numeric($value->getValue()) || is_array($value->getValue()) ) {
     			$parameters[$value->getName()] = $value->getValue();
-    		}
-    		else
+    		} else {
     			$parameters[$value->getName()] = $value->getValue()->getId();
+    		}
     	}
     	$entity = new Reporting();
 		$entity->setArrayType($req['arrType']);
@@ -654,6 +656,7 @@ class StatistiqueController extends BaseController
      * le type est soit instance ou structure
      */
     public function createTableauEvoByType(&$params, $type,$criteria) {
+    	$reportingMapping = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager());
     	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Statistique');
     	$bu=$this->getUser()->getStructure()->getBuPrincipal();
     	$semaines=$this->createArrSemaine();
@@ -662,12 +665,12 @@ class StatistiqueController extends BaseController
     		case 'instance':
     			$req=$rep->getStatistiqueEvolutiveByInstance($criteria)->getQuery()->getArrayResult();
     			$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
-    			$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsCroise($data, 'instance','semaine',$params,$semaines);
+    			$stats = $reportingMapping->mappingDataStatsCroise($data, 'instance', 'semaine', $params, $semaines);
     		break;
     		case 'structure':
     			$req=$rep->getStatistiqueEvolutiveByStructure($criteria);
     			$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
-    			$stats = $this->container->get('orange.main.dataStats')->mappingDataStatsCroise($data, $type,'semaine',$params,$semaines);
+    			$stats = $reportingMapping->mappingDataStatsCroise($data, $type, 'semaine', $params, $semaines);
     		break;
     	}
     	return $stats;

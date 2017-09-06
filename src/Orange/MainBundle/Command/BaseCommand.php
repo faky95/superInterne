@@ -35,9 +35,19 @@ class BaseCommand extends ContainerAwareCommand
 	public function getTemplating() {
 		return $this->get('templating');
 	}
-
+	
+	/**
+	 * @return \Orange\MainBundle\Service\Mailer
+	 */
 	public function getMailer() {
 		return $this->get('orange.main.mailer');
+	}
+	
+	/**
+	 * @return \Orange\MainBundle\Mapping\AbstractMapping
+	 */
+	public function getMapping() {
+		return new \Orange\MainBundle\Mapping\AbstractMapping();
 	}
 
 }

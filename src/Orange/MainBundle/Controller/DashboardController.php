@@ -1,20 +1,19 @@
 <?php
 namespace Orange\MainBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Orange\QuickMakingBundle\Controller\BaseController;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Utilisateur;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
-use Orange\MainBundle\Entity\Reporting;
 /**
  * Controlleur du Tableau de bord
  * @author madiagne
  *
  */
-class DashboardController extends Controller {
+class DashboardController extends BaseController {
 	
 	CONST NBSEM=53;
 	
@@ -33,7 +32,7 @@ class DashboardController extends Controller {
 		$res = $this->container->get('orange.main.calcul')->cumul($reqEvP);
 		$colors = $this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->listColorOfBu($bu);
 		$dataEvP = $this->container->get('orange.main.calcul')->stats($bu, $res);
-		$statsEvP = $this->container->get('orange.main.dataStats')->mappingDataStatsEvo($dataEvP, 'semaine');
+		$statsEvP = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($dataEvP, 'semaine');
 		$graphe=array();
 		foreach($statsEvP['taux'] as $key=>$value) {
 			$graphe[$key]=array();
@@ -139,7 +138,7 @@ class DashboardController extends Controller {
 			$role=Utilisateur::ROLE_PORTEUR;
 		}
 		$rq=$rep->listAllElementsGeneral($role);
-		$map= $this->container->get('orange.main.dataStats')->transformRequeteToSimpleNull($rq);
+		$map= $this->getMapping()->getReporting()->transformRequeteToSimpleNull($rq);
 		return array('req'=>$map);
 	}
 	

@@ -22,7 +22,7 @@ class AlertesForAnimatorCommand extends BaseCommand {
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
 		$actions = $em->getRepository('OrangeMainBundle:Action')->alertAnimateurGlobal($bu, $espace, $projet)->getQuery()->execute();
-		$data = $this->get('orange.main.data')->mapDataforAlertAnimateurGlobal($actions);
+		$data = $this->getMapping()->getRelance()->mapDataforAlertAnimateurGlobal($actions);
 		foreach($data as $value) {
 			$to = array($value['email']);
 			$cc = $value['manager']!=null ? array($value['manager']) : null;

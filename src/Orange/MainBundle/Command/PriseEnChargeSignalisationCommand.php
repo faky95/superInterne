@@ -24,7 +24,7 @@ class PriseEnChargeSignalisationCommand extends BaseCommand {
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
 		$signs = $em->getRepository('OrangeMainBundle:Signalisation')->nouvelleSignalisation($bu, $projet, $espace);
-		$this->get('orange.main.data')->priseEnChargeSignalisationAction($signs);
+		$this->getMapping()->getRelance()->setEntityManager($em)->priseEnChargeSignalisationAction($signs);
 			
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

@@ -2,6 +2,14 @@
 parameters:
     template_status: OrangeMainBundle:Extra:status.html.twig
     ids:
+        cibleNotification:
+            porteur: 1
+            animateur: 2
+            manager: 3
+        typeNotification:
+            relanceDepassement: 1
+            rappelQuartTemps: 2
+            relanceValidation: 3 
     
     pas:
         Hebdomadaire: 1

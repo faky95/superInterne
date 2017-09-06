@@ -23,8 +23,17 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	public function getAllActions() {
-		return $this->createQueryBuilder('a')->select('a.etatCourant AS type_statut, inst.id AS instance_id, '.date('W').' as semaine, dom.id AS domaine_id, typ.id AS type_action_id, COUNT(a.id) as nombre,
-				port.id AS porteur_id, struct.id AS structure_id')->leftJoin('a.instance', 'inst')->leftJoin('a.porteur', 'port')->leftJoin('a.structure', 'struct')->leftJoin('a.domaine', 'dom')->leftJoin('a.typeAction', 'typ')->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")->groupBy('type_statut, instance_id, domaine_id, type_action_id, porteur_id, structure_id')->getQuery()->getResult();
+		return $this->createQueryBuilder('a')->select('a.etatCourant AS type_statut, inst.id AS instance_id, '.date('W').' as semaine')
+				->addSelect('dom.id AS domaine_id, typ.id AS type_action_id, COUNT(a.id) as nombre, port.id AS porteur_id, struct.id AS structure_id')
+				->leftJoin('a.instance', 'inst')
+				->leftJoin('a.porteur', 'port')
+				->leftJoin('a.structure', 'struct')
+				->leftJoin('a.domaine', 'dom')
+				->leftJoin('a.typeAction', 'typ')
+				->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")
+				->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'")
+				->groupBy('type_statut, instance_id, domaine_id, type_action_id, porteur_id, structure_id')
+				->getQuery()->getResult();
 	}
 	
 	public function findAll() {
@@ -33,9 +42,9 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	public function getActions($ids) {
-		return $this->createQueryBuilder('a')->where('a.id IN(:ids)')->setParameters(array(
-				'ids' => $ids 
-		))->getQuery()->getResult();
+		return $this->createQueryBuilder('a')
+			->where('a.id IN(:ids)')->setParameters(array('ids' => $ids ))
+			->getQuery()->getResult();
 	}
 	
 	public function statistiqueUtilisateur($action_liste, $all) {
@@ -422,7 +431,16 @@ class ActionRepository extends BaseRepository {
 	 * @return QueryBuilder
 	 */
 	public function filterForStruct() {
-		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi');
+		$queryBuilder = $this->createQueryBuilder('a')
+			->innerJoin('a.instance', 'insta')
+			->leftJoin('insta.espace', 'espa')
+			->leftJoin('a.signalisation', 'sign')
+			->leftJoin('sign.source', 'src')
+			->innerJoin('a.porteur', 'port')
+			->leftJoin('a.priorite', 'priori')
+			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')
+			->innerJoin('a.porteur', 'mp')
+			->innerJoin('a.instance', 'mi');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}
@@ -440,7 +458,10 @@ class ActionRepository extends BaseRepository {
 	 * @return QueryBuilder
 	 */
 	public function filterGeneral() {
-		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi')->select('count(a.id) total ,a.etatCourant action_etat')->groupBy('a.etatCourant');
+		$queryBuilder = $this->createQueryBuilder('a')
+			->innerJoin('a.instance', 'insta')
+			->leftJoin('insta.espace', 'espa')
+			->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi')->select('count(a.id) total ,a.etatCourant action_etat')->groupBy('a.etatCourant');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}
@@ -452,7 +473,7 @@ class ActionRepository extends BaseRepository {
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getInstanceIds()));
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_CHEF_PROJET)) {
-			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getInstanceIdsForChefProjet()));
+			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)',  $this->checkEmptyArray($this->_user->getInstanceIdsForChefProjet())));
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_RAPPORTEUR)) {
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.structure)', $this->_user->getStructureIdsForRapporteur()));
@@ -496,7 +517,7 @@ class ActionRepository extends BaseRepository {
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getInstanceIds()));
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_CHEF_PROJET)) {
-			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getInstanceIdsForChefProjet()));
+			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->checkEmptyArray($this->_user->getInstanceIdsForChefProjet())));
 		}
 		if($this->_user->hasRole(Utilisateur::ROLE_RAPPORTEUR)) {
 			$queryBuilder->orWhere($queryBuilder->expr()->in('IDENTITY(a.structure)', $this->_user->getStructureIdsForRapporteur()));

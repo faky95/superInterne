@@ -16,7 +16,7 @@ class relanceSignalisationCommand extends BaseCommand {
 		$em = $this->getEntityManager();
 		$states = $this->getContainer()->getParameter('states');
 		$signs = $em->getRepository('OrangeMainBundle:Signalisation')->signalisationAValider($states);
-		$data = $this->get('orange.main.mapping')->mapDataforRelances($signs);
+		$data = $this->getMapping()->getRelance()->mapDataforRelances($signs);
 		foreach($data['instance'] as $instance) {
             $animateurs = array();
 			foreach ($instance['animateurs'] as $animateur){

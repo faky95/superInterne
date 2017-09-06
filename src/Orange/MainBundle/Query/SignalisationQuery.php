@@ -84,21 +84,15 @@ class SignalisationQuery extends BaseQuery {
 	
 	public function migrateData($current_user,$nouvelle_statut) {
 		$query="INSERT INTO signalisation (`id`, `reference`, `source_id`, `constatateur`, `libelle`, `description`, `instance_id`, `domaine_id`, `type_signalisation_id`, `date_constat`, `date_signale`, `site`, `etat_courant`)
-						                     select null, CONCAT('S_', t.id), t.source, t.constateur, t.libelle,t.description,t.perimetre,t.domaine,t.type, STR_TO_DATE(t.date_constat, '%d/%m/%Y'), CURRENT_TIMESTAMP(),t.site,'SIGN_NOUVELLE'
+						                     select t.id, CONCAT('S_', t.id), t.source, t.constateur, t.libelle,t.description,t.perimetre,t.domaine,t.type, STR_TO_DATE(t.date_constat, '%d/%m/%Y'), CURRENT_TIMESTAMP(),t.site,'SIGN_NOUVELLE'
 						                     from tmp_signalisation t";
 		$this->connection->prepare($query)->execute();
-		$resultsAction = $this->connection->fetchAll("SELECT id ,source from tmp_signalisation ");
-		$query1="INSERT INTO signalisation_has_statut (`id` ,`signalisation_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
+		$resultsAction = $this->connection->fetchAll("SELECT id, source from tmp_signalisation ");
+		$query1 = "INSERT INTO signalisation_has_statut (`id` ,`signalisation_id`,`statut_id`,`dateStatut`,`utilisateur_id`,`commentaire`) values";
 		for($i=0; $i<count($resultsAction);$i++) {
-			if($i==0){
-				$query1.="(null,".($resultsAction[$i]['id']).",".$nouvelle_statut->getId().",NOW(),".$current_user->getId().", 'signalisation importee avec succes')";
-			}else{
-				$query1.=",(null,".($resultsAction[$i]['id']).",".$nouvelle_statut->getId().",NOW(),".$current_user->getId().", 'signalisation importee avec succes')";
-			}
+			$query1.= ($i==0 ? null : ' ,')."(null,".($resultsAction[$i]['id']).",".$nouvelle_statut->getId().",NOW(),".$current_user->getId().", 'signalisation importee avec succes')";
 		}
-		$query1.=";";
-		$this->connection->prepare($query1)->execute();
-		$this->connection->prepare($query)->execute();
+		$this->connection->prepare($query1.';')->execute();
 	}
 	
 	public function deleteTable() {

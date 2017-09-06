@@ -23,7 +23,7 @@ class rappelActionsCommand extends BaseCommand {
 		$em = $this->getEntityManager();
 		$states = $this->getContainer()->getParameter('states');
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertRappel($bu, $projet, $espace, $states);
-		$data = $this->get('orange.main.data')->mapDataforAlertDepassement($actions);
+		$data = $this->getMapping()->getRelance()->setEntityManager($em)->mapDataforAlertDepassement($actions);
 		foreach($data['user'] as $user){
 			$body = $this->getTemplating()->render('OrangeMainBundle:Action:rappelActions.html.twig', array(
 						'porteur' => $user['nom'], 'actions' => $user['action'],

@@ -15,6 +15,7 @@ class ActionVoter extends AbstractVoter {
 	const READ 	 	 = 'read';
 	const UPDATE 	 = 'update';
 	const DELETE	 = 'delete';
+	const IMPORT	 = 'import';
 	
 	private $em;
 	
@@ -26,7 +27,7 @@ class ActionVoter extends AbstractVoter {
 	}
 	
 	protected function getSupportedAttributes() {
-		return array(self::CREATE, self::READ, self::UPDATE, self::DELETE);
+		return array(self::CREATE, self::READ, self::UPDATE, self::DELETE, self::IMPORT);
 	}
 	
 	protected function getSupportedClasses() {
@@ -83,6 +84,13 @@ class ActionVoter extends AbstractVoter {
 				break;
 			case self::DELETE:
 				if($this->isInstanceAnimateur($action, $user) || $this->isBuAdministrateur($action, $user)) {
+					return true;
+				}
+				break;
+			case self::IMPORT:
+				// the data object could have for example a method isPrivate()
+				// which checks the Boolean attribute $private
+				if ($user->hasRole('ROLE_ANIMATEUR') || $user->hasRole('ROLE_ADMIN')) {
 					return true;
 				}
 				break;

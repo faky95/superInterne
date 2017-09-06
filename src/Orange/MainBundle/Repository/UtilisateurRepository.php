@@ -243,42 +243,34 @@ public function getUtilisateurByStructure($structures, $bu=null){
 		}
 		$rep=$this->_em->getRepository('OrangeMainBundle:Structure');
 		$structures_ids=array();
-		foreach($structures as $str)
+		foreach($structures as $str) {
 			$structures_ids[]=$str['id'];
-		$queryBuilder=$rep->createQueryBuilder('s')
-							->select('COUNT(distinct(u1.id)) usr, s.id, s.libelle')
-							->add('from', 'OrangeMainBundle:Utilisateur u1', true)
-							->innerJoin('u1.structure','s1')
-							->innerJoin('s1.buPrincipal','b1')
-							->innerJoin('u1.action', 'a')
-							->innerJoin('a.actionStatut', 'ahs')
-							->innerJoin('ahs.statut', 'st')
-							->where('st.code=:code') ->setParameter('code', Statut::ACTION_NON_ECHUE)
-							->andWhere('s.id in(:structs)')->setParameter('structs', $structures_ids)
-							->andWhere('s1.lvl >= s.lvl ')
-							->andWhere('s1.root = s.root')
-							->andWhere('s1.lft  >= s.lft')
-							->andWhere('s1.rgt <= s.rgt')
-							->andWhere('b1=:bu')
-				        	->setParameter('bu', $bu)
-							->groupBy('s.id');
-		return $queryBuilder;
+		}
+		return $rep->createQueryBuilder('s')
+			->select('COUNT(distinct(u1.id)) usr, s.id, s.libelle')
+			->add('from', 'OrangeMainBundle:Utilisateur u1', true)
+			->innerJoin('u1.structure','s1')
+			->innerJoin('s1.buPrincipal','b1')
+			->innerJoin('u1.action', 'a')
+			->innerJoin('a.actionStatut', 'ahs')
+			->innerJoin('ahs.statut', 'st')
+			->where('st.code=:code') ->setParameter('code', Statut::ACTION_NON_ECHUE)
+			->andWhere('s.id in(:structs)')->setParameter('structs', $structures_ids)
+			->andWhere('s1.lvl >= s.lvl ')
+			->andWhere('s1.root = s.root')
+			->andWhere('s1.lft  >= s.lft')
+			->andWhere('s1.rgt <= s.rgt')
+			->andWhere('b1=:bu')
+        	->setParameter('bu', $bu)
+			->groupBy('s.id');
 	}
-		public function listByInstance($idStructure){
+		public function listByInstance($idStructure) {
 			return $this->createQueryBuilder('u')
-						->innerJoin('u.structure', 's')
-						->add('from', 'OrangeMainBundle:Utilisateur u1', true)
-						->select('u1')
-						->innerJoin('u1.structure', 's1')
+						->innerJoin('u.structure', 's1')
+						->innerJoin('OrangeMainBundle:Structure', 's', 'WITH', 's1.lvl >= s.lvl AND s1.root = s.root AND s1.lft >= s.lft  AND s1.rgt <= s.rgt')
 						->where('s.id IN (:id)')
-						->andWhere('s1.lvl >= s.lvl')
-						->andWhere('s1.root = s.root')
-						->andWhere('s1.lft >= s.lft')
-						->andWhere('s1.rgt <= s.rgt')
 						->setParameter('id', $idStructure)
-						->distinct()
-						//->getQuery()->getArrayResult()
-			;
+						->distinct();
 		}
 		
 	

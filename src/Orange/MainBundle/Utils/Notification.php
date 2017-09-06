@@ -6,6 +6,7 @@ use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Signalisation;
 use Orange\MainBundle\Entity\Tache;
 use Orange\MainBundle\Entity\ActionGenerique;
+use Orange\MainBundle\Entity\ActionStatut;
 
 class Notification {
 	
@@ -75,16 +76,17 @@ class Notification {
 	}
 
 	/**
-	 * @param Mailer $helper
+	 * @param Mailer $mailer
 	 * @param string $subject
 	 * @param array $membresEmail
 	 * @param array $cc
 	 * @param string $commentaire
-	 * @param Action|Signalisation|Tache $entity
+	 * @param Action|ActionStatut|Signalisation|Tache $entity
 	 */
-	public static function notificationWithCopy($helper, $subject, $membresEmail, $cc, $commentaire, $entity) {
+	public static function notificationWithCopy($mailer, $subject, $membresEmail, $cc, $commentaire, $entity) {
 		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
-		$helper->NotifWithCopy($membresEmail, $cc, $subject, $body, $entity->getCommentaire(), $entity instanceof Tache);
+		$commentaire = ($entity instanceof ActionStatut) ? $entity->getCommentaire() : $commentaire;
+		$mailer->NotifWithCopy($membresEmail, $cc, $subject, $body, $commentaire, $entity instanceof Tache);
 	}
 
 	/**

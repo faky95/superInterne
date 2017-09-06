@@ -34,7 +34,7 @@ class InstanceType extends AbstractType
             		'class'=>'OrangeMainBundle:Utilisateur',
             		'label' => 'Animateurs :',
             		'query_builder'=>function(UtilisateurRepository $ur){
-					          return $ur->filter();
+					 	return $ur->filter();
 					 }
             ))
             ->add('tmp_source', 'entity', array(
@@ -86,9 +86,8 @@ class InstanceType extends AbstractType
 										return $sr->createQueryBuilder('s');
 									}
             				))
-            				->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
-            				->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')))
-        ;
+            ->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
+            ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));
     }
     
     /**
@@ -106,6 +105,6 @@ class InstanceType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_instance';
+        return 'instance';
     }
 }

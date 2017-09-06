@@ -35,6 +35,13 @@ class BaseController extends Controller {
 	}
 	
 	/**
+	 * @return \Orange\MainBundle\Mapping\AbstractMapping
+	 */
+	public function getMapping() {
+		return new \Orange\MainBundle\Mapping\AbstractMapping();
+	}
+	
+	/**
 	 * @param \Symfony\Component\Form\Form $form
 	 * @param array $fields
 	 */
@@ -70,6 +77,9 @@ class BaseController extends Controller {
 		foreach ($pagination->getItems() as $entity) {
 			$aaData[] = $this->{$rendererMethod}($entity);
 		}
+		$data = $this->get('session')->get('data', array());
+		$data['totalNumber'] = $totalNumber;
+		$this->get('session')->set('data', $data);
 		$output = array(
 				"sEcho" => $params['sEcho'],
 				"iTotalRecords" => $totalNumber,//$pagination->getTotalItemCount(),

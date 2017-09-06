@@ -229,9 +229,8 @@ class InstanceController extends BaseController
      * @return integer
      */
     protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName) {
-    	exit('waaaaa');
     	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))
-	    	->resetDQLPart('groupBy')
+    		->resetDQLPart('groupBy')
 	    	->getQuery()->execute();
     	return $data[0]['number'];
     }
@@ -257,12 +256,10 @@ class InstanceController extends BaseController
      * @Template()
      */
     public function exportAction() {
-    	$queryBuilder = $this->get('session')->get('data', array());
-    	$em = $this->getDoctrine()->getEntityManager();
-    	$query = $em->createQuery($queryBuilder['query']);
-    	$query->setParameters($queryBuilder['param']);
+    	$queryBuilder = $this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->listAllElements(true);
+    	$query = $queryBuilder->getQuery();
     	$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-    	$data = $this->get('orange.main.data')->exportInstance($query->execute());
+    	$data = $this->getMapping()->getExtraction()->exportInstance($query->execute());
 	  	$objWriter = $this->get('orange.main.extraction')->exportInstance($data);
     	$filename = sprintf("Extraction_des_instances_du_%s.xlsx", date('d-m-Y'));
     	$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
