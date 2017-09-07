@@ -279,7 +279,12 @@ class ActionController extends BaseController
  		$query->setParameters($queryBuilder['param']);
  		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
- 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->getArrayResult(), $statut->getQuery()->execute());
+ 		$actions       = $query->getArrayResult();
+ 		$ids           = array_column($actions, 'id');
+ 		$contributeurs = $em->getRepository('OrangeMainBundle:Contributeur')->findContributeursForManyAction($ids);
+ 		$avancement    = $em->getRepository('OrangeMainBundle:ActionAvancement')->findForManyAction($ids);
+ 		$divers        = array('contributeur'=>$contributeurs,'avancement'=>$avancement);
+ 		$objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute(),$divers);
 		$objWriter->save('php://output');
 		return $response;
 	}
@@ -415,7 +420,6 @@ class ActionController extends BaseController
     	$form   = $this->createCreateForm($entity, 'ActionChange');
     	if($request->isMethod('POST')) {
     		$form->handleRequest($request);
-    		var_dump($form->getErrorsAsString());exit;
     		if($form->isValid()) {
     			$this->get('orange.main.change_statut')->ChangeStatutAction($entity, $this->getUser());
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Statut changé avec succés.'));
