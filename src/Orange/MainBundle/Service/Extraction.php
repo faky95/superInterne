@@ -155,11 +155,11 @@ class Extraction extends \PHPExcel {
 				$contrib = array_filter($divers['contributeur'], function($object)use($value){
 					return $object->getAction()->getId() == $value['id'];
 				});
-			
-			foreach ($contrib as $contributeur) {
-				$contributeurs .= $j.'. '.$contributeur->getUtilisateur()->getPrenom().' '.$contributeur->getUtilisateur()->getNom()."  \n  ";
-				$j++;
-			}
+			if($contrib)
+				foreach ($contrib as $contributeur) {
+					$contributeurs .= $j.'. '.$contributeur->getUtilisateur()->getPrenom().' '.$contributeur->getUtilisateur()->getNom()."  \n  ";
+					$j++;
+				}
 			$avancements = null;
 			$j=1;   
 			$avcts =null;
@@ -167,11 +167,11 @@ class Extraction extends \PHPExcel {
 				$avcts = array_filter($divers['avancement'], function($object)use($value){
 					return $object->getAction()->getId() == $value['id'];
 				});
-			
-			foreach ($avcts as $avancement) {
-				$avancements .= $j.'. '.$avancement->getDescription()."  \n  ";
-				$j++;
-			}
+			if($avcts!=null)
+				foreach ($avcts as $avancement) {
+					$avancements .= $j.'. '.$avancement->getDescription()."  \n  ";
+					$j++;
+				}
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],

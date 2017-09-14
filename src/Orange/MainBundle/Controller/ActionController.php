@@ -138,6 +138,9 @@ class ActionController extends BaseController
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionCollaborateurs($criteria);
+		/**
+		 * @var QueryBuilder $queryExport
+		 */
 		$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionCollaborateursForExport($criteria);
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);

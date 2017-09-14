@@ -10,6 +10,7 @@ use Orange\MainBundle\Query\BaseQuery;
 use Orange\MainBundle\Query\ActionQuery;
 use Orange\MainBundle\Entity\Statut;
 use Symfony\Component\DependencyInjection\Container;
+use Doctrine\DBAL\Exception\ConnectionException;
 
 class Loader {
 
@@ -37,11 +38,14 @@ class Loader {
 	 * @var array
 	 */
 	protected $_states;
+	
+	protected $container;
 
 	/**
 	 * @param \Symfony\Component\DependencyInjection\Container $container
 	 */
 	public function __construct($container, $web_dir, $ids, $states) {
+		$this->container =$container;
 		$this->em = $container->get('doctrine.orm.entity_manager');
 		//$this->mailer = $container->get('mailer');
 		$this->web_dir = $web_dir;
@@ -109,16 +113,26 @@ class Loader {
 	 * @return integer
 	 */
 	public function loadSignalisation($file,$sources,$current_user) {
+		/**		 @var \Doctrine\DBAL\Connection $connection */
+		$connection = $this->container->get('database_connection');
 		$repository = $this->em->getRepository('OrangeMainBundle:Signalisation');
-		$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::NOUVELLE_SIGNALISATION));
-		$query = new SignalisationQuery($this->em->getConnection());
-		$next_id = $repository->getNextId();
-		$query->crateTable($next_id);
-		$query->loadTable($file->getPathname(), $this->web_dir);
-		$number = $query->updateTable($sources);
-		$query->migrateData($current_user,$nouvelle_statut);
-		$query->deleteTable();
-		return $number;
+		try {
+			$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::NOUVELLE_SIGNALISATION));
+			$query = new SignalisationQuery($this->em->getConnection());
+			$next_id = $repository->getNextId();
+			$query->crateTable($next_id);
+			$query->loadTable($file->getPathname(), $this->web_dir);
+			$number = $query->updateTable($sources);
+			$query->migrateData($current_user,$nouvelle_statut);
+			$query->deleteTable();
+			$connection->commit();
+			return $number;
+		} catch (\Doctrine\DBAL\ConnectionException $e){
+			$connection->rollBack();
+			throw new \Exception("Chargement impossible :: Format du fichier invalide!", 500);
+		} finally {
+			$connection->close();
+		}
 	}
 	/**
 	 * 
@@ -130,18 +144,30 @@ class Loader {
 	 * @return number
 	 */
 	public function loadAction($file, $current_user, $users, $instances, $isCorrective) {
-		$repository = $this->em->getRepository('OrangeMainBundle:Action');
-		$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NOUVELLE));
-		$statuts=$this->em->getRepository('OrangeMainBundle:Statut')->getArrayStatutImport();
-		$lesMails = array();
-		$query = new ActionQuery($this->em->getConnection());
-		$next_id = $repository->getNextId();
-		$query->createTable($next_id);
-		$nl = $query->loadTable($file->getPathname(), $this->web_dir, $next_id,$isCorrective);
-		$number = $query->updateTable($users, $instances,$statuts,$lesMails);
-		$query->migrateData($nouvelle_statut, $current_user, $isCorrective);
-		$query->deleteTable();
-		return $number;
+		/**		 @var \Doctrine\DBAL\Connection $connection */
+		$connection = $this->container->get('database_connection');
+		try {
+			$connection->setAutoCommit(false);
+			$connection->beginTransaction();
+			$repository = $this->em->getRepository('OrangeMainBundle:Action');
+			$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NOUVELLE));
+			$statuts=$this->em->getRepository('OrangeMainBundle:Statut')->getArrayStatutImport();
+			$lesMails = array();
+			$query = new ActionQuery($this->em->getConnection());
+			$next_id = $repository->getNextId();
+			$query->createTable($next_id);
+			$nl = $query->loadTable($file->getPathname(), $this->web_dir, $next_id,$isCorrective);
+			$number = $query->updateTable($users, $instances,$statuts,$lesMails);
+			$query->migrateData($nouvelle_statut, $current_user, $isCorrective);
+			$query->deleteTable();
+			$connection->commit();
+			return $number;
+		} catch (\Doctrine\DBAL\ConnectionException $e){
+			$connection->rollBack();
+			throw new \Exception("Chargement impossible :: Format du fichier invalide!", 500);
+		} finally {
+			$connection->close();
+		}
 	}
 	
 }

@@ -267,6 +267,12 @@ class Action
      *
      */
     private $actionGenerique;
+    
+    /**
+     * @var Complement
+     * @ORM\OneToOne(targetEntity="Complement", mappedBy="action", cascade={"persist", "merge","remove"})
+     */
+    private $complement;
 
     public $toDebut;
     
@@ -1253,5 +1259,29 @@ class Action
     	$actionGeneriqueHasAction->setCommentaire("Ajouté!");
     	$actionGeneriqueHasAction->setUtilisateur($user);
     	$this->addActionGeneriqueHasAction($actionGeneriqueHasAction);
+    }
+
+    /**
+     * Set complement
+     *
+     * @param \Orange\MainBundle\Entity\Complement $complement
+     *
+     * @return Action
+     */
+    public function setComplement(\Orange\MainBundle\Entity\Complement $complement = null)
+    {
+        $this->complement = $complement;
+
+        return $this;
+    }
+
+    /**
+     * Get complement
+     *
+     * @return \Orange\MainBundle\Entity\Complement
+     */
+    public function getComplement()
+    {
+        return $this->complement;
     }
 }
