@@ -36,7 +36,7 @@ class Complement
 	 * @var \Action
 	 *
 	 * @ORM\OneToOne(targetEntity="Action",inversedBy="complement")
-	 * @ORM\JoinColumn(name="acion_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="action_id", referencedColumnName="id")
 	 */
 	private $action;
 
@@ -61,7 +61,7 @@ class Complement
      */
     public function setAvancements($avancements)
     {
-        $this->avancements = $avancements;
+        $this->avancements .= " - " . $avancements;
 
         return $this;
     }

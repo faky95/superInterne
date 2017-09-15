@@ -109,7 +109,7 @@ class Extraction extends \PHPExcel {
 	 * @param array $dataStatut
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
-	public function exportAction($arrData, $dataStatut , $divers = array()) {
+	public function exportAction($arrData, $dataStatut ) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
 			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
@@ -148,30 +148,6 @@ class Extraction extends \PHPExcel {
 		}
 		$tableau = array();
 		foreach($arrData as $value) {
-			$contributeurs = null;
-			$j=1;
-			$contrib =null;
-			if($divers['contributeur']!=null)
-				$contrib = array_filter($divers['contributeur'], function($object)use($value){
-					return $object->getAction()->getId() == $value['id'];
-				});
-			if($contrib)
-				foreach ($contrib as $contributeur) {
-					$contributeurs .= $j.'. '.$contributeur->getUtilisateur()->getPrenom().' '.$contributeur->getUtilisateur()->getNom()."  \n  ";
-					$j++;
-				}
-			$avancements = null;
-			$j=1;   
-			$avcts =null;
-			if($divers['avancement']!=null)
-				$avcts = array_filter($divers['avancement'], function($object)use($value){
-					return $object->getAction()->getId() == $value['id'];
-				});
-			if($avcts!=null)
-				foreach ($avcts as $avancement) {
-					$avancements .= $j.'. '.$avancement->getDescription()."  \n  ";
-					$j++;
-				}
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],
@@ -186,11 +162,11 @@ class Extraction extends \PHPExcel {
 					$value['typeAction']['type'],
 					$arrayStatut [$value['etatReel']],
 					$value['domaine']['libelleDomaine'],
-					$contributeurs,
+					$value['complement']['contributeurs'],
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
 					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
 					$value['dateFinExecut'] ? $value['dateFinExecut']->format('d-m-Y') : 'En Cours',
-					$avancements
+					$value['complement']['avancements'],
 				);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');

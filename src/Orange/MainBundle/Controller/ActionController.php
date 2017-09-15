@@ -283,11 +283,7 @@ class ActionController extends BaseController
  		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
  		$actions       = $query->getArrayResult();
- 		$ids           = array_column($actions, 'id');
- 		$contributeurs = $em->getRepository('OrangeMainBundle:Contributeur')->findContributeursForManyAction($ids);
- 		$avancement    = $em->getRepository('OrangeMainBundle:ActionAvancement')->findForManyAction($ids);
- 		$divers        = array('contributeur'=>$contributeurs,'avancement'=>$avancement);
- 		$objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute(),$divers);
+ 		$objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
 		$objWriter->save('php://output');
 		return $response;
 	}

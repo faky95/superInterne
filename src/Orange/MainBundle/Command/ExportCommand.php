@@ -20,11 +20,7 @@ class ExportCommand extends BaseCommand {
 			$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
 			$query->setParameters(unserialize($extraction->getParam()));
 			$actions       = $query->getArrayResult();
-			$ids           = array_column($actions, 'id');
-			$contributeurs = $em->getRepository('OrangeMainBundle:Contributeur')->findContributeursForManyAction($ids);
-			$avancement    = $em->getRepository('OrangeMainBundle:ActionAvancement')->findForManyAction($ids);
-			$divers        = array('contributeur'=>$contributeurs,'avancement'=>$avancement);
-			$objWriter = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute(),$divers);
+			$objWriter = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
 			$filename = 'actions_'.date("Y-m-d_H-i-s").'.xlsx';
 			$objWriter->save("./web/upload/reporting/$filename");
 			$sub = "Extraction d'action du ".$extraction->getDateAction()->format('d/m/Y H:i');
