@@ -113,15 +113,20 @@ class RelanceMapping extends AbstractMapping {
 		$date2 = new \DateTime();
 		$statut= $this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::ACTION_NON_ECHUE));
 		$nbHeureActuel= intval($date2->getTimestamp()/3600);
+		$nombre = 0;
 		foreach ($actions as $action){
 			$nbHeureDate=intval($action->getDateAction()->getTimestamp()/3600);
 			if($nbHeureActuel-$nbHeureDate >= 24){
 				$action->setEtatCourant(Statut::ACTION_NON_ECHUE);
 				$action->setEtatReel(Statut::ACTION_NON_ECHUE);
 				$this->em->persist($action);
-				$this->em->flush();
+				$nombre++;
+			}
+			if($nombre > 10) {
+				break;
 			}
 		}
+		$this->em->flush();
 	}
 	
 	public function priseEnChargeSignalisationAction($signs){

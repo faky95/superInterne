@@ -72,7 +72,6 @@ class Extraction
     	$entity->param = $param;
     	$entity->etat = 0;
     	return $entity;
-    	
     }
     
     /**
