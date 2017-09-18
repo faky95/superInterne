@@ -10,6 +10,7 @@ use Orange\MainBundle\Entity\ActionAvancement;
 use Orange\MainBundle\Form\ActionAvancementType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Orange\MainBundle\Entity\Action;
 
 /**
  * ActionAvancement controller.
@@ -26,11 +27,13 @@ class ActionAvancementController extends Controller
     public function createActionAvancementAction(Request $request, $action_id)
     {
         $em = $this->getDoctrine()->getManager();
+        /** @var Action $action */
         $action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
         $entity = new ActionAvancement();
         $form = $this->createCreateForm($entity, $action->getId());
         $form->handleRequest($request);
         if($form->isValid()){
+        	$action->getComplement()->setAvancements($entity->getDescription());
             $em->persist($entity);
             $entity->setAction($action);
             $entity->setAuteur($this->getUser());

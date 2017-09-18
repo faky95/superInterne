@@ -138,6 +138,9 @@ class ActionController extends BaseController
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->getActionCollaborateurs($criteria);
+		/**
+		 * @var QueryBuilder $queryExport
+		 */
 		$queryExport = $em->getRepository('OrangeMainBundle:Action')->getActionCollaborateursForExport($criteria);
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
@@ -279,7 +282,8 @@ class ActionController extends BaseController
  		$query->setParameters($queryBuilder['param']);
  		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
  		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
- 		$objWriter = $this->get('orange.main.extraction')->exportAction($query->getArrayResult(), $statut->getQuery()->execute());
+ 		$actions       = $query->getArrayResult();
+ 		$objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
 		$objWriter->save('php://output');
 		return $response;
 	}
@@ -415,7 +419,6 @@ class ActionController extends BaseController
     	$form   = $this->createCreateForm($entity, 'ActionChange');
     	if($request->isMethod('POST')) {
     		$form->handleRequest($request);
-    		var_dump($form->getErrorsAsString());exit;
     		if($form->isValid()) {
     			$this->get('orange.main.change_statut')->ChangeStatutAction($entity, $this->getUser());
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Statut changé avec succés.'));

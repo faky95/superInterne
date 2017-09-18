@@ -48,12 +48,13 @@ class ChangeStatut{
 				$action->setEtatCourant('ACTION_SOLDEE_DELAI');
 				$action->setEtatReel('ACTION_SOLDEE_DELAI');
 			}
+			$action->setDateCloture(new \DateTime("now"));
 		}elseif($code === Statut::ACTION_ABANDONNEE){
 				$st = $this->em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_ABANDONNEE);
 				$action->setEtatCourant('ACTION_ABANDONNEE');
 				$action->setEtatReel('ACTION_ABANDONNEE');
 		}
-		
+	
 		$statut->setUtilisateur($user);
 		$statut->setStatut($st);
 		$statut->setAction($action);

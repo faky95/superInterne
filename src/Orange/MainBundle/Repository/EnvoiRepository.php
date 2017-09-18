@@ -16,6 +16,16 @@ class EnvoiRepository extends BaseRepository{
 		
 	}
 	
+	public function getLastsEnvoi(){
+		$qb = $this->createQueryBuilder('e')
+		           ->select('max(e.id) envoi_id, e envoi, r reporting')
+		           ->innerJoin('e.reporting', 'r')
+		           ->where('e.dateEnvoi <= :today')->setParameter('today',  date('Y-m-d'))
+		           ->groupBy('r.id');
+		return $qb;
+	}
+	
+	
 	public function getEnvoiStructure($bu = null, $espace = null, $projet = null)
 	{
 		$queryBuilder = $this->createQueryBuilder('e')

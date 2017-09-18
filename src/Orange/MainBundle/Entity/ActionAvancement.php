@@ -9,7 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
  * ActionAvancement
  *
  * @ORM\Table(name="action_avancement")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ActionAvancementRepository")
  */
 class ActionAvancement
 {

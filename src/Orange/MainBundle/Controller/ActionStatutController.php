@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\MainBundle\OrangeMainEvents;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Orange\MainBundle\Entity\Action;
 
 /**
  * ActionStatut controller.
@@ -73,6 +74,7 @@ class ActionStatutController extends BaseController
 	public function solderAction(Request $request, $action_id) {
 		$dispatcher = $this->container->get('event_dispatcher');
 		$em   = $this->getDoctrine()->getManager();
+		/** @var Action $action */
 		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		$var = 0;
 		if ($action->getEtatReel() == 'ACTION_NOUVELLE' &&  $action->getEtatCourant() == 'ACTION_NOUVELLE'){
@@ -83,7 +85,7 @@ class ActionStatutController extends BaseController
 		if($request->getMethod() === 'POST') {
 			$form->handleRequest($request);
 			if($form->isValid()) {
-				if($action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI) {
+				if($action->getEtatReel() === Statut::ACTION_FAIT_HORS_DELAI) { 
 					$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_SOLDEE_HORS_DELAI);
 					$action->setEtatCourant('ACTION_SOLDEE_HORS_DELAI');
 					$action->setEtatReel('ACTION_SOLDEE_HORS_DELAI');
@@ -92,6 +94,7 @@ class ActionStatutController extends BaseController
 					$action->setEtatCourant('ACTION_SOLDEE_DELAI');
 					$action->setEtatReel('ACTION_SOLDEE_DELAI');
 				}
+				$action->setDateCloture(new \DateTime("now"));
 				$entity->setStatut($statut);
 				$entity->setUtilisateur($this->getUser());
 				$entity->setAction($action);
