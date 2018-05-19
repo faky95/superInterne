@@ -12,9 +12,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Periodicite 
 {
+	static $ids;
+	
     /**
      * @var integer
-     *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -42,27 +43,21 @@ class Periodicite
     
     /**
      * Set libelle
-     *
      * @param string $libelle
      * @return Periodicite
      */
-    public function setLibelle($libelle)
-    {
+    public function setLibelle($libelle) {
         $this->libelle = $libelle;
-
         return $this;
     }
-
+    
     /**
      * Get libelle
-     *
-     * @return string 
+     * @return string
      */
-    public function getLibelle()
-    {
-        return $this->libelle;
+    public function getLibelle() {
+    	return $this->libelle;
     }
-
 
     /**
      * Get libelle

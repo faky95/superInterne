@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Component\Form\Form;
 use Doctrine\ORM\Query;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class BaseController extends Controller {
 
@@ -27,11 +28,26 @@ class BaseController extends Controller {
 	 * @param array $fields
 	 */
 	protected function useFormFields($form, $fields = array()) {
-		foreach($form->all() as $name => $widget) {
+		foreach(array_keys($form->all()) as $name) {
 			if(in_array($name, $fields)==false) {
 				$form->remove($name);
 			}
 		}
+	}
+	
+	/**
+	 * Forwards the request to another controller.
+	 * @param string $controller The controller name (a string like BlogBundle:Post:index)
+	 * @param array  $path       An array of path parameters
+	 * @param array  $query      An array of query parameters
+	 * @param array  $request    An array of post parameters
+	 * @return Response A Response instance
+	 */
+	public function forward($controller, array $path = array(), array $query = array(), array $request = array())
+	{
+		$path['_controller'] = $controller;
+		$subRequest = $this->get('request_stack')->getCurrentRequest()->duplicate($query, $request, $path);
+		return $this->get('http_kernel')->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 	}
 	
 	/**
@@ -46,7 +62,7 @@ class BaseController extends Controller {
 	 * @param array $fields
 	 */
 	protected function removeFormFields($form, $fields = array()) {
-		foreach($form->all() as $name => $widget) {
+		foreach(array_keys($form->all()) as $name) {
 			if(in_array($name, $fields)==true) {
 				$form->remove($name);
 			}
@@ -118,6 +134,21 @@ class BaseController extends Controller {
 		$request->setMethod('POST');
 		$form->handleRequest($request);
 	}
+	
+	/**
+	 * @param Request $request
+	 * @param array $data
+	 * @param Form $form
+	 */
+	public function setRequestForForm($request, $data, $form) {
+		$arrData = array();
+		foreach($data as $key => $value) {
+			$arrData[$form->getName()][$key] = $value;
+		}
+		$request->request->replace($arrData);
+		$request->setMethod('POST');
+		$form->handleRequest($request);
+	}
 	  
 	/**
 	 * @todo ajoute un filtre
@@ -146,14 +177,14 @@ class BaseController extends Controller {
 	 * @param QueryBuilder $queryBuilder
 	 * @return integer
 	 */
-	protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName) {
+	protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName = 'id') {
 	  	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))
 	  		->getQuery()->execute();
 	  	return $data[0]['number'];
 	}
 	
 	protected function getMyParameter($name, $path = array()) {
-		$data = $this->container->getParameter($name);
+		$data = $this->getParameter($name);
 		foreach($path as $key) {
 			$data = $data[$key];
 		}

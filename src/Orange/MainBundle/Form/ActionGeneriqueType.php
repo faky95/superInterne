@@ -15,7 +15,6 @@ class ActionGeneriqueType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('reference')
             ->add('libelle', null, array('label'=>"Libellé"))
             ->add('description', null, array('label'=>"Description"))
             ->add('dateDebut', 'date', array('label' => 'Date de Début :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
@@ -24,7 +23,6 @@ class ActionGeneriqueType extends AbstractType
             ->add('porteur', null, array('label'=>'Porteur :', 'query_builder' => function($er)  {return $er->filter();}, 'empty_value' => 'Choix le porteur ...'))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
        		->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));
-        ;
     }
     
     /**
@@ -42,6 +40,6 @@ class ActionGeneriqueType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_actiongenerique';
+        return 'actiongenerique';
     }
 }

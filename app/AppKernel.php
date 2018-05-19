@@ -17,14 +17,18 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
         	new FOS\UserBundle\FOSUserBundle(),
-        	new Orange\QuickMakingBundle\OrangeQuickMakingBundle(),
         	new FOS\JsRoutingBundle\FOSJsRoutingBundle(),
-            new Orange\MainBundle\OrangeMainBundle(),
         	new Ob\HighchartsBundle\ObHighchartsBundle(),
         	new AppVentus\AlertifyBundle\AvAlertifyBundle(),
         	new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),
         	new Knp\Bundle\MenuBundle\KnpMenuBundle(),
         	new FR3D\LdapBundle\FR3DLdapBundle(),
+        	new FOS\RestBundle\FOSRestBundle(),
+        	new JMS\SerializerBundle\JMSSerializerBundle(),
+        	new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
+        	new Nelmio\CorsBundle\NelmioCorsBundle(),
+        	new Orange\QuickMakingBundle\OrangeQuickMakingBundle(),
+        	new Orange\MainBundle\OrangeMainBundle()
 
         );
 

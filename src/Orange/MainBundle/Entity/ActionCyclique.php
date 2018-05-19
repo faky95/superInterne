@@ -44,12 +44,12 @@ class ActionCyclique
     private $pas;
     
     /**
-     * @ORM\OneToMany(targetEntity="Tache", mappedBy="actionCyclique", cascade={"persist","merge"})
+     * @ORM\OneToMany(targetEntity="Tache", mappedBy="actionCyclique", cascade={"persist", "merge", "remove"})
      **/
     private $tache;
     
     /**
-     * @var \DayOfMonth
+     * @var DayOfMonth
      * @ORM\ManyToOne(targetEntity="DayOfMonth")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="day_of_month_id", referencedColumnName="id")
@@ -58,7 +58,7 @@ class ActionCyclique
     private $dayOfMonth;
     
     /**
-     * @var \DayOfWeek
+     * @var DayOfWeek
      * @ORM\ManyToOne(targetEntity="DayOfWeek")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="day_of_week_id", referencedColumnName="id")
@@ -133,29 +133,48 @@ class ActionCyclique
     public function newTache($arrPas) {
     	$tache = new Tache();
     	$tache->setActionCyclique($this);
-    	$this->occurence = $this->occurence ? $this->occurence + 1 : 1;
-    	$tache->setDateDebut(new \DateTime('NOW'));
+    	$this->occurence = $this->getTache()->count() ? $this->getTache()->count() + 1 : 1;
     	$pas = $this->pas->getId();
     	$it = $this->getIteration();
     	$numJr = $this->getDayOfWeek() ? $this->getDayOfWeek()->getValeur() : null;
-    	$date = strtotime(date('Y-01-01'));
     	$num = array('first', 'second', 'third', 'fourth', 'fifth', 'sixth');
     	$semaine = array('monday', 'tuesday', 'wednesday', 'thursday', 'friday','saturday', 'sunday');
     	if($pas == $arrPas['Hebdomadaire']) {
-    		$dateInitial = date('Y-m-d', strtotime($semaine[$numJr].' next week'));
+    		$dateDebut = date('Y-m-d', strtotime('monday this week'));
+    		$dateInitial = $numJr ? date('Y-m-d', strtotime($semaine[$numJr].' this week')) : $dateDebut;
+    		$dateFin = date('Y-m-d', strtotime('sunday this week'));
+    		$tache->setReference(sprintf('%s_H%02d_%s', $this->action->getReference(), date('W'), date('Y')));
     	} elseif($pas == $arrPas['Quinzaine']) {
-    		$dateInitial = date('Y-m-d', strtotime($semaine[$numJr].' this week'));
-    		$dateInitial = date('Y-m-d', strtotime('+'.$it.' week', strtotime($dateInitial)));
-    	} elseif($pas == $arrPas['Mensuelle']) {
+    		$dateDebut = (date('d') < 16) ? date('Y-m-01') : date('Y-m-16');
+    		$dateInitial = date('Y-m-d', strtotime('next '.$semaine[$numJr], strtotime($dateDebut)));
+    		$dateInitial = date('Y-m-d', strtotime('+'.($it - 1).' week', strtotime($dateInitial)));
+    		$dateFin = (date('d') < 16) ? date('Y-m-15') : date('Y-m-d', strtotime('last day of this month'));
+    		$tache->setReference(sprintf('%s_Q%s_%s_%s', $this->action->getReference(), $this->occurence, date('m'), date('Y')));
+    	} elseif($pas == $arrPas['Mensuelle'] && $this->getDayOfMonth()) {
     		$numJr = $this->getDayOfMonth()->getValeur();
-    		$dateInitial = date('Y-m-'.$numJr, strtotime(($numJr < date('j') ? '+1' : 'this').' month'));
+    		$dateDebut= date('Y-m-d', strtotime('first day of this month'));
+    		$dateInitial = date('Y-m-'.$numJr);
+    		$dateFin = date('Y-m-d', strtotime('last day of this month'));
+    		$tache->setReference(sprintf('%s_%s_%s', $this->action->getReference(), date('m'), date('Y')));
     	} elseif($pas == $arrPas['Trimestrielle']) {
-    		$dateInitial = date('Y-m-d', strtotime($num[$it-1].' '.$semaine[$numJr], $date));
+    		$numJr = $this->getDayOfMonth()->getValeur();
+    		$dateDebut = date(sprintf('Y-%s-01', (floor(date('m') / 3) * 3) + 1));
+    		$dateInitial= date('Y-m-d', strtotime(sprintf("+%s day", $numJr - 1), strtotime(sprintf('+%s month', $it-1), strtotime($dateDebut))));
+    		$dateFin = date('Y-m-d', strtotime('-1 day', strtotime('+3 month', strtotime($dateDebut))));
+    		$tache->setReference(sprintf('%s_T%s_%s', $this->action->getReference(), ceil(date('m')/3), date('Y')));
     	} elseif($pas == $arrPas['Semestrielle']) {
-    		$dateInitial = date('Y-m-d', strtotime($num[$it-1].' '.$semaine[$numJr], $date));
+    		$numJr = $this->getDayOfMonth()->getValeur();
+    		$dateDebut = date(sprintf('Y-%s-01', (floor(date('m') / 6) * 6) + 1));
+    		$dateInitial= date('Y-m-d', strtotime(sprintf("+%s day", $numJr - 1), strtotime(sprintf('+%s month', $it-1), strtotime($dateDebut))));
+    		$dateFin = date('Y-m-d', strtotime('-1 day', strtotime('+6 month', strtotime($dateDebut))));
+    		$tache->setReference(sprintf('%s_S%s_%s', $this->action->getReference(), ceil(date('m')/6), date('Y')));
     	}
-    	$tache->setReference(sprintf('%s-T_%03d', $this->action->getReference(), $this->occurence));
+    	$tache->setDateDebut(new \DateTime($dateDebut));
     	$tache->setDateInitial(new \DateTime($dateInitial));
+    	$tache->setDateFin(new \DateTime($dateFin));
+    	if(!isset($dateInitial) || !isset($dateDebut) || $this->action->getDateDebut() > $tache->getDateDebut()) {
+    		return null;
+    	}
     	$this->addTache($tache);
     	return $tache;
     }
@@ -167,6 +186,7 @@ class ActionCyclique
      */
     public function addTache(\Orange\MainBundle\Entity\Tache $tache)
     {
+    	$tache->setActionCyclique($this);
         $this->tache[] = $tache;
         return $this;
     }
@@ -289,5 +309,27 @@ class ActionCyclique
     public function getIteration()
     {
         return $this->iteration;
+    }
+    
+    /**
+     * get echeance occurence
+     * @return string
+     */
+    public function echeanceOccurence() {
+    	$echeance = null;
+    	if($this->pas->getPeriodicite()->getId()==Periodicite::$ids['hebdomadaire']) {
+    		if($this->iteration==null) {
+    			$echeance = sprintf('chaque %s', $this->dayOfWeek);
+    		} else {
+    			$echeance = sprintf('le %s %s de chaque quinzaine', $this->iteration.'e', $this->dayOfWeek);
+    		}
+    	} elseif($this->pas->getPeriodicite()->getId()==Periodicite::$ids['mensuelle']) {
+    		if($this->iteration==null) {
+    			$echeance = sprintf('chaque %s du mois', $this->dayOfMonth->getValeur());
+    		} else {
+    			$echeance = sprintf('le %s %s du %s', $this->iteration.'e', $this->dayOfMonth->getValeur(), $this->pas->getChaine());
+    		}
+    	}
+    	return $echeance;
     }
 }

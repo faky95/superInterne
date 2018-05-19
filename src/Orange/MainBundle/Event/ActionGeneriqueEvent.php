@@ -44,7 +44,7 @@ class ActionGeneriqueEvent extends UserEvent
      * @param Request $request
      * @param ActionGeneriqueManager $am
      */
-    public function __construct(SecurityContext $security_context, ActionGeneriqueManager $am = null, ActionManager $actMan)
+    public function __construct(SecurityContext $security_context, ActionGeneriqueManager $am = null, $actMan)
     {
     	$this->security_context = $security_context;
         $this->actionGeneriqueManager = $am;

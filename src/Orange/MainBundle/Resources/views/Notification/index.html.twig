@@ -21,7 +21,7 @@
 				<a href="#minimize" class="maximize" style="display: inline;">Minimize</a>
 	        </div>
 	        <div class="panel-body with-footer" style="display: none;">
-		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('filtrer_les_notifications') }}" method="post">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('les_notifications') }}" method="post">
 		         	<div class="form-group">
 						{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
 					</div>
@@ -32,7 +32,7 @@
 	                {{ form_widget(form._token) }}
 			        <div class="form-group form-actions">
 			        	<div class="col-lg-offset-2 col-lg-9">
-			        		<button type="submit" class="btn btn-warning submitLink" data-target="#myModal" call="closeAndNotifyAfterSuccess" argument-call="#notificationTable">Filtrer</button>
+			        		<button type="submit" class="btn btn-warning" data-target="#myModal" call="closeAndNotifyAfterSuccess" argument-call="#notificationTable">Filtrer</button>
 			        		<button type="reset" class="btn btn-die" onclick="form.reset()">Effacer</button>
 						</div>
 					</div><!-- End .form-group  -->  
@@ -61,12 +61,11 @@
 							<th>En copie</th>
 							<th>Date</th>
 							<th>Etat</th>
-							<th width="200px">Actions</th>
 	                    </tr>
 	                </thead>
 	                <tbody>
 	                	<tr>
-	                		<td colspan="7"></td>
+	                		<td colspan="5"></td>
 	                	</tr>
 	                </tbody>
 	            </table>
@@ -79,6 +78,6 @@
 {% block pagescript %}
 {{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
-	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'notificationTable', url: path('liste_des_notifications'), nosorting: {0:4, 1:5} } %}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'notificationTable', url: path('liste_des_notifications'), nosorting: {0:0, 1:4} } %}
 {% endblock %}
 		 	

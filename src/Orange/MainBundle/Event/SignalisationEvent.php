@@ -67,16 +67,22 @@ class SignalisationEvent extends UserEvent
     {
         return $this->signalisationManager;
     }
+    
+    /**
+     * @return \Orange\MainBundle\Entity\Signalisation
+     */
 	public function getSignalisation() {
 		return $this->signalisation;
 	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+	 * @return \Orange\MainBundle\Event\SignalisationEvent
+	 */
 	public function setSignalisation($signalisation) {
 		$this->signalisation = $signalisation;
 		return $this;
 	}
-	
-
-    
 	
 }
 

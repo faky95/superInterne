@@ -13,14 +13,13 @@ use Doctrine\ORM\Mapping as ORM;
 class TypeStructure
 {
 	
-	const NIVEAU_DIRECTION 		= 'DIRECTION';
-	const NIVEAU_POLE 			= 'POLE';
-	const NIVEAU_DEPARTEMENT 	= 'DEPARTEMENT';
-	const NIVEAU_SERVICE 		= 'SERVICE';
+	/**
+	 * @var array
+	 */
+	static $ids;
 	
     /**
      * @var integer
-     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")

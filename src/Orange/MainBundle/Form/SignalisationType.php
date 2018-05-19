@@ -1,12 +1,11 @@
 <?php
-
 namespace Orange\MainBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Doctrine\ORM\EntityRepository;
 use Orange\MainBundle\Repository\InstanceRepository;
+use Orange\MainBundle\Repository\UtilisateurRepository;
 
 class SignalisationType extends AbstractType
 {
@@ -16,33 +15,26 @@ class SignalisationType extends AbstractType
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options) {
-    	$structure_id 	= $options['attr']['structure_id'];
         $builder->add('libelle',null,array('label'=>'Libellé :'))
             ->add('description',null,array('label'=>'Description :'))
             ->add('site',null,array('label'=>'Site :'))
             ->add('instance', null, array(
-            		'label' => 'Périmètre :',
-            		'empty_value' => '--- Choisir le périmètre ---',
+            		'label' => 'Périmètre :', 'empty_value' => 'Choisir le périmètre ...',
             		'query_builder' => function(InstanceRepository $er ) {
             			return $er->filterForSignalisation();
             		}
             ))
             ->add('constatateur', null, array(
-            		'label' => 'Constat fait par :',
-            		'empty_value' => '--- Choisir le constatateur ---',
-            		'query_builder' => function(EntityRepository $er ) use ($structure_id) {
-            			return $er->createQueryBuilder('q')
-		            			  ->innerJoin('q.structure', 'str')
-		            			  ->where('str.id = ?1')
-		            			  ->setParameter(1, $structure_id);
+            		'label' => 'Constat fait par :', 'empty_value' => 'Choisir le constatateur ...',
+            		'query_builder' => function(UtilisateurRepository $er) {
+            			return $er->filter();
             		}
             ))
             ->add('dateConstat', 'date', array('label' => 'Date de constat :', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
-            ->add('domaine', null, array('label'=>'Domaine :', 'empty_value' => 'Choisissez un domaine ..'))
-            ->add('typeSignalisation', null, array('label'=>'Type Signalisation :', 'empty_value' => 'Choisissez un type de signalisation...'))
+            ->add('domaine', null, array('label'=>'Domaine :', 'empty_value' => 'Choisissez un domaine ...'))
+            ->add('typeSignalisation', null, array('label'=>'Type Signalisation :', 'empty_value' => 'Choisissez un type de signalisation ...'))
             ->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
-            ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-default cancel')))
-          ;
+            ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-default cancel')));
     }
     
     /**
@@ -60,6 +52,6 @@ class SignalisationType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_signalisation';
+        return 'signalisation';
     }
 }

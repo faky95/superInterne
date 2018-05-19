@@ -228,7 +228,7 @@ class InstanceController extends BaseController
      * @param QueryBuilder $queryBuilder
      * @return integer
      */
-    protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName) {
+    protected function getLengthResults(QueryBuilder $queryBuilder, $rootColumnName = 'id') {
     	$data = $queryBuilder->select(sprintf('COUNT(DISTINCT %s.%s) as number', $queryBuilder->getRootAlias(), $rootColumnName))
     		->resetDQLPart('groupBy')
 	    	->getQuery()->execute();

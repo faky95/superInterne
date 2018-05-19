@@ -29,12 +29,12 @@ class DashboardController extends BaseController {
 		$user=$this->getUser();
 		$bu=$user->getStructure()->getBuPrincipal();
 		$reqEvP=$rep->getStatsUserBySemaine($user, 1, null);
-		$res = $this->container->get('orange.main.calcul')->cumul($reqEvP);
+		$res = $this->get('orange.main.calcul')->cumul($reqEvP);
 		$colors = $this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->listColorOfBu($bu);
-		$dataEvP = $this->container->get('orange.main.calcul')->stats($bu, $res);
+		$dataEvP = $this->get('orange.main.calcul')->stats($bu, $res);
 		$statsEvP = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($dataEvP, 'semaine');
 		$graphe=array();
-		foreach($statsEvP['taux'] as $key=>$value) {
+		foreach(array_keys($statsEvP['taux']) as $key) {
 			$graphe[$key]=array();
 		}
 		foreach ($statsEvP['semaine'] as $key=>$values) {
@@ -107,15 +107,14 @@ class DashboardController extends BaseController {
 			$tauxRealisationGlobaleDelais=0;
 			$tauxRealisationGlobale=0;
 		}
-		return  array(
+		return array(
 			 	'tauxRealisationGlobaleDelais'=>$tauxRealisationGlobaleDelais,
 				'tauxRealisationGlobale'=>$tauxRealisationGlobale,
 				'actionRealiseeDelai'=>$actionRealiseeDelai,
 				'actionRealisee'=>$actionRealisee, 
 				'actionRealiseeDelai'=>$actionRealiseeDelai,
 				'actionTotal'=>$actionTotal
-				
-		);
+			);
 	}
 	/**
 	 * @Method("GET")

@@ -116,6 +116,7 @@ class Loader {
 		/**		 @var \Doctrine\DBAL\Connection $connection */
 		$connection = $this->container->get('database_connection');
 		$repository = $this->em->getRepository('OrangeMainBundle:Signalisation');
+		$connection->beginTransaction();
 		try {
 			$nouvelle_statut=$this->em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code'=>Statut::NOUVELLE_SIGNALISATION));
 			$query = new SignalisationQuery($this->em->getConnection());

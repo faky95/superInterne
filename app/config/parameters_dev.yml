@@ -1,6 +1,8 @@
 # This file is a "template" of what your parameters.yml file should look like
 parameters:
     template_status: OrangeMainBundle:Extra:status.html.twig
+    wsdl_http: http://127.0.0.1/super/web/app_dev.php
+    wsdl_host: http://127.0.0.1/super/web
     ids:
         cibleNotification:
             porteur: 1
@@ -10,6 +12,17 @@ parameters:
             relanceDepassement: 1
             rappelQuartTemps: 2
             relanceValidation: 3 
+        typeStructure:
+            direction: 1
+            departement: 2
+            service: 3
+            pole: 4
+            societe: 5
+        periodicite:
+            hebdomadaire: 1
+            mensuelle: 2
+            annuelle: 3
+            journaliere: 4
     
     pas:
         Hebdomadaire: 1

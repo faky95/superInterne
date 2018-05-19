@@ -1,0 +1,22 @@
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal">
+		<span class="icon12 minia-icon-close"></span>
+	</button>
+	<h4 align="left">
+		<span class="icon16 icomoon-icon-earth"></span>
+       	<span>Suppression d'une action cyclique</span>
+	</h4>
+</div>
+<form class="form-horizontal" action="{{ path('supprimer_actioncyclique', {'id': entity.id }) }}" method="POST" novalidate="novalidate" role="form">
+	<div class="panel-body">
+		<p>Voulez-vous vraiment supprimer cette action cyclique.</p>
+{# 		{{ form_widget(form._token) }}#}
+		<!-- End .form-group  -->
+	</div>
+	<div class="form-actions">
+		<div class="col-lg-offset-2 col-lg-9">
+			<a data-target="#myModal" class="btn btn-success submitLink" call="closeAndNotifyAndRefresh" argument-call="#actionCycliqueTable">Confirmer</a>
+			<a class="btn btn-primary" data-dismiss="modal">Fermer</a>
+		</div>
+	</div>
+</form>

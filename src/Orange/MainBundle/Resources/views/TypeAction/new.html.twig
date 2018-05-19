@@ -17,10 +17,10 @@
 			    </h4>
 			</div>
 			<div class="panel-body">
-				<form novalidate="novalidate" class="form-horizontal" action="{{ espace_id is empty ? path('creer_type_action') : path('creer_type_action_to_espace', {'espace_id':espace_id})}}" method="post" role="form">
+				<form novalidate="novalidate" class="form-horizontal" action="{{ espace is empty ? path('creer_type_action') : path('creer_type_action_to_espace', {'espace_id':espace.id})}}" method="post" role="form">
 					<div class="form-group">
 						{{ form_widget(form.type,  {'attr': {'class': 'nostyle form-control'}}) }}
-						{% if is_granted('ROLE_SUPER_ADMIN') and espace_id is not defined and espace_id is empty %}
+						{% if is_granted('ROLE_SUPER_ADMIN') and espace is not defined and espace is empty %}
 						{{ form_widget(form.bu,  {'attr': {'class': 'nostyle form-control'}}) }}
 						{% endif %}
 					</div>

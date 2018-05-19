@@ -16,7 +16,6 @@ class NotificationRepository extends BaseRepository{
 		foreach($data as $value) {
 			$parameters[$value->getName()] = $value->getValue();
 		}
-		
 		return $queryBuilder->setParameters($parameters);
 	}
 	

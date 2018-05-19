@@ -10,8 +10,8 @@ class SecurityExtension extends \Twig_Extension
 	 */
 	private $user;
 	
-    public function __construct($securityContext) {
-        $this->user = $securityContext->getToken() ? $securityContext->getToken()->getUser() : null; 
+    public function __construct($container) {
+    	$this->user = $container->get('security.context')->getToken() ? $container->get('security.context')->getToken()->getUser() : null; 
     }
 
     /**
@@ -37,7 +37,7 @@ class SecurityExtension extends \Twig_Extension
     	if(is_array($role)) {
     		return $this->user ? $this->user->hasRoles($role) : false;
     	} else {
-    		return $this->user ? $this->user->hasRole($role) : false;
+    		return $this->user ? true : false;
     	}
     }
     

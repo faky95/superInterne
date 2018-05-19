@@ -4,17 +4,6 @@
 	    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	    <title>Super{% block title %} {% endblock %}</title>
 		{% block stylesheets %}
-		
-		{% endblock %}
-		    <meta name="author" content="SuggeElson" />
-		    <meta name="description" content="Supr admin template - new premium responsive admin template. This template is designed to help you build the site administration without losing valuable time.Template contains all the important functions which must have one backend system.Build on great twitter boostrap framework" />
-		    <meta name="keywords" content="admin, admin template, admin theme, responsive, responsive admin, responsive admin template, responsive theme, themeforest, 960 grid system, grid, grid theme, liquid, masonry, jquery, administration, administration template, administration theme, mobile, touch , responsive layout, boostrap, twitter boostrap" />
-		    <meta name="application-name" content="Supr admin template" />
-		
-		    <!-- Mobile Specific Metas -->
-		    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		    <!-- Force IE9 to render in normal mode -->
-		    <meta http-equiv="X-UA-Compatible" content="IE=edge" />	
 		    <!-- Le styles -->
 		    <!-- Use new way for google web fonts 
 		    http://www.smashingmagazine.com/2012/07/11/avoiding-faux-weights-styles-google-web-fonts -->
@@ -34,7 +23,6 @@
 		    <link href="{{ asset('bundles/orangemain/css/supr-theme/jquery.ui.supr.css') }}" rel="stylesheet" type="text/css"/>
 		    <link href="{{ asset('bundles/orangemain/css/icons.css') }}" rel="stylesheet" type="text/css" />
 		    <link href="{{ asset('bundles/orangemain/plugins/forms/color-picker/color-picker.css') }}" type="text/css" rel="stylesheet" />
-		        
 		    <!-- Plugins stylesheets -->
 		    <link href="{{ asset('bundles/orangemain/plugins/misc/qtip/jquery.qtip.css') }}" rel="stylesheet" type="text/css" />
 		    <link href="{{ asset('bundles/orangemain/plugins/forms/uniform/uniform.default.css') }}" type="text/css" rel="stylesheet" />
@@ -43,17 +31,13 @@
 		    <link href="{{ asset('bundles/orangemain/plugins/misc/fullcalendar/fullcalendar.css') }}" rel="stylesheet" type="text/css" />
 		    <link href="{{ asset('bundles/orangemain/plugins/pnotify/jquery.pnotify.default.css') }}" rel="stylesheet" type="text/css" />
 		    <link href="{{ asset('bundles/orangemain/plugins/misc/search/tipuesearch.css') }}" type="text/css" rel="stylesheet" />
-		    
 		    <link href="{{ asset('bundles/orangemain/js/colorpicker/spectrum.css') }}" type="text/css" rel="stylesheet" />
-		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery.min.js') }}"></script>
-		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-1.10.2.js') }}"></script>
-		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-ui.js') }}"></script>
 		    <link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/jquery.dataTables.css') }}" type="text/css" rel="stylesheet" />
     		<link href="{{ asset('bundles/orangemain/plugins/tables/dataTables/TableTools.css') }}" type="text/css" rel="stylesheet" />
     		<link href="{{ asset('bundles/orangemain/plugins/forms/togglebutton/toggle-buttons.css') }}" type="text/css" rel="stylesheet" />
     		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/modal.css') }}" type="text/css" media="screen" />
     		<link rel="stylesheet" href="{{ asset('bundles/orangemain/css/main.css') }}" type="text/css" media="screen" />
-    	
+		
 		    <!-- Main stylesheets -->
 		    <link href="{{ asset('bundles/orangemain/css/main.css') }}" rel="stylesheet" type="text/css" /> 
 			
@@ -62,6 +46,22 @@
 			
 		    <!--[if IE 8]><link href="css/ie8.css" rel="stylesheet" type="text/css" /><![endif]-->
 		    
+		{% endblock %}
+		    <meta name="author" content="SuggeElson" />
+		    <meta name="description" content="Supr admin template - new premium responsive admin template. This template is designed to help you build the site administration without losing valuable time.Template contains all the important functions which must have one backend system.Build on great twitter boostrap framework" />
+		    <meta name="keywords" content="admin, admin template, admin theme, responsive, responsive admin, responsive admin template, responsive theme, themeforest, 960 grid system, grid, grid theme, liquid, masonry, jquery, administration, administration template, administration theme, mobile, touch , responsive layout, boostrap, twitter boostrap" />
+		    <meta name="application-name" content="Supr admin template" />
+		
+		    <!-- Mobile Specific Metas -->
+		    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		    <!-- Force IE9 to render in normal mode -->
+		    <meta http-equiv="X-UA-Compatible" content="IE=edge" />	
+		        
+		    
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery.min.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-1.10.2.js') }}"></script>
+		    <script type="text/javascript" src="{{ asset('bundles/orangemain/js/jquery-ui.js') }}"></script>
+    	
 		    <!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		    <!--[if lt IE 9]>
 		      <script type="text/javascript" src="js/libs/excanvas.min.js"></script>
@@ -164,6 +164,13 @@
 	                            <span class="icon16 icomoon-icon-mail"></span><span class="txt"> Notifications</span>
 	                        </a>
 	                    </li>
+	                    {% if is_granted('ROLE_ADMIN') %}
+	                    <li class="dropdown">
+                            <a href="{{ path('mon_panier') }}" class="dropdown-toggle">
+                                <span class="icon16 cut-icon-cart"></span>Panier<span class="notification">8</span>
+                            </a>
+                        </li>
+                        {% endif %}
 	                </ul>
 	                <ul class="nav navbar-right usernav">
 	                    <li class="dropdown">
@@ -316,8 +323,7 @@
 			<script type="text/javascript" src="{{ asset('bundles/orangemain/js/utils.js') }}"></script>
 			<script type="text/javascript" src="{{ asset('bundles/orangequickmaking/js/jquery.form.min.js') }}"></script>
 			<script type="text/javascript" src="{{ asset('bundles/orangequickmaking/js/utils.js') }}"></script>
-			
-		 	{% endblock %}
+		 {% endblock %}
 		 	
 		 	<!-- Changement de passe -->
 		 	<script type="text/javascript">

@@ -1,0 +1,83 @@
+{% extends '::base.html.twig' %}
+
+{% form_theme edit_form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
+
+{% block content -%}
+<!-- heading -->
+<div class="heading">
+	<h3>{% block page_title %} Modification d'une action {% endblock %}</h3>                    
+</div>
+<!-- End .heading-->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+			    <h4> 
+			        <span>Modification d'une Action</span>
+			    </h4>
+			</div>
+			<div class="panel-body with-footer">
+			    <form novalidate="novalidate" class="form-horizontal" action="{{ path('modifier_action', {id : entity.id}) }}" method="post" {{ form_enctype(edit_form) }} role="form">
+	    			<div class="form-group">
+			                {{ form_widget(edit_form.libelle, {'attr': {'class': 'form-control'}} ) }}
+			                {{ form_widget(edit_form.typeAction,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							      <div 
+									{% if espace_id is defined and espace_id is not empty %}
+										style="display:none;"
+									{% endif %}
+									>
+										{{ form_widget(edit_form.instance) }}
+								</div>
+							{{ form_widget(edit_form.domaine,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(edit_form.porteur) }}
+							{{ form_widget(edit_form.priorite,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+{# 							{{ form_widget(edit_form.groupe,  {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}#}
+							{{ form_widget(edit_form.tmp_contributeur, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+						</div>
+						<div class="form-group">
+							{{ form_widget(edit_form.dateDebut, {'attr': {'class': 'form-control'}}) }}
+							{{ form_widget(edit_form.dateInitial, {'attr': {'class': 'form-control'}}) }}
+						</div>
+							{{ form_row(edit_form.description) }}
+		                	{{ form_widget(edit_form._token) }}
+			        <div class="form-group form-actions">
+			        	<div class="col-lg-offset-2 col-lg-9">
+							    {{ form_widget(edit_form.save) }}
+							    {{ form_widget(edit_form.save_and_add) }}
+							    {{ form_widget(edit_form.cancel, {attr: {class: 'btn btn-die'}}) }}
+						</div>
+					</div><!-- End .form-group  --> 
+				</form>
+			</div>
+		</div><!-- End .panel -->
+	</div><!-- End .span6 -->
+</div>
+{% if  espace_id is not empty%}
+	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+		{parent: edit_form.instance, child: edit_form.porteur, url: path('porteur_by_espace'), key: 'id' } 
+	%}
+{% endif %}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: edit_form.instance, child: edit_form.typeAction, url: path('type_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+	{parent: edit_form.instance, child: edit_form.domaine, url: path('domaine_by_instance'), key: 'id' } 
+%}
+{% include 'OrangeMainBundle:Extra:reloadSelect2.html.twig' with 
+	{parent: edit_form.instance, child: edit_form.tmp_contributeur, url: path('user_by_instance'), key: 'id' } 
+%}
+{% if espace_id is empty %}
+	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+		{parent: edit_form.instance, child: edit_form.porteur, url: path('porteur_by_instance'), key: 'id' } 
+	%}
+{% endif %}
+{% endblock %}
+
+{% block pagescript %}
+{% endblock %}

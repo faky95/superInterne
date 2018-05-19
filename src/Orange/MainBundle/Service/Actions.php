@@ -62,6 +62,8 @@ class Actions {
 		$arrStatut = array(Statut::ACTION_NOUVELLE, Statut::ACTION_ABANDONNEE);
 		$actions = '<div class="btn-group">
 				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>';
+		$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Ajout dans le panier">
+			<span class="cut-icon-cart"></span></a>';
 		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
@@ -72,7 +74,8 @@ class Actions {
 		}
 		return sprintf($actions, $entity->getInstance()->getEspace()? $this->router->generate('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $entity->getInstance()->getEspace()->getId())):
 						$this->router->generate('details_action', array('id'=>$entity->getId())),
-                   		$this->router->generate('edition_action', array('id'=>$entity->getId())),
+						$this->router->generate('ajouter_dans_panier', array('id'=>$entity->getId())),
+						$this->router->generate('edition_action', array('id'=>$entity->getId())),
 						$this->router->generate('supprimer_action', array('id'=>$entity->getId()))
 					);
 	}
@@ -85,6 +88,12 @@ class Actions {
 		$actions = '<div class="btn-group"><a class="btn btn-default" href="%s" title="Détails sur l\'action cylclique"><span class="icomoon-icon-eye"></span></a>';
 		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAction()->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
+		}
+		if($this->user->hasRole('ROLE_ADMIN')) {
+			$actions= $actions.sprintf('<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Supprimer l\'action">'.
+						'<span class="icomoon-icon-remove-4"></span></a>',
+					$this->router->generate('supprimer_actioncyclique', array('id'=>$entity->getId()))
+				);
 		}
 		return sprintf($actions, $this->router->generate('actioncyclique_show', array('id'=>$entity->getId())),
 					$this->router->generate('actioncyclique_edit', array('id'=>$entity->getId()))
@@ -154,14 +163,13 @@ class Actions {
 	 */
 	public function generateActionsForReporting($entity)
 	{
-		$test = '<div class="btn-group">';
-		$test = $test.'<a class="btn btn-default" href="%s" title="Modifier le reporting"><span class="icomoon-icon-pencil-3"></span></a>
+		$render = '<div class="btn-group">';
+		$render .= '<a class="btn btn-default" href="%s" title="Modifier le reporting"><span class="icomoon-icon-pencil-3"></span></a>
 						<a class="btn btn-default" method="delete" href="%s" title="Supprimer le reporting"><span class="icomoon-icon-remove-4"></span></a>
-											</div>';
-	
-		return sprintf($test,$this->router->generate('edition_reporting', array('id'=>$entity->getId())),
+					</div>';
+		return sprintf($render, $this->router->generate('edition_reporting', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_reporting', array('id'=>$entity->getId()))
-				);
+			);
 	}
 	
 	/**
@@ -215,10 +223,10 @@ class Actions {
 				          	<a class="btn btn-default" href="%s" title="Modifier le groupe"><span class="icomoon-icon-pencil-3"></span></a>
 				          	<a class="btn btn-default" method="delete" href="%s" title="Supprimer le groupe"><span class="icomoon-icon-remove-4"></span></a>
 				        </div>', 
-				$this->router->generate('details_groupe', 	array('id'=>$entity->getId())),
-														$this->router->generate('edition_groupe', 	array('id'=>$entity->getId())),
-														$this->router->generate('supprimer_groupe', array('id'=>$entity->getId()))
-		);
+		$this->router->generate('details_groupe', array('id'=>$entity->getId())),
+						$this->router->generate('edition_groupe', 	array('id'=>$entity->getId())),
+						$this->router->generate('supprimer_groupe', array('id'=>$entity->getId()))
+			);
 	}
 	
 	/**
@@ -234,10 +242,11 @@ class Actions {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'utilisateur"><span class="icomoon-icon-pencil-3"></span></a>';
 		}
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || ($this->user->hasRole('ROLE_ADMIN') && $this->user->getStructure()->getRoot()==$entity->getStructure()->getRoot())) {
-			if($entity->isEnabled()){
+			if($entity->isEnabled()) {
 				$actions .= '<a class="btn btn-default" method="delete" href="%s" title="Désactiver l\'utilisateur"><span class="icomoon-icon-lock-2"></span></a></div>';
-			}else
+			} else {
 				$actions .= '<a class="btn btn-default" method="delete" href="%s" title="Activer l\'utilisateur"><span class="icomoon-icon-unlocked-2"></span></a></div>';
+			}
 		}
 		if($this->user->hasRole('ROLE_SUPER_ADMIN')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Se connecter au compte"><span class="entypo-icon-shuffle"></span></a></div>';
@@ -396,17 +405,16 @@ class Actions {
 				$this->router->generate('details_actiongenerique', array('id'=>$entity->getId())),
 				$this->router->generate('edition_actiongenerique', array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_actiongenerique', array('id'=>$entity->getId()))
-				);
+			);
 	}
 	
 	/**
-	 * 
 	 * @param Action $entity
 	 */
 	public function showCheckBoxForOrientationAction($entity){
 		if($entity->getActionGeneriqueHasAction()->count()==0 && $entity->getActionCyclique()==null){
 			return '<input type="checkbox" name="datas[]" class="styled chkbox" value="'.$entity->getId().'"  >';
-		}else{
+		} else {
 			return "";
 		}
 	}

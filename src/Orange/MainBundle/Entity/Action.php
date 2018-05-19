@@ -9,7 +9,6 @@ use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
 
 /**
  * Action
- *
  * @ORM\Table(name="action")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ActionRepository")
  * @ACAssert
@@ -19,7 +18,6 @@ class Action
 	
 	 /**
      * @var integer
-     *
      * @ORM\Column(name="id", type="integer", nullable=false)
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
@@ -28,7 +26,6 @@ class Action
 
     /**
      * @var string date
-     *
      * @ORM\Column(name="reference", type="string", length=50, nullable=true)
      */
     private $reference;
@@ -42,7 +39,6 @@ class Action
 
     /**
      * @var string
-     *
      * @ORM\Column(name="description", type="text", nullable=true)
      * @Assert\NotBlank(message="Vous devez donner une description pour cette action ! ")
      */
@@ -60,13 +56,20 @@ class Action
      * @Assert\NotBlank(message="Vous devez donner une date de début pour cette action ! ")
      */
     private $dateDebut;
-
+    
     /**
      * @var \DateTime
      * @ORM\Column(name="date_initial", type="date", nullable=false)
      * @Assert\NotBlank(message="Vous devez donner un délai pour cette action ! ")
      */
     private $dateInitial;
+    
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="date_fin_prevue", type="date", nullable=false)
+     * @Assert\NotBlank(message="Vous devez donner une date de fin pour cette action ! ")
+     */
+    private $dateFinPrevue;
     
     /**
      * @ORM\OneToMany(targetEntity="ActionAvancement", mappedBy="action", cascade={"persist", "merge", "remove"})
@@ -86,7 +89,7 @@ class Action
     private $dateCloture;
 
     /**
-     * @var \Priorite
+     * @var Priorite
      * @ORM\ManyToOne(targetEntity="Domaine", inversedBy="action")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="domaine_id", referencedColumnName="id")
@@ -96,7 +99,7 @@ class Action
     private $domaine;
     
     /**
-     * @var \Priorite
+     * @var Priorite
      * @ORM\ManyToOne(targetEntity="Priorite")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="priorite_id", referencedColumnName="id")
@@ -116,7 +119,6 @@ class Action
     private $dateFinExecut;
     
    /** @var Structure
-	*
 	* @ORM\ManyToOne(targetEntity="Structure", inversedBy="action")
 	* @ORM\JoinColumns({
 	*   @ORM\JoinColumn(name="structure_id", referencedColumnName="id")
@@ -164,6 +166,7 @@ class Action
     private $animateur;
     
     /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
      * @ORM\OneToMany(targetEntity="Contributeur", mappedBy="action", cascade={"persist", "merge" ,"remove"})
      */
     private $contributeur;
@@ -181,6 +184,12 @@ class Action
      * )
      */
     private $groupe;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     * @ORM\ManyToMany(targetEntity="Panier", mappedBy="action")
+     */
+    private $panier;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -205,15 +214,21 @@ class Action
     
     /**
      * @var boolean
-     *
      * @ORM\Column(name="isReload", type="boolean", nullable=true)
      */
     private  $isReload;
     
     /**
+     * @var ActionCyclique
      * @ORM\OneToOne(targetEntity="ActionCyclique", mappedBy="action", cascade={"persist"})
      **/
     private $actionCyclique;
+    
+    /**
+     * @var Reco
+     * @ORM\OneToOne(targetEntity="Reco", mappedBy="action", cascade={"persist", "merge", "remove"})
+     **/
+    private $reco;
         
     /**
      * @var string
@@ -229,7 +244,7 @@ class Action
     
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection
-     * @ORM\OneToMany(targetEntity="Document", mappedBy="action", cascade={"persist"})
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="action", cascade={"persist", "remove"})
      */
     private $document;
     
@@ -253,7 +268,7 @@ class Action
     
     /**
      * @var \Orange\MainBundle\Entity\Statut
-     * @Assert\NotBlank(message="Choisissez le statut de l'action ")
+     * @Assert\NotBlank(message="Choisissez le statut de l'action", groups={"change_statut"})
      */
     private $statutChange;
     
@@ -447,18 +462,37 @@ class Action
     		$this->etatReel= 'ACTION_NON_ECHUE';
     	}
         $this->dateInitial = $dateInitial;
-
+		$this->dateFinPrevue = $dateInitial;
         return $this;
     }
 
     /**
-     * Get dateInitial
-     *
+     * Get dateFinPrevue
      * @return \DateTime 
+     */
+    public function getDateFinPrevue()
+    {
+    	return $this->dateFinPrevue;
+    }
+    
+    /**
+     * Set dateFinPrevue
+     * @param \DateTime $dateFinPrevue
+     * @return Action
+     */
+    public function setDateFinPrevue($dateFinPrevue)
+    {
+    	$this->dateFinPrevue = $dateFinPrevue;
+    	return $this;
+    }
+    
+    /**
+     * Get dateInitial
+     * @return \DateTime
      */
     public function getDateInitial()
     {
-        return $this->dateInitial;
+    	return $this->dateInitial;
     }
 
     /**
@@ -967,6 +1001,14 @@ class Action
         return $this->actionCyclique;
     }
     
+    /**
+     * @param Paneir
+     * @return \Orange\MainBundle\Entity\Action
+     */
+    public function addPanier($panier) {
+    	$this->panier->add($panier);
+    	return $this;
+    }
 
     /**
      * Set etatCourant

@@ -1,5 +1,4 @@
 <?php
-
 namespace Orange\MainBundle\Model;
 
 use Orange\MainBundle\Entity\Action;

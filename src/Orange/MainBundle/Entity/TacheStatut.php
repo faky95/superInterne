@@ -41,10 +41,20 @@ class TacheStatut
     
     /**
      * @var \DateTime
-     *
      * @ORM\Column(name="dateStatut", type="datetime", nullable=true)
      */
     private $dateStatut;
+    
+    /**
+     * @var \Doctrine\Common\Collections\ArrayCollection
+     */
+    public $erq;
+    
+    /**
+     * @var \Date
+     */
+    public $dateFinExecut;
+    
     
     /**
      * @var textarea
@@ -55,6 +65,7 @@ class TacheStatut
     
     public function __construct(){
     	$this->dateStatut = new \DateTime();
+    	$this->erq = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -66,28 +77,25 @@ class TacheStatut
     {
         return $this->id;
     }
-
+    
     /**
      * Set dateStatut
-     *
      * @param \DateTime $dateStatut
      * @return TacheStatut
      */
     public function setDateStatut($dateStatut)
     {
-        $this->dateStatut = $dateStatut;
-
-        return $this;
+    	$this->dateStatut = $dateStatut;
+    	return $this;
     }
-
+    
     /**
      * Get dateStatut
-     *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getDateStatut()
     {
-        return $this->dateStatut;
+    	return $this->dateStatut;
     }
 
     /**

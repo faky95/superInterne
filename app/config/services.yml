@@ -33,7 +33,7 @@ services:
             
     twig.extension.orange.main.security:
         class: Orange\MainBundle\Twig\SecurityExtension
-        arguments: ["@security.context"] 
+        arguments: ["@service_container"] 
         tags:
             - {name: twig.extension }
             

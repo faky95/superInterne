@@ -243,8 +243,8 @@ class DomaineController extends BaseController
      * @param number $chantier_id
      * @return void
      */
-    private function findEntities($em, $espace_id, $projet_id, $chantier_id) {
-    	$data = array('response' => null);
+    private function findEntities($em, $espace_id = null, $projet_id = null, $chantier_id = null) {
+    	$data = array('response' => null, 'espace' => null, 'projet' => null, 'chantier' => null);
     	if($espace_id) {
     		$data['espace'] = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		if($data['espace']) {

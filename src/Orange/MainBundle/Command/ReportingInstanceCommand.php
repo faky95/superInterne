@@ -53,7 +53,7 @@ class ReportingInstanceCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
-		$reportingMapping = $this->getMapping()->getReporting();
+		$reportingMapping = $this->getMapping()->getReporting()->setEntityManager($em);
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiInstance($bu, $espace, $projet);
 		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting($bu, $espace, $projet);
 		$mapUsers = array();

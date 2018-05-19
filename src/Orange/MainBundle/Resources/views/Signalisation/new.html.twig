@@ -30,9 +30,9 @@
 			                	{{ form_widget(form.dateConstat) }}
 			                 	{{ form_widget(form.constatateur, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
 			                </div>
-                                        <div class="form-group">
-                                        {{ form_widget(form.site, {'attr': {'class': 'form-control'}}) }}
-                                        </div>
+                            <div class="form-group">
+	                            {{ form_widget(form.site, {'attr': {'class': 'form-control'}}) }}
+                            </div>
 			                	{{ form_row(form.description) }}
 			                	{{ form_widget(form._token) }}
 						    <div class="form-group">
@@ -53,9 +53,12 @@
  {{ parent() }}
 	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 			{parent: form.instance, child: form.typeSignalisation, url: path('typesignalisation_by_instance'), key: 'id' } 
-	%}
+	    %}
 	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
 			{parent: form.instance, child: form.domaine, url: path('domaine_signalisation_by_instance'), key: 'id' } 
-	%}
+	    %}
+	{% include 'OrangeMainBundle:Extra:reloadSelect.html.twig' with 
+			{parent: form.instance, child: form.constatateur, url: path('constatateur_by_instance'), key: 'id' } 
+	    %}
 
 {% endblock %}

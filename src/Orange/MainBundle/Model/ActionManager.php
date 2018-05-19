@@ -158,10 +158,12 @@ class ActionManager
 		$emailPorteur = array($emailPorteur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
-		}else{
+		} else {
 			$cc = array_merge($allEmailAnimateur, $emailManager, $emailContributeur );
 		}
-		$action->getActionStatut()->last()->getErq()->setType($this->types['demande_abandon']);
+		foreach($action->getActionStatut()->last()->getErq() as $erq) {
+			$erq->setType($this->types['demande_abandon']);
+		}
 		$this->updateEntityEtat($this->em, $statut, $statut, $action);
 		Notification::notificationWithCopy($helper, $subject, $emailAnimateur, $cc, $commentaire, $action->getActionStatut()->last());
 	}
@@ -199,8 +201,8 @@ class ActionManager
 		if($today > $action->getDateInitial()->format('Y-m-d')){
 			$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
 		}
-		$comment = '. La demande d\'abandon de l\'action '.$action->getReference().' a été refusée par
-						' . $this->user->getNomComplet(). ' pour les raisons suivantes: "'.$action->getActionStatut()->last()->getCommentaire ().'"';
+		$comment = 'La demande d\'abandon de l\'action '.$action->getReference().' a été refusée par
+						' . $this->user->getNomComplet(). ' pour les raisons décrites en commentaire.';
 		$emailAnimateur = array($emailAnimateur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
@@ -223,8 +225,8 @@ class ActionManager
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$emailAnimateur = ActionUtils::getEmailAnimateur($this->em, $action);
 		$subject = 'Demande de report d\'action .';
-		$commentaire = $this->user->getCompletNom(). ' a effectué(e) une demande de report d\'échéance pour les raisons suivantes :"'.$action->getReport()->last()->getDescription().
-		'". '.$action->getAnimateur()->getNomComplet().' est invité(e) à donner une suite à cette demande. ';
+		$commentaire = $this->user->getCompletNom(). ' a effectué(e) une demande de report d\'échéance pour les raisons décrites en commentaire.'.
+			$action->getAnimateur()->getNomComplet().' est invité(e) à donner une suite à cette demande. ';
 		$emailPorteur = array($emailPorteur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur, $emailPorteur);
@@ -250,8 +252,7 @@ class ActionManager
 		$emailContributeur = ActionUtils::getEmailContributeur($this->em, $action);
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Demande de report d\'action';
-		$comment = 'La demande de report d\'échéance a été acceptée.
-										par ' . $this->user->getNomComplet().' ';
+		$comment = 'La demande de report d\'échéance a été acceptée par ' . $this->user->getNomComplet();
 		$emailPorteur = array($emailPorteur);
 		if ($action->getInstance() && $action->getInstance()->getEspace()){
 			$cc = array_merge($emailContributeur, $allEmailAnimateur);
@@ -261,7 +262,7 @@ class ActionManager
 		$action->getActionStatut()->last()->setStatut($this->em->getRepository('OrangeMainBundle:Statut')->findOneByCode($statut));
 		$this->em->persist($action->getActionStatut()->last());
 		$this->em->flush();
-		$action->setDateInitial($action->getReport()->last()->getDate());
+		$action->setDateFinPrevue($action->getReport()->last()->getDate());
 		$this->updateEntityEtat($this->em, $statut, $statut, $action);
 		Notification::notificationWithCopy($helper, $subject, $emailPorteur, $cc, $comment, $action->getActionStatut()->last());
 		
@@ -275,8 +276,7 @@ class ActionManager
 		$emailContributeur = ActionUtils::getEmailContributeur($this->em, $action);
 		$allEmailAnimateur = ActionUtils::getAllEmailAnimateur($this->em, $action);
 		$subject = 'Demande de report d\'action .';
-		$comment = '. La demande de report d\'échéance a été refusée
-											par ' . $this->user->getNomComplet() . ' !, reprise de traitement de l\'action .';
+		$comment = 'La demande de report d\'échéance a été refusée par ' . $this->user->getNomComplet() . ', reprise de traitement de l\'action.';
 		$statut = Statut::ACTION_NON_ECHUE;
 		if($today > $action->getDateInitial()->format('Y-m-d')){
 			$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
@@ -399,9 +399,6 @@ class ActionManager
 	 * @param LifecycleEventArgs $args
 	 */
 	public function updateAction($action, $helper,$args){
-		var_dump($args->getEntity()->getId());
-		var_dump($action->getId());
-		exit;
 		if($args->hasChangedField('porteur')){
 			exit('yes');
 		}

@@ -1,0 +1,153 @@
+{% extends '::base.html.twig' %}
+
+{% block content %}
+<!-- heading -->
+<div class="heading">
+	<h3>
+		{% block page_title %}
+		Importation d'une action
+		{% endblock %}
+	</h3>
+</div>
+<!-- End .heading-->
+<div class="row">
+	<div class="col-lg-12">
+
+		<div class="panel panel-default">
+
+			<div class="panel-heading">
+
+				<h4>
+					<span class="icon16   icomoon-icon-book "></span> <span>Manuel
+						pour le chargement des actions {{ isCorrective is defined and isCorrective==1 ? "correctives" : "" }}
+					</span>
+				</h4>
+			</div>
+			<div class="panel-body" style="padding-left: 0">
+				<ul style="list-style: none">
+					<li class="big col-lg-8" style="padding-left: 0">
+						<h3>Contraintes sur le fichier de chargement</h3> <span>Le
+							fichier de chargement est structuré de la maniére suivante:</span>
+						<ul>
+							{% if isCorrective is defined and isCorrective==1  %}
+							    <li><b>1 ème colonne :</b> Référence de la signalisation <span style="color:red"><i>(Attention: elle est obligatoire)</i></span></li>
+    							<li><b>2 ème colonne :</b> Le prénom et nom du porteur de
+    								l'action.</li>
+    							<li><b>3 ème colonne :</b> L'adresse email du porteur</li>
+    							<li><b>4 ème colonne : </b> L'instance de l'action</li>
+    							<li><b>5 ème colonne :</b> Les agents contributeurs à
+    								l'action <span style="color: red"> <i>(Attention :
+    										liste de leur e-mail séparés par une virgule ',')</i></span></li>
+    							<li><b>6 ème colonne :</b> L'état de l'action <span
+    								style="color: red"><i>(Attention : les états
+    										possibles: soldée, action nouvelle, abandonnée, en cours)</i></span></li>
+    							<li><b>7 ème colonne :</b> Le type de l'action</li>
+    							<li><b>8 ème colonne :</b> Le domaine de l'action</li>
+    							<li><b>9 ème colonne :</b> La date de démarrage de l'action
+    							</li>
+    							<li><b>10 ème colonne :</b> La date de fin prévue de l'action
+    							</li>
+    							<li><b>11 ème colonne :</b> La date de clôture de l'action <span
+    								style="color: red"> <i>(Attention : si la date de
+    										clôture est inconnue ou bien que l'action est en cours,
+    										laisser vide)</i></span></li>
+    							<li><b>12 ème colonne :</b> Le libellé de l'action</li>
+    							<li><b>13 ème colonne :</b> La description de l'action</li>
+    							<li><b>14 ème colonne :</b> La priorité <span
+    								style="color: red"><i>(Attention : les priorités
+    										possibles: importante, majeure, critique)</i></span></li>
+							{% else %}
+        							<li><b>1 ème colonne :</b> Le prénom et nom du porteur de
+        								l'action.</li>
+        							<li><b>2 ème colonne :</b> L'adresse email du porteur</li>
+        							<li><b>3 ème colonne : </b> L'instance de l'action</li>
+        							<li><b>4 ème colonne :</b> Les agents contributeurs à
+        								l'action <span style="color: red"> <i>(Attention :
+        										liste de leur e-mail séparés par une virgule ',')</i></span></li>
+        							<li><b>5 ème colonne :</b> L'état de l'action <span
+        								style="color: red"><i>(Attention : les états
+        										possibles: soldée, action nouvelle, abandonnée, en cours)</i></span></li>
+        							<li><b>6 ème colonne :</b> Le type de l'action</li>
+        							<li><b>7 ème colonne :</b> Le domaine de l'action</li>
+        							<li><b>8 ème colonne :</b> La date de démarrage de l'action
+        							</li>
+        							<li><b>9 ème colonne :</b> La date de fin prévue de l'action
+        							</li>
+        							<li><b>10 ème colonne :</b> La date de clôture de l'action <span
+        								style="color: red"> <i>(Attention : si la date de
+        										clôture est inconnue ou bien que l'action est en cours,
+        										laisser vide)</i></span></li>
+        							<li><b>11 ème colonne :</b> Le libellé de l'action</li>
+        							<li><b>12 ème colonne :</b> La description de l'action</li>
+        							<li><b>13 ème colonne :</b> La priorité <span
+        								style="color: red"><i>(Attention : les priorités
+        										possibles: importante, majeure, critique)</i></span></li>
+							{% endif %}
+						</ul>
+						<p>
+							<u><b>NB</b></u>:
+						</p>
+						<p style="color: red;">
+							<b>La première ligne du fichier est réservée aux titres des
+								colonnes. Elle sera ignorée lors du chargement.</b><br> <b>Le
+								format des dates: JJ/MM/AAAA</b>
+						</p>
+					</li>
+					<li class="big col-lg-4">
+						<h3>Contraintes sur le chargement</h3>
+						<ul>
+							<li>L'email du porteur doit exister .</li>
+							<li>L'instance doit exister au prealable.</li>
+							<li>Le domaine doit exister au prealable.</li>
+							<li>Le type d'action doit exister au prealable.</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+
+		</div>
+		<!-- End .panel -->
+
+	</div>
+	<!-- End .span4 -->
+
+</div>
+<!-- End .row -->
+<div class="row">
+	<div class="col-lg-12">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h4>
+					<span class="icon16 entypo-icon-download "></span> <span>Importation
+						action</span>
+				</h4>
+			</div>
+			<form method="post" action="{{ path('importer_action') }}"
+				class="form-horizontal" {{ form_enctype(form) }}>
+				<div class="panel-body with-footer">
+					<p class="right" style="color: red;">
+						<u>NB:</u> Le format du fichier doit être .txt ou .csv avec
+						séparateur point-virgule.
+					</p>
+					<br> <br>
+					{{ form_row(form.isCorrective, {'attr': {'value':isCorrective} }) }}
+					{% include 'OrangeMainBundle:Extra:customFormFile.html.twig' with {'fileField': form.file} %}
+					{{ form_row(form._token) }}
+					<div class="form-group form-actions">
+						<div class="col-lg-offset-3 col-lg-9">
+							<a class="btn btn-success"
+								href="{{ isCorrective==1 ? asset('upload/canevas/action-corrective.csv') : asset('upload/canevas/action.csv') }}">Télécharger
+								le modéle</a>
+							{{ form_widget(form.add) }}
+							{{ form_widget(form.cancel) }}
+						</div>
+					</div>
+					<!-- End .form-actions  -->
+				</div>
+			</form>
+		</div>
+	</div>
+	<!-- End .panel -->
+</div>
+
+{% endblock %}

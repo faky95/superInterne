@@ -21,7 +21,7 @@
 		"sensio/framework-extra-bundle" : "~3.0",
 		"incenteev/composer-parameter-handler" : "~2.0",
 		"ob/highcharts-bundle" : "^1.2",
-		"friendsofsymfony/user-bundle" : "dev-master",
+		"friendsofsymfony/user-bundle" : "2.*",
 		"gedmo/doctrine-extensions" : "^2.4",
 		"friendsofsymfony/jsrouting-bundle" : "1.x-dev",
 		"knplabs/knp-menu-bundle" : "~2",
@@ -30,11 +30,15 @@
 		"beberlei/DoctrineExtensions" : "dev-master",
 		"phpoffice/phpexcel" : "dev-master",
 		"fr3d/ldap-bundle" : "dev-master",
-		"bestmodules/alertify-bundle" : "dev-master"
+		"bestmodules/alertify-bundle" : "dev-master",
+		"friendsofsymfony/rest-bundle" : "dev-master",
+		"nelmio/api-doc-bundle" : "2.*",
+		"nelmio/cors-bundle" : "~1.5",
+		"jms/serializer-bundle" : "1.*"
 	},
 	"require-dev" : {
 		"sensio/generator-bundle" : "~2.3",
-		"phpunit/phpunit": "5.5.*"
+		"phpunit/phpunit" : "5.5.*"
 	},
 	"scripts" : {
 		"post-install-cmd" : [

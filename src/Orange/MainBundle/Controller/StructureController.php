@@ -15,9 +15,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+
 /**
  * Structure controller.
- *
  */
 class StructureController extends BaseController
 {
@@ -105,9 +105,9 @@ class StructureController extends BaseController
     	if($this->getRequest()->isMethod("POST")) {
     		if ($form->isValid()) {
     			$em = $this->getDoctrine()->getManager();
+    			$entity->updateLibelle($entity);
     			$em->persist($entity);
     			$em->flush();
-    			$this->get('orange.main.updateStructure')->setStructureForAction();
 				$route =  $this->generateUrl('les_structures');
 				if($form->get('save_and_add')->isClicked()) {
 					$route =  $this->generateUrl('nouvelle_structure', array('bu_id' => $bu_id));
@@ -196,9 +196,12 @@ class StructureController extends BaseController
         if ($request->getMethod() == 'POST') {
         	$form->handleRequest($request);
         	if ($form->isValid()) {
+        		foreach($em->getRepository('OrangeMainBundle:Structure')->findChildren($entity) as $structure) {
+        			$structure->updateLibelle($structure);
+        			$em->persist($structure);
+        		}
         		$em->persist($entity);
         		$em->flush();
-        		$this->get('orange.main.updateStructure')->setStructureForAction();
         		return $this->redirect($this->generateUrl('les_structures'));
         	}
         }

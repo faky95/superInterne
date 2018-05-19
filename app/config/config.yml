@@ -75,6 +75,10 @@ doctrine:
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         auto_mapping: true
+        dql:
+            string_functions:
+                GROUP_CONCAT: DoctrineExtensions\Query\Mysql\GroupConcat
+                IFNULL: DoctrineExtensions\Query\Mysql\IfNull
 
 fos_user:
     db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
@@ -142,3 +146,48 @@ knp_menu:
         template: knp_menu.html.twig
     templating: false   #  if true, enables the helper for PHP templates
     default_renderer: twig  # the renderer to use, list is also available by default
+
+# FOS Rest
+fos_rest:
+    zone:
+        - { path: ^/api/* }
+    format_listener:
+        rules:
+            - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: false }
+            - { path: '^/', stop: true } # Available for version >= 1.5
+    exception:
+        enabled: true
+        exception_controller: app.exception_controller:showApiAction
+    view:
+        view_response_listener: true
+        formats:
+            json: true
+            xml:  false
+        mime_types:
+            json: ['application/json']
+    routing_loader:
+        default_format: json
+        include_format: false
+    serializer:
+        serialize_null: true
+    body_converter:
+        enabled: false
+    access_denied_listener:
+        json: true
+    body_converter:
+        enabled: true
+
+nelmio_cors:
+    paths:
+        '^/':
+            allow_origin: ['*']
+            allow_headers: ['*']
+            allow_methods: ['POST', 'GET']
+            max_age: 3600
+            
+nelmio_api_doc:
+    name:                   Documentation sur les Webervices
+    cache:
+        enabled:            false
+        file:               '%kernel.cache_dir%/api-doc.cache'
+    

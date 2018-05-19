@@ -194,6 +194,8 @@ class Signalisation
 	
 	public $fromDateSignale;
 	
+	public $commentaire;
+	
 	/**
 	 * @ORM\OneToMany(targetEntity="SignalisationReformulation", mappedBy="signalisation", cascade={"persist","remove","merge"})
 	 */
@@ -675,5 +677,20 @@ class Signalisation
     public function getReformulation()
     {
         return $this->reformulation;
+    }
+    
+    public function isQualifiable() {
+    	$nbActions = $this->action->count();
+    	$nbActionSoldees = $this->action->filter(function($action) {
+    			return strpos(strtoupper($action->getEtatCourant()), 'SOLDE')!== false;
+    		})->count();
+    	return $nbActions>0 && $nbActions==$nbActionSoldees;
+    }
+    
+    /**
+     * @return string
+     */
+    public function getCommentaire() {
+    	return $this->commentaire;
     }
 }

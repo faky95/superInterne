@@ -503,7 +503,7 @@ function closeAndNotify(response, dataTarget) {
 	$.pnotify({
 		type: response.type,
 	    title: response.title,
-			text: response.text,
+		text: response.text,
 	    icon: 'picon icon16 white ' + icon,
 	    hide: false,
 	    opacity: 0.95,

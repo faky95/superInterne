@@ -552,8 +552,7 @@ class ActionGenerique
     
     public function isFaisable(){
     	$res = $this->actionGeneriqueHasAction->filter(function($ags){
-    		if($ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_ABANDON || $ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_REPORT)
-    			return true;
+    		return ($ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_ABANDON || $ags->getAction()->getEtatReel()==Statut::ACTION_DEMANDE_REPORT);
     	});
     	return $this->actionGeneriqueHasAction->count()>0 && count($res)==0;
     }
@@ -564,6 +563,21 @@ class ActionGenerique
 		    			return true;
 		    	});
     	return count($res)==0;
+    }
+    
+    public function toArray() {
+    	return array(
+    			'id' 			=> $this->id,
+    			'reference' 	=> $this->reference,
+    			'libelle' 		=> $this->libelle,
+    			'description'	=> $this->description,
+    			'dateAction' 	=> $this->dateAction,
+    			'dateCloture' 	=> $this->dateCloture,
+    			'dateDebut' 	=> $this->dateDebut,
+    			'dateInitial' 	=> $this->dateInitial,
+    			'porteur' 		=> $this->porteur->__toString(),
+    			'animateur' 	=> $this->animateur->__toString()
+    		);
     }
     
 }

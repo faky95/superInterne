@@ -61,35 +61,35 @@ class SignalisationStatutController extends BaseController {
 			$entity->setDateStatut(new \DateTime ());
 			$em->flush ();
 			if ($valide == 'SIGN_PRISE_EN_CHARGE') {
-				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($entity );
+				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_PRISE_EN_CHARGE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (
 						'title' => 'Notification', 'body' => 'Signalisation prise en charge.' 
 					));
 			}
 			if ($valide == 'SIGN_INVALIDE') {
-				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($entity );
+				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_NON_PRISE_EN_CHARGE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (
 						'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès' 
 					));
 			}
 			if ($valide == 'SIGN_TRAIT_EFFICACE') {
-				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($entity );
+				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_EFFICACE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (
 						'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès' 
 					));
 			}
 			if($valide == 'SIGN_TRAIT_NON_EFFICACE') {
-				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($entity );
+				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_NON_EFFICACE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (
 						'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès' 
 					));
 			}
 			return new JsonResponse(array (
-					'url' => $this->generateUrl('details_signalisation', array('id' => $entity->getSignalisation()->getId()))
+					'url' => $this->generateUrl('details_signalisation', array('id' => $signalisation->getId()))
 				));
 		}
 		return new Response($this->renderView('OrangeMainBundle:SignalisationStatut:new.html.twig', array(

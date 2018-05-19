@@ -162,7 +162,7 @@ class RelanceMapping extends AbstractMapping {
 					'reference' => $action->getReference(), 'jours' => $a, 'delai' => $action->getDateInitial()->format('d-m-Y'),
 					'libelle' => $action->getLibelle(), 'id' => $action->getId(),
 					'animateur'=>$action->getAnimateur()->getEmail(),
-					'action_generique'=>($action->getActionGeneriqueHasAction()->count()>0 ? $action->getActionGeneriqueHasAction()->first()->getActionGenerique(): null)
+					'action_generique'=>($action->getActionGeneriqueHasAction()->count()>0 ? $action->getActionGeneriqueHasAction()->first()->getActionGenerique() : null)
 				);
 			$i++;
 		}
@@ -180,9 +180,9 @@ class RelanceMapping extends AbstractMapping {
 			$array['user'][$value['user_id']]['animateur'] = $value['animateur'];
 			$array['user'][$value['user_id']]['action'][$i] = array('id'  => $value['id'], 'reference' => $value['reference'], 'libelle' => $value['libelle'],
 					'instance' => $value['instance'], 'delai' => $value['delai'], 'jours' => $value['jours'],
-					'action_generique'=>$value['action_generique']
-			);
-			if($value['action_generique']!=null){
+					'action_generique'=>$value['action_generique'] ? $value['action_generique']->toArray() : null
+				);
+			if($value['action_generique']!=null) {
 				if(!isset($array['user'][$value['user_id']]['action_generique'][$value['action_generique']->getId()])) {
 					$stats = $repo->getStatsSimpleActionByActionGenerique($value['action_generique']->getId())->getQuery()->getArrayResult();
 					$map = $this->getReporting()->mapToHaveLibelle($stats);
@@ -235,18 +235,17 @@ class RelanceMapping extends AbstractMapping {
 			$data[$action->getId()] = array('nom' => $action->getPorteur()->getCompletNom(),'instance' => $action->getInstance()->getLibelle(),
 					'animateur' => $action->getInstance()->getAnimateur(),'reference' => $action->getReference(),'delai' => $action->getDateInitial()->format('d-m-Y'),
 					'libelle' => $action->getLibelle(), 'instance_id' => $action->getInstance()->getId(), 'action_id' => $action->getId()
-			);
+				);
 		}
 		$array = array();
 		$i=0;
 		foreach ($data as $value){
 			if(!isset($array['instance'][$value['instance_id']])) {
-				$array['instance'][$value['instance_id']] = array('animateurs' => $value['animateur'],'instance' => $value['instance']
-						,'action' => array());
+				$array['instance'][$value['instance_id']] = array('animateurs' => $value['animateur'], 'instance' => $value['instance'], 'action' => array());
 			}
-			$array['instance'][$value['instance_id']]['action'][$i] = array('id' =>  $value['action_id'], 'porteur' => $value['nom'], 'reference' => $value['reference'], 'libelle' => $value['libelle'],
-					'delai' => $value['delai']
-			);
+			$array['instance'][$value['instance_id']]['action'][$i] = array(
+					'id' =>  $value['action_id'], 'porteur' => $value['nom'], 'reference' => $value['reference'], 'libelle' => $value['libelle'], 'delai' => $value['delai']
+				);
 			$i++;
 		}
 		return $array;

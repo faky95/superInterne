@@ -7,6 +7,16 @@
 	<span style="background-color: {{ statut ? statut.couleur : null }};border-radius: 4px 4px;padding: 0 5px;">{{ statut }}</span>
 {% endblock status_action_etat %}
 
+{% block status_tache_etat %}
+	{% set statut = entity|get_statut_tache %}
+	<span style="background-color: {{ statut ? statut.couleur : null }};border-radius: 4px 4px;padding: 0 5px;">{{ statut }}</span>
+{% endblock status_tache_etat %}
+
+{% block status_notification_etat %}
+	{% set statut = entity|get_statut %}
+	<span style="background-color: {{ entity.etat ? 'green' : 'red' }};border-radius: 4px 4px;padding: 0 5px;">{{ entity.etat ? 'Envoyée' : 'Echouée' }}</span>
+{% endblock status_notification_etat %}
+
 {% block status_document_type %}
 	{% if entity.type==types.creation %}
 	    <span class="icon16 icomoon-icon-plus tip" title="Création" class="tip" style="display: inline;"></span>

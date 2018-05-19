@@ -228,6 +228,21 @@ class Mailer
 		return $this->mailer->send($mail);
     }
     
+    public function notifForSignalisation($to, $cc, $subject, $body, $motif=null, $trace=false) {
+    	$mail = \Swift_Message::newInstance();
+    	$mail->setFrom(array($this->from => $this->name))
+	    	->setTo($to)
+	    	->setCc($cc)
+	    	->setSubject($subject)
+	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notifSignalisation.html.twig', array('body' => $body, 'motif' => $motif)))
+	    	->setContentType('text/html')
+	    	->setCharset('utf-8');
+    	if($trace) {
+    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'));
+    	}
+    	return $this->mailer->send($mail);
+    }
+    
     public function NotifWithCopy($to, $cc, $subject, $body, $motif=null, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))

@@ -34,6 +34,9 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 				continue;
 			}
 			$tache = $actionCyclique->newTache($this->getContainer()->getParameter('pas'));
+			if($tache==null) {
+				continue;
+			}
 			$em->persist($tache);
 	    	$contributeurs = array();
 	    	foreach($tache->getActionCyclique()->getAction()->getContributeur() as $contributeur) {

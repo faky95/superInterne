@@ -99,6 +99,7 @@ class Calcul
 			foreach($taux as $kpi) {
 				$stats[$key]['taux'][$kpi['libelle']] = $this->computeKpi($data, $kpi);
 			}
+			$stats[$key]['taux']["Taux de respect du délai"] = $this->computeRespectDelai($data);
 		}
 		return $stats;
 	}
@@ -115,6 +116,10 @@ class Calcul
 			array_push($test, $data[$val]);
 		}
 		return $denom ? round(($num / $denom)*100) : 0;
+	}
+	
+	public function computeRespectDelai($data) {
+		return 10;
 	}
 	
 	public function changeTableau($tab) {

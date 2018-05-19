@@ -1,67 +1,67 @@
 <ul id="myTab3" class="nav nav-tabs">
 {% set tst1=0 %}
-									{% if has_rights('ROLE_ADMIN') %}
-                                        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
-                                        	<a href="#admin" data-toggle="tab">General</a>
-                                        </li>
-                                     {% endif %}
-                                     {% if has_rights('ROLE_ANIMATEUR') %}
-                                        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
-                                        	<a href="#animateur" data-toggle="tab">Mes instances</a>
-                                        </li>
-                                     {% endif %}
-                                       <li  class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %}">
-                                    		<a href="#portee" data-toggle="tab">Actions portées</a>
-                                    </li>
-                                       {% if has_rights('ROLE_MANAGER') %}
-                                        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
-                                        	<a href="#manager" data-toggle="tab">Actions collaborateurs</a>
-                                        </li>
-                                     {% endif %}
-                                     <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} ">
-                                    		<a href="#contrib" data-toggle="tab">Actions contribution</a>
-                                    </li>
+	{% if has_rights('ROLE_ADMIN') %}
+        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
+        	<a href="#admin" data-toggle="tab">General</a>
+        </li>
+     {% endif %}
+     {% if has_rights('ROLE_ANIMATEUR') %}
+        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
+        	<a href="#animateur" data-toggle="tab">Mes instances</a>
+        </li>
+     {% endif %}
+       <li  class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %}">
+    		<a href="#portee" data-toggle="tab">Actions portées</a>
+    </li>
+       {% if has_rights('ROLE_MANAGER') %}
+        <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " >
+        	<a href="#manager" data-toggle="tab">Actions collaborateurs</a>
+        </li>
+     {% endif %}
+     <li class="{% if tst1==0 %}active  {% set tst1=1 %} {% endif %} ">
+    		<a href="#contrib" data-toggle="tab">Actions contribution</a>
+    </li>
 </ul>  
-         <div class="tab-content" style="overflow-y: hidden;">
-          {% set tst1=0 %}
-          {% if has_rights('ROLE_ADMIN') %}
-		         <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="admin">
-					{{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueAdmin')) }}
-		         </div>  
-	         {% endif %}    
-	         {% if has_rights('ROLE_ANIMATEUR') %}
-		         <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="animateur">
-					{{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueAnimateur')) }}
-		         </div>  
-	         {% endif %} 
-	         	<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %}  " id="portee">
-						{% if statsP.instance  is not empty %}
-						   {% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsP , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
-						{% else %}
-       						  <div class="alert alert-warning">
-								  <strong>Infos!</strong> Aucune action portée ....
-								</div>
-		       			 {% endif %}
-		       	</div>
-				{% if has_rights('ROLE_MANAGER') %}
-				<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="manager">
-				 {% if statsM is defined and statsM  is not empty %}
-				  	{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsM , 'statut':statutM, 'type':'structure', 'nbTaux':nbTaux}  %}
-				 {% else %}
-       						  <div class="alert alert-warning">
-								  <strong>Infos!</strong> Aucune action portee par vos collaborateurs ....
-								</div>
-				 {% endif %}
-				 </div>
-				 {% endif %}
- 				<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="contrib">
- 				{% if statsC.instance  is not empty %}
-						   {% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsC , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
+ <div class="tab-content" style="overflow-y: hidden;">
+  {% set tst1=0 %}
+  {% if has_rights('ROLE_ADMIN') %}
+         <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="admin">
+			{{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueAdmin')) }}
+         </div>  
+     {% endif %}    
+     {% if has_rights('ROLE_ANIMATEUR') %}
+         <div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="animateur">
+			{{ render(controller('OrangeMainBundle:Statistique:tableauStatistiqueAnimateur')) }}
+         </div>  
+     {% endif %} 
+     	<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %}  " id="portee">
+				{% if statsP.instance  is not empty %}
+				   {% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsP , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
 				{% else %}
-       					<div class="alert alert-warning">
-								  <strong>Infos!</strong> Aucune action en contribution ....
+					  <div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune action portée ....
 						</div>
-       			{% endif %}
+       			 {% endif %}
+       	</div>
+		{% if has_rights('ROLE_MANAGER') %}
+		<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="manager">
+		 {% if statsM is defined and statsM  is not empty %}
+		  	{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsM , 'statut':statut, 'type':'structure', 'nbTaux':nbTaux}  %}
+		 {% else %}
+					  <div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune action portee par vos collaborateurs ....
+						</div>
+		 {% endif %}
+		 </div>
+		 {% endif %}
+		<div class="tab-pane fade in {% if tst1==0 %}active  {% set tst1=1 %} {% endif %} " id="contrib">
+		{% if statsC.instance  is not empty %}
+				   {% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': statsC , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
+		{% else %}
+				<div class="alert alert-warning">
+						  <strong>Infos!</strong> Aucune action en contribution ....
+				</div>
+		{% endif %}
  </div>
 
  </div>

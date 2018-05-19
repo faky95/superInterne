@@ -13,6 +13,10 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Criteria\ActionCriteria;
 use Orange\QuickMakingBundle\Controller\BaseController;
 use Orange\MainBundle\Entity\Action;
+use Symfony\Component\HttpFoundation\Response;
+use Orange\MainBundle\Criteria\ActionCycliqueCriteria;
+use Doctrine\ORM\QueryBuilder;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
  * ActionCyclique controller.
@@ -24,11 +28,21 @@ class ActionCycliqueController extends BaseController
 	/**
 	 * Lists all ActionCyclique entities.
 	 * @Route("/", name="actioncyclique")
-	 * @Method("GET")
+	 * @Method({"GET","POST"})
 	 * @Template()
 	 */
-	public function indexAction() {
-		return array();
+	public function indexAction(Request $request) {
+		$form = $this->createForm(new ActionCycliqueCriteria());
+		$this->get('session')->set('actioncyclique_criteria', array());
+		if($request->getMethod()=='POST') {
+			if(isset($data['effacer'])) {
+				$this->get('session')->set('actioncyclique_criteria', array());
+			} else {
+				$this->get('session')->set('actioncyclique_criteria', $request->request->get($form->getName()));
+				$form->handleRequest($request);
+			}
+		}
+		return array('form'=>$form->createView());
 	}
 
 	/**
@@ -37,9 +51,15 @@ class ActionCycliqueController extends BaseController
 	public function listeCycliqueAction(Request $request) {
 		$em = $this->getDoctrine()->getManager();
 		$form = $this->createForm(new ActionCriteria());
-		//$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
+		$this->modifyRequestForForm($request, $this->get('session')->get('actioncyclique_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:ActionCyclique')->filter($criteria);
+		$queryBuilderExport = $em->getRepository('OrangeMainBundle:ActionCyclique')->filterForExport($criteria);
+		$qbOccurence = $em->getRepository('OrangeMainBundle:Tache')->filterForExport($criteria);
+		$this->get('session')->set('occurence', array(
+				'query' => $qbOccurence->getDql(), 'param' => $qbOccurence->getParameters(), 'totalNumber' => $this->getLengthResults($qbOccurence, 'id')
+			));
+		$this->get('session')->set('data', array('query' => $queryBuilderExport->getDql(), 'param' => $queryBuilderExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
 	}
 
@@ -61,6 +81,15 @@ class ActionCycliqueController extends BaseController
 				$em->persist($entity);
 				$em->flush();
 				ActionUtils::setReferenceAction($em, $entity->getAction());
+				if(null!=$tache=$entity->newTache($this->getParameter('pas'))) {
+					$contributeurs = array();
+					foreach($entity->getAction()->getContributeur() as $contributeur) {
+						$contributeurs[] = $contributeur->getUtilisateur()->getEmail();
+					}
+					$this->get('orange.main.mailer')->notifNewTache(array($entity->getAction()->getPorteur()->getEmail()), $contributeurs, $tache);
+				}
+				$em->persist($entity);
+				$em->flush();
 				ActionUtils::changeStatutAction($em, $entity->getAction(), Statut::ACTION_NOUVELLE, $this->getUser(), "Nouvelle action créée.");
 				return $this->redirect($this->generateUrl('actioncyclique_show', array('id' => $entity->getId())));
 			}
@@ -160,35 +189,76 @@ class ActionCycliqueController extends BaseController
 	
 	/**
 	 * Deletes a ActionCyclique entity.
-	 * @Route("/{id}/supprimer_action_cyclique", name="actioncyclique_delete")
-	 * @Method("DELETE")
+	 * @Route("/{id}/supprimer_action_cyclique", name="supprimer_actioncyclique")
+	 * @Method({"GET","POST"})
 	 */
 	public function deleteAction(Request $request, $id) {
-		$form = $this->createDeleteForm($id);
-		$form->handleRequest($request);
-		if ($form->isValid()) {
-			$em = $this->getDoctrine()->getManager();
-			$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
-			if (!$entity) {
-				throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
-			}
+		$em = $this->getDoctrine()->getManager();
+		$entity = $em->getRepository('OrangeMainBundle:ActionCyclique')->find($id);
+		if($request->getMethod()=='POST') {
 			$em->remove($entity);
 			$em->flush();
+			return new JsonResponse(array('status' => 'notice', 'title' => "Suppression d'une action cyclique", 'text' => "L'action cyclique a été supprimé avec succés"));
 		}
-		return $this->redirect($this->generateUrl('actioncyclique'));
+		return $this->render('OrangeMainBundle:ActionCyclique:delete.html.twig', array('entity' => $entity));
+	}
+	
+	/**
+	 * @QMLogger(message="Exportation les actions cycliques")
+	 * @Route("/export_actioncyclique", name="export_actioncyclique")
+	 * @Method("GET")
+	 */
+	public function exportAction(){
+		$em = $this->getDoctrine()->getEntityManager();
+		$response = new Response();
+		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions cycliques du %s.xlsx', date('YmdHis')));
+		$response->sendHeaders();
+		$queryBuilder = $this->get('session')->get('data');
+		$query = $em->createQuery($queryBuilder['query']);
+		$query->setParameters($queryBuilder['param']);
+		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+		$actions       = $query->getArrayResult();
+		$objWriter     = $this->get('orange.main.extraction')->exportActionCyclique($actions, $statut->getQuery()->execute());
+		$objWriter->save('php://output');
+		return $response;
+	}
+	
+	/**
+	 * @QMLogger(message="Exportation les occurences")
+	 * @Route("/export_occurence", name="export_occurence")
+	 * @Method("GET")
+	 */
+	public function exportOccurenceAction(){
+		$em = $this->getDoctrine()->getEntityManager();
+		$response = new Response();
+		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions cycliques du %s.xlsx', date('YmdHis')));
+		$response->sendHeaders();
+		$queryBuilder = $this->get('session')->get('data');
+		$query = $em->createQuery($queryBuilder['query']);
+		$query->setParameters($queryBuilder['param']);
+		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+		$actions       = $query->getArrayResult();
+		$objWriter     = $this->get('orange.main.extraction')->exportActionCyclique($actions, $statut->getQuery()->execute());
+		$objWriter->save('php://output');
+		return $response;
 	}
 
 	/**
-	 * @todo retourne le nombre d'enregistrements renvoyer par le r�sultat de la requ�te
+	 * @todo retourne le nombre d'enregistrements renvoyer par le résultat de la requéte
 	 * @param \Orange\MainBundle\Entity\ActionCyclique $entity
 	 * @return array
 	 */
 	protected function addRowInTable($entity) {
 		return array(
-				$entity->getInstance() ? $entity->getInstance()->__toString() : 'non renseigné',
+				$entity->getAction()->getReference(),
 				$entity->getLibelle(),
 				$entity->getPorteur() ? $entity->getPorteur()->__toString() : 'non renseigné',
-				$this->showEntityStatus($entity->getAction(), 'etat'),
+				$entity->getPas() ? $entity->getPas()->getLibelle() : 'Non renseignée',
+				$entity->getTache()->count() ? $this->showEntityStatus($entity->getTache()->last(), 'etat') : 'NA',
 				$this->get('orange_main.actions')->generateActionsForActionCyclique($entity)
 			);
 	}
@@ -198,6 +268,6 @@ class ActionCycliqueController extends BaseController
 	 * @param sfWebRequest $request
 	 */
 	protected function setFilter(\Doctrine\ORM\QueryBuilder $queryBuilder, $aColumns, Request $request) {
-		parent::setFilter($queryBuilder, array('a.reference', 'a.libelle', 'insta.libelle','sr.libelle', 'port.nom', 'port.prenom'), $request);
+		parent::setFilter($queryBuilder, array('a.reference', 'a.libelle', 'insta.libelle', 'sr.libelle', 'port.nom', 'port.prenom'), $request);
 	}
 }

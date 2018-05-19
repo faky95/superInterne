@@ -51,10 +51,11 @@ class OrangeExtension extends \Twig_Extension {
 	 */
     public function getFilters() {
         return array(
-            'show_status' => new \Twig_Filter_Method($this, 'showStatus', array('is_safe' => array('html'))),
-            'get_statut' => new \Twig_Filter_Method($this, 'getStatutForAction', array('is_safe' => array('html'))),
-        	'get_statut_signalisation' => new \Twig_Filter_Method($this, 'getStatutForSignalisation', array('is_safe' => array('html')))
-        );
+        		'show_status' => new \Twig_Filter_Method($this, 'showStatus', array('is_safe' => array('html'))),
+        		'get_statut' => new \Twig_Filter_Method($this, 'getStatutForAction', array('is_safe' => array('html'))),
+        		'get_statut_tache' => new \Twig_Filter_Method($this, 'getStatutForTache', array('is_safe' => array('html'))),
+        		'get_statut_signalisation' => new \Twig_Filter_Method($this, 'getStatutForSignalisation', array('is_safe' => array('html')))
+        	);
     }
     
     /**
@@ -85,6 +86,13 @@ class OrangeExtension extends \Twig_Extension {
      */
     public function getStatutForAction($entity) {
     	return $this->em->getRepository('OrangeMainBundle:Statut')->getStatutForAction($entity);
+    }
+    
+    /**
+     * @param \Orange\MainBundle\Entity\Tache $entity
+     */
+    public function getStatutForTache($entity) {
+    	return $this->em->getRepository('OrangeMainBundle:Statut')->getStatutForTache($entity);
     }
     
     /**

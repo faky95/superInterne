@@ -84,7 +84,7 @@ class ActionGeneriqueVoter extends AbstractVoter {
 				}
 			break;
 			case self::ABANDONNE:
-				if ($user->getId() == $action->getAnimateur()->getId()) {
+				if ($user->getId() == $action->getPorteur()->getId()) {
 					return true;
 				}
 			break;

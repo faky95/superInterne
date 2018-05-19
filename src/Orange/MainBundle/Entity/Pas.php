@@ -17,14 +17,19 @@ class Pas
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="IDENTITY")
      */
-    protected $id;
-    
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="libelle", type="string", length=100,nullable=false)
-     */
-    private $libelle;
+	protected $id;
+	
+	/**
+	 * @var string
+	 * @ORM\Column(name="libelle", type="string", length=100,nullable=false)
+	 */
+	private $libelle;
+	
+	/**
+	 * @var string
+	 * @ORM\Column(name="chaine", type="string", length=100,nullable=false)
+	 */
+	private $chaine;
     
     /**
      * @var integer
@@ -34,6 +39,7 @@ class Pas
     private $valeur;
     
     /**
+     * @var Periodicite
      * @ORM\ManyToOne(targetEntity="Orange\MainBundle\Entity\Periodicite", inversedBy="pas")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="periodicite_id", referencedColumnName="id")
@@ -75,14 +81,23 @@ class Pas
         $this->libelle = $libelle;
         return $this;
     }
-
+    
     /**
      * Get libelle
-     * @return string 
+     * @return string
      */
     public function getLibelle()
     {
-        return $this->libelle;
+    	return $this->libelle;
+    }
+    
+    /**
+     * Get libelle
+     * @return string
+     */
+    public function getChaine()
+    {
+    	return $this->chaine;
     }
 
     /**
@@ -121,8 +136,7 @@ class Pas
 
     /**
      * Get periodicite
-     *
-     * @return integer 
+     * @return Periodicite 
      */
     public function getPeriodicite()
     {

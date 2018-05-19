@@ -1,90 +1,59 @@
 {% extends '::base.html.twig' %}
 
 {% block content -%}
-                <!-- Build page from here: -->
-                <!-- heading -->
-				<div class="heading">
-					<h3>{% block page_title %} Infos sur l'utilisateur {% endblock %}</h3>                    
-				</div>
-				<!-- End .heading-->
-                <div class="row">
-                    <div class="col-lg-12">
-                        <div class="panel panel-default gradient invoice">
-                            <div class="panel-heading clearfix">
-                                <h4 class="left">
-                                    <span>Utilisateur</span>
-                                </h4>
-                            </div>
-                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
-                                <div class="you col-lg-6 col-md-6 col-sm-6" >
-                                    <ul class="list-unstyled">
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Nom : <strong class="red">{{ entity }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Téléphone :<strong class="red">{{ entity.telephone }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Manager ?  <strong class="red">{%if entity.manager %}Oui{% else %}Non{% endif %}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Administrateur ?  <strong class="red">{% if entity.isAdmin %}Oui{% else %}Non{% endif %}</strong></li>
-                                    </ul>
-                                </div>
-                                <div class="you col-lg-6 col-md-6 col-sm-6" >
-                                    <ul class="list-unstyled">
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Structure : <strong class="red">{{ entity.structure }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Adresse Email : <strong class="red">{{ entity.email }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Nom d'utilisateur : <strong class="red">{{ entity.username }}</strong></li>
-                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Dernière date de connexion : 
-                                        	<strong class="red">{{ entity.lastLogin ? entity.lastLogin|localizeddate('full', 'none') : 'Jamais' }}</strong>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="clearfix"></div>
-                                
-                                <div class="you col-lg-12 col-md-6 col-sm-6">                        
-								<div class="panel panel-default">
-								    <div class="panel-heading" style="background:#FFFFFF">
-								        <h4>
-								            <span class="icon16 icomoon-icon-list-2 "></span>
-								            <span class="red">Liste des PAs de l'utilisateur</span>
-								        </h4>
-								        <a href="#" class="minimize">Minimize</a>
-								    </div>
-								    <div class="panel-body noPad">
-								        <table class="table table-bordered">
-								         {% if entity.action is defined and entity.action is not empty %}
-								            <thead>
-								              <tr style="background:#FFFFFF" align="center">
-								                <td><strong>Action</strong></td>
-								                <td><strong>Référence</strong></td>
-								                <td><strong>Type d'actions</strong></td>
-								                <td><strong>Domaine</strong></td>
-								              </tr>
-								            </thead>
-								            <tbody>
-								            	{% for act in entity.action %}
-									            	<tr bgcolor="#FFFFFF">
-										                <td width="450px" style="text-align: justify">{{ act.libelle }}</td>
-										                <td style="text-align: justify">{{ act.reference }}</td>
-										                <td style="text-align: justify">{{ act.typeAction }}</td>
-										                <td style="text-align: justify">{{ act.domaine }}</td>
-										            </tr>
-										        {% endfor %}
-								            </tbody>
-								        {% else %}
-								            <tbody>
-									            <tr>
-										            <td>
-										            	Cet utilisateur n'a pas de PAs.
-										            </td>
-									            <tr>
-								            </tbody>
-								    	{% endif %}
-								        </table>
-								    </div>
-								</div><!-- End .panel -->
-							</div><!-- End .span12 -->
-                                
-                            </div>
-                            
-                        </div><!-- End .panel -->
-                    </div>
-                </div><!-- End .row -->
+    <!-- Build page from here: -->
+    <!-- heading -->
+	<div class="heading">
+		<h3>{% block page_title %} Infos sur l'utilisateur {% endblock %}</h3>                    
+	</div>
+	<!-- End .heading-->
+    <div class="span12">
+        <div class="box">
+            <div class="panel-heading clearfix">
+                <h4 class="clearfix">
+                    <span>Utilisateur</span>
+                    <form class="box-form right" action="" />
+                        <a class="btn btn-mini dropdown-toggle" data-toggle="dropdown" href="#">
+                            <span class="icon16 iconic-icon-cog"></span>
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#"><span class="icon-pencil"></span> Edit</a></li>
+                            <li><a href="#"><span class="icon-trash"></span> Delete</a></li>
+                        </ul>
+                    </form>
+                </h4>
+            </div>
+            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                    <ul class="list-unstyled">
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Nom : <strong class="red">{{ entity }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Téléphone :<strong class="red">{{ entity.telephone }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Manager ?  <strong class="red">{%if entity.manager %}Oui{% else %}Non{% endif %}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Administrateur ?  <strong class="red">{% if entity.isAdmin %}Oui{% else %}Non{% endif %}</strong></li>
+                    </ul>
+                </div>
+                <div class="you col-lg-6 col-md-6 col-sm-6" >
+                    <ul class="list-unstyled">
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Structure : <strong class="red">{{ entity.structure }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Adresse Email : <strong class="red">{{ entity.email }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Nom d'utilisateur : <strong class="red">{{ entity.username }}</strong></li>
+                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Dernière date de connexion : 
+                        	<strong class="red">{{ entity.lastLogin ? entity.lastLogin|localizeddate('full', 'none') : 'Jamais' }}</strong>
+                        </li>
+                    </ul>
+                </div>
+                <div class="clearfix"></div>
+                
+                <div class="you col-lg-12 col-md-6 col-sm-6">                        
+				<div class="panel panel-default">
+				</div><!-- End .panel -->
+			</div><!-- End .span12 -->
+                
+            </div>
+            
+        </div><!-- End .panel -->
+    </div><!-- End .row -->
 {% endblock %}
 {% block pagescript %}
 	{% include 'OrangeMainBundle:ModalScript:confirm.html.twig' %}

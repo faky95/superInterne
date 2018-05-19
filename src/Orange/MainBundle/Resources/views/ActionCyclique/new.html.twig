@@ -28,18 +28,10 @@
 							{{ form_widget(form.pas,  {'attr': {'class': 'select form-control ', 'style' : 'width: 100%'}}) }}
                         </div>
                         <div class="form-group">
-    						<div>
-    							{{ form_widget(form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}
-    						</div>
-                            <div >
-    				        	{{ form_widget(form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}
-    						</div>
+    						<div>{{ form_widget(form.dayOfMonth, {'attr': {'class': 'nostyle form-control '}}) }}</div>
+    				        <div>{{ form_widget(form.dayOfWeek, {'attr': {'class': 'nostyle form-control '}}) }}</div>
+				        	<div>{{ form_widget(form.iteration, {'attr': {'class': 'form-control '}}) }}</div>
                         </div>
-                        <div class="form-group">
-                            <div>
-				        	{{ form_widget(form.iteration, {'attr': {'class': 'form-control '}}) }}
-				        	</div>
-						 </div>
 						<div class="form-group">
 			                {{ form_widget(form.action.libelle,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}} ) }}
 			                {{ form_widget(form.action.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
@@ -82,27 +74,37 @@
 	{parent: form.action.instance, child: form.action.porteur, url: path('porteur_by_instance'), key: 'id' } 
 %}
 <script type="text/javascript">
-$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
-$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
-$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
  	$(document).ready(function() {
+ 		$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+ 		$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+ 		$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
 	 // $("select").select2();
 	  $({{ ('"#'~form.pas.vars.id~'"')|raw }}).change(function() {
 		 if($(this).val()=="3") {
 			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
 			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().show();
 			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+		 } else if($(this).val()=="2") {
+			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().find('label').html('Semaine : ');
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).attr('max', 2).val('');
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().show();
 		 } else if($(this).val()=="1") {
 			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
 			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
 			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
-		 } else if($(this).val()=="9") {
+		 } else if($(this).val()=="5") {
 			$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
-			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
-			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().hide();
+			$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().find('label').html('Mois : ');
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).attr('max', 3).val('');
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().show();
 		} else {
-    		$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().show();
-    		$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().hide();
+    		$({{ ('"#'~form.dayOfWeek.vars.id~'"')|raw }}).parent().parent().hide();
+    		$({{ ('"#'~form.dayOfMonth.vars.id~'"')|raw }}).parent().parent().show();
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().find('label').html('Mois : ');
+			$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).attr('max', 6).val('');
     		$({{ ('"#'~form.iteration.vars.id~'"')|raw }}).parent().parent().show();
 		}
 	  });

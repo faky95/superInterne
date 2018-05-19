@@ -113,7 +113,7 @@
 																		{% endfor %}
 																		</table>
 																		<br><br>
-																		<b>Veuillez solder vos actions ou bien changer leur date d'échéance</b>
+																		<b>Veuillez solder vos actions ou demander un report de délai</b>
 																		<br><br>
 															              </div>
 															          </td>
@@ -141,9 +141,9 @@
     																		    </tr>
                                                                                 {% for lib,val in ag['stats'] %}
     																		      <tr>
-        																		    <th>{{ lib }}</th>
+        																		    <td align="left">{{ lib }}</th>
         																		    <td style="text-align:center">{{ val }}</td>
-        																		    <td style="text-align:center">{{ (val*100) / ag['nbActions'] ~ '%'  }}</td>
+        																		    <td style="text-align:center">{{ (val*100 / ag['nbActions'])|number_format(0) ~ '%'  }}</td>
         																		   </tr>
     																		    {% endfor  %}
     																		    <tr class="orange" style="background:#f7f7f7">

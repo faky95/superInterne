@@ -5,8 +5,10 @@
 # to each configured DirectoryIndex file (e.g. index.php, index.html, index.pl).
 DirectoryIndex app.php
 
-php_value memory_limit 2048M
-php_value max_execution_time 120
+php_value memory_limit 512M
+php_value max_execution_time 30
+php_value session.cookie_httponly 1
+php_value session.use_only_cookies 1
 
 <IfModule mod_headers.c>
      Header set X-Frame-Options DENY

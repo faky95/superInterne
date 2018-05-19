@@ -7,10 +7,10 @@
        	<span>Ajout Domaine</span>
 	</h4>
 </div>
-<form novalidate="novalidate" class="form-horizontal" action="{{  espace_id is empty ? path('creer_domaine') : path('creer_domaine_to_espace', {'espace_id':espace_id})}}" method="post" role="form">
+<form novalidate="novalidate" class="form-horizontal" action="{{  espace is empty ? path('creer_domaine') : path('creer_domaine_to_espace', {'espace_id':espace.id})}}" method="post" role="form">
 	<div class="panel-body">
 		{{ form_row(form.libelleDomaine)}} 
-		{% if is_granted('ROLE_SUPER_ADMIN') and espace_id is not defined and espace_id is empty %}
+		{% if is_granted('ROLE_SUPER_ADMIN') and espace is not defined and espace is empty %}
 		{{ form_row(form.bu,  {'attr': {'class': 'form-control'}}) }}
 		{% endif %}
 		{{ form_row(form._token) }}

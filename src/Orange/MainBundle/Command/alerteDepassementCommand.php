@@ -37,7 +37,7 @@ class alerteDepassementCommand extends BaseCommand {
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
 			try {
-				$result = $this->getMailer()->send(array(), array(), $subject, $body, true);
+				$result = $this->getMailer()->send($user['email_porteur'], $user['manager'], $subject, $body, true);
 				$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($user['email_porteur']), array($user['manager']), count($user['action']));
 				$spool->flushQueue($transport);
 			} catch(\Exception $e) {
@@ -45,7 +45,7 @@ class alerteDepassementCommand extends BaseCommand {
 			}
 			$em->persist(Notification::nouvelleInstance(
 					count($user['action']), $em->getReference('OrangeMainBundle:TypeNotification', TypeNotification::$ids['relanceDepassement']),
-					$user['porteurId'] ? array($em->getReference('OrangeMainBundle:Utilisateur', $user['porteurId'])) : array(), 
+					$user['porteurId'] ? array($em->getReference('OrangeMainBundle:Utilisateur', $user['porteurId'])) : array(),
 					$user['managerId'] ? array($em->getReference('OrangeMainBundle:Utilisateur', $user['managerId'])) : array(), $result
 				));
 			if($index % 10 == 0) {

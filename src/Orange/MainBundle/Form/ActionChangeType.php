@@ -40,8 +40,9 @@ class ActionChangeType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver) {
         $resolver->setDefaults(array(
-            'data_class' => 'Orange\MainBundle\Entity\Action'
-        ));
+	            'data_class' => 'Orange\MainBundle\Entity\Action',
+	        	'validation_groups' => array('change_statut', 'Default')
+	        ));
     }
 
     /**

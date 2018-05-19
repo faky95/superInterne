@@ -35,12 +35,24 @@ class Tache
      * @ORM\Column(name="date_debut", type="datetime", nullable=false)
      */
     private $dateDebut;
+    
+    /**
+     * @var \DateTime
+     * @ORM\Column(name="date_fin", type="date", nullable=false)
+     */
+    private $dateFin;
 
     /**
      * @var \DateTime
      * @ORM\Column(name="date_initial", type="date", nullable=false)
      */
     private $dateInitial;
+    
+    /**
+     * @var \Date
+     * @ORM\Column(name="date_fin_execution", type="date", nullable=true)
+     */
+    private $dateFinExecut;
     
     /**
      * @var \DateTime
@@ -54,6 +66,11 @@ class Tache
     private $tacheStatut;
     
     /**
+     * @ORM\OneToMany(targetEntity="Document", mappedBy="tache", cascade={"persist","remove","merge"})
+     */
+    private $document;
+    
+    /**
      * @var string
      * @ORM\Column(name="etat_courant", type="string", length=255, nullable=true)
      */
@@ -64,7 +81,8 @@ class Tache
      */
     public function __construct()
     {
-        $this->tacheStatut = new \Doctrine\Common\Collections\ArrayCollection();
+    	$this->tacheStatut = new \Doctrine\Common\Collections\ArrayCollection();
+    	$this->document = new \Doctrine\Common\Collections\ArrayCollection();
         $this->etatCourant = Statut::ACTION_NON_ECHUE;
     }
 
@@ -115,6 +133,26 @@ class Tache
     {
         return $this->dateDebut;
     }
+    
+    /**
+     * Set dateFin
+     * @param \DateTime $dateFin
+     * @return Tache
+     */
+    public function setDateFin($dateFin)
+    {
+    	$this->dateFin = $dateFin;
+    	return $this;
+    }
+    
+    /**
+     * get dateFin
+     * @return \DateTime
+     */
+    public function getDateFin()
+    {
+    	return $this->dateFin;
+    }
 
     /**
      * Set dateInitial
@@ -154,6 +192,26 @@ class Tache
     public function getDateCloture()
     {
         return $this->dateCloture;
+    }
+    
+    /**
+     * Set dateFinExecut
+     * @param \DateTime $dateFinExecut
+     * @return Tache
+     */
+    public function setDateFinExecut($dateFinExecut)
+    {
+    	$this->dateFinExecut = $dateFinExecut;
+    	return $this;
+    }
+    
+    /**
+     * Get dateFinExecut
+     * @return \DateTime
+     */
+    public function getDateFinExecut()
+    {
+    	return $this->dateFinExecut;
     }
 
     /**
@@ -201,15 +259,23 @@ class Tache
     {
         $this->tacheStatut->removeElement($tacheStatut);
     }
-
+    
     /**
      * Get tacheStatut
-     *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getTacheStatut()
     {
-        return $this->tacheStatut;
+    	return $this->tacheStatut;
+    }
+    
+    /**
+     * get document
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getDocument()
+    {
+    	return $this->document;
     }
 
     /**

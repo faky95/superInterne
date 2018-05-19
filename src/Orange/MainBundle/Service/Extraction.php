@@ -8,65 +8,34 @@ class Extraction extends \PHPExcel {
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
 	public function exportUser($arrData) {
+		
 		$default_border = array(
-				'style' => \PHPExcel_Style_Border::BORDER_THIN,
-				'size' => 16,
-				'color' => array(
-						'rgb' => '000000' 
-				) 
-		);
+				'style' => \PHPExcel_Style_Border::BORDER_THIN, 'size' => 16, 'color' => array('rgb' => '000000') 
+			);
 		$style_th = array(
-				'borders' => array(
-						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
-					),
-				'alignment' => array(
-						'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-					),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '7FC6BC') 
-					),
-				'font' => array(
-						'bold' => true, 'size' => 14, 'color' => array('rgb' => '000000') 
-			));
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '7FC6BC')),
+				'font' => array('bold' => true, 'size' => 14, 'color' => array('rgb' => '000000'))
+			);
 		$data = array(
-				'borders' => array(
-						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
-					),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-					),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ffffff')
-					),
-				'font' => array(
-						'bold' => false, 'size' => 11, 'color' => array('rgb' => '000000') 
-			));
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ffffff')),
+				'font' => array('bold' => false, 'size' => 11, 'color' => array('rgb' => '000000'))
+			);
 		$green = array(
-				'borders' => array(
-						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
-					),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-					),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '00ff00')
-					),
-				'font' => array(
-						'bold' => true, 'size' => 12, 'color' => array('rgb' => '000000')
-			));
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => '00ff00')),
+				'font' => array('bold' => true, 'size' => 12, 'color' => array('rgb' => '000000'))
+			);
 		$red = array(
-				'borders' => array(
-						'top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border 
-					),
-				'alignment' => array(
-						'vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER 
-					),
-				'fill' => array(
-						'type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff0000') 
-					),
-				'font' => array(
-						'bold' => true, 'size' => 12, 'color' => array('rgb' => '000000') 
-			));
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('vertical' => \PHPExcel_Style_Alignment::VERTICAL_CENTER, 'horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff0000')),
+				'font' => array('bold' => true, 'size' => 12, 'color' => array('rgb' => '000000'))
+			);
 		$th = array('Prénom', 'Nom', 'Structure', 'Profil', 'Etat');
 		$col = "A";
 		$x = 1;
@@ -109,7 +78,7 @@ class Extraction extends \PHPExcel {
 	 * @param array $dataStatut
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
-	public function exportAction($arrData, $dataStatut ) {
+	public function exportAction($arrData, $dataStatut) {
 		$arrayStatut = array();
 		foreach($dataStatut as $statut) {
 			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
@@ -147,7 +116,8 @@ class Extraction extends \PHPExcel {
 			}
 		}
 		$tableau = array();
-		foreach($arrData as $value) {
+		foreach($arrData as $val) {
+			$value = $val[0];
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],
@@ -155,19 +125,167 @@ class Extraction extends \PHPExcel {
 					$value['description'],
 					$value['priorite']['libelle'],
 					$value['porteur']['prenom'].' '.$value['porteur']['nom'],
-					$value['structure']['architectureStructure']['direction'],
-					$value['structure']['architectureStructure']['pole'],
-					$value['structure']['architectureStructure']['departement'],
-					$value['structure']['architectureStructure']['service'],
+					$value['structure']['direction'],
+					$value['structure']['pole'],
+					$value['structure']['departement'],
+					$value['structure']['service'],
 					$value['typeAction']['type'],
 					$arrayStatut [$value['etatReel']],
 					$value['domaine']['libelleDomaine'],
-					$value['complement']['contributeurs'],
+					$val['contributeurs'],
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
 					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
 					$value['dateFinExecut'] ? $value['dateFinExecut']->format('d-m-Y') : 'En Cours',
-					$value['complement']['avancements'],
+					$val['avancements'],
 				);
+		}
+		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
+		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
+		return $objWriter;
+	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $dataStatut
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
+	public function exportActionCyclique($arrData, $dataStatut) {
+		$arrayStatut = array();
+		foreach($dataStatut as $statut) {
+			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
+		}
+		$default_border = array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'size' => 16, 'color' => array('rgb' => '000000'));
+		$style_th = array(
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff6600')),
+				'font' => array('bold' => true, 'size' => 16, 'color' => array('rgb' => '000000'))
+			);
+		$th = array(
+				'Référence', 'Periodicite','Delai des occurences dans le mois ', 'Delai des occurences dans la semaine','Instance', 'Libellé', 'Description', 'Priorité', 
+				'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Date de fin prévue', 'Date de clôture'
+			);
+		$col = "A";
+		$x = 1;
+		foreach($th as $value) {
+			if($col == "E") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "F") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "S") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} else {
+				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			}
+		}
+		$tableau = array();
+		$i=0;
+		foreach($arrData as $value) {
+			$tableau[] = array(
+					$value[0]['action']['reference'],
+					$value[0]['pas']['libelle'],
+					$value[0]['dayOfMonth']['libelle'],
+					$value[0]['dayOfWeek']['libelle'],
+					$value[0]['action']['instance']['libelle'],
+					$value[0]['action']['libelle'],
+					$value[0]['action']['description'],
+					$value[0]['action']['priorite']['libelle'],
+					$value[0]['action']['porteur']['prenom'].' '.$value[0]['action']['porteur']['nom'],
+					$value[0]['action']['structure']['architectureStructure']['direction'],
+					$value[0]['action']['structure']['architectureStructure']['pole'],
+					$value[0]['action']['structure']['architectureStructure']['departement'],
+					$value[0]['action']['structure']['architectureStructure']['service'],
+					$value[0]['action']['typeAction']['type'],
+					$arrayStatut [$value[0]['action']['etatReel']],
+					$value[0]['action']['domaine']['libelleDomaine'],
+					$value['contributeurs'],
+					$value[0]['action']['dateDebut'] ? $value[0]['action']['dateDebut']->format('d-m-Y') : '',
+					$value[0]['action']['dateInitial'] ? $value[0]['action']['dateInitial']->format('d-m-Y') : '',
+					$value[0]['action']['dateFinExecut'] ? $value[0]['action']['dateFinExecut']->format('d-m-Y') : 'En Cours',
+			);
+			$i++;
+		}
+		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
+		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
+		return $objWriter;
+	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $dataStatut
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
+	public function exportOccurence($arrData, $dataStatut) {
+		$arrayStatut = array();
+		foreach($dataStatut as $statut) {
+			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
+		}
+		$default_border = array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'size' => 16, 'color' => array('rgb' => '000000'));
+		$style_th = array(
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff6600')),
+				'font' => array('bold' => true, 'size' => 16, 'color' => array('rgb' => '000000'))
+		);
+		$th = array(
+				'Référence', 'Periodicite','Delai des occurences dans le mois ', 'Delai des occurences dans la semaine','Instance', 'Libellé', 'Description', 
+				'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 'Domaine', 'Date de début', 'Date de fin prévue', 'Date de clôture', 'Statut'
+		);
+		$col = "A";
+		$x = 1;
+		foreach($th as $value) {
+			if($col == "E") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "F") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "S") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} else {
+				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			}
+		}
+		$tableau = array();
+		$i=0;
+		foreach($arrData as $value) {
+			$action = $value['actionCyclique']['action'];
+			$tableau[] = array(
+					$value['reference'],
+					$value['actionCyclique']['pas']['libelle'],
+					$value['actionCyclique']['dayOfMonth']['libelle'],
+					$value['actionCyclique']['dayOfWeek']['libelle'],
+					$action['instance']['libelle'],
+					$action['libelle'],
+					$action['description'],
+					$action['priorite']['libelle'],
+					$action['porteur']['prenom'].' '.$action['porteur']['nom'],
+					$action['structure']['architectureStructure']['direction'],
+					$action['structure']['architectureStructure']['pole'],
+					$action['structure']['architectureStructure']['departement'],
+					$action['structure']['architectureStructure']['service'],
+					$action['typeAction']['type'],
+					$action['domaine']['libelleDomaine'],
+					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
+					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
+					$value['dateFinExecut'] ? $value['dateFinExecut']->format('d-m-Y') : 'En Cours',
+					$arrayStatut[$value['etatCourant']]
+				);
+			$i++;
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
@@ -280,7 +398,7 @@ class Extraction extends \PHPExcel {
 		}
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'CSV');
 		$objWriter->setDelimiter(';');
-		$objWriter->setEnclosure('');
+		$objWriter->setEnclosure('"');
 		$objWriter->setLineEnding("\r\n");
 		return $objWriter;
 	}

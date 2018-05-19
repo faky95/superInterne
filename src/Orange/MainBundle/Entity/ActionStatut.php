@@ -47,7 +47,7 @@ class ActionStatut
     private $dateStatut;
     
     /**
-     * @var \Orange\MainBundle\Entity\Document
+     * @var \Doctrine\Common\Collections\ArrayCollection
      */
     private $erq;
     

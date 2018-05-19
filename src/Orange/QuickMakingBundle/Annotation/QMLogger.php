@@ -16,6 +16,5 @@ final class QMLogger
 	
 	public function affiche()
 	{
-// 		exit(var_dump($this->message));
 	}
 }

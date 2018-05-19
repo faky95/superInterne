@@ -9,12 +9,13 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\TacheStatut;
 use Orange\MainBundle\Form\TacheStatutType;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Orange\MainBundle\Utils\ActionUtils;
 use Orange\QuickMakingBundle\Controller\BaseController;
 use Orange\MainBundle\Entity\Statut;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Utils\Notification;
+use Orange\MainBundle\OrangeMainForms;
+use Orange\MainBundle\Entity\TypeStatut;
 
 /**
  * TacheStatut controller.
@@ -34,6 +35,17 @@ class TacheStatutController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $entities = $em->getRepository('OrangeMainBundle:TacheStatut')->findAll();
         return array('entities' => $entities);
+    }
+    
+    /**
+     * @QMLogger(message="Historique des traitements d'une occurence")
+     * @Route("/historique/{tache_id}", name="historique_tache")
+     * @Template()
+     */
+    public function historiqueAction($tache_id) {
+    	$em = $this->getDoctrine()->getManager();
+    	$entities = $em->getRepository("OrangeMainBundle:TacheStatut")->findByTache($tache_id);
+    	return array('entities' => $entities);
     }
     
     /**
@@ -90,7 +102,8 @@ class TacheStatutController extends BaseController
     	$em = $this->getDoctrine()->getManager();
     	$tache = $em->getRepository("OrangeMainBundle:Tache")->find($tache_id);
     	$entity = new TacheStatut();
-    	$form = $this->createCreateForm($entity,'TacheStatut');
+    	$event = ($etat=='EVENEMENT_DEMANDE_SOLDE' || $etat=='EVENEMENT_DEMANDE_ABANDON') ? OrangeMainForms::TACHESTATUT_FAIT : null;
+    	$form = $this->createForm(new TacheStatutType($event), $entity);
     	return array('entity' => $entity, 'form'   => $form->createView(), 'tache'	=> $tache, 'etat'	=> $etat);
     }
 
@@ -203,36 +216,35 @@ class TacheStatutController extends BaseController
     	$statut = null;
 		$copy = array($this->getUser()->getEmail());
     	if($request->getMethod() == 'POST') {
+    		$statutTache = new TacheStatut();
 			switch ($etat) {
 				case 'EVENEMENT_DEMANDE_SOLDE':
+					$form = $this->createForm(new TacheStatutType(OrangeMainForms::TACHESTATUT_FAIT), $statutTache);
 					$target = $animateurs;
 					$subject = "Fin de traitement d'une tâche";
 					$tache->getDateCloture(new \DateTime('NOW'));
 					$statut = ($tache->getDateInitial() > new \DateTime('NOW')) ? Statut::ACTION_FAIT_DELAI : Statut::ACTION_FAIT_HORS_DELAI;
-					$commentaire = "La tâche a été traitée. En attente de validation .";
 					$infos = sprintf("La tâche %s a été traitée par %s . %s est invité à prendre en charge.", 
 								$tache->getReference(), $this->getUser()->getCompletNom(), $action->getAnimateur()->getNomComplet()
 							);
 					break;
 				case 'EVENEMENT_DEMANDE_ABANDON':
+					$form = $this->createForm(new TacheStatutType(OrangeMainForms::TACHESTATUT_DEMANDE_ABANDON), $statutTache);
 					$target = $animateurs;
 					$subject = "Demande d'abandon d'une tâche";
 					$tache->getDateCloture(new \DateTime('NOW'));
 					$statut = Statut::ACTION_DEMANDE_ABANDON;
-					$commentaire = "Un abandon a été demandé pour cette tâche.";
 					$infos = sprintf("%s a demandé un abandon de la tâche %s. %s est invité à prendre en charge.", 
 								$tache->getReference(), $this->getUser()->getCompletNom(), $action->getAnimateur()->getNomComplet()
 							);
 					break;
 				case 'EVENEMENT_VALIDER':
+					$form = $this->createForm(new TacheStatutType(), $statutTache);
 					$copy = array_merge($copy, $animateurs);
 					$target = array($tache->getActionCyclique()->getAction()->getPorteur()->getEMail());
 					if($tache->getEtatCourant()==Statut::ACTION_DEMANDE_ABANDON) {
 						$subject = "Abandon d'une tâche";
 						$statut = Statut::ACTION_ABANDONNEE;
-						$commentaire = sprintf("L'abandon de la tâche %s demandé par %s a été validé par %s.",
-									$tache->getReference(), $action->getPorteur()->getCompletNom(), $this->getUser()->getCompletNom()
-								);
 						$infos = sprintf("%s a validé l'abandon de la tâche .", $this->getUser()->getCompletNom());
 					} elseif($tache->getEtatCourant()==Statut::ACTION_FAIT_DELAI || $tache->getEtatCourant()==Statut::ACTION_FAIT_HORS_DELAI) {
 						$subject = "Clôture d'une tâche";
@@ -241,25 +253,19 @@ class TacheStatutController extends BaseController
 								);
 						if($tache->getDateInitial() > $tache->getDateCloture()) {
 							$statut = Statut::ACTION_SOLDEE_DELAI;
-							$commentaire = "La tâche a été soldée dans les délais.";
 						} else {
 							$statut = Statut::ACTION_SOLDEE_HORS_DELAI;
-							$commentaire = "La tâche a été soldée hors délai.";
 						}
 					}
 					break;
 				case 'EVENEMENT_INVALIDER':
+					$form = $this->createForm(new TacheStatutType(), $statutTache);
 					$copy = array_merge($copy, $animateurs);
 					$target = array($tache->getActionCyclique()->getAction()->getPorteur()->getEMail());
 					if($tache->getEtatCourant()==Statut::ACTION_DEMANDE_ABANDON) {
 						$subject = "Rejet de l'abandon d'une tâche";
-						$commentaire = "La demande d'abandon de la tâche a été rejetée";
-						$commentaire = sprintf("L'abandon de la tâche %s demandé par %s a été rejeté par %s.",
-									$tache->getReference(), $action->getPorteur()->getCompletNom(), $this->getUser()->getCompletNom()
-								);
 					} elseif($tache->getEtatCourant()==Statut::ACTION_FAIT_DELAI || $tache->getEtatCourant()==Statut::ACTION_FAIT_HORS_DELAI) {
 						$subject = "Rejet du solde d'une tâche";
-						$commentaire = "La demande de solde de la tâche a été rejetée";
 						$infos = sprintf("La clôture de la tâche %s traitée par %s a été rejeté par %s.", 
 									$tache->getReference(), $action->getPorteur()->getCompletNom(), $this->getUser()->getCompletNom()
 								);
@@ -273,9 +279,24 @@ class TacheStatutController extends BaseController
 					break;
 			}
 			if($statut) {
+				$form->handleRequest($request);
+				$statutTache->setTache($tache);				
+				$typeStatut = $em->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_ACTION);
+				$statutEntity = $em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
+				$statutTache->setStatut($statutEntity);
+				$statutTache->setUtilisateur($this->getUser());
 				$tache->setEtatCourant($statut);
 				$em->persist($tache);
-	    		ActionUtils::changeStatutTache($em, $tache, $statut, $this->getUser(), $commentaire);
+				foreach($statutTache->erq as $erq) {
+					if($erq->getFile()) {
+						$erq->setType($this->container->getParameter('types')['demande_solde']);
+						$erq->setNomFichier($erq->getFile()->getClientOriginalName());
+						$erq->setTache($tache);
+						$erq->setUtilisateur($this->getUser());
+						$em->persist($erq);
+					}
+				}
+				$em->persist($statutTache);
 				$em->flush();
     			$this->get('session')->getFlashBag()->add('success', array(
     					'title' => 'Notification', 'body' =>  "Le traitement sur la tâche s'est effectué avec succès"

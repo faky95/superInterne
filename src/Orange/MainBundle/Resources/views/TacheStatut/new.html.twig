@@ -9,9 +9,24 @@
        	<span>Laisser un commentaire</span>
 	</h4>
 </div>
-<form novalidate="novalidate" class="form-horizontal" action="{{ path('tachestatut_create', {tache_id: tache.id, etat:etat}) }}" method="post" role="form">
+<form novalidate="novalidate" class="form-horizontal" action="{{ path('tachestatut_create', {tache_id: tache.id, etat:etat}) }}" method="post" {{ form_enctype(form) }} role="form">
 	<div class="panel-body">
+		{% if form.dateFinExecut is defined %}
+		<div class="form-group">
+			{{ form_widget(form.dateFinExecut,  {'attr': {'class': 'datepicker'}}) }}
+		</div>
+		{% endif %}
 		{{ form_row(form.commentaire)}} 
+		{% if form.erq is defined %}
+		<div class="todo">
+			<h4>Le(s) ERQ(s) <a id="ajout_erq_fait" href="#myModal" style="float: right;"><span class="icon12 cut-icon-plus"></span></a>
+		</div>
+		<div id="list_erq_fait" prototype="{{ form_widget(form.erq.vars.prototype.file)|e('html_attr') }}">
+		{% for erqForm in form.erq %}
+			<div>{{ form_widget(erqForm.file) }}</div>
+		{% endfor %}
+		</div>
+		{% endif %}
 		{{ form_widget(form._token) }}
 		<!-- End .form-group  -->
 	</div>

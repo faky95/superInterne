@@ -20,6 +20,13 @@
     {{ form_errors(form) }}
 {% endblock form_widget_simple %}
 
+{%- block collection_widget -%}
+    {% if prototype is defined %}
+        {%- set attr = attr|merge({'data-prototype': form_row(prototype) }) -%}
+    {% endif %}
+    {{- block('form_widget') -}}
+{%- endblock collection_widget -%}
+
 {% block form_widget_label %}
     <label class="col-lg-2 control-label>{{ form_label(form) }}</label>
 {% endblock form_widget_label %}

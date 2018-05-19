@@ -74,7 +74,7 @@ class Instance extends BaseEntity
      /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="Domaine", inversedBy="instance", cascade={"persist", "merge", "remove"})
+     * @ORM\ManyToMany(targetEntity="Domaine", inversedBy="instance", cascade={"persist", "merge"})
      * @ORM\JoinTable(name="instance_has_domaine",
      *   joinColumns={
      *     @ORM\JoinColumn(name="instance_id", referencedColumnName="id")
@@ -85,6 +85,13 @@ class Instance extends BaseEntity
      * )
      */
     private $domaine;
+    
+    /**
+     * @var \Doctrine\Common\Collections\Collection
+     *
+     * @ORM\ManyToMany(targetEntity="Application", mappedBy="instance")
+     */
+    private $application;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -104,7 +111,7 @@ class Instance extends BaseEntity
     /**
      * @var \Doctrine\Common\Collections\Collection
      *
-     * @ORM\ManyToMany(targetEntity="TypeAction", inversedBy="instance", cascade={"persist", "merge", "remove"})
+     * @ORM\ManyToMany(targetEntity="TypeAction", inversedBy="instance", cascade={"persist", "merge"})
      * @ORM\JoinTable(name="instance_has_type_action",
      *   joinColumns={
      *     @ORM\JoinColumn(name="instance_id", referencedColumnName="id")
@@ -240,6 +247,7 @@ class Instance extends BaseEntity
         $this->animateur = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tmp_animateur = new \Doctrine\Common\Collections\ArrayCollection();
         $this->isDeleted=false;
+        $this->application = new \Doctrine\Common\Collections\ArrayCollection();
         $this->children = new \Doctrine\Common\Collections\ArrayCollection();
         $this->sourceInstance = new \Doctrine\Common\Collections\ArrayCollection();
         $this->tmp_source = new \Doctrine\Common\Collections\ArrayCollection();

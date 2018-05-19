@@ -203,9 +203,7 @@
 																	      <p align="right"><em>Pour plus d'infos sur cette action, <a target="_blank" href="{{ url('details_action', {'id': body.entity.action.id}) }}">Cliquez ici</a></em></p>
 																	  </tbody>
 								                         		</table>
-								                         {% endif %}
-								                         
-														{% if body.entity.action is defined and body.entity.action is not empty %}
+								                         {% elseif body.entity.action is defined and body.entity.action is not empty %}
 										                         <table class="w580" width="580" cellspacing="0" cellpadding="0" border="0">
 																	  <tbody>
 																	      <tr>

@@ -187,34 +187,19 @@ class UtilisateurRepository extends BaseRepository {
 		$data = array_merge($this->filterByProfile($queryBuilder, 'p6', Utilisateur::ROLE_CHEF_PROJET)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
-
+	
 	/**
 	 * @return QueryBuilder
 	 */
 	public function porteurQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('u7')->select('u7.id')
-							->innerJoin('u7.action', 'a7')
-							->innerJoin('a7.porteur', 'ut7');
+			->innerJoin('OrangeMainBundle:Action', 'a7', 'WITH', 'a7.porteur = u7')
+			->innerJoin('a7.porteur', 'ut7');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'ut7', Utilisateur::ROLE_PORTEUR)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
 	
-	public function getAllPorteur(){
-		return $this->createQueryBuilder('u')->select('u.id')
-					->innerJoin('u.action', 'a')
-					->innerJoin('a.porteur', 'ut')
-					->distinct()
-					->getQuery()->getArrayResult();
-	}
-
-	public function getAllCotributeur(){
-		return $this->createQueryBuilder('u')->select('u.id')
-					->innerJoin('u.action', 'a')
-					->innerJoin('a.porteur', 'ut')
-					->distinct()
-					->getQuery()->getArrayResult();
-	}
-public function getUtilisateurByStructure($structures, $bu=null){
+	public function getUtilisateurByStructure($structures, $bu=null){
 		if ($this->_user){
 			$bu=$this->_user->getStructure()->getBuPrincipal();
 		}
@@ -237,6 +222,7 @@ public function getUtilisateurByStructure($structures, $bu=null){
 						->groupBy('s.id');
 		return $queryBuilder;
 	}
+	
 	public function getUtilisateurActifByStructure($structures, $bu=null){
 		if ($this->_user){
 			$bu=$this->_user->getStructure()->getBuPrincipal();
@@ -248,10 +234,10 @@ public function getUtilisateurByStructure($structures, $bu=null){
 		}
 		return $rep->createQueryBuilder('s')
 			->select('COUNT(distinct(u1.id)) usr, s.id, s.libelle')
-			->add('from', 'OrangeMainBundle:Utilisateur u1', true)
+			->leftJoin('OrangeMainBundle:Utilisateur',  'u1', 'WITH', '1=1')
 			->innerJoin('u1.structure','s1')
 			->innerJoin('s1.buPrincipal','b1')
-			->innerJoin('u1.action', 'a')
+			->innerJoin('OrangeMainBundle:Action', 'a', 'WITH', 'a.porteur = u1')
 			->innerJoin('a.actionStatut', 'ahs')
 			->innerJoin('ahs.statut', 'st')
 			->where('st.code=:code') ->setParameter('code', Statut::ACTION_NON_ECHUE)
@@ -264,44 +250,55 @@ public function getUtilisateurByStructure($structures, $bu=null){
         	->setParameter('bu', $bu)
 			->groupBy('s.id');
 	}
-		public function listByInstance($idStructure) {
-			return $this->createQueryBuilder('u')
-						->innerJoin('u.structure', 's1')
-						->innerJoin('OrangeMainBundle:Structure', 's', 'WITH', 's1.lvl >= s.lvl AND s1.root = s.root AND s1.lft >= s.lft  AND s1.rgt <= s.rgt')
-						->where('s.id IN (:id)')
-						->setParameter('id', $idStructure)
-						->distinct();
-		}
-		
 	
-		public function getMailsByBu(){
-			return $this->createQueryBuilder('u')
-						->select('u.id,u.email')
-						->innerJoin('u.structure', 's')
-						->where('s.buPrincipal=:bu')->setParameter('bu', $this->_user->getStructure()->getBuPrincipal())
-						->getQuery()->getArrayResult();
-			
-		}
+	public function listByInstance($idStructure) {
+		return $this->createQueryBuilder('u')
+			->innerJoin('u.structure', 's1')
+			->innerJoin('OrangeMainBundle:Structure', 's', 'WITH', 's1.lvl >= s.lvl AND s1.root = s.root AND s1.lft >= s.lft  AND s1.rgt <= s.rgt')
+			->where('s.id IN (:id)')
+			->setParameter('id', $idStructure)
+			->distinct();
+	}
 		
-		public function getMembreEspace($espace_id){
-			return $this->createQueryBuilder('u')
+	public function getMailsByBu() {
+		return $this->createQueryBuilder('u')
+			->select('u.id,u.email')
+			->innerJoin('u.structure', 's')
+			->where('s.buPrincipal=:bu')->setParameter('bu', $this->_user->getStructure()->getBuPrincipal())
+			->getQuery()->getArrayResult();
+		
+	}
+		
+	public function getMembreEspace($espace_id) {
+		return $this->createQueryBuilder('u')
 			->innerJoin('u.membreEspace', 'me')
 			->innerJoin('me.espace', 'e')
 			->where('e.id=:id')->setParameter('id', $espace_id);
-		}
+	}
 		
-		/**
-		 * @param \Orange\MainBundle\Entity\Utilisateur $manager
-		 */
-		public function getMembreCollaborateur($manager){
-			return $this->createQueryBuilder('u')
-				->where('u.id IN (:ids)')->setParameter('ids', $manager->getCollaboratorsId());
-		}
-		
-		public function getAllDestinataireOfReporting($bu = null, $espace = null, $projet = null){
-			return $this->createQueryBuilder('u')
-						->select('partial u.{id , email}')
-			            ->innerJoin('u.reporting','r')->getQuery()->execute();
-		}
+	/**
+	 * @param \Orange\MainBundle\Entity\Utilisateur $manager
+	 */
+	public function getMembreCollaborateur($manager) {
+		return $this->createQueryBuilder('u')
+			->where('u.id IN (:ids)')->setParameter('ids', $manager->getCollaboratorsId());
+	}
+	
+	public function getAllDestinataireOfReporting($bu = null, $espace = null, $projet = null) {
+		return $this->createQueryBuilder('u')
+			->select('partial u.{id , email}')
+            ->innerJoin('u.reporting','r')->getQuery()->execute();
+	}
+	
+	/**
+	 * @param number $instanceId
+	 * @return array
+	 */
+	public function listConstatateurByInstance($instanceId) {
+		return $this->createQueryBuilder('u')
+			->innerJoin('u.sources', 's')
+			->where('IDENTITY(s.instance) = :instanceId')->setParameter('instanceId', $instanceId)
+			->getQuery()->getArrayResult();
+	}
 }
 

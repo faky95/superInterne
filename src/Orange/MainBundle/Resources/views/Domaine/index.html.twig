@@ -4,12 +4,12 @@
 <!-- heading -->
 <div class="heading">
 	<h3>{% block page_title %} Liste des domaines 
-	{% if  espace_id is not empty %} de l'espace:
+	{% if  espace is not empty %} de l'espace:
 		<span style=" color:#ff6600"> {{ espace.libelle }} </span> 
 	{% endif %}{% endblock %}</h3> 
 	    
-	  {% if espace_id is not empty %} 
-	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {'espace': espace, 'espace_id': espace_id, 'gest': gest} %}
+	  {% if espace is not empty %} 
+	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {'espace': espace, 'espace_id': espace.id, 'gest': gest} %}
      {% endif %}
                    
 </div>
@@ -18,8 +18,8 @@
 	<div class="col-lg-12">
 		<div class="row">
 			<div class="col-lg-8">
-			 {% if  espace_id is not empty %} 
-				 <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine_to_espace', {'espace_id':espace_id})}}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
+			 {% if  espace is not empty %} 
+				 <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine_to_espace', {'espace_id':espace.id})}}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
 			{% else %}
 			 	<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{  path('nouveau_domaine') }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
 			{% endif %} 
@@ -54,8 +54,8 @@
 {% block pagescript %}
 	{{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
-	{% if espace_id is defined and espace_id is not empty  %}
-		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'domaineTable', url: path('liste_des_domaines_by_espace', {'espace_id':espace_id}) } %}
+	{% if espace is defined and espace is not empty  %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'domaineTable', url: path('liste_des_domaines_by_espace', {'espace_id':espace.id}) } %}
 	{% else %}
 		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'domaineTable', url: path('liste_des_domaines') } %}
 	{% endif %}

@@ -53,9 +53,16 @@ class Document
 	/**
 	 * @var \Orange\MainBundle\Entity\Action
 	 * @ORM\ManyToOne(targetEntity="Action")
-	 * @ORM\JoinColumn(name="action_id", referencedColumnName="id")
+	 * @ORM\JoinColumn(name="action_id", referencedColumnName="id", nullable=true)
 	 */
 	private $action;
+	
+	/**
+	 * @var \Orange\MainBundle\Entity\Tache
+	 * @ORM\ManyToOne(targetEntity="Tache")
+	 * @ORM\JoinColumn(name="tache_id", referencedColumnName="id", nullable=true)
+	 */
+	private $tache;
 	
 	/**
 	 * @var \Orange\MainBundle\Entity\Utilisateur
@@ -169,6 +176,22 @@ class Document
 	 */
 	public function setAction($action) {
 		$this->action = $action;
+		return $this;
+	}
+	
+	/**
+	 * @return \Orange\MainBundle\Entity\Tache
+	 */
+	public function getTache() {
+		return $this->tache;
+	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Tache $tache
+	 * @return \Orange\MainBundle\Entity\Document
+	 */
+	public function setTache($tache) {
+		$this->tache = $tache;
 		return $this;
 	}
 	

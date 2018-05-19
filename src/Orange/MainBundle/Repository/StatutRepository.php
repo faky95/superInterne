@@ -30,17 +30,17 @@ class StatutRepository extends BaseRepository {
 		return $queryBuilder;
 	}
 	
-	public function getArrayStatutImport(){
-		$codeStatuts=array(Statut::ACTION_ABANDONNEE,Statut::ACTION_SOLDEE,Statut::ACTION_NON_ECHUE,Statut::ACTION_NOUVELLE,Statut::ACTION_EN_COURS);
-		$statuts= $this->createQueryBuilder('s')
+	public function getArrayStatutImport() {
+		$codeStatuts=array(Statut::ACTION_ABANDONNEE, Statut::ACTION_SOLDEE, Statut::ACTION_NON_ECHUE, Statut::ACTION_NOUVELLE, Statut::ACTION_EN_COURS);
+		$statuts = $this->createQueryBuilder('s')
 						->select('s.id')
 						->where('s.code in(:statuts)')
 						->setParameter('statuts',$codeStatuts)
 						->getQuery()->getArrayResult();
-		$tabStatuts=array();
-		$i=0;
-		foreach ($statuts as $ta){
-			$tabStatuts[$i]=$ta['id'];
+		$tabStatuts = array();
+		$i = 0;
+		foreach($statuts as $ta) {
+			$tabStatuts[$i] = $ta['id'];
 			$i++;
 		}
 		return $tabStatuts;
@@ -56,6 +56,18 @@ class StatutRepository extends BaseRepository {
 			->getQuery()
 			->getOneOrNullResult();
 	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Tache $tache
+	 */
+	public function getStatutForTache($tache) {
+		return $this->createQueryBuilder('q')
+			->innerJoin('OrangeMainBundle:Tache', 't', 'WITH', 't.etatCourant = q.code')
+			->where('t = :tache')->setParameter('tache', $tache)
+			->getQuery()
+			->getOneOrNullResult();
+	}
+	
 	/**
 	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
 	 */

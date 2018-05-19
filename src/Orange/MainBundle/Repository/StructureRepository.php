@@ -8,13 +8,15 @@ use Orange\MainBundle\Entity\Structure;
 use Orange\MainBundle\Entity\Statut;
 
 class StructureRepository extends BaseRepository {
-	public function idsArch(){
+	
+	public function idsArch() {
 		return $this->createQueryBuilder('s')
 		->select('s.id')
 		->innerJoin('s.architectureStructure', 'a')
 		->getQuery()
 		->getArrayResult();
 	}
+	
 	public function StructureToUpdate(){
 		$ids = $this->idsArch();
 		return $this->createQueryBuilder('s')
@@ -22,13 +24,14 @@ class StructureRepository extends BaseRepository {
 		->getQuery()
 		->getResult();
 	}
+	
 	public function getIdStructure($id) {
 		$array = array();
 		$query = parent::createQueryBuilder('s')
-					->select('s.id')
-					->innerJoin('s.parent', 'p')
-					->where('p.id = :id')
-					->setParameter('id', $id)
+			->select('s.id')
+			->innerJoin('s.parent', 'p')
+			->where('p.id = :id')
+			->setParameter('id', $id)
 			->getQuery()->getArrayResult();
 		foreach ($query as $id){
 			array_push($array, $id['id']);
@@ -137,12 +140,12 @@ class StructureRepository extends BaseRepository {
      */
     public function adminQueryBuilder(&$data = array()) {
     	$queryBuilder = parent::createQueryBuilder('s2')->select('s2.id')
-    					        ->add('from', 'OrangeMainBundle:Structure st1', true)
-								->leftJoin('st1.buPrincipal', 'bu1')
-								->leftJoin('bu1.structure', 'st2')
-								->andWhere('bu1.id = :buId')
-								->andWhere('s2.id = st1.id OR (s2.root = st2.root AND s2.lvl >= st2.lvl AND s2.lft >= st2.lft AND s2.rgt <= st2.rgt)')
-								->setParameter('buId', $this->_user->getStructure()->getBuPrincipal()->getId());
+    					    ->add('from', 'OrangeMainBundle:Structure st1', true)
+							->leftJoin('st1.buPrincipal', 'bu1')
+							->leftJoin('bu1.structure', 'st2')
+							->andWhere('bu1.id = :buId')
+							->andWhere('s2.id = st1.id OR (s2.root = st2.root AND s2.lvl >= st2.lvl AND s2.lft >= st2.lft AND s2.rgt <= st2.rgt)')
+							->setParameter('buId', $this->_user->getStructure()->getBuPrincipal()->getId());
     	$data = array_merge($this->filterByProfile($queryBuilder, 'bu1', Utilisateur::ROLE_ADMIN)->getParameters()->toArray(), $data);
     	return $queryBuilder;
     }
@@ -152,9 +155,9 @@ class StructureRepository extends BaseRepository {
      */
     public function animateurQueryBuilder(&$data = array()) {
     	$queryBuilder = parent::createQueryBuilder('s3')->select('s3.id')
-    						 ->innerJoin('s3.utilisateurs', 'u3')
-    						 ->innerJoin('u3.action', 'a3')
-    						 ->innerJoin('a3.instance', 'i3');
+    						->innerJoin('s3.utilisateurs', 'u3')
+    						->innerJoin('OrangeMainBundle:Action', 'a3', 'WITH', 'a3.porteur = u3')
+    						->innerJoin('a3.instance', 'i3');
     	$data = array_merge($this->filterByProfile($queryBuilder, 'i3', Utilisateur::ROLE_ANIMATEUR)->getParameters()->toArray(), $data);
     	return $queryBuilder;
     }
@@ -235,14 +238,14 @@ class StructureRepository extends BaseRepository {
     /**
      * Recupere les structures et les structures directement lie
      */
-	 public function getStructureAndStructureDirecteByStructure($structure){
-	    	$str = $this->find($structure);
-	    	$queryBuilder =  parent::createQueryBuilder('s')->select('s') ;
-	    	return $queryBuilder->where('s.id=:structure ')->setParameter('structure', $structure)
-				    	->orWhere('s.lvl = :lvl and s.parent=:parent ')
-				    	->setParameter('lvl', $str->getLvl()+1)
-				    	->setParameter('parent', $str)
-				    	->orderBy('s.lvl');
+	 public function getStructureAndStructureDirecteByStructure($structure) {
+    	$str = $this->find($structure);
+    	$queryBuilder =  parent::createQueryBuilder('s')->select('s') ;
+    	return $queryBuilder->where('s.id=:structure ')->setParameter('structure', $structure)
+	    	->orWhere('s.lvl = :lvl and s.parent=:parent ')
+	    	->setParameter('lvl', $str->getLvl()+1)
+	    	->setParameter('parent', $str)
+	    	->orderBy('s.lvl');
 	    }
     
     public function listAllStructures($id) {
@@ -256,44 +259,42 @@ class StructureRepository extends BaseRepository {
     
     public function getChildrenByParent($id){
     	return parent::createQueryBuilder('s')
-    	->select('s1')
-    	->add('from', 'OrangeMainBundle:Structure s1', true)
-    	->where('s.id = :id')
-    	->andWhere('s.lvl <= s1.lvl')
-    	->andWhere('s.root = s1.root')
-    	->andWhere('s.lft  <= s1.lft')
-    	->andWhere('s.rgt >= s1.rgt')
-    	->setParameter('id', $id)
-    	;
+	    	->select('s1')
+	    	->add('from', 'OrangeMainBundle:Structure s1', true)
+	    	->where('s.id = :id')
+	    	->andWhere('s.lvl <= s1.lvl')
+	    	->andWhere('s.root = s1.root')
+	    	->andWhere('s.lft  <= s1.lft')
+	    	->andWhere('s.rgt >= s1.rgt')
+	    	->setParameter('id', $id);
     }
-    public function getDirectionAndPoleByBu($bu){
+    
+    public function getDirectionAndPoleByBu($bu) {
     	$queryBuilder =  parent::createQueryBuilder ('s')
-    	->select('s.id , s.libelle')
-    	->innerJoin('s.buPrincipal', 'b')
-    	->innerJoin('s.typeStructure', 't')
-    	->where('b=:bu')->setParameter('bu', $bu)
-    	->andWhere('t.code=:typeD')->setParameter('typeD', TypeStructure::NIVEAU_DIRECTION)
-    	->orWhere('t.code=:typeP')->setParameter('typeP', TypeStructure::NIVEAU_POLE)
-    	;
+	    	->select('s.id , s.libelle')
+	    	->innerJoin('s.buPrincipal', 'b')
+	    	->innerJoin('s.typeStructure', 't')
+	    	->where('b=:bu')->setParameter('bu', $bu)
+	    	->andWhere('t.code=:typeD')->setParameter('typeD', TypeStructure::$ids['direction'])
+	    	->orWhere('t.code=:typeP')->setParameter('typeP', TypeStructure::$ids['pole']);
     	return $queryBuilder;
     }
 
-    public function getStructureByRole($role){
+    public function getStructureByRole($role) {
     	$data=array();
     	$states=array(Statut::ABANDONNEE_ARCHIVEE, Statut::SOLDEE_ARCHIVEE);
 	    if($role==Utilisateur::ROLE_ADMIN) {
-	    		$structures = $this->adminQueryBuilder($data)->select('s2');
+	    	$structures = $this->adminQueryBuilder($data)->select('s2');
 	    } elseif($role==Utilisateur::ROLE_ANIMATEUR) {
-				$structures=$this->animateurQueryBuilder($data)
-								 ->select('s3')
-								 ->andWhere('a3.etatCourant not in(:etat)')
-								 ->setParameter('etat', $states)
-								 ->distinct()
-								 ;
+			$structures=$this->animateurQueryBuilder($data)
+				 ->select('s3')
+				 ->andWhere('a3.etatCourant not in(:etat)')
+				 ->setParameter('etat', $states)
+				 ->distinct();
     	} elseif($role==Utilisateur::ROLE_MANAGER) {
-				$structures=$this->managerQueryBuilder($data)->select('s4');
+			$structures=$this->managerQueryBuilder($data)->select('s4');
     	} elseif($role==Utilisateur::ROLE_RAPPORTEUR) {
-	    		$structures = $this->rapporteurQueryBuilder($data)->select('s8');
+	    	$structures = $this->rapporteurQueryBuilder($data)->select('s8');
     	} else {
 	    	 $structures = $this->filter();
 	    }
@@ -303,26 +304,35 @@ class StructureRepository extends BaseRepository {
     }
     
     /**
-     * 
      * @param unknown $structures
      */
-	public function getChildren($structures){
-		$structuresIds=array();
-		foreach($structures as $structure) 
+	public function getChildren($structures) {
+		$structuresIds = array();
+		foreach($structures as $structure) {
 			$structuresIds[] = $structure->getId();
-			$queryBuilder =  parent::createQueryBuilder('s');
-			$queryBuilder
-			->select('s1')
+		}
+		return parent::createQueryBuilder('s')->select('s1')
 			->add('from', 'OrangeMainBundle:Structure s1', true)
 			->where('s.id in(:structures) ')->setParameter('structures', $structuresIds)
 			->andWhere('s.lvl <= s1.lvl')
     		->andWhere('s.root = s1.root')
     		->andWhere('s.lft  <= s1.lft')
     		->andWhere('s.rgt >= s1.rgt')
-    		->orderBy('s1.lvl')
-			;
-			return $queryBuilder;
+    		->orderBy('s1.lvl');
+	}
+	
+	/**
+	 * @param \Orange\MainBundle\Entity\Structure $structure
+	 */
+	public function findChildren($structure) {
+		return parent::createQueryBuilder('s')->select('s1')
+			->add('from', 'OrangeMainBundle:Structure s1', true)
+			->where('s.id = :id')->setParameter('id', $structure->getId())
+			->andWhere('s.lvl <= s1.lvl')
+			->andWhere('s.root = s1.root')
+			->andWhere('s.lft  <= s1.lft')
+			->andWhere('s.rgt >= s1.rgt')
+			->getQuery()
+			->getResult();
 	}
 }
-
-?>

@@ -23,6 +23,12 @@ final class OrangeMainForms
     const ACTION_CHANGE_STATUT 			= 'orange_main.action.change_statut';
     const ACTION_REAFFECTATION 			= 'orange_main.action.reaffectation';
     const ACTION_CYCLIQUE 				= 'orange_main.action.cyclique';
+    const ACTION_PROJET					= 'orange_main.action.projet';
+    /**
+     * The tache statut type
+     */
+    const TACHESTATUT_FAIT				= 'orange_main.tachestatut.fait';
+    const TACHESTATUT_DEMANDE_ABANDON	= 'orange_main.tachestatut.demandeabandon';
     
 
 }

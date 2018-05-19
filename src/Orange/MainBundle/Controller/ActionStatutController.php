@@ -14,6 +14,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Orange\MainBundle\OrangeMainEvents;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Entity\Action;
+use Orange\MainBundle\Entity\Signalisation;
+use Orange\MainBundle\Entity\SignalisationStatut;
 
 /**
  * ActionStatut controller.
@@ -99,6 +101,16 @@ class ActionStatutController extends BaseController
 				$entity->setUtilisateur($this->getUser());
 				$entity->setAction($action);
 				$em->persist($entity);
+				if($action->getSignalisation()->count() && $action->getSignalisation()->first()->isQualifiable()) {
+					$signalisation = $action->getSignalisation()->first();
+					$eventSignalisation = $this->get('orange_main.signalisation_event')->createForSignalisation($signalisation);
+					$signalisation->setStatut(Statut::FIN_TRAITEMENT_SIGNALISATION);
+					$signalisation->addSignStatut(SignalisationStatut::newInstance($this->getUser(), 
+							$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('libelle' => Statut::FIN_TRAITEMENT_SIGNALISATION)), 'Toutes les actions sont soldées'
+						));
+					$em->persist($signalisation);
+					$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_FIN_TRAITEMENT, $eventSignalisation);
+				}
 				$em->flush();
 				$event = $this->get('orange_main.action_event')->createForAction($action);
 				$dispatcher->dispatch(OrangeMainEvents::ACTION_CLOTURE, $event);
@@ -156,7 +168,7 @@ class ActionStatutController extends BaseController
 			} else {
 				return $this->render('OrangeMainBundle:ActionStatut:demande.html.twig', array(
 						'entity' => $action, 'form' => $form->createView()), new Response(null, 303)
-						);
+					);
 			}
 		}
 		return array('entity' => $action, 'form' => $form->createView());
@@ -364,16 +376,13 @@ class ActionStatutController extends BaseController
 		$date = date('Y-m-d');
     	$entity = new ActionStatut();
     	$em = $this->getDoctrine()->getManager();
-    	$entity->setErq(new \Doctrine\Common\Collections\ArrayCollection());
-    	$entity->getErq()->add(new \Orange\MainBundle\Entity\Document());
-    	$entity->getErq()->add(new \Orange\MainBundle\Entity\Document());
-    	$form = $this->createCreateForm($entity,'ActionStatut');
+    	$form = $this->createCreateForm($entity, 'ActionStatut');
     	$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		if($request->getMethod() == 'POST') {
 			$form->handleRequest($request);
 			if($form->isValid()) {
 				if ($entity->getDateFinExecut()){
-					if($action->getDateInitial()->format('Y-m-d') >= $entity->getDateFinExecut()->format('Y-m-d')){
+					if($action->getDateInitial()->format('Y-m-d') >= $entity->getDateFinExecut()->format('Y-m-d')) {
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
 					} else {
@@ -381,20 +390,22 @@ class ActionStatutController extends BaseController
 						$action->setDateFinExecut($entity->getDateFinExecut());
 					}
 				} else {
-					if($action->getDateInitial()->format('Y-m-d') >= $date){
+					if($action->getDateInitial()->format('Y-m-d') >= $date) {
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_DELAI);
-						$action->setDateFinExecut($entity->getDateFinExecut());
+						$action->setDateFinExecut($entity->getDateFinExecut());	
 					} else {
 						$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_FAIT_HORS_DELAI);
 						$action->setDateFinExecut($entity->getDateFinExecut());
 					}
 				}
-				if($entity->getErq() && $entity->getErq()->getFile()) {
-					$entity->getErq()->setType($this->container->getParameter('types')['demande_solde']);
-					$entity->getErq()->setAction($action);
-					$entity->getErq()->setNomFichier($entity->getErq()->getFile()->getClientOriginalName());
-					$entity->getErq()->setUtilisateur($this->getUser());
-	    			$em->persist($entity->getErq());
+				foreach($entity->getErq() as $erq) {
+					if($erq->getFile()) {
+						$erq->setType($this->container->getParameter('types')['demande_solde']);
+						$erq->setAction($action);
+						$erq->setNomFichier($erq->getFile()->getClientOriginalName());
+						$erq->setUtilisateur($this->getUser());
+		    			$em->persist($erq);
+					}
 				}
 	    		$entity->setUtilisateur($this->getUser());
 	    		$entity->setAction($action);
@@ -403,9 +414,7 @@ class ActionStatutController extends BaseController
 	    		$em->flush();
 	    		$event = $this->get('orange_main.action_event')->createForAction($action);
 	    		$dispatcher->dispatch(OrangeMainEvents::ACTION_FAITE, $event);
-				$this->get('session')->getFlashBag()->add('success', array (
-							'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'
-					));
+				$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' => 'Enregistrement effectué avec succès'));
 				return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $action_id))));
 			} else {
 				return $this->render('OrangeMainBundle:ActionStatut:cloturer.html.twig', array('action' => $action, 'form' => $form->createView()), new Response(null, 303));

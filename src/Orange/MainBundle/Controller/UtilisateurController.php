@@ -130,7 +130,7 @@ class UtilisateurController extends BaseController
     public function editAction(Request $request, $id)
     {
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:Membre')->find($id);
+        $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
@@ -426,6 +426,28 @@ class UtilisateurController extends BaseController
             return $response;
         }
         return $this->render('OrangeMainBundle::firstChangePassword.html.twig', array('form' => $form->createView()));
+    }
+    
+    /**
+     * @Route("/constatateur_by_instance", name="constatateur_by_instance")
+     * @QMLogger(message="Liste des constatateurs d'un périmétre")
+     * @Template()
+     */
+    public function listConstatateurByInstanceAction(Request $request) {
+    	$em = $this->getDoctrine()->getManager();
+    	$instance = empty($request->request->get('id')) ? null : $em->getRepository('OrangeMainBundle:Instance')->find($request->request->get('id'));
+    	if(!$instance) {
+    		$arrData = array();
+    	} else {
+    		$arrData = $em->getRepository('OrangeMainBundle:Utilisateur')->listConstatateurByInstance($instance->getId());
+    	}
+    	$output = array(0 => array('id' => null, 'libelle' => 'Choisir un constatateur  ...'));
+    	foreach ($arrData as $data) {
+    		$output[] = array('id' => $data['id'], 'libelle' => $data['prenom'].' '.$data['nom']);
+    	}
+    	$response = new Response();
+    	$response->headers->set('Content-Type', 'application/json');
+    	return $response->setContent(json_encode($output));
     }
     
 }

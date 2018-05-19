@@ -14,31 +14,17 @@ class ReloadActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-    	$builder->add(	'isReload', 'checkbox', array(
+    	$builder->add('isReload', 'checkbox', array(
 		    			'label' => 'Recharger',
 		    			'required' => false))
 		    	->add('libelle')
-		    	->add('dateDebut', 'date', array(
-		    			'label' => 'Date de Debut :',
-		    			'widget' => 'single_text',
-		    			'input'  => 'datetime',
-		    			'format' => 'dd/MM/yyyy'
-		    	))
-		    	->add('dateInitial', 'date', array(
-		    			'label' => 'Délai :',
-		    			'widget' => 'single_text',
-		    			'input'  => 'datetime',
-		    			'format' => 'dd/MM/yyyy'
-		    	))
 		    	->add('porteur','entity',
 		    			array('label'=>'Porteur :',
 		    					'class'=>'Orange\MainBundle\Entity\Utilisateur',
 		    					'empty_value' => '--- Choix Porteur ---',
 		    			))
 				->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
-				->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')))
-		    
-    	;
+				->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));
     }
     
     

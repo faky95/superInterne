@@ -14,20 +14,21 @@ use Doctrine\ORM\QueryBuilder;
 use Orange\MainBundle\Entity\Utilisateur;
 use Orange\MainBundle\Entity\Reporting;
 use Orange\MainBundle\Entity\Statistique;
+use Orange\MainBundle\Entity\Synthese;
 
 class StatistiqueController extends BaseController
 {
 
-     protected  $statuts= array(
-                        'nbAbandon' => 'Abandonnée',
-                        'nbDemandeAbandon' => "Demande d'abandon",
-                        'nbFaiteDelai' => "Faite dans les délais",
-                        'nbFaiteHorsDelai' => "Faite hors délai",
-                        'nbNonEchue' => "Non échue",
-                        'nbEchueNonSoldee' => "Echue non soldée",
-                        'nbSoldeeHorsDelais' => 'Soldée hors délais',
-                        'nbSoldeeDansLesDelais' => "Soldée dans les délais",
-                        'total' => "Total",
+     protected $statuts = array(
+                    'nbAbandon' => 'Abandonnée',
+                    'nbDemandeAbandon' => "Demande d'abandon",
+                    'nbFaiteDelai' => "Faite dans les délais",
+                    'nbFaiteHorsDelai' => "Faite hors délai",
+                    'nbNonEchue' => "Non échue",
+                    'nbEchueNonSoldee' => "Echue non soldée",
+                    'nbSoldeeHorsDelais' => 'Soldée hors délais',
+                    'nbSoldeeDansLesDelais' => "Soldée dans les délais",
+                    'total' => "Total",
                 );
      
      protected  $effectifs= array(
@@ -35,7 +36,7 @@ class StatistiqueController extends BaseController
             'nbMoyenActionByUser' => "Nombre moyen daction par utilisateur",
             'nbUsersActif' => "Nombre d\'utilisateur Actif",
             'nbMoyenActionByUserActif' => "Nombre moyen d\'action par utilisateur actif",
-     );
+     	);
 
 	/**
      * Lists all Statistique entities.
@@ -61,29 +62,22 @@ class StatistiqueController extends BaseController
     	$criteria=null;
     	$em = $this->getDoctrine()->getManager();
     	$instancesP = $em->getRepository('OrangeMainBundle:Instance')->porteurQueryBuilder($init)
-    			->addSelect('i7.libelle')->distinct()
+    			->addSelect('i7.libelle, i7.couleur')->distinct()
     			->getQuery()->getArrayResult();
     	$statsP = $this->statistiqueByType("instance", Utilisateur::ROLE_PORTEUR, $instancesP, $criteria);
     	
     	$instancesC=$em->getRepository('OrangeMainBundle:instance')->getInstancesEnConributions($this->getUser()->getId());
     	$statsC = $this->statistiqueByType("instance", Utilisateur::ROLE_CONTRIBUTEUR, $instancesC, $criteria);
     	
-    	$statutsM=$this->getStatus();
     	$statsM=array();
     	
     	if($this->getUser()->hasRole(Utilisateur::ROLE_MANAGER)) {
-    		$id=$this->getUser()->getStructure()->getId();
-    		$structures=$em->getRepository('OrangeMainBundle:Structure')
-    										->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
-    		$statsM = $this->statistiqueByType("structure", Utilisateur::ROLE_MANAGER, $structures, $criteria);
-    		foreach ($statsM['taux'] as $key => $taux) {
-    			$statutsM[$key] = $key;
-    		}
+    		$id = $this->getUser()->getStructure()->getId();
+    		$structures = $em->getRepository('OrangeMainBundle:Structure')
+    			->getStructureAndStructureDirecteByStructure($id)->getQuery()->getArrayResult();
+    			$statsM = $this->statistiqueByType("structure", Utilisateur::ROLE_MANAGER, $structures, $criteria);
     	}
-    	$statuts=$this->getStatus();
-    	return array(
-    			'statut'=>$statuts, 'statutM'=>$statutsM, 'statsP'=>$statsP, 'statut'=> $statuts, 'statsC'=>$statsC, 'statsM'=>$statsM, 'nbTaux'=>$this->getNombreTaux(),
-    		);
+    	return array('statsP'=>$statsP, 'statut'=> $this->getStatus(), 'statsC'=>$statsC, 'statsM'=>$statsM, 'nbTaux'=>$this->getNombreTaux());
     }
     
     /**
@@ -187,7 +181,7 @@ class StatistiqueController extends BaseController
     public function tableauStatistiqueAnimateurAction(Request $request) {
         $criteria=null;
         $data=array();
-        $instances=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->animateurQueryBuilder($data)->addSelect('i3.libelle')->getQuery()->getArrayResult();
+        $instances=$this->getDoctrine()->getRepository('OrangeMainBundle:Instance')->animateurQueryBuilder($data)->addSelect('i3.libelle, i3.couleur')->getQuery()->getArrayResult();
 		$stats = $this->statistiqueByType("instance", Utilisateur::ROLE_ANIMATEUR, $instances, $criteria);
         $statuts=$this->getStatus();
         return $this->render("OrangeMainBundle:Statistique:simple_tableau_stats.html.twig", array(
@@ -269,7 +263,7 @@ class StatistiqueController extends BaseController
     		}
     	}
     	$tabByInstance = $this->statistiqueByType('instance', $tabRoles[$role], $instances, $form->getData());
-    	foreach ($tabByInstance['taux'] as $key => $taux) {
+    	foreach(array_keys($tabByInstance['taux']) as $key) {
     		$graphe[$key]=array();
     	}
     	$graphe=$this->createGraphe($tabByInstance['instance'],$graphe);
@@ -277,17 +271,17 @@ class StatistiqueController extends BaseController
     		$tabByStructure= $this->statistiqueByType('structure', $tabRoles[$role], $structures, $form->getData());
     	if($tabRoles[$role]==Utilisateur::ROLE_MANAGER) {
     		$graphe=array();
-    		foreach ($tabByStructure['taux'] as $key => $taux)
+    		foreach (array_keys($tabByStructure['taux']) as $key) {
     			$graphe[$key]=array();
+    		}
     		$graphe=$this->createGraphe($tabByStructure['structure'],$graphe);	
     	}
     	if($tabRoles[$role]==Utilisateur::ROLE_ADMIN || $tabRoles[$role]== Utilisateur::ROLE_RAPPORTEUR) {
-     			$req=$this->getDoctrine()->getRepository('OrangeMainBundle:Action')->getStatsByStructureInstance($tabRoles[$role],$form->getData());
-     			$map = $this->getMapping()->getReporting()->transformRequeteToCroise($req,$structures,$instances);
-     			$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
-     			$tabCroise = $this->getMapping()->getReporting()->setEntityManager($this->getMapping()->getReporting())
-     				->mappingDataStatsCroise($data, 'structure', 'instance', $structures, $instances);
-     			$graphe=$this->createManyGrapheStat($tabCroise,'structure','instance');
+    		$req = $this->getDoctrine()->getRepository('OrangeMainBundle:Synthese')->reportingByStructureAndInstance($tabRoles[$role], $form->getData());
+     		$data = $this->get('orange.main.calcul')->stats($bu, $req);
+     		$tabCroise = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())
+     			->reportingInCroise($data, 'structure', 'instance', $structures, $instances);
+     		$graphe=$this->createManyGrapheStat($tabCroise,'structure','instance');
     	}
     	if($tabByInstance['instance']) {
     		$tmp_inst = 1;
@@ -307,20 +301,20 @@ class StatistiqueController extends BaseController
     }
     
     /**
-     * @param unknown $type
+     * @param string $type
      */
-    public function statistiqueByType($type, $role, $arrType,$criteria) {
-    	$tableau=array();
-    	$bu=$this->getUser()->getStructure()->getBuPrincipal();
-    	$rep=$this->getDoctrine()->getRepository('OrangeMainBundle:Action');
+    public function statistiqueByType($type, $role, $arrType, $criteria) {
+    	$tableau = array();
+    	$bu = $this->getUser()->getStructure()->getBuPrincipal();
+    	$rep = $this->getDoctrine()->getRepository('OrangeMainBundle:Action');
+    	$syntheseRepository = $this->getDoctrine()->getRepository('OrangeMainBundle:Synthese');
     	if($type=='instance') {
-    		$rq = $rep->getStatsByInstance($role, $criteria);
+    		$rq = $syntheseRepository->reportingByInstanceAndPorteur($role, $criteria);
     		$reqActions = $rep->getStatsByInstance2($role, $criteria);
-    		$req = $this->getMapping()->getReporting()->combineTacheAndActionByPorteur($rq->addGroupBy('u.id')->getQuery()->getArrayResult());
-    		$map = $this->getMapping()->getReporting()->transformRequeteToPorteur($req, $arrType);
+    		$map = $this->getMapping()->getReporting()->reportingByInstanceAndPorteur($rq->getQuery()->getArrayResult(), $arrType);
+    		$data = $this->get('orange.main.calcul')->stats($bu, $map);
     		
-    		$data = $this->container->get('orange.main.calcul')->stats($bu, $map);
-    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'instance',$arrType);
+    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'instance', $arrType);
     		$this->get('session')->set('donnees_reporting_actions_instance', array('query'=>$reqActions->getDQL(), 'param'=>$reqActions->getParameters()));
     		$this->get('session')->set('donnees_reporting_instance', array('data'=>$tableau, 'req'=>$rq->getDQL(), 'role' => $role, 'param'=>$rq->getParameters()));
     		$this->get('session')->set('reporting_instance', array(
@@ -328,15 +322,16 @@ class StatistiqueController extends BaseController
     			));
     		$this->get('session')->set('type',array('valeur' => 2));
     	} else {
-    		$rq=$rep->getStatsByStructure($role, $criteria);
-    		$reqActions=$rep->getStatsByStructure2($role, $criteria);
-    		$req =$this->getMapping()->getReporting()-> combineTacheAndAction($rq->getQuery()->getArrayResult());
-    		$mapM= $this->getMapping()->getReporting()->transformRequeteToSimple($req, $arrType);
-    		$data = $this->container->get('orange.main.calcul')->stats($bu, $mapM);
-    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'structure',$arrType);
+    		$rq = $syntheseRepository->reportingByStructure($role, $criteria, $arrType);
+    		var_dump($rq->getQuery()->getSql());exit;
+    		$reqActions = $rep->getStatsByStructure2($role, $criteria);
+    		$data = $this->get('orange.main.calcul')->stats($bu, $rq->getQuery()->getArrayResult());
+    		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'structure', $arrType);
     		$this->get('session')->set('donnees_reporting_actions_structure',array('query'=>$reqActions->getDQL() , 'param'=>$reqActions->getParameters()));
     		$this->get('session')->set('donnees_reporting_structure',array('data'=>$tableau, 'req'=>$rq->getDQL(), 'param'=>$rq->getParameters() ));
-    		$this->get('session')->set('reporting_structure',array('req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 1, 'arrType' => serialize($arrType)));
+    		$this->get('session')->set('reporting_structure', array(
+    				'req' => $rq->getDQL(), 'param' => $rq->getParameters(), 'tp' => 1, 'arrType' => serialize($arrType)
+    			));
     		$this->get('session')->set('type', array('valeur' => 1));
     	}
     	return $tableau;
@@ -377,7 +372,7 @@ class StatistiqueController extends BaseController
     	
     	if ($tabRoles[$role]==Utilisateur::ROLE_CONTRIBUTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 2, $form->getData());
-    		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
+    		$data = $this->get('orange.main.calcul')->stats($bu, $req);
     		$stats = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($data, 'semaine');
     	}
     	
@@ -643,9 +638,14 @@ class StatistiqueController extends BaseController
     public function getStatus() {
     	$formule=$this->getDoctrine()->getRepository('OrangeMainBundle:Formule')->getTauxStats();
     	$statuts=$this->statuts;
-    	if(count($formule)>0)
-	    	foreach ($formule as $form)
+    	if(count($formule)>0) {
+	    	foreach ($formule as $form) {
 	    		$statuts[$form['libelle']]=$form['libelle'];
+	    	}
+    	}
+    	foreach(Synthese::$formules as $formule => $libelle) {
+    		$statuts[$formule] = $libelle;
+    	}
     	return $statuts;
     		
     }
@@ -664,12 +664,12 @@ class StatistiqueController extends BaseController
     	switch ($type) {
     		case 'instance':
     			$req=$rep->getStatistiqueEvolutiveByInstance($criteria)->getQuery()->getArrayResult();
-    			$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
+    			$data = $this->get('orange.main.calcul')->stats($bu, $req);
     			$stats = $reportingMapping->mappingDataStatsCroise($data, 'instance', 'semaine', $params, $semaines);
     		break;
     		case 'structure':
     			$req=$rep->getStatistiqueEvolutiveByStructure($criteria);
-    			$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
+    			$data = $this->get('orange.main.calcul')->stats($bu, $req);
     			$stats = $reportingMapping->mappingDataStatsCroise($data, $type, 'semaine', $params, $semaines);
     		break;
     	}

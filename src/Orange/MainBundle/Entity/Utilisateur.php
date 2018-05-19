@@ -134,18 +134,6 @@ class Utilisateur extends BaseUser
     
     /**
      * @var \Doctrine\Common\Collections\Collection
-     *  @ORM\OneToMany(targetEntity="Action", mappedBy="porteur", cascade={"persist","remove","merge"})
-     */
-    private $action;
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *  @ORM\OneToMany(targetEntity="Action", mappedBy="animateur", cascade={"persist","remove","merge"})
-     */
-    private $actionAnimateur;
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
      *  @ORM\OneToMany(targetEntity="Signalisation", mappedBy="constatateur", cascade={"persist","remove","merge"})
      */
     private $signalisation;
@@ -160,12 +148,6 @@ class Utilisateur extends BaseUser
      * @ORM\OneToMany(targetEntity="SignalisationAnimateur", mappedBy="utilisateur", cascade={"persist","remove","merge"})
      */
     private $signalisationAnimateur;
-    
-    /**
-     * @var \Doctrine\Common\Collections\Collection
-     *  @ORM\OneToMany(targetEntity="Statistique", mappedBy="type", cascade={"persist","remove","merge"})
-     */
-    private $statistique;
     
     /**
      * @var \Doctrine\Common\Collections\Collection
@@ -647,26 +629,6 @@ class Utilisateur extends BaseUser
     }
 
     /**
-     * Remove action
-     *
-     * @param \Orange\MainBundle\Entity\Action $action
-     */
-    public function removeAction(\Orange\MainBundle\Entity\Action $action)
-    {
-        $this->action->removeElement($action);
-    }
-
-    /**
-     * Get actionPortees
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getAction()
-    {
-        return $this->action;
-    }
-
-    /**
      * Add sources
      *
      * @param \Orange\MainBundle\Entity\Source $sources
@@ -984,56 +946,20 @@ class Utilisateur extends BaseUser
     	return $this->manager;
     }
     
+    public function getService() {
+    	return $this->structure ? $this->structure->getService() : null;
+    }
     
-
-    public function getService(){
-    	$service = null;
-    	if ($this->getStructure() && $this->getStructure()->getTypeStructure()->getId()==3){
-    		$service = $this->getStructure()->getLibelle();
-    	}
-    	return $service;
-    }
     public function getDepartement(){
-    	$dep = null;
-    	if ($this->getStructure() && $this->getStructure()->getParent() &&  $this->getStructure()->getParent()->getTypeStructure()->getId()==2){
-    		$dep = $this->getStructure()->getParent()->getLibelle();
-    	}
-    	elseif( $this->getStructure() && $this->getStructure()->getTypeStructure()->getId() == 2 ){
-    		$dep = $this->getStructure()->getLibelle();
-    	}
-    	return $dep;
+    	return $this->structure ? $this->structure->getDepartement() : null;
     }
-    public function getDirection(){
-    	$dir = null;
-    	if ($this->getStructure() && $this->getStructure()->getParent()){
-    		if ($this->getStructure()->getParent()->getParent()){
-    			if ($this->getStructure()->getParent()->getParent()->getParent() && $this->getStructure()->getParent()
-    					->getParent()->getParent()->getTypeStructure()->getId()==1){
-    				$dir = $this->getStructure()->getParent()->getParent()->getParent()->getLibelle();
-    			}if ($this->getStructure()->getParent()->getParent()->getTypeStructure()->getId()==1){
-    				$dir = $this->getStructure()->getParent()->getParent()->getLibelle();
-    			}
-    		}elseif ($this->getStructure()->getParent()->getTypeStructure()->getId() == 1){
-    			$dir = $this->getStructure()->getParent()->getLibelle();
-    		}
-    	}
-    	return $dir;
+    
+    public function getDirection() {
+    	return $this->structure ? $this->structure->getDirection() : null;
     }
-    public function getPole(){
-    	$pole = null;
-    	if ($this->getStructure() && $this->getStructure()->getParent()){
-    		if ($this->getStructure()->getParent()->getParent() && $this->getStructure()->getParent()
-    				->getParent()->getTypeStructure()->getId()==4){
-    			$pole = $this->getStructure()->getParent()->getParent()->getLibelle();
-    		}
-    		elseif ($this->getStructure()->getParent()->getTypeStructure()->getId() == 4 ){
-    			$pole = $this->getStructure()->getParent()->getLibelle();
-    		}
-    		elseif ($this->getStructure()->getTypeStructure()->getId() == 4 ){
-    			$pole = $this->getStructure()	->getLibelle();
-    		}
-    	}
-    	return $pole;
+    
+    public function getPole() {
+    	return $this->structure ? $this->structure->getPole() : null;
     }
 
     /**

@@ -103,11 +103,11 @@ class TypeActionController extends BaseController
            	}
             $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  "Le type d'action a été créé avec succès"));
             if($espace_id!=null) {
-            	return new JsonResponse(array('url' => $this->generateUrl('les_types_action_by_espace', array('espace_id'=>$espace_id))));
+            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action_by_espace', array('espace_id'=>$espace_id))));
             } elseif($projet_id!=null) {
-            	return new JsonResponse(array('url' => $this->generateUrl('les_types_action_by_projet', array('projet_id'=>$projet_id))));
+            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action_by_projet', array('projet_id'=>$projet_id))));
             } else {
-          	  	return new JsonResponse(array('url' => $this->generateUrl('les_types_action')));
+            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action')));
             }
        	}
         return $this->render('OrangeMainBundle:TypeAction:new.html.twig', array(
@@ -240,8 +240,8 @@ class TypeActionController extends BaseController
      * @param number $chantier_id
      * @return void
      */
-    private function findEntities($em, $espace_id, $projet_id, $chantier_id) {
-    	$data = array('response' => null);
+    private function findEntities($em, $espace_id = null, $projet_id = null, $chantier_id = null) {
+    	$data = array('response' => null, 'espace' => null, 'projet' => null, 'chantier' => null);
     	if($espace_id) {
     		$data['espace'] = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		if($data['espace']) {
@@ -286,6 +286,7 @@ class TypeActionController extends BaseController
      */
     protected function addRowInTable($entity) {
     	return array(
+    			sprintf('<span style="background-color: %s;padding-left: 10px;">&nbsp;</span>', $entity->getCouleur()),
     			$entity->getType(),
     			$this->get('orange_main.actions')->generateActionsForTypeAction($entity)
     		);

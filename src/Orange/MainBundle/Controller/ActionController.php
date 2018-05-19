@@ -177,7 +177,7 @@ class ActionController extends BaseController
 			$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->listAllElements($criteria);
 			$queryExport = $em->getRepository('OrangeMainBundle:Action')->listAllElementsForExport($criteria);
 		}
-		$this->get('session')->set('data',array('query' => $queryExport->getDql(),'param' =>$queryExport->getParameters()) );
+		$this->get('session')->set('data',array('query' => $queryExport->getDql(),'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
 	}
 	
@@ -299,16 +299,13 @@ class ActionController extends BaseController
      */
     public function createAction(Request $request, $espace_id=null, $chantier_id=null) {
     	$entity = new Action();
-     	$dispatcher = $this->container->get('event_dispatcher');
+     	$dispatcher = $this->get('event_dispatcher');
      	$espace = $chantier = null;
     	if($espace_id!=null) {
     		$espace = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($espace_id);
     		$entity->setInstance($espace ? $espace->getInstance() : null);
     		$entity->setInstance($espace->getInstance());
     		$entity->setEtatCourant(Statut::ACTION_NON_ECHUE);
-    		$entity->setStatutChange(Statut::ACTION_NON_ECHUE);
-    	} else {
-    		$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	}
     	if($chantier_id!=null) {
     		$chantier = $this->getDoctrine()->getRepository('OrangeMainBundle:Espace')->find($chantier_id);
@@ -351,8 +348,6 @@ class ActionController extends BaseController
     					return $this->redirect($this->generateUrl('nouvelle_action'));
     				}
     			}
-//     			$event = $this->get('orange_main.action_event')->createForAction($entity);
-//     			$dispatcher->dispatch(OrangeMainEvents::ACTION_CREATE_NOUVELLE, $event);
     			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action créée avec succès'));
     			if($espace_id) {
     				return $this->redirect($this->generateUrl('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $espace_id)));
@@ -365,7 +360,7 @@ class ActionController extends BaseController
     		if(!$form->isValid()) {
     			$form_errors = $this->get('form_errors')->getArray($form);
     			foreach ($form_errors as $error){
-    				$this->container->get ('session')->getFlashBag()->add('error', array ('title' => 'Erreur', 'body' => $error[0]." "));
+    				$this->get ('session')->getFlashBag()->add('error', array ('title' => 'Erreur', 'body' => $error[0]." "));
     			}
     		}
     	}
@@ -440,7 +435,6 @@ class ActionController extends BaseController
     	$dispatcher = $this->container->get('event_dispatcher');
    		$em = $this->getDoctrine()->getManager();
    		$entity = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
-    	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         $form   = $this->createForm(new ActionType(OrangeMainForms::ACTION_REAFFECTATION), $entity);
     	if($entity->getPorteur()) {
     		$entity->setStructure($entity->getPorteur()->getStructure());
@@ -507,7 +501,6 @@ class ActionController extends BaseController
     		return $this->redirect($this->generateUrl('les_signalisations'));
     	}
     	$entity->setAnimateur($this->getUser());
-    	$entity->setStatutChange(Statut::ACTION_NOUVELLE);
     	$form = $this->createForm(new ActionType(OrangeMainForms::ACTION_BU), $entity);
     	$form->handleRequest($request);
     	if($entity->getPorteur()) {
@@ -544,6 +537,17 @@ class ActionController extends BaseController
      * @Template()
      */
     public function showAction($id, $id_espace=null) {
+    	/*$arrData = array('centreantipoison.sn', 'comafesa.com', 'samsara-lcs.sn', 'chocosen.sn', 'exa.sn', 'orangesmspro.sn', 'tresorpublic.sn', 'avs.sn', 'secufoudre.sn', 'marbresgranites.sn', 'arezkitp.sn', 'atlantic-electronics.com', 'archidessin.com', 'delphinus.sn', 'quartierdespros.sn', 'apacsn.com', 'netcrm.sn', 'saicom.sn');
+    	foreach ($arrData as $email) {
+	    	$mail = \Swift_Message::newInstance();
+	    	$mail->setFrom('madisylla@orange.sn')
+	    		->setTo(array('madiagne.sylla@orange-sonatel.com', 'hotlinepro@'.$email))
+		    	->setSubject("Nouvelle Action")
+		    	->setBody('test envoi mail vers '.$email)
+		    	->setContentType('text/html')
+		    	->setCharset('utf-8');
+	    	$this->get('mailer')->send($mail);
+    	}*/
         $em = $this->getDoctrine()->getManager();
         $action = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('read', $action, 'Unauthorized access!');
@@ -605,7 +609,6 @@ class ActionController extends BaseController
         $statut = new ActionStatut();
         $today = new \DateTime();
         if($request->getMethod() == 'POST') {
-        	$entity->setStatutChange($entity->getActionStatut()->count() ? $entity->getActionStatut()->first()->getStatut() : null);
         	$form->handleRequest($request);
         	if($form->isValid()) {
         		if($entity->getDateInitial() > $today){
@@ -659,7 +662,7 @@ class ActionController extends BaseController
      * Deletes a Document entity.
      * @QMLogger(message="Suppression Erq")
      * @Route("/supprimer_erq/{id}", name="supprimer_erq")
-     * @Security("has_role('ROLE_ANIMATEUR') or has_role('ROLE_ADMIN') or has_role('ROLE_PORTEUR')")
+     * Security("has_role('ROLE_ANIMATEUR') or has_role('ROLE_ADMIN') or has_role('ROLE_PORTEUR')")
      */
     public function deleteErqAction($id) {
     	$em = $this->getDoctrine()->getManager();
@@ -671,7 +674,11 @@ class ActionController extends BaseController
 		    	$em->remove($entity);
 		    	$em->flush();
 		    	$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  "Suppression de l'ERQ effectuée avec succès!"));
-		    	return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $entity->getAction()->getId()))));
+		    	if($entity->getAction()) {
+		    		return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $entity->getAction()->getId()))));
+		    	} else {
+		    		return new JsonResponse(array('url' => $this->generateUrl('details_occurence', array('id' => $entity->getTache()->getId()))));
+		    	}
     		}
     	}
     	return $this->render('OrangeMainBundle:Action:deleteErq.html.twig', array('entity' => $entity));
@@ -691,7 +698,7 @@ class ActionController extends BaseController
     }
     
     /**
-     * @todo retourne le nombre d'enregistrements renvoyer par le r�sultat de la requ�te
+     * @todo retourne le nombre d'enregistrements renvoyer par le résultat de la requ�te
      * @param \Orange\MainBundle\Entity\Action $entity
      * @return array
      */
@@ -708,7 +715,7 @@ class ActionController extends BaseController
     }
     
     /**
-     * @todo retourne le nombre d'enregistrements renvoyer par le r�sultat de la requ�te
+     * @todo retourne le nombre d'enregistrements renvoyer par le résultat de la requ�te
      * @param \Orange\MainBundle\Entity\Action $entity
      * @return array
      */
@@ -722,7 +729,7 @@ class ActionController extends BaseController
     			$entity->getPorteur()->getPrenom().' '.$entity->getPorteur()->getNom(),
     			$this->showEntityStatus($entity, 'etat'),
     			$this->get('orange_main.actions')->generateActionsForAction($entity)
-    	);
+    		);
     }
     
     /**
@@ -815,18 +822,18 @@ class ActionController extends BaseController
     	$instance_id = $request->request->get('instance_id');
    		$em = $this->getDoctrine()->getManager();
 		$qb = $em->getRepository('OrangeMainBundle:Utilisateur')
-						->createQueryBuilder('u')
-						->join('u.structure', 's')
-						->add('from', 'OrangeMainBundle:Structure s1',true)
-						->join('s1.instance', 'i1')
-						->select('u')
-						->where('i1.id=:instance_id')->setParameter('instance_id', $instance_id)
-					    ->andWhere('s.id =s1.id ')
-						->andWhere('s.lvl >= s1.lvl')
-						->andWhere('s.root = s1.root')
-						->andWhere('s.lft  >= s1.lft')
-						->andWhere('s.rgt <= s1.rgt')
-		                ->getQuery()->getArrayResult();
+				->createQueryBuilder('u')
+				->join('u.structure', 's')
+				->add('from', 'OrangeMainBundle:Structure s1',true)
+				->join('s1.instance', 'i1')
+				->select('u')
+				->where('i1.id=:instance_id')->setParameter('instance_id', $instance_id)
+			    ->andWhere('s.id =s1.id ')
+				->andWhere('s.lvl >= s1.lvl')
+				->andWhere('s.root = s1.root')
+				->andWhere('s.lft  >= s1.lft')
+				->andWhere('s.rgt <= s1.rgt')
+                ->getQuery()->getArrayResult();
     	return new JsonResponse($qb);
     }
     
@@ -881,7 +888,6 @@ class ActionController extends BaseController
     	foreach ($structs as $struct){
     		array_push($structures, $struct->getId());
     	}
-    	exit($em->getRepository('OrangeMainBundle:Utilisateur')->listByInstance($structures)->getQuery()->getSQL());
     	$arrData = $em->getRepository('OrangeMainBundle:Utilisateur')->listByInstance($structures)->getQuery()->execute();
     	$output = array(0 => array('id' => null, 'libelle' => 'Choisir un porteur ...'));
     	foreach ($arrData as $data) {

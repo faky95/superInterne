@@ -85,7 +85,13 @@ class Notification {
 	 */
 	public static function notificationWithCopy($mailer, $subject, $membresEmail, $cc, $commentaire, $entity) {
 		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
-		$commentaire = ($entity instanceof ActionStatut) ? $entity->getCommentaire() : $commentaire;
+		if(($entity instanceof Action) && $entity->getActionStatut()->count()) {
+			$commentaire = $entity->getActionStatut()->last()->getCommentaire();
+		} elseif(($entity instanceof ActionStatut) && $entity) {
+			$commentaire = $entity->getCommentaire();
+		} elseif(($entity instanceof Tache) && $entity->getTacheStatut()->count()) {
+			$commentaire = $entity->getTacheStatut()->last()->getCommentaire();
+		}
 		$mailer->NotifWithCopy($membresEmail, $cc, $subject, $body, $commentaire, $entity instanceof Tache);
 	}
 
@@ -98,8 +104,9 @@ class Notification {
 	 * @param Signalisation $entity
 	 */
 	public static function notificationSignWithCopy($helper, $subject, $membresEmail, $cc, $commentaire, $entity) {
-		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
-		$helper->NotifWithCopy($membresEmail, $cc, $subject, $body, $entity->getCommentaire());
+		$body = array ('commentaire' => $commentaire, 'signalisation' => $entity, 'titre'	=> $subject);
+		$last = $entity->getSignStatut()->last();
+		$helper->notifForSignalisation($membresEmail, $cc, $subject, $body, $last ? $last->getCommentaire() : null);
 	}
 
 	/**

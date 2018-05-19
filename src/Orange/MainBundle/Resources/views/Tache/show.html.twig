@@ -1,0 +1,95 @@
+{% extends '::base.html.twig' %}
+
+{% block pagescript %}
+	<script type="text/javascript" src="{{ asset('bundles/orangemain/js/controller/action.js') }}"></script>
+{% endblock %}
+		 	
+{% block content -%}
+	{% set action = tache.actionCyclique.action %}
+                <!-- Build page from here: -->
+                <!-- heading -->
+				<div class="heading">
+					<h3>{% block page_title %} Détails de l'occurence {% endblock %}</h3> 
+				</div>
+				<!-- End .heading-->
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default gradient invoice">
+                            <div class="panel-heading clearfix">
+                                <h4 class="left">
+                                    <span class="red"> Référence de l'occurence : <strong> {{ tache.reference }} </strong></span>
+                                </h4>
+                            </div>
+                            <div class="panel-body row" style="margin-left:0; margin-right:0;">
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                    <ul class="list-unstyled">
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Libellé : <strong class="red">{{ action.libelle }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date d'enregistrement de l'action : <strong class="red">{{ action.dateAction| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Date de début : <strong class="red">{{ tache.dateDebut| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Délai initial : <strong class="red">{{ tache.dateInitial| date("d/m/Y")  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Supervisée par : <strong class="red">{{ action.animateurAtLast }}</strong></li>
+                                    </ul>
+                                 </div>    
+                                 <div class="you col-lg-6 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">        
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Type d'action : <strong class="red">{{ action.typeAction  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Priorité : <strong class="red">{{ action.priorite }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Porteur : <strong class="red">{{ action.porteur  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Instance : <strong class="red">{{ action.instance  }}</strong></li>
+                                        <li><span class="icon16 icomoon-icon-arrow-right-3"></span>Domaine : <strong class="red">{{ action.domaine }}</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="you col-lg-12 col-md-6 col-sm-6" >
+                                	<ul class="list-unstyled">
+                                		 <li><h3 class="red">Description</h3></li>
+										 <p style="text-align: justify;">{{ action.description }}</p>  
+                                	</ul>
+                                </div>
+                                {% if tache.document|length %}
+		                        <div class="you col-lg-12 col-md-6">
+		                            <div class="todo">
+		                                <h4 class="red">Les ERQs{#<a href="#" class="icon tip" title="Ajouter un ERQ"><span class="icon16 icomoon-icon-plus"></span></a>#}</h4>
+		                                <ul>
+		                                    <li class="clearfix">
+		                                        <div class="txt" style="width: 95%;font-weight: bold;">
+	                                            	<span class="date" style="width: 20px;display: inline-block;">&nbsp;</span>
+		                                            <span style="width: 40%;display: inline-block;">Nom du document</span>
+	                                            	<span class="by" style="width: 25%;display: inline-block;">Auteur</span>
+		                                            <span class="date" style="width: 20%;display: inline-block;">Date d'ajout</span>
+		                                        </div>
+		                                        <div class="controls">
+		                                        </div>
+		                                    </li>
+		                                {% for document in tache.document %}
+		                                    <li class="clearfix">
+		                                        <div class="txt" style="width: 95%">
+		                                            <span class="date" style="width: 20px;display: inline-block;">{{ document|show_status('type') }}</span>
+		                                            <span style="width: 40%;display: inline-block;"><a href="{{ asset(document.path) }}" download="{{ document }}">{{ document }}</a></span>
+		                                            {% if document.utilisateur %}
+		                                            <span style="display: inline-block;">{{ document.utilisateur }}</span>
+		                                            {% else %}
+		                                            <span class="by label label-danger" style="width: 10%;display: inline-block;">Non renseigné</span>
+		                                            {% endif %}
+		                                            <span style="width: 10%;display: inline-block;">&nbsp;</span>
+		                                            <span class="date" style="width: 20%;display: inline-block;">{{ document.dateCreation | date("d/m/Y") }}</span>
+		                                        </div>
+		                                        <div class="controls">
+		                                        {% if action.porteur.id==app.user.id or action|has_rights_animateur or action|has_rights_manager or has_rights('ROLE_ADMIN') %}
+		                                            <a href="#myModal" title="Supprimer l'ERQ" data-toggle="modal" data-target="#myModal" class="tip actionLink" modal-url="{{ path('supprimer_erq', {id: document.id}) }}">
+		                                            	<span class="icon12 icomoon-icon-remove"></span>
+		                                            </a>
+		                                        {% endif %}
+		                                        </div>
+		                                    </li>
+		                                {% endfor %}
+		                                </ul>
+		                            </div>
+		                        </div>
+		                        {% endif %}
+			                     <!-- Here controller for historique of all actions --> 
+			                     {{ render(controller('OrangeMainBundle:TacheStatut:historique', { 'tache_id': tache.id })) }}
+                            </div>
+                        </div><!-- End .panel -->
+                    </div>
+                </div><!-- End .row -->
+{% endblock %}

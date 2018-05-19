@@ -26,7 +26,7 @@ class InstanceRepository extends BaseRepository{
 		return $queryBuilder;
 	}
 	public function filter() {
-					$data = array();$parameters = array();
+		$data = array();$parameters = array();
 		$queryBuilder = $this->createQueryBuilder('i');
 		$queryBuilder->where($queryBuilder->expr()->in('i.id', $this->superAdminQueryBuilder($data)->getDQL()))
 					->orWhere($queryBuilder->expr()->in('i.id', $this->adminQueryBuilder($data)->getDQL()))
@@ -247,25 +247,38 @@ class InstanceRepository extends BaseRepository{
 			return $queryBuilder;
 		}
 	
-		public function getInstanceByRole($role){
+		public function getInstanceByRole($role) {
 			$data=array();
-			if ($role==Utilisateur::ROLE_ADMIN)
+			if ($role==Utilisateur::ROLE_ADMIN) {
 				$instances=$this->adminQueryBuilder($data)->select('i2')->leftJoin('i2.parent', 'p')->andWhere('p.id IS NULL');
-			elseif($role==Utilisateur::ROLE_ANIMATEUR)
+			} elseif($role==Utilisateur::ROLE_ANIMATEUR) {
 				$instances=$this->animateurQueryBuilder($data)->select('i3');
-			elseif ($role==Utilisateur::ROLE_MANAGER)
+			} elseif ($role==Utilisateur::ROLE_MANAGER) {
 				$instances=$this->managerQueryBuilder($data)->select('i4');
-			elseif($role==Utilisateur::ROLE_RAPPORTEUR)
+			} elseif($role==Utilisateur::ROLE_RAPPORTEUR) {
 				$instances=$this->rapporteurQueryBuilder($data)->select('i8');
-			elseif($role==Utilisateur::ROLE_PORTEUR)
+			} elseif($role==Utilisateur::ROLE_PORTEUR) {
 				$instances=$this->porteurQueryBuilder($data)->select('i7');
-			else
+			} else {
 				$instances=$this->filter();
+			}
 			return $instances;
 		}
 		
+		/**
+		 * @param string $application
+		 * @param string $email
+		 * @return array
+		 */
+		public function listByApplication($application, $email) {
+			return $this->createQueryBuilder('i')->select('i')
+				->innerJoin('i.application', 'a')
+				->innerJoin('i.animateur', 'm')
+				->innerJoin('m.utilisateur', 'u')
+				->where('a.code = :application')->setParameter('application', $application)
+				->andWhere('TRIM(u.email) LIKE :email')->setParameter('email', $email)
+				->groupBy('i.id')
+				->getQuery()->getArrayResult();
+		}
+		
 }
-	
-	
-
-?>

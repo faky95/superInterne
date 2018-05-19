@@ -65,6 +65,20 @@ class SignalisationStatut
     public function __construct(){
     	$this->setDateStatut(new  \DateTime('now'));
     }
+    
+    /**
+     * @param Utilisateur $utilisateur
+     * @param Statut $statut
+     * @param commentaire $commentaire
+     * @return \Orange\MainBundle\Entity\SignalisationStatut
+     */
+    static function newInstance($utilisateur, $statut, $commentaire) {
+    	$self = new self;
+    	$self->utilisateur = $utilisateur;
+    	$self->statut = $statut;
+    	$self->commentaire = $commentaire;
+    	return $self;
+    }
 
     /**
      * Get id

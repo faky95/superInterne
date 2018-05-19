@@ -64,42 +64,17 @@ class BuController extends BaseController
         $entity = new Bu();
         $form = $this->createCreateForm($entity,'Bu');
         $form->handleRequest($request);
-       
-        	if ($form->isValid()) 
-        	{
-	            $em = $this->getDoctrine()->getManager();
-	            $em->persist($entity);
-	            $em->flush();
-	            
-	            return new JsonResponse(array('url' => $this->generateUrl('nouvelle_structure', array(
-            																						   'bu_id' => $entity->getId()))));
-        	}
-	            
-       	return $this->render('OrangeMainBundle:Bu:new.html.twig',
-        			array(
+        if($form->isValid()) {
+	    	$em = $this->getDoctrine()->getManager();
+	        $em->persist($entity);
+	        $em->flush();
+	        return new JsonResponse(array('url' => $this->generateUrl('nouvelle_structure', array('bu_id' => $entity->getId()))));
+       	}
+       	return $this->render('OrangeMainBundle:Bu:new.html.twig', array(
         					'entity' => $entity,
         					'form'   => $form->createView(),
         			), new \Symfony\Component\HttpFoundation\Response(null,303));
     }
-
-    /**
-     * Creates a form to create a Bu entity.
-     *
-     * @param Bu $entity The entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-    
-    private function createCreateForm(Bu $entity)
-    {
-        $form = $this->createForm(new BuType(), $entity, array(
-            'action' => $this->generateUrl('creer_bu'),
-            'method' => 'POST',
-        ));
-
-        $form->add('submit', 'submit', array('label' => 'Create'));
-
-        return $form;
-    } */
 
     /**
      * Displays a form to create a new Bu entity.
@@ -113,11 +88,7 @@ class BuController extends BaseController
     {
         $entity = new Bu();
         $form   = $this->createCreateForm($entity,'Bu');
-
-        return array(
-            'entity' => $entity,
-            'form'   => $form->createView(),
-        );
+        return array('entity' => $entity, 'form'   => $form->createView());
     }
 
     /**
@@ -131,19 +102,12 @@ class BuController extends BaseController
     public function showAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('OrangeMainBundle:Bu')->find($id);
-		
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Bu entity.');
         }
-
         $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'delete_form' => $deleteForm->createView(),
-        );
+        return array('entity'      => $entity, 'delete_form' => $deleteForm->createView());
     }
 
     /**
@@ -157,28 +121,17 @@ class BuController extends BaseController
     public function editAction($id)
     {
         $em = $this->getDoctrine()->getManager();
-
         $entity = $em->getRepository('OrangeMainBundle:Bu')->find($id);
-
         if (!$entity) {
             throw $this->createNotFoundException('Unable to find Bu entity.');
         }
-
         $editForm = $this->createEditForm($entity);
-        $deleteForm = $this->createDeleteForm($id);
-
-        return array(
-            'entity'      => $entity,
-            'edit_form'   => $editForm->createView(),
-            'delete_form' => $deleteForm->createView(),
-        );
+        return array('entity'      => $entity, 'edit_form'   => $editForm->createView());
     }
 
     /**
     * Creates a form to edit a Bu entity.
-    *
     * @param Bu $entity The entity
-    *
     * @return \Symfony\Component\Form\Form The form
     */
     private function createEditForm(Bu $entity)
@@ -187,9 +140,7 @@ class BuController extends BaseController
             'action' => $this->generateUrl('modifier_bu', array('id' => $entity->getId())),
             'method' => 'PUT',
         ));
-
         $form->add('submit', 'submit', array('label' => 'Update'));
-
         return $form;
     }
     /**
@@ -229,27 +180,24 @@ class BuController extends BaseController
             if ($entity) {
             	if($entity->getStructureBuPrincipal()->count()>0 ){
             		$this->container->get('session')->getFlashBag()->add('failed', array (
-            				'title' =>'Notification',
-            				'body' => 'Cette bu a des structures ! '
-            		));
-            	}else {
+            				'title' =>'Notification', 'body' => 'Cette bu a des structures ! '
+            			 ));
+            	} else {
             		$this->container->get('session')->getFlashBag()->add('sucess', array (
-            				'title' =>'Notification',
-            				'body' => 'Cette bu a ete supprime avec succes ! '
-            		));
+            				'title' =>'Notification', 'body' => 'Cette bu a ete supprime avec succes ! '
+            			));
             		$em->remove($entity);
             		$em->flush();
             	}            		
-            }else
+            } else {
                 throw $this->createNotFoundException('Unable to find Bu entity.');
+            }
         return $this->redirect($this->generateUrl('les_bu'));
     }
 
     /**
      * Creates a form to delete a Bu entity by id.
-     *
      * @param mixed $id The entity id
-     *
      * @return \Symfony\Component\Form\Form The form
      */
     private function createDeleteForm($id)
@@ -258,8 +206,7 @@ class BuController extends BaseController
             ->setAction($this->generateUrl('supprimer_bu', array('id' => $id)))
             ->setMethod('DELETE')
             ->add('submit', 'submit', array('label' => 'Delete'))
-            ->getForm()
-        ;
+            ->getForm();
     }
     
     /**
@@ -317,40 +264,4 @@ class BuController extends BaseController
     protected function setFilter(QueryBuilder $queryBuilder, $aColumns, Request $request) {
     	parent::setFilter($queryBuilder, array('b.libelle'), $request);
     }
-    
-    
-    /**
-     * Supprimer bu
-     *
-     * @Route("/{id}/supprimer_bu", name="supprimer_bu")
-     
-    public function supprimerAction($id){
-    
-    	$em = $this->getDoctrine()->getManager();
-    	$entity = $em->getRepository('OrangeMainBundle:Bu')->find($id);
-    	if($entity) {
-    		if ($entity->getIsDeleted()==false)
-    		{
-    			$entity->setIsDeleted(true);
-    			$em->flush();
-    			$this->get('session')->getFlashBag()->add('success', array (
-    					'title' =>'Notification',
-    					'body' => 'Bu a été supprime avec succes ! '
-    			));
-    				
-    		}else {
-    			$entity->setIsDeleted(false);
-    			$em->flush();
-    			$this->get('session')->getFlashBag()->add('success', array (
-    					'title' =>'Notification',
-    					'body' => 'La suppression du bu à été annule avec succes ! '
-    			));
-    		}
-    		return $this->redirect($this->generateUrl('les_bu'));
-    
-    	}else {
-    		throw $this->createNotFoundException('Unable to find Bu entity.');
-    	}
-    	 
-    }*/
 }

@@ -44,6 +44,7 @@ final class OrangeMainEvents
     const SIGNALISATION_CREATE_NOUVELLE				= 'orange_main.signalisation.creation';
     const SIGNALISATION_PRISE_EN_CHARGE				= 'orange_main.signalisation.prise.en.charge';
     const SIGNALISATION_NON_PRISE_EN_CHARGE			= 'orange_main.signalisation.non.prise.en.charge';
+    const SIGNALISATION_FIN_TRAITEMENT				= 'orange_main.signalisation.fin_traitement';
     const SIGNALISATION_EFFICACE				    = 'orange_main.signalisation.efficace';
     const SIGNALISATION_NON_EFFICACE				= 'orange_main.signalisation.non.efficace';
     const SIGNALISATION_REFORMULATION				= 'orange_main.signalisation.reformulation';

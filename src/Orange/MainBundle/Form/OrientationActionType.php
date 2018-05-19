@@ -17,7 +17,7 @@ class OrientationActionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
 			$builder->add('actionGenerique','entity', array('label'=>'Action générique : ', 'class'=>'Orange\MainBundle\Entity\ActionGenerique',
-					'empty_value' => 'Choisir l\'action ', 'property' => 'reference',
+					'empty_value' => 'Choisir l\'action ', 'property' => 'libelle',
 					'query_builder' => function(EntityRepository $ir)use($options){
 							$user = $options['attr']['user'];
 							$ids    = $options['attr']['ids'];

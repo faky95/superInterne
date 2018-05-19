@@ -2,12 +2,8 @@
 namespace Orange\MainBundle\Repository;
 
 use Orange\MainBundle\Entity\Utilisateur;
-use DoctrineExtensions\Query\Mysql\Week;
 use Orange\MainBundle\Entity\Action;
-use \DateTime;
 use Orange\MainBundle\Entity\Instance;
-use Orange\MainBundle\Entity\ArchitectureStructure;
-use DoctrineExtensions\Query\Mysql\Date;
 
 class ActionGeneriqueRepository extends BaseRepository {
 	/**
@@ -15,9 +11,9 @@ class ActionGeneriqueRepository extends BaseRepository {
 	 */
 	public function filter() {
 		$queryBuilder = $this->createQueryBuilder('a')
-		->innerJoin('a.porteur', 'u')
-		->innerJoin('u.structure', 's')
-		->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.statut');
+			->innerJoin('a.porteur', 'u')
+			->innerJoin('u.structure', 's')
+			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.statut');
 		if($this->_user->hasRole(Utilisateur::ROLE_SUPER_ADMIN)) {
 			$queryBuilder->where('1=1');
 		}

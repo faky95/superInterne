@@ -153,7 +153,6 @@ class StatistiqueSignController extends Controller
     		}
     	}
     	
-    	//var_dump($tableau); exit;
     	return array(
     			'semaines'=>$semaines,
     			'tableauStatique'=>$tableau
@@ -275,7 +274,6 @@ class StatistiqueSignController extends Controller
     			}
     		}
     	}
-    	var_dump($stats);exit;
     	return array(
     			'semaines'=>$semaines,
     			'tableau'=>$tableau

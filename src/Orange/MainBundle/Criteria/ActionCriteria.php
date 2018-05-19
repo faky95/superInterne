@@ -26,31 +26,31 @@ class ActionCriteria extends AbstractCriteria
     	$instances=(isset($options['attr']['instances'])) ? $options['attr']['instances'] : null;
         $builder->add('domaine', null, array('label' =>'Domaine', 'query_builder'=>function (DomaineRepository $dr)use($espace_id) {
 	        		return ($espace_id==0) ? $dr->filter() : $dr->getDomainesByEspace($espace_id);
-        		}, 'empty_value' => '--- Choisir le domaine ---'
+        		}, 'empty_value' => 'Choisir le domaine ...'
         	));
 		$builder ->add('instance', null, array('label' =>'Instance', 
 				'query_builder'=>function (InstanceRepository $ir)use($instances){
 					return ($instances==null) ?  $ir->filter() : $instances;
-				}, 'empty_value' => '--- Choisir l\'instance ---'
+				}, 'empty_value' => 'Choisir l\'instance ...'
 			));
 		$builder->add('structure', null, array('label' =>'Structure', 
-				      'query_builder'=>function (StructureRepository $sr)use($structures){
+				      'query_builder'=>function (StructureRepository $sr)use($structures) {
 					return ($structures==null) ? $sr->filter() : $structures;
-				}, 'empty_value' => '--- Choisir la structure---'
+				}, 'empty_value' => 'Choisir la structure ...'
 			));
 		$builder->add('porteur', null, array('label' =>'Porteur', 'query_builder'=>function (UtilisateurRepository $ur)use($espace_id){
 		        		return($espace_id==0) ? $ur->filter() : $ur->getMembreEspace($espace_id);
-		       	}, 'empty_value' => '--- Choisir le porteur ---'
+		       	}, 'empty_value' => 'Choisir le porteur ...'
 		    ));
 		$builder->add('typeAction', null, array('label' =>'Type', 'query_builder'=>function (TypeActionRepository $tr)use($espace_id) {
 						return($espace_id==0) ? $tr->filter() : $tr->getTypesByEspace($espace_id);
-				}, 'empty_value' => '--- Choisir le type ---'
+				}, 'empty_value' => 'Choisir le type ...'
 		    ));
 		$builder->add('statut', 'entity', array('class' => 'OrangeMainBundle:Statut', 'query_builder' => function(EntityRepository $er) {
 				 	 	return $er->createQueryBuilder('s')->where('s.typeStatut = 2')->andWhere('s.display = 1');
-		    	}, 'label' =>'Statut', 'empty_value' => '--- Choisir le statut ---'
+		    	}, 'label' =>'Statut', 'empty_value' => 'Choisir le statut ...'
 		    ));
-		$builder->add('priorite', null, array('label' =>'Priorité', 'empty_value' => '--- Choisir la priorité---'))
+		$builder->add('priorite', null, array('label' =>'Priorité', 'empty_value' => 'Choisir la priorité...'))
             	->add('fromInitial', 'date', array('label' => 'Délai initial Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
             	->add('toInitial', 'date', array('label' => 'Au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
 		        ->add('fromDebut', 'date', array('label' => 'Date de debut Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))

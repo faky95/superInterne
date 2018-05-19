@@ -2,6 +2,7 @@
 namespace Orange\MainBundle\Mapping;
 
 use Orange\MainBundle\Entity\Statut;
+use Orange\MainBundle\Entity\Synthese;
 
 class ReportingMapping extends AbstractMapping {
 	
@@ -97,52 +98,46 @@ class ReportingMapping extends AbstractMapping {
 	 * @param string|number $type
 	 */
 	public function mappingDataStats(&$data, $type, &$params, $bu=null) {
-		$formule= $this->em->getRepository('OrangeMainBundle:Formule')->getTauxStats($bu);
 		$effectif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurByStructure($params, $bu)->getQuery()->getArrayResult();
 		$effectifActif= $this->em->getRepository('OrangeMainBundle:Utilisateur')->getUtilisateurActifByStructure($params, $bu)->getQuery()->getArrayResult();
 		$arrData = array($type => array(), 'taux' => array(), 'porteurs' => array());
-		foreach ($params as $key=>$par) {
-			$aide=false;
-			foreach($data as $value) {
-				if($par['id']==$value['id']) {
-					if(!isset($arrData[$type][$value['id']])) {
-						$arrData[$type][$value['id']] = array('libelle' => $value['libelle'], 'data' => array());
-						$arrData[$type][$value['id']]['couleur'] = isset($value['couleur']) ? $value['couleur'] : 'FFFFFF';
-						if(isset($value['porteurs']) && is_array($value['porteurs'])) {
-							$arrData[$type][$value['id']]['porteurs'] = $value['porteurs'];
-							foreach($value['porteurs'] as $porteurId => $porteur) {
-								if(!isset($arrData['porteurs'][$porteurId])) {
-									$arrData['porteurs'][$porteurId] = $porteur;
-									continue;
-								}
-								foreach($arrData['porteurs'][$porteurId] as $key => $number) {
-									$arrData['porteurs'][$porteurId][$key] = (is_numeric( $porteur[$key])) ? ($porteur[$key] + $number) :  $porteur[$key];
-								}
-							}
-						}
-						$this->transfertDonnes($arrData[$type][$value['id']], $value, false);
-						if(!empty($value['taux']))
-							foreach ($value['taux'] as $key => $taux){
-								$arrData[$type][$value['id']]['data'][$key] = $taux;
-								$arrData['taux'][$key] = $taux;
-						}
-						$aide=true;
+		foreach($data as $value) {
+			if(!isset($arrData[$type][$value['id']])) {
+				$arrData[$type][$value['id']] = array(
+						'libelle' => $value['libelle'], 'couleur' => (isset($value['couleur']) ? $value['couleur'] : 'FFFFFF'), 'data' => array()
+					);
+			}
+			foreach(array_keys(Synthese::$formules) as $key) {
+				$arrData[$type][$value['id']][$key] = $value[$key];
+			}
+			if(isset($value['porteurs']) && is_array($value['porteurs'])) {
+				$arrData[$type][$value['id']]['porteurs'] = $value['porteurs'];
+				foreach($value['porteurs'] as $porteurId => $porteur) {
+					if(!isset($arrData['porteurs'][$porteurId])) {
+						$arrData['porteurs'][$porteurId] = $porteur;
+						continue;
+					}
+					foreach($arrData['porteurs'][$porteurId] as $key => $number) {
+						$arrData['porteurs'][$porteurId][$key] = (is_numeric($porteur[$key])) ? ($porteur[$key] + $number) :  $porteur[$key];
 					}
 				}
 			}
-			if($aide===false) {
-				if(!isset($arrData[$type][$par['id']]) ) {
-					$arrData[$type][$par['id']] = array('libelle' => $par['libelle'], 'couleur' => $par['couleur'], 'data' => array());
-					$this->transfertDonnes($arrData[$type][$par['id']], $par, true);
-					if(!empty($formule))
-						foreach ($formule as $for){
-							$arrData[$type][$par['id']]['data'][$for['libelle']] = 0;
-							$arrData['taux'][$for['libelle']] = 0;
-					}
+			$this->transfertDonnes($arrData[$type][$value['id']], $value, false);
+			if(!empty($value['taux'])) {
+				foreach ($value['taux'] as $key => $taux) {
+					$arrData[$type][$value['id']]['data'][$key] = $taux;
+					$arrData['taux'][$key] = $taux;
+				}
+				foreach(array_keys(Synthese::$formules) as $key) {
+					$arrData[$type][$value['id']]['data'][$key] = $value[$key];
+					$arrData['taux'][$key] = $value[$key];
 				}
 			}
-			if($type=="structure")
+		}
+		foreach ($params as $par) {
+			if($type=="structure" && isset($arrData[$type][$par['id']])) {
 				$this->addEffectifToStats($arrData[$type][$par['id']]['data'], $effectif, $effectifActif, $par);
+			}
 		}
 		return $arrData;
 	}
@@ -181,37 +176,25 @@ class ReportingMapping extends AbstractMapping {
 	 * @param unknown $data
 	 * @param unknown $type
 	 */
-	public function mappingDataStatsCroise(&$data, $type,$typeCroise,&$paramsType,&$paramsCroise){
-		$formule= $this->em->getRepository('OrangeMainBundle:Formule')->getTauxStats();
+	public function reportingInCroise(&$data, $type,$typeCroise,&$paramsType,&$paramsCroise){
 		$arrData = array($type => array());
-		foreach ($paramsType as $key=>$parT){
+		foreach ($paramsType as $key=>$parT) {
 			$arrData[$type][$parT['libelle']] = array($typeCroise => array(), 'taux' => array());
-			foreach ($paramsCroise as $parC){
-				$aide=false;
-				if(count($data)>0){
-					foreach ($data as $value) {
-						if ($parT['id']==$value['f_id'] && $parC['id']==$value['s_id']){
-							if(!isset($arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']])){
-								$arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']] = array('libelle' => $value['s_libelle'], 'data' => array());
-								$this->transfertDonnes($arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']], $value, false);
-								if(!empty($value['taux']))
-									foreach ($value['taux'] as $key => $taux){
-										$arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']]['data'][$key] = $taux;
-										$arrData[$type][$parT['libelle']]['taux'][$key] = $taux;
-								}
-								$aide=true;break;
+			foreach ($paramsCroise as $parC) {
+				foreach ($data as $value) {
+					if ($parT['id']==$value['f_id'] && $parC['id']==$value['s_id']) {
+						if(!isset($arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']])) {
+							$arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']] = array('libelle' => $value['s_libelle'], 'data' => array());
+							$this->transfertDonnes($arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']], $value, false);
+							foreach($value['taux'] as $key => $taux) {
+								$arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']]['data'][$key] = $taux;
+								$arrData[$type][$parT['libelle']]['taux'][$key] = $taux;
 							}
-						}
-					}
-					if($aide===false){
-						if (!isset($arrData[$type][$parT['libelle']][$typeCroise][$parC['id']] )){
-							$arrData[$type][$parT['libelle']][$typeCroise][$parC['id']] = array('libelle' => $parC['libelle'], 'data' => array());
-							$this->transfertDonnes($arrData[$type][$parT['libelle']][$typeCroise][$parC['id']], $parC, true);
-							if(count($formule)>0)
-								foreach ($formule as $for){
-									$arrData[$type][$parT['libelle']][$typeCroise][$parC['id']]['data'][$for['libelle']] = 0;
-									$arrData[$type][$parT['libelle']]['taux'][$for['libelle']] = 0;
+							foreach(array_keys(Synthese::$formules) as $key) {
+								$arrData[$type][$parT['libelle']][$typeCroise][$value['s_id']]['data'][$key] = $value[$key];
+								$arrData[$type][$parT['libelle']]['taux'][$key] = $value[$key];
 							}
+							break;
 						}
 					}
 				}
@@ -237,7 +220,7 @@ class ReportingMapping extends AbstractMapping {
 			$arrData['data'] = array(
 					'nbActionNouvelle' => 0, 'nbNonEchue' => 0, 'nbEchueNonSoldee' => 0, 'nbAbandon' => 0, 'nbDemandeAbandon' => 0,
 					'nbAbandon' => 0, 'nbFaiteDelai' => 0, 'nbFaiteHorsDelai' => 0, 'nbSoldeeDansLesDelais' => 0, 'nbSoldeeHorsDelais' => 0, 'total' => 0
-			);
+				);
 		}
 	}
 	
@@ -249,7 +232,7 @@ class ReportingMapping extends AbstractMapping {
 				$data[$i]=array(  'id'=>$val['id'], 'libelle'=>$val['libelle'], 'nbDemandeAbandon' => 0, 'nbAbandon'=>0, 'nbActionNouvelle' => 0,
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
 						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
-				);
+					);
 				if(count($requete)>0) {
 					foreach ($requete as $value){
 						if($val['libelle']==$value['libelle'] ) {
@@ -285,11 +268,31 @@ class ReportingMapping extends AbstractMapping {
 		return $data;
 	}
 	
+	/**
+	 * @param unknown $data
+	 * @param unknown $instances
+	 * @return array
+	 */
+	public function reportingByInstanceAndPorteur($data, $instances) {
+		$arrData = array();
+		foreach($data as $value) {
+			if(!isset($arrData[$value['id']])) {
+				$arrData[$value['id']] = array('id' => $value['id'], 'libelle' => $value['libelle'], 'couleur' => $value['couleur'], 'porteurs' => array());
+			}
+			$arrData[$value['id']] = $this->mergeWithSumByStatut($arrData[$value['id']], $value, Synthese::$fields);
+			if(!isset($arrData[$value['id']]['porteurs'][$value['user_id']])) {
+				$arrData[$value['id']]['porteurs'][$value['user_id']] = $value;
+			}
+			$arrData[$value['id']] = $this->mergeWithAvgByFormule($arrData[$value['id']], 'porteurs', Synthese::$formules);
+		}
+		return $arrData;
+	}
+	
 	public function transformRequeteToSimpleNull(&$requete){
 		$data = array('nbDemandeAbandon' => 0, 'nbAbandon'=>0,
 				'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0, 'nbActionNouvelle' => 0,
 				'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0
-		);
+			);
 		if(count($requete)>0) {
 			foreach ($requete as $value){
 				$data=$this->copieDonnees($value, $data);
@@ -307,7 +310,7 @@ class ReportingMapping extends AbstractMapping {
 						'nbFaiteDelai'=>0, 'nbFaiteHorsDelai'=>0, 'nbNonEchue'=>0, 'nbEchueNonSoldee' =>0,
 						'nbSoldeeHorsDelais'=>0, 'nbSoldeeDansLesDelais'=>0, 'total'=>0, 's_id'=>$valeur['id'],
 						's_libelle'=>$valeur['libelle']
-				);
+					);
 				if(count($requete)>0){
 					foreach ($requete as $value){
 						if($val['id']==$value['f_id'] && $valeur['id']==$value['s_id']){
@@ -439,7 +442,7 @@ class ReportingMapping extends AbstractMapping {
 						$arrData['data'][$i] = array(
 								'id' => $value['id'], 'libelle' => $value['libelle'], 'total' => intval($value['total']),
 								'couleur' => $value['couleur'], 'user_id' => intval($value['user_id']), 'porteur' => $value['porteur']
-						);
+							);
 						$arrData['data'][$i]['etatCourant']= ($value['tache_etat']==null) ? $value['action_etat'] : $value['tache_etat'];
 					}
 					
@@ -520,8 +523,6 @@ class ReportingMapping extends AbstractMapping {
 	public function mapDataReportingInstance($data){
 		$arrData = array('instance' => array(), 'taux' => array());
 		foreach ($data as $value){
-			$i=1;
-			
 			if (!isset($arrData['instance'][$value['id_instance']])){
 				$arrData['instance'][$value['id_instance']] = array('libelle' => $value['libelle'], 'data' => array());
 			}
@@ -537,15 +538,14 @@ class ReportingMapping extends AbstractMapping {
 			foreach ($value['taux'] as $key => $taux){
 				$arrData['instance'][$value['id_instance']]['data'][$key] = $taux;
 				$arrData['taux'][$key] = $taux;
-				$i++;
 			}
+			$arrData['taux']["Taux de respect du délai"] = 10;
 		}
 		return $arrData;
 	}
 	public function mapDataReportingStructure($data){
 		$arrData = array('structure' => array(), 'taux' => array());
 		foreach ($data as $value){
-			$i=1;
 			if (!isset($arrData['structure'][$value['id_structure']])){
 				$arrData['structure'][$value['id_structure']] = array('libelle' => $value['libelle'], 'data' => array());
 			}
@@ -561,8 +561,45 @@ class ReportingMapping extends AbstractMapping {
 			foreach ($value['taux'] as $key => $taux){
 				$arrData['structure'][$value['id_structure']]['data'][$key] = $taux;
 				$arrData['taux'][$key] = $taux;
-				$i++;
 			}
+			$arrData['taux']["Taux de respect du délai"] = 10;
+		}
+		return $arrData;
+	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $values
+	 * @param array $keys
+	 * @return array
+	 */
+	private function mergeWithSumByStatut($arrData, $values, $keys = array()) {
+		foreach($keys as $key) {
+			if(isset($arrData[$key])==false && isset($values[$key])==false) {
+				$arrData[$key] = 0;
+			} elseif(isset($arrData[$key]) && isset($values[$key])) {
+				$arrData[$key] += $values[$key];
+			} elseif(isset($arrData[$key])==false) {
+				$arrData[$key] = (int)$values[$key];
+			}
+		}
+		return $arrData;
+	}
+	
+	/**
+	 * @param array $arrData
+	 * @param array $values
+	 * @param array $keys
+	 * @return array
+	 */
+	private function mergeWithAvgByFormule($arrData, $code, $keys = array()) {
+		foreach(array_keys($keys) as $key) {
+			$number = 0;$sum = null;
+			foreach($arrData[$code] as $data) {
+				$number += $data[$key] ? 1 : 0;
+				$sum     = $data[$key] ? ($sum ? $sum + $data[$key] : $data[$key]) : $sum;
+			}
+			$arrData[$key] = $sum ? number_format($sum / $number, 1) : null;
 		}
 		return $arrData;
 	}

@@ -137,12 +137,12 @@ class ExtractionMapping extends AbstractMapping {
 			$date = new \DateTime();
 			$destinataire = InstanceUtils::animateursComplet($this->em, $value->getInstance());
 			$array[$i] = array(
-					'reference' => $value->getReference(), 'porteur' => $destinataire['nom'][0], 
-					'email' =>$destinataire['email'][0],'instance'=> $value->getInstance()->getParent()->__toString(),
-					'contributeur' => '', 'statut' => 'action nouvelle', 'dateCloture' => '',
-					'type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->getType():null,
-					'domaine' => $value->getDomaine()?$value->getDomaine()->getLibelleDomaine():null,
-					'dateDeb' => $date->format('d/m/Y'),'dateInit' => $date->add($interval)->format('d/m/Y'),
+					'reference' => $value->getReference(), 'porteur' => $destinataire['nom'][0], 'email' =>$destinataire['email'][0],
+					'instance'=> $value->getInstance()->getParent() ? $value->getInstance()->getParent()->__toString() : null,
+					'contributeur' => '', 'statut' => 'action nouvelle',
+					'type' => $value->getTypeSignalisation() ? $value->getTypeSignalisation()->getType() : null,
+					'domaine' => $value->getDomaine() ? $value->getDomaine()->getLibelleDomaine() : null,
+					'dateDeb' => $date->format('d/m/Y'), 'dateInit' => $date->add($interval)->format('d/m/Y'), 'dateCloture' => '',
 					'libelle' => $value->getLibelle(),'description' => $value->getDescription(),'priorite'=>'importante'
 				);
 			$i++;

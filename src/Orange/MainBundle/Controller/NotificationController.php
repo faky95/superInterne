@@ -24,14 +24,24 @@ class NotificationController extends BaseController
      * Lists all notifications entities.
      * @QMLogger(message="Liste des notifications")
      * @Route("/les_notifications", name="les_notifications")
-     * @Method("GET")
+     * @Method({"GET", "POST"})
      * @Template()
      * @Security("has_role('ROLE_ADMIN')")
      */
-    public function indexAction()
+    public function indexAction(Request $request)
     {
     	$form = $this->createForm(new NotificationCriteria());
-    	$this->get('session')->set('notification_criteria', new Request());
+    	$data = $request->get($form->getName());
+    	if($request->getMethod()=='POST') {
+    		if(isset($data['effacer'])) {
+    			$this->get('session')->set('notification_criteria', new Request());
+    		} else {
+    			$this->get('session')->set('notification_criteria', $request->request->get($form->getName()));
+    			$form->handleRequest($request);
+    		}
+    	} else {
+    		$this->get('session')->set('notification_criteria', new Request());
+    	}
     	return array('form' => $form->createView());
     }
     
@@ -96,9 +106,8 @@ class NotificationController extends BaseController
     			$entity->getTypeNotification()->getLibelle(),
     			$entity->getDestinataireInShort(),
     			$entity->getCopyInShort(),
-    			$entity->getDate(),
+    			$entity->getDate()->format('d F Y à H:i'),
     			$this->showEntityStatus($entity, 'etat'),
-    			$this->get('orange_main.actions')->generateActionsForNotification($entity)
     		);
     }
     

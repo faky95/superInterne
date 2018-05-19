@@ -50,7 +50,7 @@ class ReportingStructureCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
-		$reportingMapping = $this->getMapping()->getReporting();
+		$reportingMapping = $this->getMapping()->getReporting()->setEntityManager($em);
 		$envois = $em->getRepository('OrangeMainBundle:Envoi')->getEnvoiStructure($bu, $espace, $projet);
 		$utilisateurs = $em->getRepository('OrangeMainBundle:Utilisateur')->getAllDestinataireOfReporting();
 		$mapUsers = array();

@@ -28,11 +28,9 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
-use Mapping\Fixture\Xml\Status;
 
 /**
  * Signalisation controller.
- * 
  */
 class SignalisationController extends BaseController
 {
@@ -107,7 +105,7 @@ class SignalisationController extends BaseController
 		$queryBuilder = $this->get('session')->get('canevas', array());
 		$query = $em->createQuery($queryBuilder['query']);
 		$query->setParameters($queryBuilder['param']);
-		$data = $this->getMapping()->getExtraction()->exportCanevas($query->execute());
+		$data = $this->getMapping()->getExtraction()->setEntityManager($em)->exportCanevas($query->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportCanevas($data);
 		$filename = sprintf("Extraction_canevas_actions_du_%s.csv", date('d-m-Y'));
         $response->headers->set('Content-Type', 'text/csv; charset=ISO-8859-1;');
@@ -414,18 +412,18 @@ class SignalisationController extends BaseController
    			$form->setData(array('isReload' => $actionsReload));
    			$form->handleRequest($request);
    			if ($form->isValid()) {
-   				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
-   				$this->updateEntityEtat($em, Statut::TRAITEMENT_SIGNALISATION, $signalisation);
+   				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::SIGNALISATION_RECHARGER, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
+   				$this->updateEntityEtat($em, Statut::SIGNALISATION_RECHARGER, $signalisation);
    				foreach ($actionsReload as $action) {
-   					$action->setDateDebut(new \DateTime());
-   					$action->setDateInitial(new \DateTime());
    					if($action->getIsReload()) {
-   						ActionUtils::changeStatutAction($em, $action, Statut::NOUVELLE_ACTION, $this->getUser(), " Cette action a été rechargée suite à un mauvais traitement de la signalisation ");
-   						$action->setEtatCourant(Statut::NOUVELLE_ACTION);
+   						ActionUtils::changeStatutAction($em, $action, Statut::ACTION_NON_ECHUE, $this->getUser(), " Cette action a été rechargée suite à un mauvais traitement de la signalisation ");
+   						$action->setEtatCourant(Statut::ACTION_NON_ECHUE);
+   						$action->setEtatReel(Statut::ACTION_NON_ECHUE);
    						$subject = 'Traitement de la signalisation '.$signalisation->getLibelle();
    						$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
 										à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
 										ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
+   						$em->persist($action);
    						$em->flush();
    						Notification::notification ( $helper, $subject, $membresEmail, $commentaire, $actionStatut );
    					}

@@ -7,16 +7,16 @@
 				</div>
 				<ul class="nav nav-pills monTab">
 					<li {% if role==4 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 4 }) }}">Mes Stats</a></li>
-					{% if has_rights('ROLE_ADMIN') %}
+					{% if is_granted('ROLE_ADMIN') %}
 						<li {% if role==0 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 0 }) }}">Générale</a></li>
 					{% endif %}
-					{% if has_rights('ROLE_MANAGER') %}
+					{% if is_granted('ROLE_MANAGER') %}
 					<li {% if role==2 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 2 }) }}">Mes Collaborateurs</a></li>
 					{% endif %}
-					{% if has_rights('ROLE_ANIMATEUR') %}
+					{% if is_granted('ROLE_ANIMATEUR') %}
                     <li {% if role==1 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 1 }) }}">Mes instances</a></li>
                     {% endif %}
-					{% if has_rights('ROLE_RAPPORTEUR') %}
+					{% if is_granted('ROLE_RAPPORTEUR') %}
                     <li {% if role==3 %}class="active"{% endif %}><a href="{{ path('statistique_generale', {'role': 3 }) }}">Mes structures</a></li>
                     {% endif %}
                     <li {% if role is not defined and role is empty %}class="active"{% endif %}><a href="{{ path('stats_actiongenerique') }}"> Mes actions Génériques</a></li>
@@ -105,11 +105,11 @@
 
                  <div class="tab-content" style="padding: 0; overflow-y:hidden;">
                                     <div class="tab-pane fade active in " id="tabInst">
-                             				{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByInstance , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
+                             			{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByInstance , 'statut':statut, 'type':'instance', 'nbTaux':nbTaux}  %}
                                     </div>
                                     {%  if role>=0 and role <=3  %}
 	                                    <div class="tab-pane fade  " id="tabStr">
-	                                    		{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByStructure , 'statut':statut, 'type':'structure', 'nbTaux':nbTaux}  %}
+	                                    	{% include "OrangeMainBundle:Statistique:simple_tableau_stats.html.twig" with {'stats': tabByStructure , 'statut':statut, 'type':'structure', 'nbTaux':nbTaux}  %}
 		                                </div>
                                     {% endif %}
                                     {% if role == 2 %}

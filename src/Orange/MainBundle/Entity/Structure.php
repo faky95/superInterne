@@ -104,6 +104,37 @@ class Structure
     private $bu;
     
     /**
+     * @var string
+     * @ORM\Column(name="service", type="string", length=255, nullable=true)
+     */
+    private $service;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="departement", type="string", length=255, nullable=true)
+     */
+    private $departement;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="pole", type="string", length=255, nullable=true)
+     */
+    private $pole;
+    
+    /**
+     * @var string
+     * @ORM\Column(name="direction", type="string", length=255, nullable=true)
+     */
+    private $direction;
+    
+    
+    /**
+     * @var string
+     * @ORM\Column(name="societe", type="string", length=255, nullable=true)
+     */
+    private $societe;
+    
+    /**
      * @var boolean
      *
      * @ORM\Column(name="isDeleted", type="boolean", nullable=true)
@@ -152,16 +183,8 @@ class Structure
      */
     private $action;
     
-
-    /**
-     * @var ArchitectureStructure
-     * @ORM\OneToOne(targetEntity="ArchitectureStructure", mappedBy="structure", cascade={"persist", "merge", "remove"})
-     */
-    private $architectureStructure;
-    
     /**
      * Get libelle
-     *
      * @return string
      */
     public function __toString()
@@ -426,16 +449,144 @@ class Structure
         return $this->bu;
     }
     
+    /**
+     * check if is deleted
+     * @return boolean
+     */
 	public function getIsDeleted() {
 		return $this->isDeleted;
 	}
+	
+	/**
+	 * set is deleted
+	 * @param boolean $isDeleted
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
 	public function setIsDeleted($isDeleted) {
 		$this->isDeleted = $isDeleted;
 		return $this;
 	}
 	
-    
-    
+	/**
+	 * get service
+	 * @return string
+	 */
+	public function getService() {
+		return $this->service;
+	}
+	
+	/**
+	 * set service
+	 * @param string $service
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function setService($service) {
+		$this->service = $service;
+		return $this;
+	}
+	
+	/**
+	 * get departement
+	 * @return string
+	 */
+	public function getDepartement() {
+		return $this->departement;
+	}
+	
+	/**
+	 * set departement
+	 * @param string $departement
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function setDepartement($departement) {
+		$this->departement = $departement;
+		return $this;
+	}
+	
+	/**
+	 * get pole
+	 * @return string
+	 */
+	public function getPole() {
+		return $this->pole;
+	}
+	
+	/**
+	 * set pole
+	 * @param string $pole
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function setPole($pole) {
+		$this->pole = $pole;
+		return $this;
+	}
+	
+	/**
+	 * get direction
+	 * @return string
+	 */
+	public function getDirection() {
+		return $this->direction;
+	}
+	
+	/**
+	 * set direction
+	 * @param string $direction
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function setDirection($direction) {
+		$this->direction = $direction;
+		return $this;
+	}
+	
+	/**
+	 * get societe
+	 * @return string
+	 */
+	public function getSociete() {
+		return $this->societe;
+	}
+	
+	/**
+	 * set societe
+	 * @param string $societe
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function setSociete($societe) {
+		$this->societe = $societe;
+		return $this;
+	}
+	
+	/**
+	 * update libelles
+	 * @param Structure $objet
+	 * @return \Orange\MainBundle\Entity\Structure
+	 */
+	public function updateLibelle($objet = null) {
+		if($objet==null || $objet->typeStructure==null) {
+			return $this;
+		}
+		switch($objet->typeStructure->getId()) {
+			case TypeStructure::$ids['societe']:
+				$this->societe = $objet->getLibelle();
+				break;
+			case TypeStructure::$ids['pole']:
+				$this->pole = $objet->getLibelle();
+				break;
+			case TypeStructure::$ids['direction']:
+				$this->direction = $objet->getLibelle();
+				break;
+			case TypeStructure::$ids['departement']:
+				$this->departement = $objet->getLibelle();
+				break;
+			case TypeStructure::$ids['service']:
+				$this->service = $objet->getLibelle();
+				break;
+		}
+		if($objet) {
+			$this->updateLibelle($objet->getParent());
+		}
+	}
 
     /**
      * Set buPrincipal
@@ -640,14 +791,6 @@ class Structure
     	return $ids;
     }
 
-	public function getArchitectureStructure() {
-	return $this->architectureStructure;
-}
-	
-	public function setArchitectureStructure(ArchitectureStructure $architectureStructure) {
-	$this->architectureStructure = $architectureStructure;
-	return $this;
-}
 	public function getTransverse() {
 		return $this->transverse;
 	}

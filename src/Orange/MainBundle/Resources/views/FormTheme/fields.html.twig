@@ -25,6 +25,13 @@
 </div>
 {% endblock %}
 
+{% block integer_widget -%}
+{{ block('form_label') }}
+<div class="col-lg-4 {{ block('form_errors_class') }}">
+	 {% set type = type|default('number') %} {{ block('form_widget_simple') }}
+</div>
+{%- endblock integer_widget %}
+
 {% block number_widget -%}
 {{ block('form_label') }}
 <div class="col-lg-4 {{ block('form_errors_class') }}">

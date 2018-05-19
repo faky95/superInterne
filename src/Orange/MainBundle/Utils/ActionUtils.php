@@ -89,6 +89,7 @@ class ActionUtils {
 			
 		$entityManager->persist($statutTache);
 		$entityManager->flush();
+		return $statutTache;
 	}
 	
 	public static function setCommentaire($entityManager, $entity, $commentaire)
@@ -99,7 +100,7 @@ class ActionUtils {
 	}
 
 	public static function reportDelai($entityManager, $entity) {
-		$entity->getAction()->setDateCloture($entity->getDate());
+		$entity->getAction()->setDateFinPrevue($entity->getDate());
 		$entityManager->persist($entity->getAction());
 		$entityManager->flush();
 	}

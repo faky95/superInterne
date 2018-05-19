@@ -50,7 +50,7 @@
                             	    <div class="form-group">
                     					<p>Vous pouvez effectuer l’une des actions suivantes. </p>
                                     </div>
-                                        {% if app.user.id == action.animateur.id and  action.statut != 'ACTION_SOLDEE_DELAI' and action.statut != 'ACTION_SOLDEE_HORS_DELAI' and action.statut != 'ACTION_ABANDONNEE' %}
+                                        {% if app.user.id == action.porteur.id and  action.statut != 'ACTION_SOLDEE_DELAI' and action.statut != 'ACTION_SOLDEE_HORS_DELAI' and action.statut != 'ACTION_ABANDONNEE' %}
                                            <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('abandon_actiongenerique', {'id': action.id})}}" title="Abandonner l'action générique">
                         						<button class="btn btn-warning">
                         							<span class="icon16  icomoon-icon-exit white"></span>Abandonner l'action générique 

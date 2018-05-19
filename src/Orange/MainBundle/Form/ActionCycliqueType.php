@@ -17,15 +17,15 @@ class ActionCycliqueType extends AbstractType
     {
         $builder->add('pas', null, array('label'=>"Périodicité", 'query_builder' => function(EntityRepository $er) {
             			return $er->createQueryBuilder('q')->where('q.canBeCyclique = true');
-        			}, 'attr' => array('class' => 'select pas'), 'empty_value' => 'Choix la périodicite ...'
-            ))
+        			}, 'attr' => array('class' => 'select pas'), 'empty_value' => 'Choix la périodicité ...'
+            	))
             ->add('dayOfMonth', null, array(
             		'label'=>'Délai initial des occurences :', 'empty_value' => 'Choisir le jour du mois', 'attr' => array('class' => 'select')
-            ))
+            	))
             ->add('dayOfWeek', null, array(
-            		'label'=>'Délai initial des occurences :', 'empty_value' => 'Choisir le jour de la semaine', 'attr' => array('class' => 'select')
-            ))
-            ->add('iteration', null, array('label'=>'Semaine:'))
+            		'label' => 'Délai initial des occurences :', 'empty_value' => 'Choisir le jour de la semaine', 'attr' => array('class' => 'select')
+            	))
+            ->add('iteration', null, array('label' => 'Semaine:', 'attr' => array('min' => 1)))
         	->add('action', new ActionType(OrangeMainForms::ACTION_CYCLIQUE))
         	->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')));
     }

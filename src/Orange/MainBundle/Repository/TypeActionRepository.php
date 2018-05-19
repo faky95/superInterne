@@ -117,7 +117,11 @@ class TypeActionRepository extends BaseRepository {
      }
      return $tabTypeAction;
 	}
-      
+    
+	/**
+	 * @param integer $id
+	 * @return array
+	 */
 	public function listByInstance($id) {
 		return $this->createQueryBuilder('t')
 			->innerJoin('t.instance', 'i')

@@ -17,11 +17,13 @@
 		</div>
 		{{ form_row(form.commentaire)}}
 		<div class="todo">
-			<h4>Le(s) ERQ(s) <a href="#myModal" style="float: right;"><span class="icon12 cut-icon-plus"></span></a>
+			<h4>Le(s) ERQ(s) <a id="ajout_erq_fait" href="#myModal" style="float: right;"><span class="icon12 cut-icon-plus"></span></a>
 		</div>
+		<div id="list_erq_fait" prototype="{{ form_widget(form.erq.vars.prototype.file)|e('html_attr') }}">
 		{% for erqForm in form.erq %}
-		    <div>{{ form_widget(erqForm.file)}}</div> 
+			<div>{{ form_widget(erqForm.file) }}</div>
 		{% endfor %}
+		</div>
 		{{ form_widget(form._token) }}
 		<!-- End .form-group  -->
 	</div>
