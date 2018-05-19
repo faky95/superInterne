@@ -11,17 +11,12 @@
 
 namespace Orange\MainBundle\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\Security\Core\Exception\AccountStatusException;
 use FOS\UserBundle\Model\UserInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
 use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
@@ -89,24 +84,6 @@ class RegistrationController extends BaseController
 
         return $this->render('FOSUserBundle:Registration:register.html.twig', array(
             'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Tell the user to check his email provider
-     */
-    public function checkEmailAction()
-    {
-        $email = $this->get('session')->get('fos_user_send_confirmation_email/email');
-        $this->get('session')->remove('fos_user_send_confirmation_email/email');
-        $user = $this->get('fos_user.user_manager')->findUserByEmail($email);
-
-        if (null === $user) {
-            throw new NotFoundHttpException(sprintf('The user with email "%s" does not exist', $email));
-        }
-
-        return $this->render('FOSUserBundle:Registration:checkEmail.html.twig', array(
-            'user' => $user,
         ));
     }
 
