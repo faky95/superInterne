@@ -319,7 +319,7 @@ class StructureController extends BaseController
     			$number = $this->get('orange.main.loader')->loadStructure($data['file'], $buP);
     			$this->get('session')->getFlashBag()->add('success', "Le chargement s'est effectué avec succès! Nombre de structures chargées: $number");
     			return $this->redirect($this->generateUrl('les_structures'));
-    		} catch(\Exception $e) {echo $e->getMessage();exit;
+    		} catch(\Exception $e) {
     		$this->get('session')->getFlashBag()->add('error', $e->getMessage());
     		}
     	}

@@ -100,7 +100,6 @@ class SyntheseRepository extends BaseRepository {
 		if($role == Utilisateur::ROLE_MANAGER) {
 			$queryBuilder->andWhere('q.utilisateur != :me')->setParameter('me', $this->_user);
 		}
-		exit(implode(',', $structureIds));
 		return $queryBuilder->groupBy('s.id')->orderBy('s.lvl');
 	}
 	

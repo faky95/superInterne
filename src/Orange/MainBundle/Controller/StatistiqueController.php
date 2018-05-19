@@ -323,7 +323,6 @@ class StatistiqueController extends BaseController
     		$this->get('session')->set('type',array('valeur' => 2));
     	} else {
     		$rq = $syntheseRepository->reportingByStructure($role, $criteria, $arrType);
-    		var_dump($rq->getQuery()->getSql());exit;
     		$reqActions = $rep->getStatsByStructure2($role, $criteria);
     		$data = $this->get('orange.main.calcul')->stats($bu, $rq->getQuery()->getArrayResult());
     		$tableau = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStats($data, 'structure', $arrType);
