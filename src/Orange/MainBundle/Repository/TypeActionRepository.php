@@ -143,9 +143,9 @@ class TypeActionRepository extends BaseRepository {
 	 */
 	public function getTypesByEspace($espace_id) {
 		$queryBuilder = $this->createQueryBuilder('t')
-		->innerJoin('t.instance', 'i')
-		->innerJoin('i.espace', 'e')
-		->where('e.id=:id')->setParameter('id', $espace_id);
+			->innerJoin('t.instance', 'i')
+			->innerJoin('i.espace', 'e')
+			->where('e.id=:id')->setParameter('id', $espace_id);
 		return $queryBuilder;
 	}
 }

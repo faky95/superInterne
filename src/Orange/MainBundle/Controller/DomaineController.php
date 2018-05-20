@@ -247,19 +247,19 @@ class DomaineController extends BaseController
     	$data = array('response' => null, 'espace' => null, 'projet' => null, 'chantier' => null);
     	if($espace_id) {
     		$data['espace'] = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-    		if($data['espace']) {
+    		if($data['espace']==null) {
     			$this->addFlash('error', "Espace non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}
     	} elseif($projet_id) {
     		$data['projet'] = $em->getRepository('OrangeMainBundle:Projet')->find($projet_id);
-    		if($data['projet']) {
+    		if($data['projet']==null) {
     			$this->addFlash('error', "Projet non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}
     	} elseif($chantier_id) {
     		$data['chantier'] = $em->getRepository('OrangeMainBundle:Chantier')->find($chantier_id);
-    		if($data['chantier']) {
+    		if($data['chantier']==null) {
     			$this->addFlash('error', "Chantier non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}

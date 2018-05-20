@@ -54,7 +54,7 @@ class TypeActionController extends BaseController
     	$form = $this->createForm(new TypeActionCriteria());
     	$this->modifyRequestForForm($request, $this->get('session')->get('type_action_criteria'), $form);
     	if($espace_id!=null) {
-    		$queryBuilder = $em->getRepository('OrangeMainBundle:TypeAction')->getTypeActionByEspace($espace_id);
+    		$queryBuilder = $em->getRepository('OrangeMainBundle:TypeAction')->getTypesByEspace($espace_id);
     	} elseif($projet_id!=null) {
     		$queryBuilder = $em->getRepository('OrangeMainBundle:TypeAction')->getTypeActionByProjet($projet_id);
     	} elseif($chantier_id!=null) {
@@ -244,19 +244,19 @@ class TypeActionController extends BaseController
     	$data = array('response' => null, 'espace' => null, 'projet' => null, 'chantier' => null);
     	if($espace_id) {
     		$data['espace'] = $em->getRepository('OrangeMainBundle:Espace')->find($espace_id);
-    		if($data['espace']) {
+    		if($data['espace']==null) {
     			$this->addFlash('error', "Espace non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}
     	} elseif($projet_id) {
     		$data['projet'] = $em->getRepository('OrangeMainBundle:Projet')->find($projet_id);
-    		if($data['projet']) {
+    		if($data['projet']==null) {
     			$this->addFlash('error', "Projet non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}
     	} elseif($chantier_id) {
     		$data['chantier'] = $em->getRepository('OrangeMainBundle:Chantier')->find($chantier_id);
-    		if($data['chantier']) {
+    		if($data['chantier']==null) {
     			$this->addFlash('error', "Chantier non reconnu");
     			return $this->redirect($this->generateUrl('dashboard'));
     		}
