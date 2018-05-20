@@ -537,6 +537,7 @@ class ActionController extends BaseController
      * @Template()
      */
     public function showAction($id, $id_espace=null) {
+    	//var_dump($this->container->get('security.context'));exit;
     	/*$arrData = array('centreantipoison.sn', 'comafesa.com', 'samsara-lcs.sn', 'chocosen.sn', 'exa.sn', 'orangesmspro.sn', 'tresorpublic.sn', 'avs.sn', 'secufoudre.sn', 'marbresgranites.sn', 'arezkitp.sn', 'atlantic-electronics.com', 'archidessin.com', 'delphinus.sn', 'quartierdespros.sn', 'apacsn.com', 'netcrm.sn', 'saicom.sn');
     	foreach ($arrData as $email) {
 	    	$mail = \Swift_Message::newInstance();

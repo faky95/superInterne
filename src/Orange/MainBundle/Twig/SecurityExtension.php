@@ -8,10 +8,10 @@ class SecurityExtension extends \Twig_Extension
 	/**
 	 * @var \Orange\MainBundle\Entity\Utilisateur
 	 */
-	private $user;
+	private $tokenStorage;
 	
     public function __construct($container) {
-    	$this->user = $container->get('security.context')->getToken() ? $container->get('security.context')->getToken()->getUser() : null; 
+    	$this->tokenStorage= $container->get('security.token_storage'); 
     }
 
     /**
@@ -34,10 +34,11 @@ class SecurityExtension extends \Twig_Extension
     }
     
     public function hasRights($role) {
+    	$user = $this->tokenStorage->getToken()->getUser();
     	if(is_array($role)) {
-    		return $this->user ? $this->user->hasRoles($role) : false;
+    		return $user ? $this->user->hasRoles($role) : false;
     	} else {
-    		return $this->user ? true : false;
+    		return $user ? true : false;
     	}
     }
     
@@ -50,7 +51,8 @@ class SecurityExtension extends \Twig_Extension
     	foreach($entity->getInstance()->getAnimateur() as $animateur) {
     		array_push($ids, $animateur->getUtilisateur()->getId());
     	}
-    	return in_array($this->user->getId(), $ids);
+    	$user = $this->tokenStorage->getToken()->getUser();
+    	return in_array($user->getId(), $ids);
     }
     
     /**
@@ -68,7 +70,7 @@ class SecurityExtension extends \Twig_Extension
      * @return string The extension name
      */
     public function getName() {
-        return 'orange_main_extension';
+        return 'orange_security_extension';
     }
 }
 
