@@ -34,7 +34,7 @@ class alerteAnimateurCommand extends BaseCommand {
 						'actions' => $instance['action'],'instance' => $instance['instance'],
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$this->getMailer()->sendRappel($animateurs, $cc, 'Attente de cloture des actions pour '.$instance['instance'], $body);
+			$this->getMailer()->sendRappel($animateurs, $cc, 'Attente de cloture des actions pour '.$instance['instance'], $body, true);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

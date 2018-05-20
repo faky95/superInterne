@@ -29,7 +29,7 @@ class AlertesForAnimatorCommand extends BaseCommand {
 			$body = $this->getTemplating()->render('OrangeMainBundle:Relance:alertAnimateurGlobal.html.twig', array(
 					'actions' => $value['action'],'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 			));
-			$this->getMailer()->sendRappel($to, $cc, 'Traitement sur les actions de mes instances', $body);
+			$this->getMailer()->sendRappel($to, $cc, 'Traitement sur les actions de mes instances', $body, true);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}

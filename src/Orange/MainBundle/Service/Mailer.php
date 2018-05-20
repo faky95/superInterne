@@ -181,7 +181,7 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
-    public function sendRappel($to, $cc = null, $subject, $body) {
+    public function sendRappel($to, $cc = null, $subject, $body, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	 ->setTo($to)
@@ -189,6 +189,9 @@ class Mailer
 	    	 ->setSubject($subject)
 	    	 ->setBody($body)
 	    	 ->setContentType('text/html');
+    	 if($trace) {
+    	 	$mail->setBcc($this->bcc);
+    	 }
     	return $this->mailer->send($mail);
     }
     
