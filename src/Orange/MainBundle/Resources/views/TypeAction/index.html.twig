@@ -8,16 +8,16 @@
 		<span style=" color:#ff6600"> {{ espace.libelle }} </span> 
 	{% endif %}
 	{% endblock %}</h3> 
-	{% if  espace_id is  defined and espace_id is not empty %}  
-		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace, espace_id: espace_id, 'gest': gest } %}
+	{% if espace is  defined and espace is not empty %}  
+		 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {espace: espace } %}
 	{% endif %} 
                    
 </div>
 <!-- End .heading-->
 <div class="row">
 	<div class="col-lg-8">
-	 {% if espace_id is defined and espace_id is not empty and gest == true %} 
-		  <a href="{{ path('nouveau_type_to_espace', {'espace_id':espace_id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un type </button></a>
+	 {% if espace is defined and espace is not empty %} 
+		  <a href="{{ path('creer_type_action_to_espace', {'espace_id':espace.id }) }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un type </button></a>
 	{% else %}
 {# 			 	<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{  path('nouveau_type_action') }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un type </button></a>#}
 	{% endif %}
@@ -56,7 +56,7 @@
 	{{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1}) }}
 	{% if espace is not empty %}
-		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'typeActionTable', url: path('liste_des_types_action_by_espace', {'espace_id':espace_id}) } %}
+		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'typeActionTable', url: path('liste_des_types_action_by_espace', {'espace_id': espace.id}) } %}
 	{% else %}
 		{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'typeActionTable', url: path('liste_des_types_action') } %}
 	{% endif %}

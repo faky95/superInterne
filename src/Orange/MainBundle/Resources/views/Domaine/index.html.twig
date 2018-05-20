@@ -9,7 +9,7 @@
 	{% endif %}{% endblock %}</h3> 
 	    
 	  {% if espace is not empty %} 
-	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {'espace': espace, 'espace_id': espace.id, 'gest': gest} %}
+	 {% include 'OrangeMainBundle:Espace:header_espace.html.twig' with {'espace': espace} %}
      {% endif %}
                    
 </div>
@@ -19,7 +19,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 			 {% if  espace is not empty %} 
-				 <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('nouveau_domaine_to_espace', {'espace_id':espace.id})}}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
+				 <a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('creer_domaine_to_espace', {'espace_id':espace.id})}}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
 			{% else %}
 			 	<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{  path('nouveau_domaine') }}"><button class="btn btn-warning"><span class="icon16 icomoon-icon-plus white"></span> Ajouter un domaine </button></a>
 			{% endif %} 

@@ -164,7 +164,7 @@
 	                            <span class="icon16 icomoon-icon-mail"></span><span class="txt"> Notifications</span>
 	                        </a>
 	                    </li>
-	                    {% if is_granted('ROLE_ADMIN') %}
+	                    {% if is_granted('ROLE_SUPER_ADMIN') %}
 	                    <li class="dropdown">
                             <a href="{{ path('mon_panier') }}" class="dropdown-toggle">
                                 <span class="icon16 cut-icon-cart"></span>Panier<span class="notification">8</span>
