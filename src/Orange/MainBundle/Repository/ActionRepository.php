@@ -215,7 +215,7 @@ class ActionRepository extends BaseRepository {
 			->innerJoin('a.domaine', 'd')
 			->where('a.dateInitial <= :date')
 			->andWhere("a.etatCourant LIKE 'ACTION_NON_ECHUE' OR a.etatCourant LIKE 'ACTION_ECHUE_NON_SOLDEE'")
-			->andWhere('IDENTITY(a.porteur) = 1606')
+			//->andWhere('IDENTITY(a.porteur) = 1606')
 			->orderBy('a.id', 'ASC')
 			->addOrderBy('a.dateAction', 'DESC')
 			->setParameter('date', $date);
