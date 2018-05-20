@@ -25,7 +25,7 @@ class nouvelleSignalisationCommand extends BaseCommand {
 						'signs' => $instance['sign'],'instance' => $instance['instance'],
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
-			$this->getMailer()->sendRappel($animateurs, "Prise en charge d'une signalisation", $body);
+			$this->getMailer()->sendRappel($animateurs, "Prise en charge d'une signalisation", $body, true);
 		}
 		$output->writeln(utf8_encode('Yes! ça marche'));
 	}
