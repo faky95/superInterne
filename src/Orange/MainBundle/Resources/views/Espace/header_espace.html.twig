@@ -14,11 +14,11 @@
 	             <span class="notification-petit">{{ espace.totalNumber }}</span></a>
 	        </li> 
 	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Membres">
-	             <a href="{{ path('membre_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip entypo-icon-users"></span>
+	             <a href="{{ path('membre_espace', {'espace_id':espace.id}) }}"><span class="icon16 tip entypo-icon-users"></span>
 				 <span class="notification-petit green">{{ espace.membreEspace.count }}</span></a>
 	        </li>  
 	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Domaines">
-	             <a href="{{ path('les_domaine_by_espace', {'espace_id':espace_id}) }}"><span class="icon16 tip icomoon-icon-earth"></span>
+	             <a href="{{ path('les_domaine_by_espace', {'espace_id':espace.id}) }}"><span class="icon16 tip icomoon-icon-earth"></span>
 				 <span class="notification-petit blue">{{ espace.instance.domaine.count }}</span></a>
 	        </li>  
 	        <li class="tip"  data-toggle="tooltip" data-placement="bottom" title="Types">
