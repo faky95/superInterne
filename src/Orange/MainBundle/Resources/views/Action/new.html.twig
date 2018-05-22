@@ -30,7 +30,7 @@
 				</h4>
 	        </div>
 	        <div class="panel-body with-footer">
-		        <form novalidate="novalidate" class="form-horizontal" action="{{ espace is empty ? path('soap') : path('creer_action_to_espace', {'espace_id': espace.id}) }}" method="post" {{ form_enctype(form) }} role="form">
+		        <form novalidate="novalidate" class="form-horizontal" action="{{ espace is empty ? path('creer_action') : path('creer_action_to_espace', {'espace_id': espace.id}) }}" method="post" {{ form_enctype(form) }} role="form">
 					<div class="form-group">
 		                {{ form_widget(form.libelle, {'attr': {'class': 'form-control'}} ) }}
 		                <div {% if espace is defined and espace is not empty %}style="display:none;"{% endif %}>
