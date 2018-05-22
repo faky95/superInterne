@@ -9,17 +9,23 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ExceptionController extends Controller {
-
+	
 	/**
 	 * @var \Orange\MainBundle\Service\Mailer
 	 */
 	protected $mailer;
 	
-	public function __construct(\Twig_Environment $twig, $debug, $mailer)
+	/**
+	 * @var \Swift_Transport
+	 */
+	protected $transport;
+	
+	public function __construct(\Twig_Environment $twig, $debug, $mailer, $transport)
 	{
 		$this->twig = $twig;
 		$this->debug = $debug;
 		$this->mailer = $mailer;
+		$this->transport = $transport;
 	}
 
 	/**
@@ -54,7 +60,9 @@ class ExceptionController extends Controller {
 			$chemin = $dossier."/".$file;
 			file_put_contents($chemin,$content);
 			$sendMail = $this->mailer;
+			$spool = $this->mailer->getMailer()->getTransport()->getSpool();
 			$sendMail->sendBug($to, array(), "Erreur de traitement", $this->twig->render("OrangeMainBundle:Utilisateur:sendMailSupport.html.twig", array('file'=>$file, 'dossier'=>date("Y_m_d"), 'link'=>$request->getUri())),$dossier,$file);
+			$spool->flushQueue($this->transport);
 		}
 		return new Response($this->twig->render($this->findTemplate($request, $request->getRequestFormat(), $code, $showException), array(
 						'status_code' => $code, 'exception' => $exception, 'logger' => $logger, 'currentContent' => $currentContent,

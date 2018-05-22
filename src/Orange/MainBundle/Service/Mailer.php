@@ -21,6 +21,13 @@ class Mailer
         $this->templating = $templating;
     }
     
+    /**
+     * @return Swift_Mailer
+     */
+    public function getMailer() {
+    	return $this->mailer;
+    }
+    
     public function notifNewAction($to, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -93,7 +100,7 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
-    public function sendBug($to, $cc = null, $subject, $body,$chemin,$file) {
+    public function sendBug($to, $cc = null, $subject, $body, $chemin, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
