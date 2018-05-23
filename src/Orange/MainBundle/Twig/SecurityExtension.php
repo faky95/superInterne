@@ -36,7 +36,9 @@ class SecurityExtension extends \Twig_Extension
     public function hasRights($role) {
     	$user = $this->tokenStorage->getToken()->getUser();
     	if(is_array($role)) {
-    		return $user ? $this->user->hasRoles($role) : false;
+    		return $user ? $user->hasRoles($role) : false;
+    	} elseif($role) {
+    		return $user ? $user->hasRole($role) : false;
     	} else {
     		return $user ? true : false;
     	}
