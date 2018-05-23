@@ -910,8 +910,8 @@ class Action
      */
     public function addAvancement(\Orange\MainBundle\Entity\ActionAvancement $avancement)
     {
-        $this->avancement[] = $avancement;
-
+    	$avancement->setAction($this);
+    	$this->avancement[] = $avancement;
         return $this;
     }
 

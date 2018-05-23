@@ -33,10 +33,9 @@ class ActionAvancementController extends Controller
         $form = $this->createCreateForm($entity, $action->getId());
         $form->handleRequest($request);
         if($form->isValid()){
-        	$action->getComplement()->setAvancements($entity->getDescription());
-            $em->persist($entity);
-            $entity->setAction($action);
-            $entity->setAuteur($this->getUser());
+        	$entity->setAuteur($this->getUser());
+        	$action->addAvancement($entity);
+        	$em->persist($action);
             $em->flush();
             return new JsonResponse(array('url' =>$this->generateUrl('details_action', array('id' => $action_id))));
         }
