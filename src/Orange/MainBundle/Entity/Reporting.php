@@ -216,17 +216,14 @@ class Reporting
 	
 	/**
 	 * Add user
-	 *
 	 * @param \Orange\MainBundle\Entity\Utilisateur $destinataire
 	 * 
 	 */
 	public function addDestinataire($destinataire)
 	{
 		$this->destinataire[] = $destinataire;
-	
 		return $this;
 	}
-	
 	
 	public function getUtilisateur() {
 		return $this->utilisateur;
@@ -287,40 +284,80 @@ class Reporting
 		$this->envoi->removeElement($envoi);
 	}
 	
+	/**
+	 * get libelle
+	 * @return string
+	 */
 	public function getLibelle() {
 		return $this->libelle;
 	}
+	
+	/**
+	 * set libelle
+	 * @param string $libelle
+	 * @return \Orange\MainBundle\Entity\Reporting
+	 */
 	public function setLibelle($libelle) {
 		$this->libelle = $libelle;
 		return $this;
 	}
+	
+	/**
+	 * get type reporting
+	 * @return number
+	 */
 	public function getTypeReporting() {
 		return $this->typeReporting;
 	}
+	
+	/**
+	 * set type reporting
+	 * @param number $typeReporting
+	 * @return \Orange\MainBundle\Entity\Reporting
+	 */
 	public function setTypeReporting($typeReporting) {
 		$this->typeReporting = $typeReporting;
 		return $this;
 	}
+	
+	/**
+	 * get query
+	 * @return string
+	 */
 	public function getQuery() {
 		return $this->query;
 	}
+	
+	/**
+	 * set query
+	 * @param string $query
+	 * @return \Orange\MainBundle\Entity\Reporting
+	 */
 	public function setQuery($query) {
 		$this->query = $query;
 		return $this;
 	}
+	
+	/**
+	 * get param
+	 * @return string
+	 */
 	public function getParam() {
 		return $this->param;
 	}
+	
+	/**
+	 * set param
+	 * @param array $param
+	 * @return \Orange\MainBundle\Entity\Reporting
+	 */
 	public function setParam($param) {
 		$this->param = $param;
 		return $this;
 	}
 	
-	
-
     /**
      * Remove destinataire
-     *
      * @param \Orange\MainBundle\Entity\Utilisateur $destinataire
      */
     public function removeDestinataire(\Orange\MainBundle\Entity\Utilisateur $destinataire)

@@ -1218,4 +1218,19 @@ class Utilisateur extends BaseUser
     {
         return $this->canCreateActionGenerique;
     }
+    
+    /**
+     * @param \Orange\MainBundle\Entity\Action $action
+     * @return boolean
+     */
+    public function isAnimatorOfAction($action) {
+    	return false;
+    	foreach($this->animators as $animateur) {
+    		if($action->getInstance()->getId()==$animateur->getInstance()->getId()) {
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
 }

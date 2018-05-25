@@ -399,8 +399,8 @@ class StatistiqueController extends BaseController
     	
     	if($tabRoles[$role]==Utilisateur::ROLE_PORTEUR) {
     		$req=$rep->getStatsUserBySemaine($this->getUser(), 1, $form->getData());
-    		$data = $this->container->get('orange.main.calcul')->stats($bu, $req);
-    		$stats = $this->getMapping()->getReporting()->mappingDataStatsEvo($data, 'semaine');
+    		$data = $this->get('orange.main.calcul')->stats($bu, $req);
+    		$stats = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($data, 'semaine');
     		$graphe=$this->createGrapheEvo($stats);
     	}
     	return array(
@@ -523,11 +523,11 @@ class StatistiqueController extends BaseController
     	if ($form->isValid()) {
     		$em = $this->getDoctrine()->getManager();
     		$entity->setUtilisateur($this->getUser());
-    		$this->container->get('orange.main.envoi')->generateEnvoi($entity);
+    		$this->get('orange.main.envoi')->generateEnvoi($entity);
     		$em->persist($entity);
     		$em->flush();
     		// envoie de mail pour notifier de la creation du reporting
-    		$this->container->get('orange.main.mailer')->sendNotifReport($this->getUser()->getEmail(), $entity, $this->getUser());
+    		$this->get('orange.main.mailer')->sendNotifReport($this->getUser()->getEmail(), $entity, $this->getUser());
     		$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' => 'Le reporting a étè créé avec succés'));
  			return $this->redirect($this->generateUrl('les_reportings'));
     	}

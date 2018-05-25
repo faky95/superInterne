@@ -103,11 +103,11 @@ class TypeActionController extends BaseController
            	}
             $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  "Le type d'action a été créé avec succès"));
             if($espace_id!=null) {
-            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action_by_espace', array('espace_id'=>$espace_id))));
+            	return $this->redirect($this->generateUrl('les_types_action_by_espace', array('espace_id'=>$espace_id)));
             } elseif($projet_id!=null) {
-            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action_by_projet', array('projet_id'=>$projet_id))));
+            	return $this->redirect($this->generateUrl('les_types_action_by_projet', array('projet_id'=>$projet_id)));
             } else {
-            	return $this->redirect($this->generateUrl($this->generateUrl('les_types_action')));
+            	return $this->redirect($this->generateUrl('les_types_action'));
             }
        	}
         return $this->render('OrangeMainBundle:TypeAction:new.html.twig', array(

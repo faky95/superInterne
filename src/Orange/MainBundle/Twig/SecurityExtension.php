@@ -62,8 +62,9 @@ class SecurityExtension extends \Twig_Extension
      * @return boolean
      */
     public function hasRigthsManager($entity) {
+    	$user = $this->tokenStorage->getToken()->getUser();
     	$manager = $entity->getPorteur()->getSuperior();
-    	return $manager ? $manager->getId()==$this->user->getId() : false;
+    	return $manager ? $manager->getId()==$user->getId() : false;
     }
     
     /**

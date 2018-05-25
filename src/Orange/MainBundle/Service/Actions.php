@@ -1,10 +1,10 @@
 <?php
-
 namespace Orange\MainBundle\Service;
 
 use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\ActionGenerique;
+
 class Actions {
 	const ACTION_TEMPLATE = '<span class="tip" ><a title="%s" href="%s"><img src="%s" /></a></span>';
 	const ACTION_MODAL_TEMPLATE = '<span class="tip" ><a title="%" href="#myModal" class="actionLink" modal-url="%s" data-target="#myModal" data-toggle="modal"><img src="%s" /></a></span>';
@@ -60,24 +60,22 @@ class Actions {
 	 */
 	public function generateActionsForAction($entity) {
 		$arrStatut = array(Statut::ACTION_NOUVELLE, Statut::ACTION_ABANDONNEE);
-		$actions = '<div class="btn-group">
-				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>';
-		$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Ajout dans le panier">
-			<span class="cut-icon-cart"></span></a>';
-		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->hasRole('ROLE_ANIMATEUR')) {
-			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>';
+		$showRoute = $entity->getInstance()->getEspace()
+			? $this->router->generate('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $entity->getInstance()->getEspace()->getId()))
+			: $this->router->generate('details_action', array('id'=>$entity->getId()));
+		$actions = sprintf('<div class="btn-group">
+				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>', $showRoute);
+		$actions .= sprintf('<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Ajout dans le panier">
+			<span class="cut-icon-cart"></span></a>', $this->router->generate('ajouter_dans_panier', array('id'=>$entity->getId())));
+		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->isAnimatorOfAction($entity)) {
+			$actions .= sprintf('<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>',
+					$this->router->generate('edition_action', array('id'=>$entity->getId())));
 		}
 		if($this->user->hasRole('ROLE_ADMIN') && in_array($entity->getEtatCourant(), $arrStatut)) {
-			$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Supprimer l\'action">
-				<span class="icomoon-icon-remove-4"></span></a>';
-			//$actions .= '<a class="btn btn-default" method="delete" href="%s" title="Supprimer l\'action"><span class="icomoon-icon-remove-4"></span></a></div>';
+			$actions .= sprintf('<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Supprimer l\'action">
+				<span class="icomoon-icon-remove-4"></span></a>', $this->router->generate('supprimer_action', array('id'=>$entity->getId())));
 		}
-		return sprintf($actions, $entity->getInstance()->getEspace()? $this->router->generate('details_action_espace', array('id' => $entity->getId(), 'id_espace' => $entity->getInstance()->getEspace()->getId())):
-						$this->router->generate('details_action', array('id'=>$entity->getId())),
-						$this->router->generate('ajouter_dans_panier', array('id'=>$entity->getId())),
-						$this->router->generate('edition_action', array('id'=>$entity->getId())),
-						$this->router->generate('supprimer_action', array('id'=>$entity->getId()))
-					);
+		return $actions;
 	}
 	
 	/**

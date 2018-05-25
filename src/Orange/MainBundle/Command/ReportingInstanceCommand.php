@@ -83,10 +83,10 @@ class ReportingInstanceCommand extends BaseCommand {
 				}
 				$req = $reportingMapping->combineTacheAndAction($query->getArrayResult());
 				$arrType=unserialize($envoi->getReporting()->getArrayType());
-				$map= $reportingMapping->transformRequeteToSimple($req,$arrType );
+				$map= $reportingMapping->transformRequeteToSimple($req, $arrType);
 				$bu = $envoi->getReporting()->getUtilisateur()->getStructure()->getBuPrincipal();
 				$data = $this->get('orange.main.calcul')->stats($bu, $map);
-				$data = $reportingMapping->mappingDataStats($data, 'instance',$arrType, $bu);
+				$data = $reportingMapping->mappingDataStats($data, 'instance', $arrType, $bu);
 				$objWriter = $this->get('orange.main.reporting')->reportinginstanceAction($data, $this->getStatus($bu), $actions, $etats->getQuery()->execute());
 				$filename = $envoi->getReporting()->getLibelle().date("Y-m-d_H-i").'.xlsx';
 				$i=0;

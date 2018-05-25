@@ -29,7 +29,7 @@ class alerteQuartTimeCommand extends BaseCommand {
 					'porteur' => $user['porteur'], 'actions' => $user['action'], 'tour' => $tour,
 					'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 				));
-			$result = $this->getMailer()->sendAlerteQuartTime($key, "Rappel Quart Temps", $body, true);
+			$result = $this->getMailer()->sendAlerteQuartTime($key, "Rappel Quart Temps", $body);
 			$chemin = LogsMailUtils::LogOnFileMail($result, "Rappel Quart Temps", array($key));
 		}
 		if(!empty($chemin)) {

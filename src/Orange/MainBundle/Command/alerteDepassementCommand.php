@@ -37,7 +37,7 @@ class alerteDepassementCommand extends BaseCommand {
 						'accueil_url' => $this->getContainer()->get('router')->generate('dashboard', array(), true)
 					));
 			try {
-				$result = $this->getMailer()->send($user['email_porteur'], $user['manager'], $subject, $body, true);
+				$result = $this->getMailer()->send($user['email_porteur'], $user['manager'], $subject, $body);
 				$chemin = LogsMailUtils::LogOnFileMail($result, $subject, array($user['email_porteur']), array($user['manager']), count($user['action']));
 				$spool->flushQueue($transport);
 			} catch(\Exception $e) {
