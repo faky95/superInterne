@@ -31,17 +31,18 @@ class StatutCommand extends BaseCommand
                 $statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_ECHUE_NON_SOLDEE)->getId();
                 $statut_row['utilisateur_id']           = $action->getPorteur()->getId();
                 $statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
+                $statut_row['commentaire'] 				= 'Action échue non soldée';
                 $connexion->insert('action_has_statut', $statut_row);
                 ActionUtils::updateEtatCourantEntity($em, $action, Statut::ACTION_ECHUE_NON_SOLDEE, Statut::ACTION_ECHUE_NON_SOLDEE);
             }
 		}
-		
 		foreach($actionNonEchue as $action) {
 			if($action->getEtatCourant() !== Statut::ACTION_NON_ECHUE && $action->getEtatReel() !== Statut::ACTION_NON_ECHUE) {
 				$statut_row['action_id'] 	  			= $action->getId();
 				$statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_NON_ECHUE)->getId();
 				$statut_row['utilisateur_id']           = $action->getPorteur()->getId();
 				$statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
+				$statut_row['commentaire'] 				= 'Action non échue';
 				$connexion->insert('action_has_statut', $statut_row);
 				ActionUtils::updateEtatCourantEntity($em, $action, Statut::ACTION_NON_ECHUE, Statut::ACTION_NON_ECHUE);
 			}
