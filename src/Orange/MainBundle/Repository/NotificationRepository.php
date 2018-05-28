@@ -7,6 +7,30 @@ use Doctrine\ORM\QueryBuilder;
 class NotificationRepository extends BaseRepository{
 	
 	
+	/**
+	 * {@inheritDoc}
+	 * @see \Orange\MainBundle\Repository\BaseRepository::listQueryBuilder()
+	 */
+	public function listQueryBuilder($criteria) {
+		$criteria = new \Orange\MainBundle\Entity\Notification();
+		// TODO: Auto-generated method stub
+		$queryBuilder = $this->filter()->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
+		if($criteria->getTypeNotification()) {
+			$queryBuilder->andWhere('IDENTITY(q.typeNotification) = :typeNotification')
+				->setParameter('typeNotification', $criteria->getTypeNotification()->getId());
+		}
+		$copy = $destinataire = array(-1);
+		foreach($criteria->getCopy() as $value) {
+			$copy[] = $value->getId();
+		}
+		foreach($criteria->getDestinataire() as $value) {
+			$destinataire[] = $value->getId();
+		}
+		$queryBuilder->andWhere('c.id IN (:copy)')->setParameter('copy', $copy)
+			->andWhere('d.id IN (:destinataire)')->setParameter('destinataire', $destinataire);
+		return $queryBuilder;
+	}
+	
 	public function filter() {
 		$data = array();$parameters = array();
 		$queryBuilder = $this->createQueryBuilder('n');

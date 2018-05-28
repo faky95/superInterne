@@ -24,6 +24,7 @@
 		        <form novalidate="novalidate" class="form-horizontal" action="{{ path('les_notifications') }}" method="post">
 		         	<div class="form-group">
 						{{ form_widget(form.structure,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
+						{{ form_widget(form.typeNotification,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}})}}
 					</div>
 					<div class="form-group">
 						{{ form_widget(form.destinataire,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
