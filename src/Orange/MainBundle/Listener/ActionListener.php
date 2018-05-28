@@ -63,7 +63,6 @@ class ActionListener implements EventSubscriberInterface
         		OrangeMainEvents::ACTION_VALIDATION_ANIMATEUR	 	=> 'onValidationAnimateurAction',
         		OrangeMainEvents::ACTION_VALIDATION_MANAGER	 		=> 'onValidationManagerAction',
         		OrangeMainEvents::ACTION_REASSIGNATION				=> 'onReassignationAction'
-        		
         	);
     }
 

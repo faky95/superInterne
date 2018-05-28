@@ -136,10 +136,8 @@ class ActionManager
 		}else{
 			$cc = array_merge($allEmailAnimateur, $emailManager, $emailContributeur );
 		}
-		$statut = Statut::ACTION_NON_ECHUE;
-		if($today > $action->getDateInitial()->format('Y-m-d')){
-			$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
-		}
+		$statut = ($today > $action->getDateInitial()->format('Y-m-d')) ? Statut::ACTION_ECHUE_NON_SOLDEE : Statut::ACTION_NON_ECHUE;
+		$action->setDateFinExecut(null);
 		$action->getActionStatut()->last()->setStatut($this->em->getRepository('OrangeMainBundle:Statut')->findOneByCode($statut));
 		$this->em->persist($action->getActionStatut()->last());
 		$this->em->flush();
