@@ -30,7 +30,7 @@ class StatutCommand extends BaseCommand
             	$statut_row['action_id'] 	  			= $action->getId();
                 $statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_ECHUE_NON_SOLDEE)->getId();
                 $statut_row['utilisateur_id']           = $action->getPorteur()->getId();
-                $statut_row['dateStatut'] 				= $action->getDateInitial()->format('Y-m-d H:i:s');
+                $statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
                 $connexion->insert('action_has_statut', $statut_row);
                 ActionUtils::updateEtatCourantEntity($em, $action, Statut::ACTION_ECHUE_NON_SOLDEE, Statut::ACTION_ECHUE_NON_SOLDEE);
             }
@@ -41,7 +41,7 @@ class StatutCommand extends BaseCommand
 				$statut_row['action_id'] 	  			= $action->getId();
 				$statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_NON_ECHUE)->getId();
 				$statut_row['utilisateur_id']           = $action->getPorteur()->getId();
-				$statut_row['dateStatut'] 				= $action->getDateInitial()->format('Y-m-d H:i:s');
+				$statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
 				$connexion->insert('action_has_statut', $statut_row);
 				ActionUtils::updateEtatCourantEntity($em, $action, Statut::ACTION_NON_ECHUE, Statut::ACTION_NON_ECHUE);
 			}

@@ -247,8 +247,15 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	public function atteintDelai($bu, $espace, $projet) {
-		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.porteur', 'u')->innerJoin('a.instance', 'i')->innerJoin('a.domaine', 'd')->where('a.dateInitial < CURRENT_DATE()')->andWhere("a.etatReel LIKE 'ACTION_ECHUE_NON_SOLDEE'")->orderBy('a.id', 'ASC')->addOrderBy('a.dateAction', 'DESC')->getQuery()->execute();
-		return $queryBuilder;
+		return $this->createQueryBuilder('a')
+			->innerJoin('a.porteur', 'u')
+			->innerJoin('a.instance', 'i')
+			->innerJoin('a.domaine', 'd')
+			->where('a.dateFinPrevue < CURRENT_DATE()')
+			->andWhere("a.etatReel LIKE 'ACTION_ECHUE_NON_SOLDEE'")
+			->orderBy('a.id', 'ASC')
+			->addOrderBy('a.dateAction', 'DESC')
+			->getQuery()->execute();
 	}
 	
 	public function getActionValide($code, $criteria) {
@@ -1315,7 +1322,7 @@ class ActionRepository extends BaseRepository {
 	public function actionEchue() {
 		return $this->createQueryBuilder('q')
 			->where("q.etatCourant = 'ACTION_NON_ECHUE'")
-			->andWhere('q.dateInitial < :now')->setParameter('now', date('Y-m-d'))
+			->andWhere('q.dateFinPrevue < :now')->setParameter('now', date('Y-m-d'))
 			->getQuery()->getResult();
 	}
 	
@@ -1325,7 +1332,7 @@ class ActionRepository extends BaseRepository {
 	public function actionNonEchue() {
 		return $this->createQueryBuilder('q')
 			->where("q.etatCourant = 'ACTION_ECHUE_NON_SOLDEE'")
-			->andWhere('q.dateInitial > :now')->setParameter('now', date('Y-m-d'))
+			->andWhere('q.dateFinPrevue > :now')->setParameter('now', date('Y-m-d'))
 			->getQuery()->getResult();
 	}
 	

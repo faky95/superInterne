@@ -6,6 +6,7 @@ use Orange\MainBundle\Utils\Notification;
 use Orange\MainBundle\Entity\Statut;
 use Orange\MainBundle\Utils\ActionUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Orange\MainBundle\Entity\Utilisateur;
 
 class ActionManager
 {
@@ -38,6 +39,7 @@ class ActionManager
 		$this->helper = $this->container->get('orange.main.mailer');
 		$this->types = $container->getParameter('types');
 	}
+	
 	public function createNewActionEspace($action , $helper) {
 		$espace = $this->user->getMembreEspace()->get(0)->getEspace();
 		$emailGestionnaire = ActionUtils::getEmailGestionnaire($this->em, $espace);
@@ -403,4 +405,38 @@ class ActionManager
 			exit('yes');
 		}
 	}
+	
+	/**
+	 * 
+	 */
+	public function generateArrayType($role, $type, $user, $structure) {
+		$arrType  = null;
+		if($type==1) { //structure
+			switch($role) {
+				case Utilisateur::ROLE_PORTEUR:
+					$arrType= $this->em->getRepository('OrangeMainBundle:Instance')->porteurQueryBuilder(array())
+						->addSelect('i7.libelle, i7.couleur')->distinct()
+						->getQuery()->getArrayResult();
+					break;
+				case Utilisateur::ROLE_CONTRIBUTEUR:
+					$arrType= $this->em->getRepository('OrangeMainBundle:instance')->getInstancesEnConributions($user->getId());
+					break;
+				
+			}
+		} else {
+			switch($role) {
+				case Utilisateur::ROLE_MANAGER:
+					$arrType= $this->em->getRepository('OrangeMainBundle:Instance')->porteurQueryBuilder(array())
+						->addSelect('i7.libelle, i7.couleur')->distinct()
+						->getQuery()->getArrayResult();
+					break;
+				case Utilisateur::ROLE_CONTRIBUTEUR:
+					$arrType= $this->em->getRepository('OrangeMainBundle:instance')->getInstancesEnConributions($user->getId());
+					break;
+					
+			}
+		}
+		return $arrType;
+	}
+	
 }
