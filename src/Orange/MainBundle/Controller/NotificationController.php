@@ -56,7 +56,7 @@ class NotificationController extends BaseController
     	$form = $this->createForm(new NotificationCriteria());
     	$this->modifyRequestForForm($request, $this->get('session')->get('notification_criteria'), $form);
     	$criteria = $form->getData();
-    	$queryBuilder = $em->getRepository('OrangeMainBundle:Notification')->listQueryBuilder($criteria);
+    	$queryBuilder = $em->getRepository('OrangeMainBundle:Notification')->listNotifQueryBuilder($criteria);
     	$this->get('session')->set('data',array('query' => $queryBuilder->getDql(),'param' =>$queryBuilder->getParameters()));
     	return $this->paginate($request, $queryBuilder);
     }

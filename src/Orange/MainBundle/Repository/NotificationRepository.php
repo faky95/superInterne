@@ -9,9 +9,8 @@ class NotificationRepository extends BaseRepository{
 	
 	/**
 	 * {@inheritDoc}
-	 * @see \Orange\MainBundle\Repository\BaseRepository::listQueryBuilder()
 	 */
-	public function listQueryBuilder($criteria) {
+	public function listNotifQueryBuilder($criteria) {
 		$criteria = new \Orange\MainBundle\Entity\Notification();
 		// TODO: Auto-generated method stub
 		$queryBuilder = $this->filter()->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
