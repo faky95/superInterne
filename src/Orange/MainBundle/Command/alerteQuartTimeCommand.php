@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Orange\MainBundle\Utils\LogsMailUtils;
 use Orange\MainBundle\Entity\Notification;
+use Orange\MainBundle\Entity\TypeNotification;
 
 class alerteQuartTimeCommand extends BaseCommand {
 	
