@@ -11,22 +11,26 @@ class NotificationRepository extends BaseRepository{
 	 * {@inheritDoc}
 	 */
 	public function listNotifQueryBuilder($criteria) {
-		$criteria = new \Orange\MainBundle\Entity\Notification();
+		$criteria = $criteria ? $criteria : new \Orange\MainBundle\Entity\Notification();
 		// TODO: Auto-generated method stub
 		$queryBuilder = $this->filter()->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
 		if($criteria->getTypeNotification()) {
 			$queryBuilder->andWhere('IDENTITY(q.typeNotification) = :typeNotification')
 				->setParameter('typeNotification', $criteria->getTypeNotification()->getId());
 		}
-		$copy = $destinataire = array(-1);
+		$copy = $destinataire = array();
 		foreach($criteria->getCopy() as $value) {
 			$copy[] = $value->getId();
 		}
 		foreach($criteria->getDestinataire() as $value) {
 			$destinataire[] = $value->getId();
 		}
-		$queryBuilder->andWhere('c.id IN (:copy)')->setParameter('copy', $copy)
-			->andWhere('d.id IN (:destinataire)')->setParameter('destinataire', $destinataire);
+		if(count($copy)) {
+			$queryBuilder->andWhere('c.id IN (:copy)')->setParameter('copy', $copy);
+		}
+		if(count($destinataire)) {
+			$queryBuilder->andWhere('d.id IN (:destinataire)')->setParameter('destinataire', $destinataire);
+		}
 		return $queryBuilder;
 	}
 	
