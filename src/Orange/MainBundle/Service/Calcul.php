@@ -72,7 +72,7 @@ class Calcul
 				foreach($stats as $key => $data) {
 					$stats[$key]['taux'] = array();
 					foreach($taux as $kpi) {
-						$stats[$key]['taux'][$kpi['libelle']] = $this->computeKpi($data, $kpi);
+						$stats[$key]['taux'][$kpi['libelle']] = round($this->computeKpi($data, $kpi), 1);
 					}
 				}
 		}
