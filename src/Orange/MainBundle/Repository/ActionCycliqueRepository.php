@@ -133,7 +133,7 @@ class ActionCycliqueRepository extends BaseRepository {
 					partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
 				    partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
 				    partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
-				    partial port.{id, prenom, nom, structure}, partial struct.{id, , service, departement, pole, direction},
+				    partial port.{id, prenom, nom, structure}, partial struct.{id, service, departement, pole, direction},
 				    GROUP_CONCAT(distinct av.description separator ' .__ ') avancements, 
 					GROUP_CONCAT(distinct CONCAT(cuser.prenom, '  ', cuser.nom) ) contributeurs "
 				);

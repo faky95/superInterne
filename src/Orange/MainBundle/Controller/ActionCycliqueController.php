@@ -224,28 +224,6 @@ class ActionCycliqueController extends BaseController
 		$objWriter->save('php://output');
 		return $response;
 	}
-	
-	/**
-	 * @QMLogger(message="Exportation les occurences")
-	 * @Route("/export_occurence", name="export_occurence")
-	 * @Method("GET")
-	 */
-	public function exportOccurenceAction(){
-		$em = $this->getDoctrine()->getEntityManager();
-		$response = new Response();
-		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions cycliques du %s.xlsx', date('YmdHis')));
-		$response->sendHeaders();
-		$queryBuilder = $this->get('session')->get('data');
-		$query = $em->createQuery($queryBuilder['query']);
-		$query->setParameters($queryBuilder['param']);
-		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
-		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-		$actions       = $query->getArrayResult();
-		$objWriter     = $this->get('orange.main.extraction')->exportActionCyclique($actions, $statut->getQuery()->execute());
-		$objWriter->save('php://output');
-		return $response;
-	}
 
 	/**
 	 * @todo retourne le nombre d'enregistrements renvoyer par le résultat de la requéte
