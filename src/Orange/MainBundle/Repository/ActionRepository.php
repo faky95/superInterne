@@ -1162,7 +1162,6 @@ class ActionRepository extends BaseRepository {
 		if($criteria) {
 			$this->filtres($queryBuilder, $criteria, 'a');
 		}
-		exit($queryBuilder->getDQL());
 		return $queryBuilder;
 	}
 	/**
