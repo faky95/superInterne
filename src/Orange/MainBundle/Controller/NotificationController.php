@@ -26,7 +26,6 @@ class NotificationController extends BaseController
      * @Route("/les_notifications", name="les_notifications")
      * @Method({"GET", "POST"})
      * @Template()
-     * @Security("has_role('ROLE_ADMIN')")
      */
     public function indexAction(Request $request)
     {

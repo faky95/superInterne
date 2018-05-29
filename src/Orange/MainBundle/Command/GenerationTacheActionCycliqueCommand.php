@@ -27,8 +27,19 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 		$bu = $input->getOption('bu');
 		$projet = $input->getOption('projet');
 		$em = $this->getEntityManager();
+		$timestamp= (new \DateTime("NOW"))->getTimestamp();
+		$pas = $this->getContainer()->getParameter('pas');
+		$actionCycliques = array();
 		// get actions cycliques
-		$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->tacheToGenerate($bu, $projet, $espace);
+		if(date('D', $timestamp) === 'Mon' && date('j', $timestamp) === '1') {
+			$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->tacheToGenerate($bu, $projet, $espace);
+		} elseif(date('D', $timestamp) === 'Mon') { //check if monday
+			$periodicites = array($pas['Hebdomadaire'] , $pas['Quinzaine']);
+			$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->tacheByPeriodicite($bu, $projet, $espace, $periodicites);
+		} elseif(date('j', $timestamp) === '1') { //check if premier du mois
+			$periodicites = array($pas['Mensuelle'] , $pas['Trimestrielle'], $pas['Semestrielle']);
+			$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->tacheByPeriodicite($bu, $projet, $espace, $periodicites);
+		}
 		foreach($actionCycliques as $actionCyclique) {
 			if($actionCyclique->getPas()==null) {
 				continue;
