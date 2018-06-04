@@ -847,6 +847,17 @@ class Instance extends BaseEntity
     }
     
     /**
+     * @param number $buId
+     * @@return boolean
+     */
+    public function in_bu($buId) {
+    	$data = $this->bu->filter(function($bu) use($buId) {
+    			return $bu->getId()==$buId;
+    		});
+    	return $data->count()>0;
+    }
+    
+    /**
      * get configuration
      * @return \Orange\MainBundle\Entity\Configuration
      */

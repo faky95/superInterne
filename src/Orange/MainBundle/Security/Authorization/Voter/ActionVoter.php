@@ -100,8 +100,9 @@ class ActionVoter extends AbstractVoter {
 	
 	public function isBuAdministrateur($action, $user) {
 		$result = false;
-		if($user->getIsAdmin() && (($user->getStructure()->getBuPrincipal()->getId() === $action->getStructure()->getBuPrincipal()->getId())
-								|| ($user->getStructure()->getBuPrincipal()->getId() === $action->getInstance()->getStructure()->get(0)->getBuPrincipal()->getId()))){
+		$buPrincipal = $user->getStructure()->getBuPrincipal();
+		if($user->getIsAdmin() && (($buPrincipal->getId() === $action->getStructure()->getBuPrincipal()->getId())
+				|| $action->getInstance()->in_bu($buPrincipal->getId()))) {
 			$result = true;
 		}
 		return $result;

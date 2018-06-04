@@ -1224,7 +1224,6 @@ class Utilisateur extends BaseUser
      * @return boolean
      */
     public function isAnimatorOfAction($action) {
-    	return false;
     	foreach($this->animators as $animateur) {
     		if($action->getInstance()->getId()==$animateur->getInstance()->getId()) {
     			return true;
