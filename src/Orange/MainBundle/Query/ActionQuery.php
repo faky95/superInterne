@@ -169,11 +169,11 @@ class ActionQuery extends BaseQuery {
 				where t.code_statut = '" . Statut::ACTION_SOLDEE . "' or t.code_statut = '" . Statut::ACTION_EN_COURS . "';";
 		
 		$query .= "INSERT INTO action (`id`, `reference`, `priorite_id`, `type_action_id`, 
-						   			`libelle`, `description`, `date_action`, `date_debut`, 
+						   			`libelle`, `description`, `date_action`, `date_debut`, `date_fin_prevue`,
 									`date_initial`, `date_cloture`, `date_fin_execution`, `domaine_id`,`instance_id`,`etat_courant`, `etat_reel`, `porteur_id`, 
 									`animateur_id`) 
 					select t.id,".$ref.", t.priorite, t.type_action, 
-								  	 t.libelle, t.description, CURRENT_TIMESTAMP(), date_debut, date_initial, date_cloture, date_cloture, 
+								  	 t.libelle, t.description, CURRENT_TIMESTAMP(), date_debut, date_initial, date_initial, date_cloture, date_cloture, 
 				                     t.domaine,  t.instance, t.code_statut, t.code_statut, t.email," . $current_user->getId () . "
 								  	 from temp_action t;";
 		
