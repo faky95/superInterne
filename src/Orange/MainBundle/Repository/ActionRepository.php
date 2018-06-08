@@ -213,9 +213,8 @@ class ActionRepository extends BaseRepository {
 			->innerJoin('a.instance', 'i')
 			->leftJoin('i.espace', 'e')
 			->innerJoin('a.domaine', 'd')
-			->where('a.dateInitial <= :date')
+			->where('a.dateFinPrevue <= :date')
 			->andWhere("a.etatCourant LIKE 'ACTION_NON_ECHUE' OR a.etatCourant LIKE 'ACTION_ECHUE_NON_SOLDEE'")
-			//->andWhere('IDENTITY(a.porteur) = 1606')
 			->orderBy('a.id', 'ASC')
 			->addOrderBy('a.dateAction', 'DESC')
 			->setParameter('date', $date);
@@ -238,7 +237,7 @@ class ActionRepository extends BaseRepository {
 			  ->select('a.libelle libelle, a.id id, a.reference reference, i.libelle as lib_instance,
 					u.prenom as prenom, u.nom as nom, a.dateDebut as dateDebut, a.dateInitial as dateInitial, u.email as email')
 			  ->where("a.etatCourant LIKE 'ACTION_NON_ECHUE'")
-			  ->andWhere("a.dateInitial > :date")->setParameter('date', $date)
+			  ->andWhere("a.dateFinPrevue > :date")->setParameter('date', $date)
 			  ->orderBy('a.id', 'ASC')->addOrderBy('a.dateAction', 'DESC');
 		if($bu) {
 			$queryBuilder->andWhere('s.buPrincipal = :bu')->setParameter('bu', $bu);
