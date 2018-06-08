@@ -39,6 +39,8 @@ class GenerationTacheActionCycliqueCommand extends BaseCommand {
 		} elseif(date('j', $timestamp) === '1') { //check if premier du mois
 			$periodicites = array($pas['Mensuelle'] , $pas['Trimestrielle'], $pas['Semestrielle']);
 			$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->tacheByPeriodicite($bu, $projet, $espace, $periodicites);
+		} else {
+			$actionCycliques = $em->getRepository('OrangeMainBundle:ActionCyclique')->findWithoutTache($bu, $projet, $espace);
 		}
 		foreach($actionCycliques as $actionCyclique) {
 			if($actionCyclique->getPas()==null) {

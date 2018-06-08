@@ -210,4 +210,14 @@ class ActionCycliqueRepository extends BaseRepository {
 			->getQuery()->execute();
 	}
 	
+	/**
+	 * @return \Doctrine\Common\Collections\ArrayCollection
+	 */
+	public function findWithoutTache() {
+		return $this->createQueryBuilder('q')
+			->leftJoin('q.tache', 't')
+			->where('t.id IS NULL')
+			->getQuery()->getResult();
+	}
+	
 }
