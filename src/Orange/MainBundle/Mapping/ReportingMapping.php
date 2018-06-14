@@ -129,7 +129,7 @@ class ReportingMapping extends AbstractMapping {
 					$arrData['taux'][$key] = $taux;
 				}
 				foreach(array_keys(Synthese::$formules) as $key) {
-					$arrData[$type][$value['id']]['data'][$key] = $value[$key];
+					$arrData[$type][$value['id']]['data'][$key] = $value[$key] ? round($value[$key], 1) : null;
 					$arrData['taux'][$key] = $value[$key];
 				}
 			}

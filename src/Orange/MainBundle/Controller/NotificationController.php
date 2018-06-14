@@ -13,6 +13,8 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Entity\Notification;
 use Orange\MainBundle\Criteria\NotificationCriteria;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Orange\MainBundle\Entity\Extraction;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Notification controller.
@@ -93,6 +95,32 @@ class NotificationController extends BaseController
     
     	}
     
+    }
+    
+    /**
+     * @QMLogger(message="Extraction des notifications")
+     * @Route("/export_notification", name="export_notification")
+     */
+    public function exportAction() {
+    	$em = $this->getDoctrine()->getManager();
+    	$response = new Response();
+    	$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    	$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des notifications du %s.xlsx', date('YmdHis')));
+    	//$response->sendHeaders();
+    	$queryBuilder = $this->get('session')->get('data', array());
+    	if($queryBuilder['totalNumber'] > 10000) {
+    		$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']));
+    		$em->persist($extraction);
+    		$em->flush();
+    		$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
+    		return $this->redirect($this->getRequest()->headers->get('referer'));
+    	}
+    	$query = $em->createQuery($queryBuilder['query']);
+    	$query->setParameters($queryBuilder['param']);
+    	$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+    	$objWriter     = $this->get('orange.main.extraction')->exportNotification($query->getArrayResult());
+    	$objWriter->save('php://output');
+    	return $response;
     }
     
     /**

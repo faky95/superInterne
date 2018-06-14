@@ -80,6 +80,16 @@ class Notification
      */
     private $etat = false;
     
+    /**
+     * @var \DateTime
+     */
+    public $startDate;
+    
+    /**
+     * @var \DateTime
+     */
+    public $endDate;
+    
 
     public function __construct() {
     	$this->destinataire = new \Doctrine\Common\Collections\ArrayCollection();

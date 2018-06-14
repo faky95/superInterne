@@ -123,8 +123,8 @@ class ActionVoter extends AbstractVoter {
 	public function isGestionnaireEspace($action, $user) {
 		$result = false;
 		if($user->hasRole(Utilisateur::ROLE_GESTIONNAIRE_ESPACE)) {
-			$espace = $action->getInstance()->getEspace()?$action->getInstance()->getEspace():null;
-			if($espace!=null){
+			$espace = $action->getInstance()->getEspace() ? $action->getInstance()->getEspace() : null;
+			if($espace!=null) {
 				$membre = $this->em->getRepository('OrangeMainBundle:MembreEspace')->findOneBy(array('utilisateur' => $user, 'espace' => $espace));
 				if($membre !== NULL && $membre->getIsGestionnaire()==true) {
 					$result = true;

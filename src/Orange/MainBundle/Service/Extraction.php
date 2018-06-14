@@ -146,6 +146,28 @@ class Extraction extends \PHPExcel {
 	
 	/**
 	 * @param array $arrData
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
+	public function exportNotification($arrData) {
+		$th = array('Libellé', 'Destinataire', 'Copie', 'Date');
+		$this->getActiveSheet()->fromArray($th);
+		$tableau = array();
+		foreach($arrData as $val) {
+			$value = $val[0];
+			$tableau[] = array(
+					$value['reference'],
+					$value['instance']['libelle'],
+					$value['libelle'],
+					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : ''
+			);
+		}
+		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
+		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
+		return $objWriter;
+	}
+	
+	/**
+	 * @param array $arrData
 	 * @param array $dataStatut
 	 * @return \PHPExcel_Writer_Excel2007
 	 */
