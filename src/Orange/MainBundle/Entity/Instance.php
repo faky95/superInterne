@@ -851,10 +851,7 @@ class Instance extends BaseEntity
      * @@return boolean
      */
     public function in_bu($buId) {
-    	if($this->bu==null) {
-    		return false;
-    	}
-    	$data = $this->bu->filter(function($bu) use($buId) {
+    	$data = $this->getBu()->filter(function($bu) use($buId) {
     			return $bu->getId()==$buId;
     		});
     	return $data->count()>0;
