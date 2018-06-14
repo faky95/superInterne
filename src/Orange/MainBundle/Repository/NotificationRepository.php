@@ -13,7 +13,8 @@ class NotificationRepository extends BaseRepository{
 	public function listNotifQueryBuilder($criteria) {
 		$criteria = $criteria ? $criteria : new \Orange\MainBundle\Entity\Notification();
 		// TODO: Auto-generated method stub
-		$queryBuilder = $this->filter()->innerJoin('n.typeNotification', 't')->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
+		$queryBuilder = $this->filter()->select('n, t, c, d')
+			->innerJoin('n.typeNotification', 't')->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
 		if($criteria->getTypeNotification()) {
 			$queryBuilder->andWhere('t.id = :typeNotification')
 				->setParameter('typeNotification', $criteria->getTypeNotification()->getId());
