@@ -34,7 +34,7 @@ class AlertesForAnimatorCommand extends BaseCommand {
 			));
 			$result = $this->getMailer()->sendRappel($to, $cc, 'Traitement sur les actions de mes instances', $body);
 			$em->persist(Notification::nouvelleInstance(
-					count($value['action']), $em->getReference('OrangeMainBundle:TypeNotification', TypeNotification::$ids['rappelQuartTemps']),
+					count($value['action']), $em->getReference('OrangeMainBundle:TypeNotification', TypeNotification::$ids['relanceValidation']),
 					array($em->getReference('OrangeMainBundle:Utilisateur', $id)),
 					array(), $result
 				));
