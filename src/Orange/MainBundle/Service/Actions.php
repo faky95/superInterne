@@ -65,8 +65,8 @@ class Actions {
 			: $this->router->generate('details_action', array('id'=>$entity->getId()));
 		$actions = sprintf('<div class="btn-group">
 				     <a class="btn btn-default" href="%s" title="Détails sur l\'action "><span class="icomoon-icon-eye"></span></a>', $showRoute);
-		$actions .= sprintf('<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Ajout dans le panier">
-			<span class="cut-icon-cart"></span></a>', $this->router->generate('ajouter_dans_panier', array('id'=>$entity->getId())));
+		/*$actions .= sprintf('<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Ajout dans le panier">
+			<span class="cut-icon-cart"></span></a>', $this->router->generate('ajouter_dans_panier', array('id'=>$entity->getId())));*/
 		if($this->user->hasRole('ROLE_ADMIN') || $this->user->getId()==$entity->getAnimateur()->getId() || $this->user->isAnimatorOfAction($entity)) {
 			$actions .= sprintf('<a class="btn btn-default" href="%s" title="Modifier l\'action"><span class="icomoon-icon-pencil-3"></span></a>',
 					$this->router->generate('edition_action', array('id'=>$entity->getId())));
