@@ -152,10 +152,10 @@ class Extraction extends \PHPExcel {
 		$th = array('Libellé', 'Destinataire', 'Copie', 'Date');
 		$this->getActiveSheet()->fromArray($th);
 		$tableau = array();
-		$this->getActiveSheet()->getColumnDimension('A')->setWidth('50');
+		$this->getActiveSheet()->getColumnDimension('A')->setWidth('25');
 		$this->getActiveSheet()->getColumnDimension('B')->setWidth('50');
 		$this->getActiveSheet()->getColumnDimension('C')->setWidth('50');
-		$this->getActiveSheet()->getColumnDimension('D')->setWidth('50');
+		$this->getActiveSheet()->getColumnDimension('D')->setWidth('25');
 		foreach($arrData as $val) {
 			$tableau[] = array(
 					$val->getTypeNotification()->getLibelle(),
