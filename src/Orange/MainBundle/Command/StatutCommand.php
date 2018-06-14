@@ -38,6 +38,7 @@ class StatutCommand extends BaseCommand
 				$em->flush();
 			}
 		}
+		unset($statut_row['tache_id']);
 		foreach($actionEchue as $action) {
 			if($action->getEtatCourant() !== Statut::ACTION_ECHUE_NON_SOLDEE && $action->getEtatReel() !== Statut::ACTION_ECHUE_NON_SOLDEE) {
 				$statut_row['action_id'] 	  			= $action->getId();
