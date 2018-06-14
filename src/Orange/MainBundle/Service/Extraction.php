@@ -154,7 +154,7 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$tableau[] = array(
-					$val->getLibelle(),
+					$val->getTypeNotification()->getLibelle(),
 					$val->getDestinataireForReporting(),
 					$val->getCopyForReporting(),
 					$val->getDate() ? $val->getDate()->format('d-m-Y') : ''
