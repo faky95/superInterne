@@ -15,7 +15,7 @@ class NotificationRepository extends BaseRepository{
 		// TODO: Auto-generated method stub
 		$queryBuilder = $this->filter()->innerJoin('n.typeNotification', 't')->leftJoin('n.copy', 'c')->leftJoin('n.destinataire', 'd');
 		if($criteria->getTypeNotification()) {
-			$queryBuilder->andWhere('IDENTITY(n.typeNotification) = :typeNotification')
+			$queryBuilder->andWhere('t.id = :typeNotification')
 				->setParameter('typeNotification', $criteria->getTypeNotification()->getId());
 		}
 		$copy = $destinataire = array();
