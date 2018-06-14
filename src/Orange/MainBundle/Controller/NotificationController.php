@@ -106,7 +106,7 @@ class NotificationController extends BaseController
     	$response = new Response();
     	$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     	$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des notifications du %s.xlsx', date('YmdHis')));
-    	//$response->sendHeaders();
+    	$response->sendHeaders();
     	$queryBuilder = $this->get('session')->get('data', array());
     	if($queryBuilder['totalNumber'] > 10000) {
     		$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']));
