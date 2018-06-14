@@ -153,12 +153,11 @@ class Extraction extends \PHPExcel {
 		$this->getActiveSheet()->fromArray($th);
 		$tableau = array();
 		foreach($arrData as $val) {
-			$value = $val[0];
 			$tableau[] = array(
-					$value['reference'],
-					$value['instance']['libelle'],
-					$value['libelle'],
-					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : ''
+					$val->getLibelle(),
+					$val->getDestinataireForReporting(),
+					$val->getCopyForReporting(),
+					$val->getDate() ? $val->getDate()->format('d-m-Y') : ''
 			);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');

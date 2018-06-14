@@ -226,6 +226,19 @@ class Notification
     }
     
     /**
+     * Get destinataire
+     * @return string
+     */
+    public function getDestinataireForReporting()
+    {
+    	$destinataires = null;
+    	foreach($this->destinataire as $utilisateur) {
+    		$destinataires = sprintf("%s \n", $utilisateur);
+    	}
+    	return $destinataires;
+    }
+    
+    /**
      * Get copy
      * @return \Doctrine\Common\Collections\ArrayCollection
      */
@@ -259,8 +272,21 @@ class Notification
     	if($this->copy->count()==2) {
     		$copy.= ' et une autre personne';
     	}
-    	if($this->destinataire->count() > 2) {
+    	if($this->copy->count() > 2) {
     		$copy.= sprintf(' et %s autres personnes', $this->copy->count() - 1);
+    	}
+    	return $copy;
+    }
+    
+    /**
+     * Get copy
+     * @return string
+     */
+    public function getCopyForReporting()
+    {
+    	$copy = null;
+    	foreach($this->copy as $utilisateur) {
+    		$copy= sprintf("%s \n", $utilisateur);
     	}
     	return $copy;
     }
