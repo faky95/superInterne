@@ -152,13 +152,17 @@ class Extraction extends \PHPExcel {
 		$th = array('Libellé', 'Destinataire', 'Copie', 'Date');
 		$this->getActiveSheet()->fromArray($th);
 		$tableau = array();
+		$this->getActiveSheet()->getColumnDimension('A')->setWidth('50');
+		$this->getActiveSheet()->getColumnDimension('B')->setWidth('50');
+		$this->getActiveSheet()->getColumnDimension('C')->setWidth('50');
+		$this->getActiveSheet()->getColumnDimension('D')->setWidth('50');
 		foreach($arrData as $val) {
 			$tableau[] = array(
 					$val->getTypeNotification()->getLibelle(),
 					$val->getDestinataireForReporting(),
 					$val->getCopyForReporting(),
 					$val->getDate() ? $val->getDate()->format('d-m-Y') : ''
-			);
+				);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
