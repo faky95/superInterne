@@ -17,7 +17,7 @@ class NotificationCriteria extends AbstractCriteria
     	$builder->add('typeNotification', null, array('label' => 'Type de notification'))
     		->add('startDate', 'date', array('label' => 'Du:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
     		->add('endDate', 'date', array('label' => 'au:', 'widget' => 'single_text', 'input'  => 'datetime', 'format' => 'dd/MM/yyyy'))
-	    	->add('destinataire', null, array('label' => 'Porteur', 'query_builder'=>function($sr) { return $sr->filter(); }, 'multiple' => true))
+	    	->add('destinataire', null, array('label' => 'Destinataire', 'query_builder'=>function($sr) { return $sr->filter(); }, 'multiple' => true))
 	    	->add('copy', null, array('label' => 'En copie', 'query_builder'=>function($sr) { return $sr->filter(); }, 'multiple' => true))
     		->add('structure', 'entity', array('class' => 'OrangeMainBundle:Structure', 'label' => 'Structure', 'empty_value' => 'Choisir la structure ...', 'property' => 'name',
 									'query_builder'=>function($sr) { return $sr->filter(); }
