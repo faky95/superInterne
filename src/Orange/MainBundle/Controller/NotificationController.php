@@ -118,7 +118,7 @@ class NotificationController extends BaseController
     	$query = $em->createQuery($queryBuilder['query']);
     	$query->setParameters($queryBuilder['param']);
     	$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-    	$objWriter     = $this->get('orange.main.extraction')->exportNotification($query->getArrayResult());
+    	$objWriter     = $this->get('orange.main.extraction')->exportNotification($query->getResult());
     	$objWriter->save('php://output');
     	return $response;
     }
