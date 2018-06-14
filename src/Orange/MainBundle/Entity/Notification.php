@@ -232,7 +232,7 @@ class Notification
     public function getDestinataireForReporting()
     {
     	$destinataires = null;
-    	foreach($this->destinataire as $utilisateur) {
+    	foreach($this->getDestinataire() as $utilisateur) {
     		$destinataires = sprintf("%s \n", $utilisateur);
     	}
     	return $destinataires;
@@ -285,7 +285,7 @@ class Notification
     public function getCopyForReporting()
     {
     	$copy = null;
-    	foreach($this->copy as $utilisateur) {
+    	foreach($this->getCopy() as $utilisateur) {
     		$copy= sprintf("%s \n", $utilisateur);
     	}
     	return $copy;
