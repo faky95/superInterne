@@ -30,7 +30,7 @@ class StatutCommand extends BaseCommand
 			if($tache->getEtatCourant() !== Statut::ACTION_ECHUE_NON_SOLDEE) {
 				$statut_row['tache_id'] 	  			= $tache->getId();
 				$statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_ECHUE_NON_SOLDEE)->getId();
-				$statut_row['utilisateur_id']           = $tache->getPorteur()->getId();
+				$statut_row['utilisateur_id']           = $em->getReference('OrangeMainBundle:Utilisateur', 1);
 				$statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
 				$statut_row['commentaire'] 				= 'Tache échue non soldée';
 				$connexion->insert('tache_has_statut', $statut_row);
@@ -43,7 +43,7 @@ class StatutCommand extends BaseCommand
 			if($action->getEtatCourant() !== Statut::ACTION_ECHUE_NON_SOLDEE && $action->getEtatReel() !== Statut::ACTION_ECHUE_NON_SOLDEE) {
 				$statut_row['action_id'] 	  			= $action->getId();
 				$statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_ECHUE_NON_SOLDEE)->getId();
-				$statut_row['utilisateur_id']           = $action->getPorteur()->getId();
+				$statut_row['utilisateur_id']           = $em->getReference('OrangeMainBundle:Utilisateur', 1);
 				$statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
 				$statut_row['commentaire'] 				= 'Action échue non soldée';
 				$connexion->insert('action_has_statut', $statut_row);
@@ -54,7 +54,7 @@ class StatutCommand extends BaseCommand
 			if($action->getEtatCourant() !== Statut::ACTION_NON_ECHUE && $action->getEtatReel() !== Statut::ACTION_NON_ECHUE) {
 				$statut_row['action_id'] 	  			= $action->getId();
 				$statut_row['statut_id'] 	  			= $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::ACTION_NON_ECHUE)->getId();
-				$statut_row['utilisateur_id']           = $action->getPorteur()->getId();
+				$statut_row['utilisateur_id']           = $em->getReference('OrangeMainBundle:Utilisateur', 1);
 				$statut_row['dateStatut'] 				= date('Y-m-d H:i:s');
 				$statut_row['commentaire'] 				= 'Action non échue';
 				$connexion->insert('action_has_statut', $statut_row);
