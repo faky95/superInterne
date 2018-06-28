@@ -33,6 +33,7 @@ class ActionCycliqueController extends BaseController
 	 */
 	public function indexAction(Request $request) {
 		$form = $this->createForm(new ActionCycliqueCriteria());
+		$data = $request->get($form->getName());
 		$this->get('session')->set('actioncyclique_criteria', array());
 		if($request->getMethod()=='POST') {
 			if(isset($data['effacer'])) {
@@ -44,13 +45,28 @@ class ActionCycliqueController extends BaseController
 		}
 		return array('form'=>$form->createView());
 	}
+	
+	/**
+	 * @Route("/filtrer_actioncycliques", name="filtrer_actioncycliques")
+	 * @Template()
+	 */
+	public function filtreAction(Request $request) {
+		$form = $this->createForm(new ActionCycliqueCriteria());
+		if($request->getMethod()=='POST') {
+			$this->get('session')->set('actioncyclique_criteria', $request->request->get($form->getName()));
+			return new JsonResponse();
+		} else {
+			$this->modifyRequestForForm($request, $this->get('session')->get('actioncyclique_criteria'), $form);
+			return array('form' => $form->createView());
+		}
+	}
 
 	/**
 	 *  @Route("/liste_actions_cycliques", name="liste_actions_cycliques")
 	 */
 	public function listeCycliqueAction(Request $request) {
 		$em = $this->getDoctrine()->getManager();
-		$form = $this->createForm(new ActionCriteria());
+		$form = $this->createForm(new ActionCycliqueCriteria());
 		$this->modifyRequestForForm($request, $this->get('session')->get('actioncyclique_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:ActionCyclique')->filter($criteria);

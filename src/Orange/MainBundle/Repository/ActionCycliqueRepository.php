@@ -64,7 +64,7 @@ class ActionCycliqueRepository extends BaseRepository {
 	 * @param QueryBuilder $queryBuilder
 	 * @param ActionCyclique $criteria
 	 */
-	public function filterForm($queryBuilder,$criteria){
+	public function filterForm($queryBuilder, $criteria){
 		$structure = $criteria && $criteria->getAction() ? $criteria->getAction()->getStructure() : null;
 		$domaine = $criteria && $criteria->getAction() ? $criteria->getAction()->getDomaine() : null;
 		$instance = $criteria && $criteria->getAction() ? $criteria->getAction()->getInstance() : null;

@@ -5,7 +5,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Doctrine\ORM\EntityRepository;
-use Orange\MainBundle\OrangeMainForms;
 use Orange\MainBundle\Criteria\ActionCriteria;
 
 class ActionCycliqueCriteria extends AbstractType
