@@ -33,10 +33,10 @@ class NotificationRepository extends BaseRepository{
 			$queryBuilder->andWhere('d.id IN (:destinataire)')->setParameter('destinataire', $destinataire);
 		}
 		if($criteria->startDate) {
-			$queryBuilder->andWhere('n.date >= :startDate')->setParameter('startDate', $criteria->startDate);
+			$queryBuilder->andWhere('date(n.date) >= :startDate')->setParameter('startDate', $criteria->startDate->format('Y-m-d'));
 		}
 		if($criteria->endDate) {
-			$queryBuilder->andWhere('n.date <= :endDate')->setParameter('endDate', $criteria->endDate);
+			$queryBuilder->andWhere('date(n.date) <= :endDate')->setParameter('endDate', $criteria->endDate->format('Y-m-d'));
 		}
 		return $queryBuilder;
 	}
