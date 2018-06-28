@@ -148,7 +148,7 @@ class RelanceMapping extends AbstractMapping {
 		$data = array();
 		$i=0;
 		foreach ($actions as $action){
-			$di = $action->getDateInitial();
+			$di = $action->getDateFinPrevue();
 			$dateDiff = $di->diff($today);
 			$a = $di < $today ? '+' : ($dateDiff->days == 0 ? '' : '-');
 			$a = $dateDiff->days;
@@ -159,7 +159,7 @@ class RelanceMapping extends AbstractMapping {
 					'manager' => $action->getPorteur()->getSuperior() ? $action->getPorteur()->getSuperior()->getEmail() : $action->getPorteur()->getEmail(),
 					'manager_id' => $action->getPorteur()->getSuperior() ? $action->getPorteur()->getSuperior()->getId() : null,
 					'instance' => $action->getInstance()->getLibelle(),
-					'reference' => $action->getReference(), 'jours' => $a, 'delai' => $action->getDateInitial()->format('d-m-Y'),
+					'reference' => $action->getReference(), 'jours' => $a, 'delai' => $action->getDateFinPrevue()->format('d-m-Y'),
 					'libelle' => $action->getLibelle(), 'id' => $action->getId(),
 					'animateur'=>$action->getAnimateur()->getEmail(),
 					'action_generique'=>($action->getActionGeneriqueHasAction()->count()>0 ? $action->getActionGeneriqueHasAction()->first()->getActionGenerique() : null)
