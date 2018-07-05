@@ -665,7 +665,7 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function filterExport() {
 		return $this->filter()->select('partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
-				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
+				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial, dateFinPrevue, dateCloture},
 				partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
 				partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure}, 
 				partial av.{id, description}, partial struct.{id, service, departement, pole, direction},
@@ -683,7 +683,7 @@ class ActionRepository extends BaseRepository {
 	
 	public function filterExportReporting($idActions) {
 		return $this->filterAction()->select('partial av.{id, description}, partial struct.{id, service, departement, pole, direction},
-				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
+				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial, dateFinPrevue, dateCloture},
 				partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
 				partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
 				partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure}')
