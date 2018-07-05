@@ -10,6 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Extraction
 {
+	/**
+	 * @var array
+	 */
+	static $types;
 	
 	 /**
      * @var integer
@@ -48,6 +52,12 @@ class Extraction
     
     /**
      * @var integer
+     * @ORM\Column(name="type", type="integer", length=1)
+     */
+    private $type;
+    
+    /**
+     * @var integer
      * @ORM\Column(name="etat", type="integer", length=1, nullable=true)
      */
     private $etat = 0;
@@ -64,12 +74,13 @@ class Extraction
     * @param string $query
     * @param \Doctrine\Common\Collections\ArrayCollection $param
     */
-    public static function nouvelleTache($totalNumber, $utilisateur, $query, $param) {
+    public static function nouvelleTache($totalNumber, $utilisateur, $query, $param, $type) {
     	$entity = new self;
     	$entity->utilisateur = $utilisateur;
     	$entity->dateAction = new \DateTime('NOW');
     	$entity->query = $query;
     	$entity->param = $param;
+    	$entity->type = $type;
     	$entity->etat = 0;
     	return $entity;
     }
@@ -114,6 +125,22 @@ class Extraction
      */
     public function getParam() {
     	return $this->param;
+    }
+    
+    /**
+     * @param integer $type
+     * @return \Orange\MainBundle\Entity\Extraction
+     */
+    public function setType($type) {
+    	$this->type = $type;
+    	return $this;
+    }
+    
+    /**
+     * @return number
+     */
+    public function getType() {
+    	return $this->type;
     }
     
     /**

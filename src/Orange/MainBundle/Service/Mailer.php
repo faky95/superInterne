@@ -12,7 +12,7 @@ class Mailer
 	
     protected $templating;
     private $from = "orange@orange.sn";
-    private $bcc = array("madiagne.sylla@orange-sonatel.com", "mamekhady.diouf@orange-sonatel.com");
+    private $bcc = array("madiagne.sylla@orange-sonatel.com");
     private $name = " SUPER";
     
     public function __construct($mailer, EngineInterface $templating)
@@ -49,7 +49,7 @@ class Mailer
     	$manager = $tache->getActionCyclique()->getAction()->getPorteur()->getSuperior();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
- 	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+ 	    	->setBcc(array('madiagne.sylla@orange-sonatel.com'))
 	    	->setSubject("Nouvelle tache")
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:nouvelleTache.html.twig', array('tache' => $tache)))
 			->setContentType('text/html')
@@ -128,7 +128,7 @@ class Mailer
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
     	->setTo($to)
-    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+    	->setBcc(array('madiagne.sylla@orange-sonatel.com'))
     	->setSubject($subject)
     	->setBody($this->templating->render('OrangeMainBundle:Notification:reporting.html.twig'))
     	->setContentType('text/html')
@@ -137,11 +137,11 @@ class Mailer
     	return $this->mailer->send($mail);
     }
     
-    public function sendExportAction($to, $subject, $file) {
+    public function sendExtraction($to, $subject, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 	    	->setTo($to)
-	    	->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'))
+	    	->setBcc(array('madiagne.sylla@orange-sonatel.com'))
 	    	->setSubject($subject)
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:exportAction.html.twig'))
 	    	->setContentType('text/html')
@@ -248,7 +248,7 @@ class Mailer
 	    	->setContentType('text/html')
 	    	->setCharset('utf-8');
     	if($trace) {
-    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'));
+    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com'));
     	}
     	return $this->mailer->send($mail);
     }
@@ -263,7 +263,7 @@ class Mailer
 			->setContentType('text/html')
 			->setCharset('utf-8');
     	if($trace) {
-    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com', 'mamekhady.diouf@orange-sonatel.com'));
+    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com'));
     	}
 		return $this->mailer->send($mail);
     }
@@ -293,7 +293,7 @@ class Mailer
     public function sendLogsMail($subject, $body,$chemin) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
-	    	->setTo(array("madiagne.sylla@orange-sonatel.com","mamekhady.diouf@orange-sonatel.com"))
+	    	->setTo(array("madiagne.sylla@orange-sonatel.com"))
 	    	->setSubject($subject)
 	    	->setBody($body)
 	    	->setContentType('text/html')

@@ -17,10 +17,10 @@ class SignalisationRepository extends BaseRepository {
 	
 	public function getSignalisations($ids){
 		return $this->createQueryBuilder('s')
-		->where('s.id IN (:ids)')
-		->setParameters(array('ids' => $ids))
-		->getQuery()
-		->getResult();
+			->where('s.id IN (:ids)')
+			->setParameters(array('ids' => $ids))
+			->getQuery()
+			->getResult();
 	}
 	
 	public function filter() {
@@ -96,36 +96,47 @@ class SignalisationRepository extends BaseRepository {
 		$rsm = new ResultSetMapping();
 		$rsm->addEntityResult('Orange\MainBundle\Entity\Signalisation', 's');
 		$rsm->addFieldResult('s', 'id', 'id');
-		
 		$sql = 'SELECT s.id FROM project p JOIN project_related pr ON p.id = pr.related_project_id WHERE pr.project_id = ?';
-		
 		$query = $this->_em->createNativeQuery($sql, $rsm);
 		$query->setParameter(1, $idProject);
-		
 		$projects = $query->getResult();
-		
-		
-		
-			return $this->createQueryBuilder('s')
-			            ->innerJoin('s.action', 'a', 'WITH', 'a.id = :action_id')
-			            ->setParameter('action_id', $action_id)
-						->getQuery()
-						->getResult();
-		}
+		return $this->createQueryBuilder('s')
+            ->innerJoin('s.action', 'a', 'WITH', 'a.id = :action_id')
+            ->setParameter('action_id', $action_id)
+			->getQuery()
+			->getResult();
+	}
 	
 	public function getNextId() {
 		$data = $this->createQueryBuilder('s')
-		->select('MAX(s.id) as maxi')
-		->getQuery()->getArrayResult();
+			->select('MAX(s.id) as maxi')
+			->getQuery()->getArrayResult();
 		return (int)$data[0]['maxi'] + 1;
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param Signalisation $criteria
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
-	public function listAllElements($criteria){
+	public function listAllForExport($criteria) {
+		$queryBuilder = $this->listAllElements($criteria);
+		return $queryBuilder->select('sign, PARTIAL a.{ id, reference }, PARTIAL i.{ id, libelle }, PARTIAL ts.{ id, type }')
+			->addSelect('PARTIAL s.{ id }, PARTIAL u.{ id, prenom, nom }, PARTIAL shs.{ id, commentaire }, PARTIAL d.{ id, libelleDomaine }')
+			->innerJoin('sign.instance', 'i')
+			->innerJoin('sign.source', 's')
+			->innerJoin('sign.domaine', 'd')
+			->innerJoin('sign.typeSignalisation', 'ts')
+			->innerJoin('sign.signStatut', 'shs')
+			->innerJoin('s.utilisateur', 'u')
+			->leftJoin('sign.action', 'a');
+	}
+	/**
+	 *
+	 * @param Signalisation $criteria
+	 * @return \Doctrine\ORM\QueryBuilder
+	 */
+	public function listAllElements($criteria) {
 		$queryBuilder = $this->filter();
 		$fromDateSignale= $criteria->fromDateSignale;
 		$toDateSignale= $criteria->toDateSignale;

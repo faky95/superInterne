@@ -78,7 +78,8 @@ class TacheController extends BaseController
     	$response->sendHeaders();
     	$queryBuilder = $this->get('session')->get('occurence', array());
     	if($queryBuilder['totalNumber'] > 10000) {
-    		$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']));
+    		$type = \Orange\MainBundle\Entity\Extraction::$types['tache'];
+    		$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
     		$em->persist($extraction);
     		$em->flush();
     		$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");

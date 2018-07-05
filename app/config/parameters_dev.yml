@@ -59,6 +59,12 @@ parameters:
         demande_report:   3
         demande_abandon:  4
         demande_solde:    5 
+        extraction:
+            action: 1
+            actioncyclique: 2
+            occurence: 3
+            signalisation: 4
+            notification: 5
 
     instance:
         remontee_ci: 55

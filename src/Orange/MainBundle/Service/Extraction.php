@@ -118,6 +118,7 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$value = $val[0];
+			$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],
@@ -134,8 +135,8 @@ class Extraction extends \PHPExcel {
 					$value['domaine']['libelleDomaine'],
 					$val['contributeurs'],
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
-					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
-					$value['dateFinExecut'] ? $value['dateFinExecut']->format('d-m-Y') : 'En Cours',
+					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
+					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
 					$val['avancements'],
 				);
 		}
@@ -348,7 +349,7 @@ class Extraction extends \PHPExcel {
 			$b = "A";
 			foreach($values as $value) {
 				if($b == "B") {
-					$inst = explode("##", $value);
+					$inst = explode('##', $value);
 					$this->getActiveSheet()->setCellValue($b.$y, $inst[0])->getColumnDimension($b)->setAutoSize(true);
 					$style_instance = array(
 							'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),

@@ -197,7 +197,7 @@ class ActionGeneriqueController extends BaseController
         		$conn = $this->get('database_connection');
         		$query  = sprintf("delete  from action_generique_has_action where action_id=%s;",$id);
         		$query .= sprintf("delete  from action_generique_has_statut where action_id=%s;",$id);
-        		$exec = $conn->prepare($query)->execute();
+        		$conn->prepare($query)->execute();
 	            $em->remove($entity);
 	            $em->flush();
 	            $this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Action générique supprimée avec succés!'));
@@ -259,8 +259,7 @@ class ActionGeneriqueController extends BaseController
      * @Method({"GET","POST"})
      * @Template()
      */
-    public function orientationAction(Request $request, $data){
-    	$em     = $this->getDoctrine()->getEntityManager();
+    public function orientationAction(Request $request, $data) {
     	$ids    = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
     	$action = new Action();
     	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));

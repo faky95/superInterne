@@ -1,30 +1,25 @@
 <?php 
-
 namespace Orange\MainBundle\Repository;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Orange\QuickMakingBundle\Repository\EntityRepository;
-use Orange\MainBundle\Entity\Utilisateur;
 use Doctrine\ORM\QueryBuilder;
 use Orange\MainBundle\Entity\Statut;
-use Orange\MainBundle\CustomInterface\RepositoryInterface;
 use Orange\MainBundle\Entity\Action;
 
 class StatutRepository extends BaseRepository {
 	
-	public function listAllStatuts(){
+	public function listAllStatuts() {
 		$queryBuilder = $this->createQueryBuilder('s');
 		$queryBuilder->where('s.typeStatut = 2');
 		return $queryBuilder;
 	}
 	
-	public function listAllStatutsActions(){
+	public function listAllStatutsActions() {
 		$queryBuilder = $this->createQueryBuilder('s');
 		$queryBuilder->where('s.typeStatut = 2');
 		return $queryBuilder->getQuery()->getArrayResult();
 	}
 	
-	public function listAllStatutSign(){
+	public function listAllStatutSign() {
 		$queryBuilder = $this->createQueryBuilder('s');
 		$queryBuilder->where('s.typeStatut = 1');
 		return $queryBuilder;

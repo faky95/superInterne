@@ -28,6 +28,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Orange\QuickMakingBundle\Annotation\QMLogger;
+use Orange\MainBundle\Entity\Extraction;
 
 /**
  * Signalisation controller.
@@ -71,7 +72,8 @@ class SignalisationController extends BaseController
 		$this->modifyRequestForForm($request, $this->get('session')->get('signalisation_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Signalisation')->listAllElements($criteria);
-		$this->get('session')->set('data',array('query' => $queryBuilder->getDql(),'param' =>$queryBuilder->getParameters()) );
+		$queryBuilderExport = $em->getRepository('OrangeMainBundle:Signalisation')->listAllForExport($criteria);
+		$this->get('session')->set('data',array('query' => $queryBuilderExport->getDql(),'param' =>$queryBuilderExport->getParameters()) );
 		$queryCanevas = $em->getRepository('OrangeMainBundle:Signalisation')->forCanevas($criteria);
 		$this->get('session')->set('canevas',array('query' => $queryCanevas->getDql(),'param' =>$queryCanevas->getParameters()) );
 		return $this->paginate($request, $queryBuilder);
@@ -83,12 +85,20 @@ class SignalisationController extends BaseController
 	 * @Template()
 	 */
 	public function exportAction() {
-		$em = $this->getDoctrine()->getEntityManager();
+		$em = $this->getDoctrine()->getManager();
 		$queryBuilder = $this->get('session')->get('data', array());
+		if($queryBuilder['totalNumber'] > 10000) {
+			$type = \Orange\MainBundle\Entity\Extraction::$types['signalisation'];
+			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
+			$em->persist($extraction);
+			$em->flush();
+			$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
+			return $this->redirect($this->getRequest()->headers->get('referer'));
+		}
 		$query = $em->createQuery($queryBuilder['query']);
 		$query->setParameters($queryBuilder['param']);
 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatutSign();
-		$data = $this->getMapping()->getExtraction()->exportSignalisation($query->execute(),  $statut->getQuery()->execute());
+		$data = $this->getMapping()->getExtraction()->exportSignalisation($query->execute(), $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);
 		$filename = sprintf("Extraction_des_signalisations_du_%s.xlsx", date('d-m-Y'));
 		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");
@@ -101,7 +111,7 @@ class SignalisationController extends BaseController
 	 */
 	public function exportCanevasAction() {
         $response = new Response();
-		$em = $this->getDoctrine()->getEntityManager();
+		$em = $this->getDoctrine()->getManager();
 		$queryBuilder = $this->get('session')->get('canevas', array());
 		$query = $em->createQuery($queryBuilder['query']);
 		$query->setParameters($queryBuilder['param']);

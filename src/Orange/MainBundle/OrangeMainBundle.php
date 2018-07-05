@@ -17,8 +17,10 @@ class OrangeMainBundle extends Bundle
 	public function boot() {
 		// TODO: Auto-generated method stub
 		$ids	= $this->container->getParameter('ids');
+		$types	= $this->container->getParameter('types');
 		\Orange\MainBundle\Entity\TypeNotification::$ids = $ids['typeNotification'];
 		\Orange\MainBundle\Entity\TypeStructure::$ids = $ids['typeStructure'];
 		\Orange\MainBundle\Entity\Periodicite::$ids = $ids['periodicite'];
+		\Orange\MainBundle\Entity\Extraction::$types = $types['extraction'];
 	}
 }

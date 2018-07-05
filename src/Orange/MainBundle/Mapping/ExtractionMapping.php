@@ -85,6 +85,7 @@ class ExtractionMapping extends AbstractMapping {
 					'type'=>$value->getTypeAction()->__toString().'#'.$value->getTypeAction()->getCouleur(),
 					'date_debut' => $value->getDateDebut() ? $value->getDateDebut()->format('d-m-Y') : '',
 					'date_initial' => $value->getDateInitial() ? $value->getDateInitial()->format('d-m-Y') : '',
+					'date_fin_prevue' => $value->getDateFinPrevue() ? $value->getDateFinPrevue()->format('d-m-Y') : '',
 					'date_cloture' =>$value->getDateCloture() ? $value->getDateCloture()->format('d-m-Y') : 'En cours',
 				);
 			$i++;
@@ -94,7 +95,7 @@ class ExtractionMapping extends AbstractMapping {
 	
 	public function exportSignalisation($data, $dataStatut) {
 		$arrayStatutSign = array();
-		foreach ($dataStatut as $statut){
+		foreach ($dataStatut as $statut) {
 			$arrayStatutSign[$statut->getCode()] = $statut->getLibelle();
 		}
 		$array = array();
@@ -109,13 +110,21 @@ class ExtractionMapping extends AbstractMapping {
 				$action .= $j.') '.$act->getReference()."\n";
 				$j++;
 			}
-			$array[$i] = array( 'reference' => $value->getReference(),'Instance' => $value->getInstance()->getParent() ? $value->getInstance()->getParent()->__toString().'#'.$value->getInstance()->getParent()->getCouleur():$value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
-					'Périmétre' => $value->getInstance()->__toString().'#'.$value->getInstance()->getCouleur(),
-					'Domaine' => $value->getDomaine()?$value->getDomaine()->__toString():'',
-					'Type' => $value->getTypeSignalisation()?$value->getTypeSignalisation()->__toString().'#'.$value->getTypeSignalisation()->getCouleur():'##ffffff',
+			$instance = $value->getInstance();
+			$array[$i] = array(
+					'reference' => $value->getReference(),
+					'Instance' => $instance->getParent() 
+						? $instance->getParent()->__toString().'##'.$value->getInstance()->getParent()->getCouleur() 
+						: $instance->__toString().'##'.$instance->getCouleur(),
+					'Périmétre' => $instance->__toString().'##'.$instance->getCouleur(),
+					'Domaine' => $value->getDomaine() ? $value->getDomaine()->__toString() : '',
+					'Type' => $value->getTypeSignalisation() ? $value->getTypeSignalisation()->__toString().'##'.$value->getTypeSignalisation()->getCouleur() : '###ffffff',
 					'libelle' => $value->getLibelle(),'description' => $value->getDescription(),
-					'source' => $value->getSource()->getUtilisateur()->getCompletNom(),'date_signale' =>  $value->getDateSignale()->format('d-m-Y'),'direction' => $value->getSource()->getUtilisateur()->getDirection(),
-					'pole' => $value->getSource()->getUtilisateur()->getPole(),'departement' => $value->getSource()->getUtilisateur()->getDepartement(),
+					'source' => $value->getSource()->getUtilisateur()->getCompletNom(),
+					'date_signale' =>  $value->getDateSignale()->format('d-m-Y'),
+					'direction' => $value->getSource()->getUtilisateur()->getDirection(),
+					'pole' => $value->getSource()->getUtilisateur()->getPole(),
+					'departement' => $value->getSource()->getUtilisateur()->getDepartement(),
 					'service' => $value->getSource()->getUtilisateur()->getService(),
 					'statut' => $arrayStatutSign[$value->getEtatCourant()], 'action' => $action ,
 					'motif' => ($value->getEtatCourant()==Statut::SIGNALISATION_INVALIDER ? $value->getSignStatut()->last()->getCommentaire() : 'aucun')

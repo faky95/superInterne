@@ -24,6 +24,7 @@ class SyntheseRepository extends BaseRepository {
 		foreach(array_keys(Synthese::$formules) as $func) {
 			$queryBuilder->addSelect(sprintf('(CASE WHEN SUM(q.total)=0 THEN AVG(q.%s) ELSE SUM(IFNULL(q.%s, 0))/COUNT(q.%s) END) as %s', $func, $func, $func, $func, $func, $func));
 		}
+		$queryBuilder->andWhere('q.type = 1');
 		if($role == Utilisateur::ROLE_ADMIN) {
 			$queryBuilder->andWhere('i.id IN (:instanceIds)')->setParameter('instanceIds', $this->_user->getStructure()->getBuPrincipal()->getInstanceIds());
 		} elseif($role == Utilisateur::ROLE_ANIMATEUR) {
@@ -84,6 +85,7 @@ class SyntheseRepository extends BaseRepository {
 		foreach(array_keys(Synthese::$formules) as $formule) {
 			$queryBuilder->addSelect(sprintf('AVG(q.%s) as %s', $formule, $formule));
 		}
+		$queryBuilder->andWhere('q.type = 1');
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
 			foreach($instances as $data) {
@@ -142,6 +144,7 @@ class SyntheseRepository extends BaseRepository {
 			->andWhere('s1.rgt <= s.rgt')
 			->andWhere('b.id=s.buPrincipal')
 			->andWhere(' e.id IS NULL');
+		$queryBuilder->andWhere('q.type = 1');
 		foreach(Synthese::$fields as $field) {
 			$queryBuilder->addSelect(sprintf('SUM(q.%s) as %s', $field, $field));
 		}

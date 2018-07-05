@@ -146,5 +146,5 @@
 {% block pagescript %}
 	{{ parent() }}
 	{{ block_render('::form_div_layout.html.twig','datatable_options',{with_tag: 1, checkbox: 1}) }}
-	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_de_mes_actions'), nosorting: {0:0, 1:1, 2:2, 3:3, 4:4, 5:5, 6:6} } %}
+	{% include 'OrangeQuickMakingBundle:Extra:datatable.html.twig' with {idTable: 'actionTable', url: path('liste_de_mes_actions'), nosorting: [0, 1, 4, 5, 7] } %}
 {% endblock %}
