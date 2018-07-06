@@ -193,7 +193,7 @@ class ActionController extends BaseController
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->myActions($criteria, $this->getUser());
-		$queryExport = $em->getRepository('OrangeMainBundle:Action')->listAllElementsForExport($criteria, $this->getUser());
+		$queryExport = $em->getRepository('OrangeMainBundle:Action')->myFilterExport($criteria, $this->getUser());
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder ,'addRowInTableWithCheckBox');
 	}
@@ -265,7 +265,7 @@ class ActionController extends BaseController
 	 * @Route("/export_action", name="export_action")
 	 */
 	public function exportAction() {
-		$em = $this->getDoctrine()->getEntityManager();
+		$em = $this->getDoctrine()->getManager();
 		$response = new Response();
 		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));

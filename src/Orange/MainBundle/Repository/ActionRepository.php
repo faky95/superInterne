@@ -67,9 +67,7 @@ class ActionRepository extends BaseRepository {
 	 * Methode utilise pour charger la liste des actions
 	 * @param array $criteria
 	 */
-	public function listArchivedQueryBuilder($criteria) {
-		$queryBuilder = $queryBuilder = $this->createQueryBuilder('a')
-			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel');
+	public function addCriteria($queryBuilder, $criteria, $column = array()) {
 		$structure = $criteria ? $criteria->getStructure() : null;
 		$domaine = $criteria ? $criteria->getDomaine() : null;
 		$instance = $criteria ? $criteria->getInstance() : null;
@@ -83,39 +81,49 @@ class ActionRepository extends BaseRepository {
 		$toClot = $criteria ? $criteria->hasToCloture() : null;
 		$statut = $criteria ? $criteria->hasStatut() : null;
 		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
-		if($structure) {
+		if($structure && !in_array('structure', $column)) {
 			$queryBuilder->innerJoin('a.structure', 's')
 				->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')
 				->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())
 				->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
 		}
-		if($domaine) {
+		if($domaine && !in_array('domaine', $column)) {
 			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
 		}
-		if($instance) {
+		if($instance && !in_array('instance', $column)) {
 			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
 		}
-		if($porteur) {
+		if($porteur && !in_array('porteur', $column)) {
 			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
 		}
-		if($type) {
+		if($type && !in_array('type', $column)) {
 			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
 		}
-		if($priorite) {
+		if($priorite && !in_array('priorite', $column)) {
 			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
 		}
-		if($statut) {
+		if($statut && !in_array('statut', $column)) {
 			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
 		}
-		if($fromDeb) {
+		if($fromDeb && !in_array('fromDeb', $column)) {
 			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
 		}
-		if($fromInit) {
+		if($fromInit && !in_array('fromInit', $column)) {
 			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
 		}
-		if($fromClot) {
+		if($fromClot && !in_array('fromClot', $column)) {
 			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
 		}
+	}
+	
+	/**
+	 * Methode utilise pour charger la liste des actions
+	 * @param array $criteria
+	 */
+	public function listArchivedQueryBuilder($criteria) {
+		$queryBuilder = $queryBuilder = $this->createQueryBuilder('a')
+			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel');
+		$this->addCriteria($queryBuilder, $criteria);
 		$queryBuilder->andWhere($queryBuilder->expr()->in('IDENTITY(a.instance)', $this->_user->getStructure()->getBuPrincipal()->getInstanceIds()));
 		return $queryBuilder->andWhere("a.etatCourant LIKE 'ABANDONNEE_ARCHIVEE' OR a.etatCourant LIKE 'SOLDEE_ARCHIVEE'");
 	}
@@ -177,18 +185,18 @@ class ActionRepository extends BaseRepository {
 		return $queryBuilder;
 	}
 	
-	public function alertAnimateurGlobal($bu, $espace, $projet){
+	public function alertAnimateurGlobal($bu, $espace, $projet) {
 		$queryBuilder = $this->createQueryBuilder('a' )
-		                     ->leftJoin('a.porteur', 'u' )
-		                     ->leftJoin('u.structure', 's' )
-		                     ->leftJoin('a.instance', 'i' )
-		                     ->leftJoin('i.animateur', 'an' )
-		                     ->where("   a.etatReel LIKE 'ACTION_DEMANDE_ABANDON' OR 
-		                     		       a.etatReel LIKE 'ACTION_DEMANDE_REPORT' OR 
-		                     		       a.etatReel LIKE 'ACTION_FAIT_DELAI' OR 
-		                     		       a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'" )
-		                     ->orderBy('a.id', 'ASC' )
-		                     ->addOrderBy('a.dateAction', 'DESC' );
+                     ->leftJoin('a.porteur', 'u' )
+                     ->leftJoin('u.structure', 's' )
+                     ->leftJoin('a.instance', 'i' )
+                     ->leftJoin('i.animateur', 'an' )
+                     ->where("   a.etatReel LIKE 'ACTION_DEMANDE_ABANDON' OR 
+                     		       a.etatReel LIKE 'ACTION_DEMANDE_REPORT' OR 
+                     		       a.etatReel LIKE 'ACTION_FAIT_DELAI' OR 
+                     		       a.etatReel LIKE 'ACTION_FAIT_HORS_DELAI'" )
+                     ->orderBy('a.id', 'ASC' )
+                     ->addOrderBy('a.dateAction', 'DESC' );
         if($bu) {
              $queryBuilder->andWhere('IDENTITY(s.buPrincipal) = :bu')->setParameter('bu', $bu);
         }
@@ -278,50 +286,8 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function listAllElementsForExport($criteria, $porteur = null) {
 		$queryBuilder = $this->filterExport();
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		// $queryBuilder->select('partial a.{id, libelle, reference}');
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -333,50 +299,21 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function myActions($criteria, $porteur = null) {
 		$queryBuilder = $this->myFilter();
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		// $queryBuilder->select('partial a.{id, libelle, reference}');
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
+		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
+	}
+	
+	/**
+	 * Methode utilise pour charger la liste des actions
+	 *
+	 * @param unknown $criteria
+	 * @param unknown $porteur
+	 */
+	public function myActionsForExport($criteria, $porteur = null) {
+		$queryBuilder = $this->myFilterExport();
+		// $queryBuilder->select('partial a.{id, libelle, reference}');
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -388,52 +325,7 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function listAllElements($criteria, $porteur = null) {
 		$queryBuilder = $this->filter();
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')
-				->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')
-				->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())
-				->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -454,50 +346,8 @@ class ActionRepository extends BaseRepository {
 	
 	public function listActionsByCriteria($criteria) {
 		$queryBuilder = $this->filter();
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		// $queryBuilder->select('partial a.{id, libelle, reference}');
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -652,12 +502,32 @@ class ActionRepository extends BaseRepository {
 	}
 	
 	/**
-	 *
 	 * @return QueryBuilder
 	 */
 	public function myFilter() {
 		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi')->where('port.id = :userId');
 		return $queryBuilder->setParameter('userId', $this->_user->getId());
+	}
+	
+	/**
+	 * @return QueryBuilder
+	 */
+	public function myFilterExport() {
+		return $this->myFilter()->select('partial insta.{id, libelle, couleur}, partial priori.{id, couleur, libelle},
+				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial, dateFinPrevue, dateCloture},
+				partial dom.{id, libelleDomaine}, partial type.{id, couleur, type}, partial cont.{id},
+				partial cuser.{id, prenom, nom},partial port.{id, prenom, nom, structure},
+				partial av.{id, description}, partial struct.{id, service, departement, pole, direction},
+				GROUP_CONCAT(distinct av.description separator \' .__ \') avancements,
+				GROUP_CONCAT(distinct CONCAT(cuser.prenom, \'  \', cuser.nom) ) contributeurs')
+				->leftJoin('a.contributeur', 'cont')
+				->leftJoin('insta.espace', 'esp')
+				->leftJoin('cont.utilisateur', 'cuser')
+				->leftJoin('a.avancement', 'av')
+				->leftJoin('a.structure', 'struct')
+				->innerJoin('a.typeAction', 'type')
+				->leftJoin('a.domaine', 'dom')
+				->groupBy('a.id');
 	}
 	
 	/**
@@ -836,48 +706,14 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function getActionCollaborateursForExport($criteria) {
 		$structure = $this->_user->getStructure();
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
-		
 		$queryBuilder = $this->filterExport();
-		$queryBuilder->innerJoin('a.porteur', 'u')->innerJoin('a.structure', 's')->andWhere('u!=:userid')->setParameter('userid', $this->_user)->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
-		if(isset($domaine)) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if(isset($instance)) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if(isset($porteur)) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if(isset($type)) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if(isset($statut)) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if(isset($fromDeb)) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if(isset($fromInit)) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if(isset($fromClot)) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$queryBuilder->innerJoin('a.porteur', 'u')->innerJoin('a.structure', 's')
+			->andWhere('u!=:userid')->setParameter('userid', $this->_user)
+			->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())
+			->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())
+			->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())
+			->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
+		$this->addCriteria($queryBuilder, $criteria, array('structure'));
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -888,47 +724,14 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function getActionCollaborateurs($criteria) {
 		$structure = $this->_user->getStructure();
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		$queryBuilder = $this->filter();
-		$queryBuilder->innerJoin('a.porteur', 'u')->innerJoin('a.structure', 's')->andWhere('u!=:userid')->setParameter('userid', $this->_user)->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
-		if(isset($domaine)) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if(isset($instance)) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if(isset($porteur)) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if(isset($type)) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if(isset($statut)) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if(isset($fromDeb)) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if(isset($fromInit)) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if(isset($fromClot)) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$queryBuilder->innerJoin('a.porteur', 'u')->innerJoin('a.structure', 's')
+			->andWhere('u!=:userid')->setParameter('userid', $this->_user)
+			->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())
+			->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())
+			->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())
+			->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
+		$this->addCriteria($queryBuilder, $criteria, array('structure'));
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -939,52 +742,10 @@ class ActionRepository extends BaseRepository {
 	public function getActionByStructForExport($structure_id, $criteria) {
 		$structure = $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id);
 		$queryBuilder = $this->filterExport();
-		$struct = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		if($structure) {
 			$queryBuilder->leftJoin('a.structure', 's')->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
 		}
-		if($struct) {
-			$queryBuilder->innerJoin('a.structure', 'st')->andWhere('st.lvl >= :level')->andWhere('st.root = :root')->andWhere('st.lft >= :left')->andWhere('st.rgt <= :right')->setParameter('level', $struct->getLvl())->setParameter('root', $struct->getRoot())->setParameter('left', $struct->getLft())->setParameter('right', $struct->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -995,51 +756,10 @@ class ActionRepository extends BaseRepository {
 		$structure = $this->_em->getRepository('OrangeMainBundle:Structure')->find($structure_id);
 		$queryBuilder = $this->filter();
 		$struct = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$instance = $criteria ? $criteria->getInstance() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		if(!isset($struct)) {
 			$queryBuilder->leftJoin('a.structure', 's')->andWhere('s.lvl >= :lvl')->setParameter('lvl', $structure->getLvl())->andWhere('s.root = :root')->setParameter('root', $structure->getRoot())->andWhere('s.lft  >= :lft')->setParameter('lft', $structure->getLft())->andWhere('s.rgt <= :rgt')->setParameter('rgt', $structure->getRgt());
 		}
-		if(isset($struct)) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $struct->getLvl())->setParameter('root', $struct->getRoot())->setParameter('left', $struct->getLft())->setParameter('right', $struct->getRgt());
-		}
-		if(isset($domaine)) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if(isset($instance)) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if(isset($porteur)) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if(isset($type)) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if(isset($statut)) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if(isset($fromDeb)) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if(isset($fromInit)) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if(isset($fromClot)) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -1047,53 +767,12 @@ class ActionRepository extends BaseRepository {
 	 * @return \Doctrine\ORM\QueryBuilder
 	 */
 	public function getActionByInstance($instance_id, $criteria) {
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
 		$instance = $criteria ? $criteria->getInstance() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		$queryBuilder = $this->filter()->innerJoin('a.instance', 'i');
-		if(! $instance) {
+		if(!$instance) {
 			$queryBuilder->andWhere('i.id=:instance_id')->setParameter('instance_id', $instance_id);
 		}
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($instance) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria);
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	
@@ -1103,53 +782,11 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function getActionByInstanceForExport($instance_id, $criteria) {
 		$instance = $this->_em->getRepository('OrangeMainBundle:Instance')->find($instance_id);
-		$structure = $criteria ? $criteria->getStructure() : null;
-		$domaine = $criteria ? $criteria->getDomaine() : null;
-		$inst = $criteria ? $criteria->getInstance() : null;
-		$porteur = $criteria ? $criteria->getPorteur() : null;
-		$priorite = $criteria ? $criteria->getPriorite() : null;
-		$type = $criteria ? $criteria->getTypeAction() : null;
-		$toDeb = $criteria ? $criteria->hasToDebut() : null;
-		$fromDeb = $criteria ? $criteria->hasFromDebut() : null;
-		$toInit = $criteria ? $criteria->hasToInitial() : null;
-		$fromInit = $criteria ? $criteria->hasFromInitial() : null;
-		$toClot = $criteria ? $criteria->hasToCloture() : null;
-		$statut = $criteria ? $criteria->hasStatut() : null;
-		$fromClot = $criteria ? $criteria->hasFromCloture() : null;
 		$queryBuilder = $this->filterExport();
 		if($instance) {
 			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $instance);
 		}
-		if($structure) {
-			$queryBuilder->innerJoin('a.structure', 's')->andWhere('s.lvl >= :level')->andWhere('s.root = :root')->andWhere('s.lft >= :left')->andWhere('s.rgt <= :right')->setParameter('level', $structure->getLvl())->setParameter('root', $structure->getRoot())->setParameter('left', $structure->getLft())->setParameter('right', $structure->getRgt());
-		}
-		if($domaine) {
-			$queryBuilder->andWhere('a.domaine = :domaine')->setParameter('domaine', $domaine);
-		}
-		if($inst) {
-			$queryBuilder->andWhere('a.instance = :instance')->setParameter('instance', $inst);
-		}
-		if($porteur) {
-			$queryBuilder->andWhere('a.porteur = :porteur')->setParameter('porteur', $porteur);
-		}
-		if($type) {
-			$queryBuilder->andWhere('a.typeAction = :type')->setParameter('type', $type);
-		}
-		if($priorite) {
-			$queryBuilder->andWhere('a.priorite = :priorite')->setParameter('priorite', $priorite);
-		}
-		if($statut) {
-			$queryBuilder->andWhere('a.etatReel = :code')->setParameter('code', $statut->getCode());
-		}
-		if($fromDeb) {
-			$queryBuilder->andWhere('a.dateDebut >= :from and a.dateDebut <= :to')->setParameter('to', $toDeb)->setParameter('from', $fromDeb);
-		}
-		if($fromInit) {
-			$queryBuilder->andWhere('a.dateInitial >= :from and a.dateInitial <= :to')->setParameter('to', $toInit)->setParameter('from', $fromInit);
-		}
-		if($fromClot) {
-			$queryBuilder->andWhere('a.dateCloture >= :from and a.dateCloture <= :to')->setParameter('to', $toClot)->setParameter('from', $fromClot);
-		}
+		$this->addCriteria($queryBuilder, $criteria, array('instance'));
 		return $queryBuilder->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE'")->andWhere("a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE'");
 	}
 	/**
@@ -1431,6 +1068,7 @@ class ActionRepository extends BaseRepository {
 		$data = $this->combineTacheAndAction($data);
 		return $data;
 	}
+	
 	public function combineTacheAndAction($data) {
 		$arrData = array();
 		$i = 0;
