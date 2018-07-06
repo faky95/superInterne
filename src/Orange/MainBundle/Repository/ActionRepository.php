@@ -505,7 +505,12 @@ class ActionRepository extends BaseRepository {
 	 * @return QueryBuilder
 	 */
 	public function myFilter() {
-		$queryBuilder = $this->createQueryBuilder('a')->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi')->where('port.id = :userId');
+		$queryBuilder = $this->createQueryBuilder('a')
+			->innerJoin('a.instance', 'insta')->leftJoin('insta.espace', 'espa')
+			->leftJoin('a.signalisation', 'sign')->leftJoin('sign.source', 'src')
+			->innerJoin('a.porteur', 'port')->leftJoin('a.priorite', 'priori')
+			->innerJoin('OrangeMainBundle:Statut', 'sr', 'WITH', 'sr.code = a.etatReel')
+			->innerJoin('a.porteur', 'mp')->innerJoin('a.instance', 'mi')->where('port.id = :userId');
 		return $queryBuilder->setParameter('userId', $this->_user->getId());
 	}
 	

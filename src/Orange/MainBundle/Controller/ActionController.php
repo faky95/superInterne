@@ -193,7 +193,7 @@ class ActionController extends BaseController
 		$this->modifyRequestForForm($request, $this->get('session')->get('action_criteria'), $form);
 		$criteria = $form->getData();
 		$queryBuilder = $em->getRepository('OrangeMainBundle:Action')->myActions($criteria, $this->getUser());
-		$queryExport = $em->getRepository('OrangeMainBundle:Action')->myFilterExport($criteria, $this->getUser());
+		$queryExport = $em->getRepository('OrangeMainBundle:Action')->myActionsForExport($criteria, $this->getUser());
 		$this->get('session')->set('data', array('query' => $queryExport->getDql(), 'param' =>$queryExport->getParameters()));
 		return $this->paginate($request, $queryBuilder ,'addRowInTableWithCheckBox');
 	}
