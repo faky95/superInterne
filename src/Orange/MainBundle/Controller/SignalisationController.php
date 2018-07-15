@@ -517,9 +517,7 @@ class SignalisationController extends BaseController
                 	$destinataire = InstanceUtils::animateursEmail($em, $instance);
                 	$commentaire = 'Une nouvelle signalisation a été postée par '.$this->getUser()->getCompletNom().' au périmétre: '.$instance->getLibelle().'. '
                 			.$animateur.' est prié de prendre en charge cette signalisation. ';
-                	$signStatut = $em->getRepository('OrangeMainBundle:SignalisationStatut')->getStatut($value->getId());
-                	Notification::notificationSignWithCopy($helper, $subject, $destinataire, array($value->getSource()->getUtilisateur()->getEmail()), $commentaire, $signStatut[0]);
-                	//$this->get('orange.main.mailer')->notifNewSignalisation($destinataire, array($value->getSource()->getUtilisateur()->getEmail()), $value);
+                	Notification::notificationSignWithCopy($helper, $subject, $destinataire, array($value->getSource()->getUtilisateur()->getEmail()), $commentaire, $value);
                 }
                 $this->get('session')->getFlashBag()->add('success', "Le chargement s'est effectué avec succés! Nombre de signalisation chargé: $nbr");
                 return $this->redirect($this->generateUrl('les_signalisations'));

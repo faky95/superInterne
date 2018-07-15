@@ -71,7 +71,7 @@ class TacheController extends BaseController
      * @Route("/export_occurence", name="export_occurence")
      */
     public function exportAction() {
-    	$em = $this->getDoctrine()->getEntityManager();
+    	$em = $this->getDoctrine()->getManager();
     	$response = new Response();
     	$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     	$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des occurences du %s.xlsx', date('YmdHis')));

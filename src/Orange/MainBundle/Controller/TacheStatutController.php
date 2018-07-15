@@ -220,9 +220,10 @@ class TacheStatutController extends BaseController
 			switch ($etat) {
 				case 'EVENEMENT_DEMANDE_SOLDE':
 					$form = $this->createForm(new TacheStatutType(OrangeMainForms::TACHESTATUT_FAIT), $statutTache);
+					$form->handleRequest($request);
+					$tache->setDateFinExecut($statutTache->dateFinExecut);
 					$target = $animateurs;
-					$subject = "Fin de traitement d'une tâche";
-					$tache->getDateCloture(new \DateTime('NOW'));
+					$subject = "Fin de traitement d'une tâche";	
 					$statut = ($tache->getDateInitial() > new \DateTime('NOW')) ? Statut::ACTION_FAIT_DELAI : Statut::ACTION_FAIT_HORS_DELAI;
 					$infos = sprintf("La tâche %s a été traitée par %s . %s est invité à prendre en charge.", 
 								$tache->getReference(), $this->getUser()->getCompletNom(), $action->getAnimateur()->getNomComplet()
@@ -230,9 +231,9 @@ class TacheStatutController extends BaseController
 					break;
 				case 'EVENEMENT_DEMANDE_ABANDON':
 					$form = $this->createForm(new TacheStatutType(OrangeMainForms::TACHESTATUT_DEMANDE_ABANDON), $statutTache);
+					$form->handleRequest($request);
 					$target = $animateurs;
 					$subject = "Demande d'abandon d'une tâche";
-					$tache->getDateCloture(new \DateTime('NOW'));
 					$statut = Statut::ACTION_DEMANDE_ABANDON;
 					$infos = sprintf("%s a demandé un abandon de la tâche %s. %s est invité à prendre en charge.", 
 								$tache->getReference(), $this->getUser()->getCompletNom(), $action->getAnimateur()->getNomComplet()
@@ -240,8 +241,10 @@ class TacheStatutController extends BaseController
 					break;
 				case 'EVENEMENT_VALIDER':
 					$form = $this->createForm(new TacheStatutType(), $statutTache);
+					$form->handleRequest($request);
 					$copy = array_merge($copy, $animateurs);
 					$target = array($tache->getActionCyclique()->getAction()->getPorteur()->getEMail());
+					$tache->getDateCloture(new \DateTime('NOW'));
 					if($tache->getEtatCourant()==Statut::ACTION_DEMANDE_ABANDON) {
 						$subject = "Abandon d'une tâche";
 						$statut = Statut::ACTION_ABANDONNEE;
@@ -251,7 +254,7 @@ class TacheStatutController extends BaseController
 						$infos = sprintf("La clôture de la tâche %s traitée par %s a été soldée par %s.", 
 									$tache->getReference(), $action->getPorteur()->getCompletNom(), $this->getUser()->getCompletNom()
 								);
-						if($tache->getDateInitial() > $tache->getDateCloture()) {
+						if($tache->getDateInitial() >= $tache->getDateFinExecut()) {
 							$statut = Statut::ACTION_SOLDEE_DELAI;
 						} else {
 							$statut = Statut::ACTION_SOLDEE_HORS_DELAI;
@@ -260,6 +263,7 @@ class TacheStatutController extends BaseController
 					break;
 				case 'EVENEMENT_INVALIDER':
 					$form = $this->createForm(new TacheStatutType(), $statutTache);
+					$form->handleRequest($request);
 					$copy = array_merge($copy, $animateurs);
 					$target = array($tache->getActionCyclique()->getAction()->getPorteur()->getEMail());
 					if($tache->getEtatCourant()==Statut::ACTION_DEMANDE_ABANDON) {
@@ -270,7 +274,7 @@ class TacheStatutController extends BaseController
 									$tache->getReference(), $action->getPorteur()->getCompletNom(), $this->getUser()->getCompletNom()
 								);
 					}
-					if($tache->getDateInitial() > $tache->getDateCloture()) {
+					if($tache->getDateInitial() > new \DateTime('NOW')) {
 						$statut = Statut::ACTION_NON_ECHUE;
 					} else {
 						$statut = Statut::ACTION_ECHUE_NON_SOLDEE;
@@ -279,7 +283,6 @@ class TacheStatutController extends BaseController
 					break;
 			}
 			if($statut) {
-				$form->handleRequest($request);
 				$statutTache->setTache($tache);				
 				$typeStatut = $em->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_ACTION);
 				$statutEntity = $em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
@@ -289,7 +292,7 @@ class TacheStatutController extends BaseController
 				$em->persist($tache);
 				foreach($statutTache->erq as $erq) {
 					if($erq->getFile()) {
-						$erq->setType($this->container->getParameter('types')['demande_solde']);
+						$erq->setType($this->getParameter('types')['demande_solde']);
 						$erq->setNomFichier($erq->getFile()->getClientOriginalName());
 						$erq->setTache($tache);
 						$erq->setUtilisateur($this->getUser());
