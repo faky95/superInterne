@@ -120,7 +120,7 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function listAllForExport($criteria) {
 		$queryBuilder = $this->listAllElements($criteria);
-		return $queryBuilder->select('PARTIAL sign.{ id, reference, dateSignale }, PARTIAL a.{ id, reference }, PARTIAL i.{ id, libelle }, PARTIAL ts.{ id, type }')
+		return $queryBuilder->select('PARTIAL sign.{ id, reference, dateSignale, etatCourant }, PARTIAL a.{ id, reference }, PARTIAL i.{ id, libelle }, PARTIAL ts.{ id, type }')
 			->addSelect('PARTIAL s.{ id }, PARTIAL u.{ id, prenom, nom }, PARTIAL shs.{ id, commentaire }, PARTIAL d.{ id, libelleDomaine }')
 			->addSelect('PARTIAL st.{ id, direction, pole, departement, service }')
 			->innerJoin('sign.instance', 'i')
