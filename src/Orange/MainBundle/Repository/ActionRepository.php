@@ -881,7 +881,7 @@ class ActionRepository extends BaseRepository {
 			->innerJoin('a.instance', 'i')
 			->innerJoin('a.structure', 's1')
 			->andWhere('s1.lvl >= s.lvl')->andWhere('s1.root = s.root')->andWhere('s1.lft  >= s.lft')->andWhere('s1.rgt <= s.rgt')
-			->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE' AND acl IS NULL");
+			->andWhere("a.etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND a.etatCourant NOT LIKE 'SOLDEE_ARCHIVEE' AND acl.id IS NULL");
 		if($role == Utilisateur::ROLE_ANIMATEUR) {
 			$instancesIds = array();
 			foreach($instances as $data)
