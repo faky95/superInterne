@@ -263,7 +263,7 @@ class Mailer
 			->setContentType('text/html')
 			->setCharset('utf-8');
     	if($trace) {
-    		$mail->setBcc(array('madiagne.sylla@orange-sonatel.com'));
+    		//$mail->setBcc(array('madiagne.sylla@orange-sonatel.com'));
     	}
 		return $this->mailer->send($mail);
     }
