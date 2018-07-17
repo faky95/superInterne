@@ -301,8 +301,8 @@ class Signalisation
      */
     public function addSignStatut(\Orange\MainBundle\Entity\SignalisationStatut $signStatut)
     {
+    	$signStatut->setSignalisation($this);
         $this->signStatut[] = $signStatut;
-
         return $this;
     }
 

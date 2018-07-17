@@ -285,25 +285,25 @@ class Reporting extends PHPExcelAdvanced {
 				}
 				if($b == "G") {
 					// $sheet->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getDirection():' ')->getColumnDimension($b)->setAutoSize(true);
-					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDirection() : ' ')->getColumnDimension($b)->setAutoSize(true);
+					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getDirection() : ' ')->getColumnDimension($b)->setAutoSize(true);
 					// $sheet->getStyle($b.$y)->applyFromArray($data);
 					$b ++;
 				}
 				if($b == "H") {
 					// $sheet->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getPole():' ')->getColumnDimension($b)->setAutoSize(true);
-					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getPole() : ' ')->getColumnDimension($b)->setAutoSize(true);
+					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getPole() : ' ')->getColumnDimension($b)->setAutoSize(true);
 					// $sheet->getStyle($b.$y)->applyFromArray($data);
 					$b ++;
 				}
 				if($b == "I") {
 					// $sheet->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getDepartement():' ')->getColumnDimension($b)->setAutoSize(true);
-					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getDepartement() : ' ')->getColumnDimension($b)->setAutoSize(true);
+					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getDepartement() : ' ')->getColumnDimension($b)->setAutoSize(true);
 					// $sheet->getStyle($b.$y)->applyFromArray($data);
 					$b ++;
 				}
 				if($b == "J") {
 					// $sheet->setCellValue($b.$y, $value->getPorteur()?$value->getPorteur()->getService():' ')->getColumnDimension($b)->setAutoSize(true);
-					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getArchitectureStructure()->getService() : ' ')->getColumnDimension($b)->setAutoSize(true);
+					$sheet->setCellValue($b.$y, $value->getStructure() ? $value->getStructure()->getService() : ' ')->getColumnDimension($b)->setAutoSize(true);
 					// $sheet->getStyle($b.$y)->applyFromArray($data);
 					$b ++;
 				}

@@ -16,25 +16,28 @@ class OrientationActionType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-			$builder->add('actionGenerique','entity', array('label'=>'Action générique : ', 'class'=>'Orange\MainBundle\Entity\ActionGenerique',
-					'empty_value' => 'Choisir l\'action ', 'property' => 'libelle',
-					'query_builder' => function(EntityRepository $ir)use($options){
-							$user = $options['attr']['user'];
-							$ids    = $options['attr']['ids'];
-							$queryBuilder = $ir->createQueryBuilder('a');
-							$queryBuilder->leftJoin('a.actionGeneriqueHasAction', 'aha')
-					                     ->where('IDENTITY(a.porteur) = :user')->setParameter('user', $user->getId())
-					                     ->andWhere('a.statut  = :statut')->setParameter('statut', Statut::ACTION_NON_ECHUE);
-							if(is_array($ids)==false)
-								$queryBuilder->andWhere('IDENTITY(aha.action) != :id or aha.id is null')->setParameter('id', $ids);
-							else{
-								$queryBuilder->andWhere('IDENTITY(aha.action) not in (:id) or aha.id is null')->setParameter('id', $ids);
-							}
-							return $queryBuilder;
-					}
+		$builder->add('actionGenerique', 'entity', array('label'=>'Action générique : ', 'class'=>'Orange\MainBundle\Entity\ActionGenerique',
+					'empty_value' => 'Choisir l\'action ', 'property' => 'libelle', 'required'   => true, 'query_builder' => $this->addQueryBuilderAG($options)
 			))
 			->add('save', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
 			->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel', 'data-dismiss'=>'modal')));
+    }
+    
+    private function addQueryBuilderAG($options) {
+    	return function(EntityRepository $ir) use($options) {
+	    	$user = $options['attr']['user'];
+	    	$ids    = $options['attr']['ids'];
+	    	$queryBuilder = $ir->createQueryBuilder('a');
+	    	$queryBuilder->leftJoin('a.actionGeneriqueHasAction', 'aha')
+		    	->where('IDENTITY(a.porteur) = :user')->setParameter('user', $user->getId())
+		    	->andWhere('a.statut  = :statut')->setParameter('statut', Statut::ACTION_NON_ECHUE);
+	    	if(is_array($ids)==false) {
+	    		$queryBuilder->andWhere('IDENTITY(aha.action) != :id or aha.id is null')->setParameter('id', $ids);
+	    	} else {
+	    		$queryBuilder->andWhere('IDENTITY(aha.action) not in (:id) or aha.id is null')->setParameter('id', $ids);
+	    	}
+	    	return $queryBuilder;
+    	};
     }
     
     /**
@@ -51,6 +54,6 @@ class OrientationActionType extends AbstractType
      */
     public function getName()
     {
-        return 'orange_mainbundle_orientation_action';
+        return 'orientation_action';
     }
 }

@@ -75,7 +75,7 @@ class Query {
 				return $statement->fetchAll();
 	}
 	
-	public function orienterManyActions($datas){
+	public function orienterManyActions($datas) {
 		$connection  =  $this->container->get('database_connection');
 		$ids         =  is_array($datas['ids'])==true ? $datas['ids'] : array($datas['ids']);
 		$stringfyIds =  implode(',', $ids);

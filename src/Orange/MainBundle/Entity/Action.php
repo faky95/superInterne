@@ -148,7 +148,7 @@ class Action
     
     /**
      * @var Utilisateur
-     * @ORM\ManyToOne(targetEntity="Utilisateur", inversedBy="action")
+     * @ORM\ManyToOne(targetEntity="Utilisateur")
      * @ORM\JoinColumns({
      *   @ORM\JoinColumn(name="porteur_id", referencedColumnName="id")
      * })
@@ -279,7 +279,6 @@ class Action
     
     /**
      * @var \Orange\MainBundle\Entity\ActionGenerique
-     *
      */
     private $actionGenerique;
     

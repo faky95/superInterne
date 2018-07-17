@@ -18,6 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * ActionGenerique controller
@@ -262,20 +263,26 @@ class ActionGeneriqueController extends BaseController
     public function orientationAction(Request $request, $data) {
     	$ids    = (strpos($data, ',')!=false) ? explode(',', $data) : $data;
     	$action = new Action();
-    	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(),'ids'=>$ids)));
-    	if($request->getMethod() == "POST"){
+    	$form   = $this->createCreateForm($action , 'OrientationAction', array('attr'=>array('user'=>$this->getUser(), 'ids'=>$ids)));
+    	if($request->getMethod() == "POST") {
     		$form->handleRequest($request);
-    		try {
-    			$datas = array("ids"=>$ids, "user"=>$this->getUser(),"actiongenerique"=>$action->getActionGenerique());
-    			$this->get('orange.main.query')->orienterManyActions($datas);
-    			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
-    			return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
-    		} catch (DBALException $e) { 
-    			$this->get('session')->getFlashBag()->add('error', array ('title' => 'Message d\'erreur', 'body' => nl2br($e->getMessage())));
-    			return new JsonResponse(array('url' => $this->generateUrl('mes_actions')));
-    		}
+    		if($form->isValid()) {
+	    		try {
+	    			$datas = array("ids"=>$ids, "user"=>$this->getUser(), "actiongenerique"=>$action->getActionGenerique());
+	    			$this->get('orange.main.query')->orienterManyActions($datas);
+	    			$this->get('session')->getFlashBag()->add('success', array('title' => 'Notification', 'body' =>  'Orientation vers l\'action générique effectuée  avec succés!'));
+	    			return new JsonResponse(array('url' => $this->generateUrl('les_actiongeneriques')));
+	    		} catch (DBALException $e) { 
+	    			$this->get('session')->getFlashBag()->add('error', array ('title' => 'Message d\'erreur', 'body' => nl2br($e->getMessage())));
+	    			return new JsonResponse(array('url' => $this->generateUrl('mes_actions')));
+	    		}
+	    	} else {
+	    		return $this->render('OrangeMainBundle:ActionGenerique:orientation.html.twig', array(
+	    				'data' => $data, 'form' => $form->createView()), new Response(null, 303)
+	    			);
+	    	}
     	}
-    	return array('data'=> $data,'form'=>$form->createView());
+    	return array('data'=> $data, 'form'=>$form->createView());
     }  
    
     /**

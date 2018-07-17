@@ -111,6 +111,7 @@ class ExtractionMapping extends AbstractMapping {
 				$j++;
 			}
 			$instance = $value->getInstance();
+			var_dump($value->getSource()->getUtilisateur()->getStructure());exit;
 			$array[$i] = array(
 					'reference' => $value->getReference(),
 					'Instance' => $instance->getParent() 

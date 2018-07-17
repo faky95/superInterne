@@ -4,7 +4,6 @@ namespace Orange\MainBundle\Repository;
 use Orange\MainBundle\Entity\Utilisateur;
 use Doctrine\ORM\QueryBuilder;
 use Orange\MainBundle\Entity\Signalisation;
-use Orange\MainBundle\CustomInterface\RepositoryInterface;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Orange\MainBundle\Entity\Statut;
 
@@ -121,14 +120,16 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function listAllForExport($criteria) {
 		$queryBuilder = $this->listAllElements($criteria);
-		return $queryBuilder->select('sign, PARTIAL a.{ id, reference }, PARTIAL i.{ id, libelle }, PARTIAL ts.{ id, type }')
+		return $queryBuilder->select('PARTIAL sign.{ id, reference }, PARTIAL a.{ id, reference }, PARTIAL i.{ id, libelle }, PARTIAL ts.{ id, type }')
 			->addSelect('PARTIAL s.{ id }, PARTIAL u.{ id, prenom, nom }, PARTIAL shs.{ id, commentaire }, PARTIAL d.{ id, libelleDomaine }')
+			->addSelect('PARTIAL st.{ id, direction, pole, departement, service }')
 			->innerJoin('sign.instance', 'i')
 			->innerJoin('sign.source', 's')
 			->innerJoin('sign.domaine', 'd')
 			->innerJoin('sign.typeSignalisation', 'ts')
 			->innerJoin('sign.signStatut', 'shs')
 			->innerJoin('s.utilisateur', 'u')
+			->innerJoin('u.structure', 'st')
 			->leftJoin('sign.action', 'a');
 	}
 	/**
@@ -183,15 +184,14 @@ class SignalisationRepository extends BaseRepository {
 	
 	public function totalSignalisation()
 	{
-		$data= $this->filter()
-					->select('COUNT(DISTINCT sign.id) as total')
-					->innerJoin('sign.signStatut', 'signSta')
-					->innerJoin('signSta.statut', 's')
- 					->andWhere('s.code =:statut_code')
- 					->setParameter('statut_code', Statut::SIGNALISATION_PRISE_CHARGE)
-					->getQuery()
-					->getOneOrNullResult()
-					;
+		$data = $this->filter()
+			->select('COUNT(DISTINCT sign.id) as total')
+			->innerJoin('sign.signStatut', 'signSta')
+			->innerJoin('signSta.statut', 's')
+ 			->andWhere('s.code =:statut_code')
+ 			->setParameter('statut_code', Statut::SIGNALISATION_PRISE_CHARGE)
+			->getQuery()
+			->getOneOrNullResult();
 		return $data['total'];
 	}
 	
@@ -248,37 +248,34 @@ class SignalisationRepository extends BaseRepository {
 	{
 		$date =  new \DateTime();
 		$queryBuilder = $this->createQueryBuilder('i')
-		->innerJoin('i.source', 'u')
-		->innerJoin('i.instance', 'ins')
-		->innerJoin('i.constatateur', 'd')
-		->where('i.dateSignale < :date')
-		->andWhere("i.etatCourant LIKE 'SIGN_NOUVELLE'")
-		->orderBy('i.id', 'ASC')
-		->setParameters(array('date' => $date->format('Y-m-d')
-	
-		))->getQuery()->execute();
+			->innerJoin('i.source', 'u')
+			->innerJoin('i.instance', 'ins')
+			->innerJoin('i.constatateur', 'd')
+			->where('i.dateSignale < :date')
+			->andWhere("i.etatCourant LIKE 'SIGN_NOUVELLE'")
+			->orderBy('i.id', 'ASC')
+			->setParameters(array('date' => $date->format('Y-m-d')))
+			->getQuery()->execute();
 		return $queryBuilder;
 	
 	}
 	
 	public function signalisationACharger()
 	{
-		$queryBuilder = $this->createQueryBuilder('i')
-		->innerJoin('i.source', 'u')
-		->leftJoin('i.action', 'ac')
-		->innerJoin('i.instance', 'ins')
-		->innerJoin('i.constatateur', 'd')
-		->select('COUNT(ac) as nb')
-		->where("nb != 0")
-		->orderBy('i.id', 'ASC')
-		->getQuery()->execute();
-		return $queryBuilder;
-	
+		return $this->createQueryBuilder('i')
+			->innerJoin('i.source', 'u')
+			->leftJoin('i.action', 'ac')
+			->innerJoin('i.instance', 'ins')
+			->innerJoin('i.constatateur', 'd')
+			->select('COUNT(ac) as nb')
+			->where("nb != 0")
+			->orderBy('i.id', 'ASC')
+			->getQuery()->execute();
 	}
 	
 	public function statsGroupByCode(){
 		return $this->filter()
-					->addSelect('count(sign.id) total, sign.etatCourant ')
-					->addGroupBy('sign.etatCourant');
+			->addSelect('count(sign.id) total, sign.etatCourant ')
+			->addGroupBy('sign.etatCourant');
 	}
 }

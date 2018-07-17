@@ -108,7 +108,7 @@ class SignalisationManager
 	}
 	
 	//signalisation non efficace
-	public function signalisationNonEfficace($entity, $helper){
+	public function signalisationNonEfficace($entity, $helper) {
 		$signalisationActeursEmail = SignalisationUtils::getSignalisationRejeteMembresEmail($this->em, $entity);
 		$commentaire = $entity->getSignStatut()->last() ? $entity->getSignStatut()->last()->getCommentaire() : null;
 		$subject = 'Evaluation de la signalisation ';

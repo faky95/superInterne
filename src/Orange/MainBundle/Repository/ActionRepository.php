@@ -846,7 +846,7 @@ class ActionRepository extends BaseRepository {
 			->leftJoin($alias.'.instance', 'i')
 			->innerJoin($alias.'.porteur', 'u')
 			->leftJoin('u.structure', 's')
-			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE' AND acl1 IS NULL");
+			->andWhere($alias.".etatCourant NOT LIKE 'ABANDONNEE_ARCHIVEE' AND ".$alias.".etatCourant NOT LIKE 'SOLDEE_ARCHIVEE' AND acl1.id IS NULL");
 		if($role === Utilisateur::ROLE_MANAGER)
 			$queryBuilder->andWhere('u!=:me')->setParameter('me', $this->_user);
 		$this->filtres($queryBuilder, $criteria, $alias);
