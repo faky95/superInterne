@@ -244,7 +244,7 @@ class TacheStatutController extends BaseController
 					$form->handleRequest($request);
 					$copy = array_merge($copy, $animateurs);
 					$target = array($tache->getActionCyclique()->getAction()->getPorteur()->getEMail());
-					$tache->getDateCloture(new \DateTime('NOW'));
+					$tache->setDateCloture(new \DateTime('NOW'));
 					if($tache->getEtatCourant()==Statut::ACTION_DEMANDE_ABANDON) {
 						$subject = "Abandon d'une tâche";
 						$statut = Statut::ACTION_ABANDONNEE;
