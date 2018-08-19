@@ -77,7 +77,7 @@ class ExportCommand extends BaseCommand {
 	 */
 	public function extractionNotification(Extraction $extraction) {
 		$query = $this->getEntityManager()->createQuery($extraction->getQuery());
-		$query->setParameters($extraction->getParam());
+		$query->setParameters(unserialize($extraction->getParam()));
 		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
 		$objWriter     = $this->get('orange.main.extraction')->exportNotification($query->getResult());
 		$filename = 'notifications_'.date("Y-m-d_H-i-s").'.xlsx';

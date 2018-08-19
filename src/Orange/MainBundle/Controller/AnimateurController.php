@@ -1,5 +1,4 @@
 <?php
-
 namespace Orange\MainBundle\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
