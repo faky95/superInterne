@@ -1,6 +1,8 @@
 <?php
 namespace Orange\MainBundle\Service;
 
+use Orange\MainBundle\Entity\Statut;
+
 class Extraction extends \PHPExcel {
 
 	/**
@@ -91,8 +93,8 @@ class Extraction extends \PHPExcel {
 				'font' => array('bold' => true, 'size' => 16, 'color' => array('rgb' => '000000')) 
 			);
 		$th = array(
-				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 
-				'Service', 'Type', 'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Date de fin prévue', 'Date de clôture', 'Avancements' 
+				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 
+				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture', 'Respect du délai', 'Avancements' 
 			);
 		$col = "A";
 		$x = 1;
@@ -106,7 +108,7 @@ class Extraction extends \PHPExcel {
 				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			} elseif($col == "R") {
-				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('40');
 				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
 				$col ++;
 			} else {
@@ -135,14 +137,34 @@ class Extraction extends \PHPExcel {
 					$value['domaine']['libelleDomaine'],
 					$val['contributeurs'],
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
+					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
 					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
 					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
-					$val['avancements'],
+					$this->respectDelai($value),
+					$val['avancements']
 				);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
+	}
+	
+	/**
+	 * @param array $data
+	 * @return number
+	 */
+	private function respectDelai($data) {
+		$value = null;
+		if(in_array($data['etatReel'], array(Statut::ACTION_SOLDEE_DELAI, Statut::ACTION_SOLDEE_HORS_DELAI))==false) {
+			$value = null;
+		} elseif($data['dateFinExecut']==null) {
+			$value = 'NA';
+		} elseif($data['dateDebut']==$data['dateInitial']) {
+			$value = $data['dateDebut']==$data['dateFinExecut'] ? 100 : 0;
+		} else {
+			$value = 100 * number_format($data['dateDebut']->diff($data['dateInitial'])->format('%R%a') / $data['dateDebut']->diff($data['dateFinExecut'])->format('%R%a'), 1);
+		}
+		return $value;
 	}
 	
 	/**
