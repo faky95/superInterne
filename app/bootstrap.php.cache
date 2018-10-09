@@ -652,14 +652,23 @@ $content = $this->getContent();
 } catch (\LogicException $e) {
 return trigger_error($e, E_USER_ERROR);
 }
+$cookieHeader ='';
+$cookies = array();
+foreach ($this->cookies as $k => $v) {
+$cookies[] = $k.'='.$v;
+}
+if (!empty($cookies)) {
+$cookieHeader ='Cookie: '.implode('; ', $cookies)."\r\n";
+}
 return
 sprintf('%s %s %s', $this->getMethod(), $this->getRequestUri(), $this->server->get('SERVER_PROTOCOL'))."\r\n".
-$this->headers."\r\n".
+$this->headers.
+$cookieHeader."\r\n".
 $content;
 }
 public function overrideGlobals()
 {
-$this->server->set('QUERY_STRING', static::normalizeQueryString(http_build_query($this->query->all(), null,'&')));
+$this->server->set('QUERY_STRING', static::normalizeQueryString(http_build_query($this->query->all(),'','&')));
 $_GET = $this->query->all();
 $_POST = $this->request->all();
 $_SERVER = $this->server->all();
@@ -691,7 +700,7 @@ return self::$trustedProxies;
 public static function setTrustedHosts(array $hostPatterns)
 {
 self::$trustedHostPatterns = array_map(function ($hostPattern) {
-return sprintf('#%s#i', $hostPattern);
+return sprintf('{%s}i', $hostPattern);
 }, $hostPatterns);
 self::$trustedHosts = array();
 }
@@ -1374,7 +1383,7 @@ class Response
 {
 const HTTP_CONTINUE = 100;
 const HTTP_SWITCHING_PROTOCOLS = 101;
-const HTTP_PROCESSING = 102; const HTTP_OK = 200;
+const HTTP_PROCESSING = 102; const HTTP_EARLY_HINTS = 103; const HTTP_OK = 200;
 const HTTP_CREATED = 201;
 const HTTP_ACCEPTED = 202;
 const HTTP_NON_AUTHORITATIVE_INFORMATION = 203;
@@ -1407,7 +1416,8 @@ const HTTP_REQUEST_URI_TOO_LONG = 414;
 const HTTP_UNSUPPORTED_MEDIA_TYPE = 415;
 const HTTP_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
 const HTTP_EXPECTATION_FAILED = 417;
-const HTTP_I_AM_A_TEAPOT = 418; const HTTP_MISDIRECTED_REQUEST = 421; const HTTP_UNPROCESSABLE_ENTITY = 422; const HTTP_LOCKED = 423; const HTTP_FAILED_DEPENDENCY = 424; const HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL = 425; const HTTP_UPGRADE_REQUIRED = 426; const HTTP_PRECONDITION_REQUIRED = 428; const HTTP_TOO_MANY_REQUESTS = 429; const HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431; const HTTP_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
+const HTTP_I_AM_A_TEAPOT = 418; const HTTP_MISDIRECTED_REQUEST = 421; const HTTP_UNPROCESSABLE_ENTITY = 422; const HTTP_LOCKED = 423; const HTTP_FAILED_DEPENDENCY = 424;
+const HTTP_RESERVED_FOR_WEBDAV_ADVANCED_COLLECTIONS_EXPIRED_PROPOSAL = 425; const HTTP_TOO_EARLY = 425; const HTTP_UPGRADE_REQUIRED = 426; const HTTP_PRECONDITION_REQUIRED = 428; const HTTP_TOO_MANY_REQUESTS = 429; const HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431; const HTTP_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
 const HTTP_INTERNAL_SERVER_ERROR = 500;
 const HTTP_NOT_IMPLEMENTED = 501;
 const HTTP_BAD_GATEWAY = 502;
@@ -1457,7 +1467,7 @@ public static $statusTexts = array(
 415 =>'Unsupported Media Type',
 416 =>'Range Not Satisfiable',
 417 =>'Expectation Failed',
-418 =>'I\'m a teapot', 421 =>'Misdirected Request', 422 =>'Unprocessable Entity', 423 =>'Locked', 424 =>'Failed Dependency', 425 =>'Reserved for WebDAV advanced collections expired proposal', 426 =>'Upgrade Required', 428 =>'Precondition Required', 429 =>'Too Many Requests', 431 =>'Request Header Fields Too Large', 451 =>'Unavailable For Legal Reasons', 500 =>'Internal Server Error',
+418 =>'I\'m a teapot', 421 =>'Misdirected Request', 422 =>'Unprocessable Entity', 423 =>'Locked', 424 =>'Failed Dependency', 425 =>'Too Early', 426 =>'Upgrade Required', 428 =>'Precondition Required', 429 =>'Too Many Requests', 431 =>'Request Header Fields Too Large', 451 =>'Unavailable For Legal Reasons', 500 =>'Internal Server Error',
 501 =>'Not Implemented',
 502 =>'Bad Gateway',
 503 =>'Service Unavailable',
@@ -1560,7 +1570,7 @@ $this->sendHeaders();
 $this->sendContent();
 if (function_exists('fastcgi_finish_request')) {
 fastcgi_finish_request();
-} elseif ('cli'!== PHP_SAPI) {
+} elseif (!\in_array(PHP_SAPI, array('cli','phpdbg'), true)) {
 static::closeOutputBuffers(0, true);
 }
 return $this;
@@ -2485,11 +2495,11 @@ protected $booted = false;
 protected $name;
 protected $startTime;
 protected $loadClassCache;
-const VERSION ='2.8.33';
-const VERSION_ID = 20833;
+const VERSION ='2.8.43';
+const VERSION_ID = 20843;
 const MAJOR_VERSION = 2;
 const MINOR_VERSION = 8;
-const RELEASE_VERSION = 33;
+const RELEASE_VERSION = 43;
 const EXTRA_VERSION ='';
 const END_OF_MAINTENANCE ='11/2018';
 const END_OF_LIFE ='11/2019';

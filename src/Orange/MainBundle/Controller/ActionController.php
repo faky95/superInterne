@@ -510,8 +510,10 @@ class ActionController extends BaseController
     	if($form->isValid()) {
 	    	$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
 	    	$entity->setEtatReel(Statut::ACTION_NOUVELLE);
+	    	$signalisation->setEtatCourant(Statut::TRAITEMENT_SIGNALISATION);
     		$em->persist($entity);
     		$entity->addSignalisation($signalisation);
+    		$em->persist($signalisation);
     		$em->flush();
     		ActionUtils::setReferenceActionSignalisation($em, $entity, $signalisation);
     		SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::TRAITEMENT_SIGNALISATION, $signalisation, 'Une action corrective a été ajoutée pour traiter cette signalisation');
