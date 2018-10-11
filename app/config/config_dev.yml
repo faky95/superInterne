@@ -46,4 +46,4 @@ assetic:
     use_controller: "%use_assetic_controller%"
 
 swiftmailer:
-    delivery_address: madiagne.sylla@orange-sonatel.com
+    delivery_address: fatoukine.ndao@orange-sonatel.com
