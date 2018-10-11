@@ -104,9 +104,9 @@ class ActionStatutController extends BaseController
 				if($action->getSignalisation()->count() && $action->getSignalisation()->first()->isQualifiable()) {
 					$signalisation = $action->getSignalisation()->first();
 					$eventSignalisation = $this->get('orange_main.signalisation_event')->createForSignalisation($signalisation);
-					$signalisation->setStatut(Statut::FIN_TRAITEMENT_SIGNALISATION);
+					$signalisation->setEtatCourant(Statut::FIN_TRAITEMENT_SIGNALISATION);
 					$signalisation->addSignStatut(SignalisationStatut::newInstance($this->getUser(), 
-							$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('libelle' => Statut::FIN_TRAITEMENT_SIGNALISATION)), 'Toutes les actions sont soldées'
+							$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => Statut::FIN_TRAITEMENT_SIGNALISATION)), 'Toutes les actions sont soldées'
 						));
 					$em->persist($signalisation);
 					$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_FIN_TRAITEMENT, $eventSignalisation);

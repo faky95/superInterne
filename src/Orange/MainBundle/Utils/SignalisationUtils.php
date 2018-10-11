@@ -11,7 +11,6 @@ use Orange\MainBundle\Entity\Signalisation;
 class SignalisationUtils {
 	
 	/**
-	 * 
 	 * @param \Doctrine\ORM\EntityManager $entityManager
 	 * @param \Orange\MainBundle\Entity\Utilisateur $utilisateur
 	 * @param string $statut
@@ -33,6 +32,11 @@ class SignalisationUtils {
 		$entityManager->flush();
 	}
 	
+	/**
+	 * @param \Doctrine\ORM\EntityManager $entityManager
+	 * @param \Orange\MainBundle\Entity\Utilisateur $utilisateur
+	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+	 */
 	public static function addAnimateur($entityManager, $utilisateur, $signalisation)
 	{
 		$signalisationAnimateur = new SignalisationAnimateur();
