@@ -4,6 +4,7 @@ namespace Orange\MainBundle\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use FOS\UserBundle\Form\Type\RegistrationFormType as BaseType;
 
+
 class RegistrationFormType extends BaseType
 {
 	public function buildForm(FormBuilderInterface $builder, array $options)
@@ -20,6 +21,7 @@ class RegistrationFormType extends BaseType
 			->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?', 'required' => true))
 			->add('structure', null, array('label' => 'Structure :', 'empty_value' => 'Choisir la structure ---', 'required' => true))
 			->add('matricule', null, array('label' => 'Matricule :'))
+			//->add('plainPassword', null ,array('label' => 'Mot de passe :'))
 			->add('plainPassword', 'repeated', array(
             		'type' => 'password',
             		'options' => array('translation_domain' => 'FOSUserBundle'),

@@ -10,6 +10,13 @@ use Orange\MainBundle\Entity\Signalisation;
 
 class SignalisationUtils {
 	
+	/**
+	 * @param \Doctrine\ORM\EntityManager $entityManager
+	 * @param \Orange\MainBundle\Entity\Utilisateur $utilisateur
+	 * @param string $statut
+	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+	 * @param string $commentaire
+	 */
 	public static function changeStatutSignalisation($entityManager, $utilisateur, $statut, $signalisation, $commentaire )
 	{
 		$typeStatut = $entityManager->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_SIGNALISATION);
@@ -21,11 +28,15 @@ class SignalisationUtils {
 		$signalisationStatut->setSignalisation($signalisation);
 		$signalisationStatut->setStatut($statutSignalisation);
 		$signalisationStatut->setUtilisateur($utilisateur);
-		
 		$entityManager->persist($signalisationStatut);
 		$entityManager->flush();
 	}
 	
+	/**
+	 * @param \Doctrine\ORM\EntityManager $entityManager
+	 * @param \Orange\MainBundle\Entity\Utilisateur $utilisateur
+	 * @param \Orange\MainBundle\Entity\Signalisation $signalisation
+	 */
 	public static function addAnimateur($entityManager, $utilisateur, $signalisation)
 	{
 		$signalisationAnimateur = new SignalisationAnimateur();

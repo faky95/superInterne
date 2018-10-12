@@ -20,6 +20,13 @@ class UtilisateurType extends BaseType {
             ->add('manager', null, array('label'=> 'Est Manager? :'))
             ->add('structure', null, array('label'=> 'Structure :'))
             ->add('isAdmin', null, array('label'=> 'Est Admin? :'))
+            ->add('plainPassword', 'repeated', array(
+                'type' => 'password',
+                'options' => array('translation_domain' => 'FOSUserBundle'),
+                'first_options' => array('label' => 'form.password', 'attr' => array('placeholder' => 'Saisir le mot de passe')),
+                'second_options' => array('label' => 'form.password_confirmation', 'attr' => array('placeholder' => 'Confirmation')),
+                'invalid_message' => 'fos_user.password.mismatch',
+              ))
             ->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?'))
             ->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-warning')))
             ->add('cancel', 'button', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-warning cancel')));

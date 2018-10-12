@@ -135,7 +135,7 @@ class UtilisateurController extends BaseController
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
-        $formFactory = $this->get('fos_user.profile.form.factory');
+        $formFactory = $this->get('fos_user.registration.form.factory');
        	$form = $formFactory->createForm();
         $form->setData($entity);
         $form->handleRequest($request);

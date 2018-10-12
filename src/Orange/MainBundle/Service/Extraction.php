@@ -94,7 +94,7 @@ class Extraction extends \PHPExcel {
 			);
 		$th = array(
 				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 
-				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture', 'Respect du délai', 'Avancements' 
+				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture', 'Taux de respect du délai', 'Avancements' 
 			);
 		$col = "A";
 		$x = 1;
@@ -155,16 +155,21 @@ class Extraction extends \PHPExcel {
 	 */
 	private function respectDelai($data) {
 		$value = null;
+		$dateFirst = new \DateTime("@0");
 		if(in_array($data['etatReel'], array(Statut::ACTION_SOLDEE_DELAI, Statut::ACTION_SOLDEE_HORS_DELAI))==false) {
 			$value = null;
-		} elseif($data['dateFinExecut']==null) {
+		} elseif($data['dateDebut']==null ||$data['dateInitial']==null || $data['dateFinExecut']==null) {
+			$value = 'NA';
+		} elseif($data['dateDebut']<=$dateFirst||$data['dateInitial']<=$dateFirst|| $data['dateFinExecut']<=$dateFirst) {
 			$value = 'NA';
 		} elseif($data['dateDebut']==$data['dateInitial']) {
 			$value = $data['dateDebut']==$data['dateFinExecut'] ? 100 : 0;
+		} elseif($data['dateDebut']==$data['dateFinExecut']) {
+			$value = 100;
 		} else {
-			$value = 100 * number_format($data['dateDebut']->diff($data['dateInitial'])->format('%R%a') / $data['dateDebut']->diff($data['dateFinExecut'])->format('%R%a'), 1);
+			$value = number_format(100 * $data['dateDebut']->diff($data['dateInitial'])->format('%R%a') / $data['dateDebut']->diff($data['dateFinExecut'])->format('%R%a'), 1);
 		}
-		return $value;
+		return $value ? $value.'%' : null;
 	}
 	
 	/**

@@ -67,6 +67,7 @@ class Signalisation
 	private $signStatut;
 	
 	/**
+	 * @var \Doctrine\Common\Collections\ArrayCollection
 	 * @ORM\OneToMany(targetEntity="SignalisationAnimateur", mappedBy="signalisation", cascade={"persist","remove","merge"})
 	 */
 	private $signalisationAnimateur;
@@ -692,5 +693,12 @@ class Signalisation
      */
     public function getCommentaire() {
     	return $this->commentaire;
+    }
+    
+    public function getAnalyste() {
+    	$data = $this->signalisationAnimateur->filter(function($animateur) {
+    			return $animateur->getActif();
+    		});
+    	return $data->count() ? $data->first()->getUtilisateur() : null;
     }
 }

@@ -106,7 +106,6 @@ class SignalisationAnimateur
 
     /**
      * Get actif
-     *
      * @return boolean 
      */
     public function getActif()

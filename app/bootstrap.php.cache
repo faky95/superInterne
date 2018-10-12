@@ -1578,7 +1578,7 @@ $this->sendHeaders();
 $this->sendContent();
 if (\function_exists('fastcgi_finish_request')) {
 fastcgi_finish_request();
-} elseif (!\in_array(\PHP_SAPI, array('cli','phpdbg'), true)) {
+} elseif (!\in_array(PHP_SAPI, array('cli','phpdbg'), true)) {
 static::closeOutputBuffers(0, true);
 }
 return $this;
@@ -2504,11 +2504,11 @@ protected $booted = false;
 protected $name;
 protected $startTime;
 protected $loadClassCache;
-const VERSION ='2.8.45';
-const VERSION_ID = 20845;
+const VERSION ='2.8.43';
+const VERSION_ID = 20843;
 const MAJOR_VERSION = 2;
 const MINOR_VERSION = 8;
-const RELEASE_VERSION = 45;
+const RELEASE_VERSION = 43;
 const EXTRA_VERSION ='';
 const END_OF_MAINTENANCE ='11/2018';
 const END_OF_LIFE ='11/2019';

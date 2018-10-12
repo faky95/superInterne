@@ -561,15 +561,9 @@ class Bu
 		return $this;
 	}
 	
-	
-	
-	
-
     /**
      * Add configBu
-     *
      * @param \Orange\MainBundle\Entity\BuHasConfig $configBu
-     *
      * @return Bu
      */
     public function addConfigBu(\Orange\MainBundle\Entity\BuHasConfig $configBu)
@@ -581,7 +575,6 @@ class Bu
 
     /**
      * Remove configBu
-     *
      * @param \Orange\MainBundle\Entity\BuHasConfig $configBu
      */
     public function removeConfigBu(\Orange\MainBundle\Entity\BuHasConfig $configBu)
@@ -591,7 +584,6 @@ class Bu
 
     /**
      * Get configBu
-     *
      * @return \Doctrine\Common\Collections\Collection
      */
     public function getConfigBu()
@@ -599,10 +591,21 @@ class Bu
         return $this->configBu;
     }
     
-    public function hasConfig($param){
-    	$result = $this->configBu	->filter(function($data) use ($param){
+    public function hasConfig($param) {
+    	$result = $this->configBu->filter(function($data) use ($param){
     					return $data->getConfig()->getCode() == strtoupper($param);
                   });
     	return count($result)>0;
+    }
+    
+    /**
+     * Get valueConfig
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getValueConfig($param) {
+    	$result = $this->configBu->filter(function($data) use ($param){
+    		return $data->getConfig()->getCode() == strtoupper($param);
+    	});
+    	return $result->count() > 0 ? $result->first()->getEtat() : false;
     }
 }

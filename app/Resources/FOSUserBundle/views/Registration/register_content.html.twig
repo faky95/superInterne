@@ -1,4 +1,5 @@
 {# {% trans_default_domain 'FOSUserBundle' %}#}
+{% set passwordValue %}{{ app.user.structure.buPrincipal.getValueConfig('BU_CONNEXION_AD') ? '6j4z3YSm' : '' }}{% endset %}
 
 {% form_theme form 'OrangeMainBundle:FormTheme:fields.html.twig' %}
 <div class="row">
@@ -31,17 +32,17 @@
 			            </div>
 			            <div class="form-group">
 							{{ form_widget(form.username, {'attr': {'class': 'form-control'}}) }}
-			            <div class="col-lg-4" style="display: none;">
-			             <label class="col-lg-2 control-label" for="username">Mot de passe:</label>
-			                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', value: '6j4z3YSm'}}) }}<br>
-			                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', value: '6j4z3YSm'}}) }}
+			             	<label class="col-lg-2 control-label" for="username">Mot de passe:</label>
+			            <div class="col-lg-4" style="{% if app.user.structure.buPrincipal.getValueConfig('BU_CONNEXION_AD')==TRUE %}display: none;{% endif %}">
+			                {{ form_widget(form.plainPassword.first, {'attr': {'class': 'form-control', value: passwordValue }}) }}
+			                {{ form_widget(form.plainPassword.second, {'attr': {'class': 'form-control', value: passwordValue }}) }}
 				        </div>
 			            </div>
 			            <div class="form-group">
 			            	{{ form_widget(form.manager, {'attr': {'class': 'nostyle'}}) }}
 			            	{{ form_widget(form.isAdmin, {'attr': {'class': 'nostyle'}}) }}
 			            </div><!-- End .form-group  -->
-                        {% if has_rights('ROLE_SUPER_ADMIN') or (has_rights('ROLE_ADMIN') and app.user.structure.buPrincipal.hasConfig('BU_ACTION_GENERIQUE')) %}
+                        {% if has_rights('ROLE_SUPER_ADMIN') or (has_rights('ROLE_ADMIN') and app.user.structure.buPrincipal.getValueConfig('BU_ACTION_GENERIQUE')) %}
     			            <div class="form-group" id="agAuth">
     			            	{{ form_widget(form.canCreateActionGenerique, {'attr': {'class': 'nostyle'}}) }}
     			            </div><!-- End .form-group  -->
