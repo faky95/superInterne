@@ -62,29 +62,54 @@ class ArchiveController extends BaseController
      * @QMLogger(message="Extraction des actions archivées")
      * @Route("/export_actionarchivee", name="export_actionarchivee")
      */
-    public function exportAction() {
-    	$em = $this->getDoctrine()->getManager();
-    	$response = new Response();
-    	$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    	$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
-    	$response->sendHeaders();
-    	$queryBuilder = $this->get('session')->get('data', array());
-    	if($queryBuilder['totalNumber'] > 10000) {
-    		$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
-    		$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
-    		$em->persist($extraction);
-    		$em->flush();
-    		$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
-    		return $this->redirect($this->getRequest()->headers->get('referer'));
-    	}
-    	$query = $em->createQuery($queryBuilder['query']);
-    	$query->setParameters($queryBuilder['param']);
-    	$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
-    	$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-    	$actions       = $query->getArrayResult();
-    	$objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
-    	$objWriter->save('php://output');
-    	return $response;
+    public function exportAction()
+    {
+       // return new Response('ok');
+        $em = $this->getDoctrine()->getManager();
+		$response = new Response();
+		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
+	//	$response->sendHeaders();
+		$queryBuilder = $this->get('session')->get('data', array());
+		if($queryBuilder['totalNumber'] > 10000) {
+			$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
+			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
+			$em->persist($extraction);
+			$em->flush();
+			$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
+			return $this->redirect($this->getRequest()->headers->get('referer'));
+		}
+            $query = $em->createQuery($queryBuilder['query']);
+            $query->setParameters($queryBuilder['param']);
+            $statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+            $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+            $actions       = $query->getArrayResult();
+            $objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
+            return $objWriter->save('php://output');
+            //return $response;
+        
+    	// $em = $this->getDoctrine()->getManager();
+    	// $response = new Response();
+    	// $response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    	// $response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
+    	// $response->sendHeaders();
+    	// $queryBuilder = $this->get('session')->get('data', array());
+    	// if($queryBuilder['totalNumber'] > 10000) {
+    	// 	$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
+    	// 	$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
+    	// 	$em->persist($extraction);
+    	// 	$em->flush();
+    	// 	$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
+    	// 	return $this->redirect($this->getRequest()->headers->get('referer'));
+    	// }
+    	// $query = $em->createQuery($queryBuilder['query']);
+    	// $query->setParameters($queryBuilder['param']);
+    	// $statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+    	// $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+    	// $actions       = $query->getArrayResult();
+    	// $objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
+    	// $objWriter->save('php://output');
+    	// return $response;
     }
 
     /**
