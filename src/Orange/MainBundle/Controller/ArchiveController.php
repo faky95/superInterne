@@ -69,9 +69,9 @@ class ArchiveController extends BaseController
 		$response = new Response();
 		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
-	//	$response->sendHeaders();
+		$response->sendHeaders();
 		$queryBuilder = $this->get('session')->get('data', array());
-		if($queryBuilder['totalNumber'] > 10000) {
+		if($queryBuilder['totalNumber'] > 100) {
 			$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
 			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
 			$em->persist($extraction);
@@ -85,8 +85,8 @@ class ArchiveController extends BaseController
             $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
             $actions       = $query->getArrayResult();
             $objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
-            return $objWriter->save('php://output');
-            //return $response;
+            $objWriter->save('php://output');
+            return $response;
         
     	// $em = $this->getDoctrine()->getManager();
     	// $response = new Response();

@@ -120,7 +120,8 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$value = $val[0];
-			$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
+			//var_dump($value);
+			//$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],
@@ -138,8 +139,8 @@ class Extraction extends \PHPExcel {
 					$val['contributeurs'],
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
 					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
-					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
-					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
+					//$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
+					//$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
 					$this->respectDelai($value),
 					$val['avancements']
 				);

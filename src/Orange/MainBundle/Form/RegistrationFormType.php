@@ -23,7 +23,7 @@ class RegistrationFormType extends BaseType
 			->add('matricule', null, array('label' => 'Matricule :'))
 			//->add('plainPassword', null ,array('label' => 'Mot de passe :'))
 			->add('plainPassword', 'repeated', array(
-            		'type' => 'password',
+					'type' => 'password',
             		'options' => array('translation_domain' => 'FOSUserBundle'),
             		'first_options' => array('label' => 'form.password', 'attr' => array('placeholder' => 'Saisir le mot de passe')),
             		'second_options' => array('label' => 'form.password_confirmation', 'attr' => array('placeholder' => 'Confirmation')),
