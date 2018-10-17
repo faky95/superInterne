@@ -273,10 +273,11 @@ class InstanceRepository extends BaseRepository{
 		public function listByApplication($application, $email) {
 			return $this->createQueryBuilder('i')->select('i')
 				->innerJoin('i.application', 'a')
-				->innerJoin('i.animateur', 'm')
-				->innerJoin('m.utilisateur', 'u')
+				//->innerJoin('i.sourceInstance', 's')
+				->innerJoin('OrangeMainBundle:Utilisateur','u', 'WITH', 'TRIM(u.email) LIKE :email')
 				->where('a.code = :application')->setParameter('application', $application)
-				->andWhere('TRIM(u.email) LIKE :email')->setParameter('email', $email)
+				//->andWhere('TRIM(u.email) LIKE :email')
+				->setParameter('email', $email)
 				->groupBy('i.id')
 				->getQuery()->getArrayResult();
 		}
