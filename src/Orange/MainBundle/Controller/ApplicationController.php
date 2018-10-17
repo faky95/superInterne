@@ -48,13 +48,12 @@ class ApplicationController extends BaseController
 	public function listInstanceByApplicationAction(Request $request) {
 		$em = $this->getDoctrine()->getManager();
 		$params = $request->request->all();
-		var_dump($params['application']);
 		$arrData = $em->getRepository('OrangeMainBundle:Instance')->listByApplication($params['application'], $params['email']);
-		$output = $arrData == null ? array(0 => array('id' => null, 'libelle' => 'Choisir une instance  ...')) : array();
+		$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une instance  ...'));
 		foreach ($arrData as $data) {
 			$output[] = array('id' => $data['id'], 'libelle' => $data['libelle']);
 		}
-		//var_dump($output);
+		
 		return new JsonResponse($output);
 	}
 	
