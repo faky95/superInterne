@@ -103,7 +103,7 @@ class SignalisationManager
 		$subject = 'Evaluation de la signalisation ';
 		$commentaire = 'La signalisation << '.$entity->getLibelle().'>> a été qualifiée efficace par '.$this->user->getCompletNom();
 		Notification::notificationSignWithCopy($helper, $subject, $signalisationActeursEmail, array(), $commentaire, $entity );
-		$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_TRAITE_EFFICACEMENT, $entity);
+		$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_CLOTURE, $entity);
 	}
 	
 	//signalisation non efficace
@@ -114,7 +114,7 @@ class SignalisationManager
 		$commentaire = 'La signalisation <<'.$entity->getLibelle().'>> a été qualifiée non efficace par '.$this->user->getCompletNom().
 				' . Il est demandé à  l\'animateur en charge de cette signalisation de revoir les actions mal traitées .  ';
 		Notification::notificationSignWithCopy($helper, $subject, $signalisationActeursEmail, array(), $commentaire, $entity );
-		$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_TRAITE_NON_EFFICACEMENT, $entity);
+		$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_RETOURNER, $entity);
 	}
 	
 	// reformulation signalisation

@@ -94,6 +94,12 @@ class Signalisation
 	private $source;
 	
 	/**
+	 * @var boolean
+	 * @ORM\Column(name="archive", type="boolean")
+	 */
+	private $archived = false;
+	
+	/**
 	 * @var \Orange\MainBundle\Entity\Instance
 	 */
 	public $perimetre;
@@ -559,6 +565,25 @@ class Signalisation
     {
         return $this->site;
     }
+    
+    /**
+     * set as archived
+     * @param boolean $archived
+     * @return \Orange\MainBundle\Entity\Signalisation
+     */
+    public function setArchived($archived) {
+    	$this->archived = $archived;
+    	return $this;
+    }
+    
+    /**
+     * check if is archived
+     * @return boolean
+     */
+    public function isArchived() {
+    	return $this->archived;
+    }
+    
 	public function getTypeSignalisation(){
 		return $this->typeSignalisation;
 	}

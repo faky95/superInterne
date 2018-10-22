@@ -51,8 +51,9 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function adminQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign2')->select('sign2.id')
-		                     ->innerJoin('sign2.instance', 'i2')
-						   	 ->innerJoin('i2.bu', 'b2');
+                    ->innerJoin('sign2.instance', 'i2')
+				   	->innerJoin('i2.bu', 'b2')
+				   	->andWhere('sign2.archived = 0');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'b2', Utilisateur::ROLE_ADMIN)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -62,7 +63,8 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function animateurQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign3')->select('sign3.id')
-			->innerJoin('sign3.instance', 'i3');
+			->innerJoin('sign3.instance', 'i3')
+			->andWhere('sign3.archived = 0');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'i3', Utilisateur::ROLE_ANIMATEUR)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -72,9 +74,10 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function managerQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign4')->select('sign4.id')
-							->innerJoin('sign4.instance', 'i4')
-							->innerJoin('i4.animateur', 'a4')
-							->andWhere('a4.utilisateur = :user')->setParameter('user', $this->_user);
+			->innerJoin('sign4.instance', 'i4')
+			->innerJoin('i4.animateur', 'a4')
+			->andWhere('sign4.archived = 0')
+			->andWhere('a4.utilisateur = :user')->setParameter('user', $this->_user);
 		$data = array_merge($queryBuilder->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -84,8 +87,9 @@ class SignalisationRepository extends BaseRepository {
 	 */
 	public function sourceQueryBuilder(&$data = array()) {
 		$queryBuilder = $this->createQueryBuilder('sign5')->select('sign5.id')
-							->innerJoin('sign5.instance', 'i5')
-							->innerJoin('i5.sourceInstance', 'so5');
+			->innerJoin('sign5.instance', 'i5')
+			->innerJoin('i5.sourceInstance', 'so5')
+			->andWhere('sign5.archived = 0');
 		$data = array_merge($this->filterByProfile($queryBuilder, 'so5', Utilisateur::ROLE_SOURCE)->getParameters()->toArray(), $data);
 		return $queryBuilder;
 	}
@@ -188,8 +192,7 @@ class SignalisationRepository extends BaseRepository {
 			->select('COUNT(DISTINCT sign.id) as total')
 			->innerJoin('sign.signStatut', 'signSta')
 			->innerJoin('signSta.statut', 's')
- 			->andWhere('s.code =:statut_code')
- 			->setParameter('statut_code', Statut::SIGNALISATION_PRISE_CHARGE)
+ 			->andWhere('sign.archived = 0')
 			->getQuery()
 			->getOneOrNullResult();
 		return $data['total'];
