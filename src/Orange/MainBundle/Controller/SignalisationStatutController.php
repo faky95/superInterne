@@ -81,7 +81,7 @@ class SignalisationStatutController extends BaseController {
 						'title' => 'Notification', 'body' => 'Enrégistrement effectué avec succès' 
 					));
 			}
-			if($valide == 'SIGN_TRAIT_NON_EFFICACE') {
+			if($valide == 'SIGN_RETOURNEE') {
 				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_NON_EFFICACE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (

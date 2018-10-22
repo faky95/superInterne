@@ -87,7 +87,7 @@ class SignalisationController extends BaseController
 	public function exportAction() {
 		$em = $this->getDoctrine()->getManager();
 		$queryBuilder = $this->get('session')->get('data', array());
-		if($queryBuilder['totalNumber'] > 10000) {
+		if($queryBuilder['totalNumber'] > 5000) {
 			$type = \Orange\MainBundle\Entity\Extraction::$types['signalisation'];
 			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
 			$em->persist($extraction);
@@ -124,7 +124,6 @@ class SignalisationController extends BaseController
         $objWriter->save('php://output');
 		return $response;
 	}
-	
 	
     /**
 	 * @QMLogger(message="Traitement d'une signalisation")
@@ -422,8 +421,8 @@ class SignalisationController extends BaseController
    			$form->setData(array('isReload' => $actionsReload));
    			$form->handleRequest($request);
    			if ($form->isValid()) {
-   				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::SIGNALISATION_RECHARGER, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
-   				$this->updateEntityEtat($em, Statut::SIGNALISATION_RECHARGER, $signalisation);
+   				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::SIGNALISATION_RETRAITER, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
+   				$this->updateEntityEtat($em, Statut::SIGNALISATION_RETRAITER, $signalisation);
    				foreach ($actionsReload as $action) {
    					if($action->getIsReload()) {
    						ActionUtils::changeStatutAction($em, $action, Statut::ACTION_NON_ECHUE, $this->getUser(), " Cette action a été rechargée suite à un mauvais traitement de la signalisation ");

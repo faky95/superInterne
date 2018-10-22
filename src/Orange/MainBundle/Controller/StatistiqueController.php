@@ -151,19 +151,22 @@ class StatistiqueController extends BaseController
     {
         $em = $this->getDoctrine()->getManager();
         $stats=$em->getRepository("OrangeMainBundle:Signalisation")->statsGroupByCode()->getQuery()->getArrayResult();
-        $statsSign=array('Cloture'=>array(), 'Efficace'=>array(), 'Non efficace'=>array(), 'En cours'=>array(), 'abandonne'=>array());
+        $statsSign=array('cloture'=>array(), 'atraiter'=>array(), 'retourne'=>array(), 'encours'=>array(), 'abandonne'=>array());
         $total          = intval($em->getRepository("OrangeMainBundle:Signalisation")->totalSignalisation());
         foreach ($stats as $stat) {
         	if ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_EFFICACEMENT) {
-        		$val=$statsSign['Efficace']['nombre']=intval($stat['total']);
-        		$statsSign['Efficace']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_TRAITE_NON_EFFICACEMENT) {
-        		$val=$statsSign['Non efficace']['nombre']=intval($stat['total']);
-        		$statsSign['Non efficace']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_VALIDER) {
-        		$val=$statsSign['En cours']['nombre']=intval($stat['total']);
-        		$statsSign['En cours']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
-        	}elseif ($stat['etatCourant']==Statut::SIGNALISATION_ABANDONNER) {
+        		$val=$statsSign['cloture']['nombre']=intval($stat['total']);
+        		$statsSign['cloture']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
+        	} elseif ($stat['etatCourant']==Statut::SIGNALISATION_RETOURNER) {
+        		$val=$statsSign['retourne']['nombre']=intval($stat['total']);
+        		$statsSign['retourne']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
+        	} elseif(in_array($stat['etatCourant'], array(Statut::SIGNALISATION_PRISE_CHARGE))) {
+        		$val=$statsSign['atraiter']['nombre']=intval($stat['total']);
+        		$statsSign['atraiter']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
+        	} elseif(in_array($stat['etatCourant'], array(Statut::TRAITEMENT_SIGNALISATION, Statut::SIGNALISATION_RETRAITER))) {
+        		$val=$statsSign['encours']['nombre']=intval($stat['total']);
+        		$statsSign['encours']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
+        	} elseif ($stat['etatCourant']==Statut::SIGNALISATION_INVALIDER) {
         		$val=$statsSign['abandonne']['nombre']=intval($stat['total']);
         		$statsSign['abandonne']['taux']=($total==0)?"0%":number_format((($val/$total)*100),2)."%";
         	}

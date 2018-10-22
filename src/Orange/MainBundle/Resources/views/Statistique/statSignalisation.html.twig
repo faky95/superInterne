@@ -19,26 +19,34 @@
 	            </li>
 	             <li>
 	                <span class="icon24 icomoon-icon-arrow-up-2 "></span>
-	                 <span class="mypercent"> {{ stats['En cours']['taux']|default("0%") }} </span>En cours
-	                <span class="pull-right strong">{{ stats['En cours']['nombre']|default(0)  }}</span>
+	                 <span class="mypercent"> {{ stats['atraiter']['taux']|default("0%") }} </span>Prise en charge
+	                <span class="pull-right strong">{{ stats['atraiter']['nombre']|default(0)  }}</span>
 	                <div class="progress progress-striped active">
-	                    <div class="progress-bar progress-bar-warning" style="width: {{ stats['En cours']['taux']|default("0%") }};"></div>
+	                    <div class="progress-bar progress-bar-warning" style="width: {{ stats['atraiter']['taux']|default("0%") }};"></div>
+	                </div>
+	            </li>
+	             <li>
+	                <span class="icon24 icomoon-icon-arrow-up-2 "></span>
+	                 <span class="mypercent"> {{ stats['encours']['taux']|default("0%") }} </span>En cours
+	                <span class="pull-right strong">{{ stats['encours']['nombre']|default(0)  }}</span>
+	                <div class="progress progress-striped active">
+	                    <div class="progress-bar progress-bar-warning" style="width: {{ stats['encours']['taux']|default("0%") }};"></div>
 	                </div>
 	            </li>
 	            <li>
 	                <span class="icon24 icomoon-icon-arrow-up-2 green"></span> 
-	                 <span class="mypercent">{{ stats['Efficace']['taux']|default("0%")  }} </span>Efficace
-	                <span class="pull-right strong">{{ stats['Efficace']['nombre']|default(0)  }}</span>
+	                 <span class="mypercent">{{ stats['cloture']['taux']|default("0%")  }} </span>Clôturée
+	                <span class="pull-right strong">{{ stats['cloture']['nombre']|default(0)  }}</span>
 	                <div class="progress progress-striped active">
-	                    <div class="progress-bar progress-bar-success" style="width: {{ stats['Efficace']['taux']|default("0%") }};"></div>
+	                    <div class="progress-bar progress-bar-success" style="width: {{ stats['cloture']['taux']|default("0%") }};"></div>
 	                </div>
 	            </li>
 	             <li>
 	                <span class="icon24 icomoon-icon-arrow-down-2 red"></span> 
-	                 <span class="mypercent">{{ stats["Non efficace"]['taux']|default("0%")  }} </span>Non Efficace
-	                <span class="pull-right strong">{{ stats["Non efficace"]['nombre']|default(0) }}</span>
+	                 <span class="mypercent">{{ stats["retourne"]['taux']|default("0%")  }} </span>Retournée
+	                <span class="pull-right strong">{{ stats["retourne"]['nombre']|default(0) }}</span>
 	                <div class="progress progress-striped active">
-	                    <div class="progress-bar progress-bar-danger" style="width: {{ stats["Non efficace"]['taux']|default("0%") }};"></div>
+	                    <div class="progress-bar progress-bar-danger" style="width: {{ stats["retourne"]['taux']|default("0%") }};"></div>
 	                </div>
 	            </li>
 	            <li>
