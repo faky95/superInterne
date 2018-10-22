@@ -253,6 +253,7 @@ class Actions {
 // 				$this->router->generate('transfert_action', 	array('id'=>$entity->getId())),
 				$this->router->generate('details_utilisateur', 	array('id'=>$entity->getId())),
 				$this->router->generate('edition_utilisateur', 	array('id'=>$entity->getId())),
+				//$this->router->generate('change_password', 	array('id'=>$entity->getId())),
 				$this->router->generate('supprimer_utilisateur', array('id'=>$entity->getId())),
 				$this->router->generate('dashboard').'?_want_to_be_this_user='.$entity->getUsername()
 			);

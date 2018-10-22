@@ -2,6 +2,7 @@
 namespace Orange\MainBundle\Service;
 
 use Orange\MainBundle\Entity\Statut;
+use Orange\MainBundle\Entity\Action;
 
 class Extraction extends \PHPExcel {
 
@@ -120,7 +121,7 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$value = $val[0];
-			//var_dump($value);
+			
 			//$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
 			$tableau[] = array(
 					$value['reference'],
@@ -137,6 +138,7 @@ class Extraction extends \PHPExcel {
 					$arrayStatut [$value['etatReel']],
 					$value['domaine']['libelleDomaine'],
 					$val['contributeurs'],
+					//$value['dateCloture'] ? $value['dateCloture']->format('d-m-Y') : '',
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
 					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
 					//$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',

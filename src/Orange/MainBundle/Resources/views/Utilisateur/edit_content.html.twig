@@ -21,14 +21,7 @@
                         {{ form_widget(edit_form.email, {'attr': {'class': 'form-control'}}) }}
                         {{ form_widget(edit_form.structure, {'attr': {'class': 'form-control'}}) }}
                   	</div><!-- End .form-group  -->
-                  	<div class="form-group">
-                    	{{ form_widget(edit_form.username, {'attr': {'class': 'form-control'}}) }}
-						<label class="col-lg-2 control-label" for="username">Mot de passe:</label>
-					 	<div class="col-lg-4" style="">
-							{{ form_widget(edit_form.plainPassword.first, {'attr': {'class': 'form-control' }}) }}
-							{{ form_widget(edit_form.plainPassword.second, {'attr': {'class': 'form-control'}}) }} 
-						</div>
-                  	</div><!-- End .form-group  -->
+                  
                   	<div class="form-group">
                        	{{ form_widget(edit_form.manager, {'attr': {'class': 'nostyle'}}) }}
                        	{{ form_widget(edit_form.isAdmin, {'attr': {'class': 'nostyle'}}) }}

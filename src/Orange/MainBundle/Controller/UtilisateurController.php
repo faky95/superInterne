@@ -24,6 +24,7 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Utilisateur controller.
@@ -120,7 +121,7 @@ class UtilisateurController extends BaseController
     	return array('espace' => $espace, 'entity' => $entity, 'delete_form' => $deleteForm->createView(), 'actions' => $action);
     }
 
-    /**
+   /**
      * Displays a form to edit an existing Utilisateur entity.
      * @QMLogger(message="Modification utilisateur")
      * @Route("/edition_utilisateur/{id}", name="edition_utilisateur")
@@ -138,23 +139,37 @@ class UtilisateurController extends BaseController
         $formFactory = $this->get('fos_user.registration.form.factory');
        	$form = $formFactory->createForm();
         $form->setData($entity);
+        
         $form->handleRequest($request);
-       	if($form->isValid()) {
-        	/** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
-        	$userManager = $this->get('fos_user.user_manager');
-			if($entity->getIsAdmin()){
-				$entity->addRole('ROLE_ADMIN');
-			} else {
-				$entity->removeRole('ROLE_ADMIN');
-			}        		
-        	$event = new FormEvent($form, $request);
-        	$userManager->updateUser($entity);
-        	if(null === $response = $event->getResponse()) {
-        		$url = $this->generateUrl('les_utilisateurs');
-        		$response = new RedirectResponse($url);
-			}
-        	return $response;
+        if($form->isSubmitted())
+        {
+            if($form->isValid()) {
+                /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+                $userManager = $this->get('fos_user.user_manager');
+                if($entity->getIsAdmin()){
+                    $entity->addRole('ROLE_ADMIN');
+                } else {
+                    $entity->removeRole('ROLE_ADMIN');
+                }        		
+                $event = new FormEvent($form, $request);
+                $userManager->updateUser($entity);
+                
+                if (null === $response = $event->getResponse()) {
+                    $url = $this->generateUrl('les_utilisateurs');
+                    $response = new RedirectResponse($url);
+                }
+                return $response;
+            }
+             /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+             $userManager = $this->get('fos_user.user_manager');
+            
+
+            $event = new FormEvent($form, $request);
+            
+            $url = $this->generateUrl('les_utilisateurs');
+            return new  RedirectResponse($url);
         }
+      
         return array('entity' => $entity, 'edit_form' => $form->createView());
     }
 
@@ -449,5 +464,59 @@ class UtilisateurController extends BaseController
     	$response->headers->set('Content-Type', 'application/json');
     	return $response->setContent(json_encode($output));
     }
+
+     /**
+     * @Route("/change_password/{id}", name="change_password")
+     * @QMLogger(message="Modification du mot de passe")
+     * @Template()
+     */
+
+    public function changePasswordAction(Request $request,$id)
+    {
+        //$id = $request->request->get('id');
+        $em = $this->getDoctrine()->getManager();
+        $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
+        if (!$entity) {
+            throw $this->createNotFoundException('Unable to find Utilisateur entity.');
+        }
+         /** @var $dispatcher \Symfony\Component\EventDispatcher\EventDispatcherInterface */
+         $dispatcher = $this->get('event_dispatcher');
+         $event = new GetResponseUserEvent($entity, $request);
+         $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_INITIALIZE, $event);
+
+        if (null !== $event->getResponse()) {
+            return $event->getResponse();
+        }
+           /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+           $formFactory = $this->get('fos_user.change_password.form.factory');
+           $form = $formFactory->createForm();
+           $form->setData($entity);
+
+        $form->handleRequest($request);
+        //var_dump($entity->getMatricule()); exit;
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+            
+        	$userManager = $this->get('fos_user.user_manager');
+            $event = new FormEvent($form, $request);
+            $this->eventDispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
+
+            $this->userManager->updateUser($entity);
+
+            if (null === $response = $event->getResponse()) {
+                $url = $this->generateUrl('les_utilisateurs');
+                $response = new RedirectResponse($url);
+            }
+
+            $this->eventDispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_COMPLETED, new FilterUserResponseEvent($entity, $request, $response));
+
+            return $response;
+        }
+
+        return new Response($this->renderView('FOSUserBundle:ChangePassword:changePassword.html.twig', array(
+            'form' => $form->createView(), 'id' => $id
+        )));
+    }
+
     
 }

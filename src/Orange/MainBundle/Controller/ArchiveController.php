@@ -70,8 +70,9 @@ class ArchiveController extends BaseController
 		$response->headers->set('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
 		$response->sendHeaders();
-		$queryBuilder = $this->get('session')->get('data', array());
-		if($queryBuilder['totalNumber'] > 100) {
+        $queryBuilder = $this->get('session')->get('data', array());
+        // var_dump($queryBuilder); exit();
+		if($queryBuilder['totalNumber'] > 1000) {
 			$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
 			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
 			$em->persist($extraction);
@@ -79,14 +80,14 @@ class ArchiveController extends BaseController
 			$this->addFlash('warning', "L'extraction risque de prendre du temps, le fichier vous sera envoyé par mail");
 			return $this->redirect($this->getRequest()->headers->get('referer'));
 		}
-            $query = $em->createQuery($queryBuilder['query']);
-            $query->setParameters($queryBuilder['param']);
-            $statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
-            $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
-            $actions       = $query->getArrayResult();
-            $objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
-            $objWriter->save('php://output');
-            return $response;
+        $query = $em->createQuery($queryBuilder['query']);
+        $query->setParameters($queryBuilder['param']);
+        $statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatuts();
+        $query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+        $actions       = $query->getArrayResult();
+        $objWriter     = $this->get('orange.main.extraction')->exportAction($actions, $statut->getQuery()->execute());
+        $objWriter->save('php://output');
+        return $response;
         
     	// $em = $this->getDoctrine()->getManager();
     	// $response = new Response();

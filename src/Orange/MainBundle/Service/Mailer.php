@@ -9,25 +9,25 @@ class Mailer
 	 * @var \Swift_Mailer
 	 */
 	protected $mailer;
-	
+
     protected $templating;
     private $from = "orange@orange.sn";
-    private $bcc = array("madiagne.sylla@orange-sonatel.com");
+    private $bcc = array("madiagne.sylla@orange-sonatel.com","fatoukine.ndao@orange-sonatel.com");
     private $name = " SUPER";
-    
+
     public function __construct($mailer, EngineInterface $templating)
     {
         $this->mailer = $mailer;
         $this->templating = $templating;
     }
-    
+
     /**
      * @return Swift_Mailer
      */
     public function getMailer() {
     	return $this->mailer;
     }
-    
+
     public function notifNewAction($to, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -38,7 +38,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     /**
      * @param array $to
      * @param array $copy
@@ -60,7 +60,7 @@ class Mailer
     	$mail->setCc($copy);
 		return $this->mailer->send($mail);
     }
-    
+
     public function notifNewSignalisation($to, $cc, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -72,7 +72,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     public function notifNewUser($to, $cc, $data){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -84,7 +84,7 @@ class Mailer
     		->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
     public function send($to, $cc = null, $subject, $body, $trace = false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -99,7 +99,7 @@ class Mailer
     	}
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendBug($to, $cc = null, $subject, $body, $chemin, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -112,7 +112,7 @@ class Mailer
 	    	->attach(\Swift_Attachment::fromPath($chemin.'/'.$file));
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendNotifReport($to, $report, $user) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -123,7 +123,7 @@ class Mailer
 			->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendReport($to, $subject, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -136,7 +136,7 @@ class Mailer
     	->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendExtraction($to, $subject, $file) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -149,7 +149,7 @@ class Mailer
 	    	->attach(\Swift_Attachment::fromPath('./web/upload/reporting/'.$file));
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendRelanceNewAction($to, $cc, $subject, $body){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -163,7 +163,7 @@ class Mailer
     		->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
     public function registration($user){
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -174,7 +174,7 @@ class Mailer
     		->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendAlerteQuartTime($to, $subject, $body, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -187,7 +187,7 @@ class Mailer
     	}
     	return $this->mailer->send($mail);
     }
-    
+
     public function sendRappel($to, $cc = null, $subject, $body, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -201,7 +201,7 @@ class Mailer
     	 }
     	return $this->mailer->send($mail);
     }
-    
+
     public function NotifActionEspace($to, $cc, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -213,7 +213,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     public function NotifAction($to, $cc, $subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -225,7 +225,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     public function NotifActionSignalisation($to,$cc,$subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -237,7 +237,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     public function notifForSignalisation($to, $cc, $subject, $body, $motif=null, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -252,7 +252,7 @@ class Mailer
     	}
     	return $this->mailer->send($mail);
     }
-    
+
     public function NotifWithCopy($to, $cc, $subject, $body, $motif=null, $trace=false) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -278,7 +278,7 @@ class Mailer
 			->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
     public function NotifUpdatePorteur($to, $data) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -289,7 +289,7 @@ class Mailer
 			->setCharset('utf-8');
 		return $this->mailer->send($mail);
     }
-    
+
     public function sendLogsMail($subject, $body,$chemin) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -301,7 +301,7 @@ class Mailer
 	    	->attach(\Swift_Attachment::fromPath($chemin));
     	return $this->mailer->send($mail);
     }
-    
+
     public function notifActionGenerique($to, $cc=null,$subject, $body) {
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
@@ -313,5 +313,5 @@ class Mailer
     	->setCharset('utf-8');
     	return $this->mailer->send($mail);
     }
-    
+
 }

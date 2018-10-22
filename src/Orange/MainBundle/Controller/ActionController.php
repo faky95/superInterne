@@ -271,6 +271,7 @@ class ActionController extends BaseController
 		$response->headers->set('Content-Disposition', sprintf('attachment; filename=Extraction des actions du %s.xlsx', date('YmdHis')));
 		$response->sendHeaders();
 		$queryBuilder = $this->get('session')->get('data', array());
+		
 		if($queryBuilder['totalNumber'] > 10000) {
 			$type = \Orange\MainBundle\Entity\Extraction::$types['action'];
 			$extraction = Extraction::nouvelleTache($queryBuilder['totalNumber'], $this->getUser(), $queryBuilder['query'], serialize($queryBuilder['param']), $type);
