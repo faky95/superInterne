@@ -42,9 +42,9 @@
 		    	</div>
 				<div class="form-group">
 					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_TRAIT_EFFICACE', 'id': entity.id})}}" title="Valider la prise en charge de la signalisation"><button class="btn btn-success"><span class="icon16  icomoon-icon-thumbs-up white"></span>Traitement Efficace</button></a>
-					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_TRAIT_NON_EFFICACE', 'id': entity.id})}}" title="Invalider la prise en charge de la signalisation"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Traitement Inefficace</button></a>
+					<a data-toggle="modal" data-target="#myModal" href="#myModal" class="actionLink" modal-url="{{ path('signalisationstatut_new', {'valide': 'SIGN_RETOURNEE', 'id': entity.id})}}" title="Invalider la prise en charge de la signalisation"><button class="btn btn-warning"><span class="icon16  icomoon-icon-thumbs-down white"></span>Traitement Inefficace</button></a>
 				</div>
-			{% elseif statut == 'SIGN_TRAIT_NON_EFFICACE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.source.utilisateur.id %}
+			{% elseif statut == 'SIGN_RETOURNEE' and has_rights('ROLE_ANIMATEUR') and app.user.id != entity.source.utilisateur.id %}
 				<div class="form-group">
 		        	<p>{{ entity.signStatut[entity.signStatut|length - 1].commentaire }}</p>
 		    	</div>

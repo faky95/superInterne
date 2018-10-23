@@ -140,6 +140,23 @@ class DashboardController extends BaseController {
 		$map= $this->getMapping()->getReporting()->transformRequeteToSimpleNull($rq);
 		return array('req'=>$map);
 	}
+	/**
+	 * Tableau de bord
+	 * @QMLogger(message="Page d'accueil")
+	 * @Route("/mail", name="mail")
+	 * @Method("GET")
+	 * @Template()
+	 */
+	public function indexAction()
+	{
+		$message = (new \Swift_Message('Hello Email'))
+		->setFrom(array('orange@orange.sn'=>'super'))
+        ->setTo('fatoukine.ndao@orange-sonatel.com')
+        ->setCc('madiagne.sylla@orange-sonatel.com')
+        ->setBody('ok');
+		 $this->get('mailer')->send($message);
+		return $this->render('OrangeMainBundle:Dashboard:mail.html.twig');
+	}
 	
 	
 }

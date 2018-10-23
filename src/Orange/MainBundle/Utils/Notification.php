@@ -66,12 +66,13 @@ class Notification {
 	 * @param string $subject
 	 * @param array $membresEmail
 	 * @param array $cc
+	 * @param array $bcc
 	 * @param string $commentaire
 	 * @param Action|Signalisation|Tache $entity
 	 */
-	public static function notificationActionSignalisation($helper, $subject, $membresEmail, $cc, $commentaire, $entity) {
+	public static function notificationActionSignalisation($helper, $subject, $membresEmail, $cc,$bcc, $commentaire, $entity) {
 		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);
-		$helper->NotifActionSignalisation($membresEmail, $cc, $subject, $body);
+		$helper->NotifActionSignalisation($membresEmail, $cc, $bcc,$subject, $body);
 	
 	}
 

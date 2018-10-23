@@ -28,7 +28,9 @@ class RegistrationFormType extends BaseType
             		'first_options' => array('label' => 'form.password', 'attr' => array('placeholder' => 'Saisir le mot de passe')),
             		'second_options' => array('label' => 'form.password_confirmation', 'attr' => array('placeholder' => 'Confirmation')),
             		'invalid_message' => 'fos_user.password.mismatch',
-                  ));
+				  ));
+				  
+				  
 	}
 
 	public function getName() {
