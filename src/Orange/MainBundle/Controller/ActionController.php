@@ -542,17 +542,19 @@ class ActionController extends BaseController
      */
     public function showAction($id, $id_espace=null) {
     	//var_dump($this->container->get('security.context'));exit;
-    	/*$arrData = array('centreantipoison.sn', 'comafesa.com', 'samsara-lcs.sn', 'chocosen.sn', 'exa.sn', 'orangesmspro.sn', 'tresorpublic.sn', 'avs.sn', 'secufoudre.sn', 'marbresgranites.sn', 'arezkitp.sn', 'atlantic-electronics.com', 'archidessin.com', 'delphinus.sn', 'quartierdespros.sn', 'apacsn.com', 'netcrm.sn', 'saicom.sn');
-    	foreach ($arrData as $email) {
-	    	$mail = \Swift_Message::newInstance();
-	    	$mail->setFrom('madisylla@orange.sn')
-	    		->setTo(array('madiagne.sylla@orange-sonatel.com', 'hotlinepro@'.$email))
-		    	->setSubject("Nouvelle Action")
-		    	->setBody('test envoi mail vers '.$email)
-		    	->setContentType('text/html')
-		    	->setCharset('utf-8');
-	    	$this->get('mailer')->send($mail);
-    	}*/
+    	// $arrData = array('centreantipoison.sn', 'comafesa.com', 'samsara-lcs.sn', 'chocosen.sn', 'exa.sn', 'orangesmspro.sn', 'tresorpublic.sn', 'avs.sn', 'secufoudre.sn', 'marbresgranites.sn', 'arezkitp.sn', 'atlantic-electronics.com', 'archidessin.com', 'delphinus.sn', 'quartierdespros.sn', 'apacsn.com', 'netcrm.sn', 'saicom.sn');
+    	// foreach ($arrData as $email) {
+	    	// $mail = \Swift_Message::newInstance();
+	    	// $mail->setFrom('madisylla@orange.sn')
+			// 	->setTo(array('madiagne.sylla@orange-sonatel.com', 'fatoukine.ndao@orange-sonatel.com'))
+			// 	->setSubject("Nouvelle Action")
+			// 	->setCc('madiagne.sylla@orange-sonatel.com')
+		    // 	->setBody('test envoi mail vers ')
+		    // 	->setContentType('text/html')
+		    // 	->setCharset('utf-8');
+	    	// $this->get('mailer')->send($mail);
+	//	}
+		
         $em = $this->getDoctrine()->getManager();
         $action = $em->getRepository('OrangeMainBundle:Action')->find($id);
         $this->denyAccessUnlessGranted('read', $action, 'Unauthorized access!');

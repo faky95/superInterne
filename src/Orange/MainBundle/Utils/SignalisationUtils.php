@@ -100,6 +100,7 @@ class SignalisationUtils {
 		foreach ($animateurs as $animateur){
 			array_push ($membreEmail, $animateur->getUtilisateur()->getEmail());
 		}
+		//var_dump($membreEmail);
 		return $membreEmail;
 	}
 	

@@ -107,8 +107,23 @@ class SignalisationManager
 	}
 	
 	//signalisation non efficace
+	// public function signalisationNonEfficace($entity, $helper) {
+	// 	$signalisationActeursEmail = SignalisationUtils::getSignalisationRejeteMembresEmail($this->em, $entity);
+	// 	array_push($signalisationActeursEmail,"fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com");
+	// 	//var_dump($signalisationActeursEmail); 
+	// 	$commentaire = $entity->getSignStatut()->last() ? $entity->getSignStatut()->last()->getCommentaire() : null;
+	// 	$subject = 'Evaluation de la signalisation ';
+	// 	$commentaire = 'La signalisation <<'.$entity->getLibelle().'>> a été qualifiée non efficace par '.$this->user->getCompletNom().
+	// 			' . Il est demandé à  l\'animateur en charge de cette signalisation de revoir les actions mal traitées .  ';
+	// 	Notification::notificationSignWithCopy($helper, $subject, $signalisationActeursEmail, array(), $commentaire, $entity );
+	// 	$this->updateEtatSignalisation($this->em, Statut::SIGNALISATION_RETOURNER, $entity);
+	// }
+
 	public function signalisationNonEfficace($entity, $helper) {
 		$signalisationActeursEmail = SignalisationUtils::getSignalisationRejeteMembresEmail($this->em, $entity);
+		//var_dump($signalisationActeursEmail);
+		array_push($signalisationActeursEmail,"fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com");
+		//var_dump($signalisationActeursEmail); 
 		$commentaire = $entity->getSignStatut()->last() ? $entity->getSignStatut()->last()->getCommentaire() : null;
 		$subject = 'Evaluation de la signalisation ';
 		$commentaire = 'La signalisation <<'.$entity->getLibelle().'>> a été qualifiée non efficace par '.$this->user->getCompletNom().
