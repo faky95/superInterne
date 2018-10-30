@@ -21,14 +21,16 @@ class RegistrationFormType extends BaseType
 			->add('canCreateActionGenerique', 'checkbox', array('label' => 'Peut créer des actions génériques ?', 'required' => true))
 			->add('structure', null, array('label' => 'Structure :', 'empty_value' => 'Choisir la structure ---', 'required' => true))
 			->add('matricule', null, array('label' => 'Matricule :'))
-			//->add('plainPassword', null ,array('label' => 'Mot de passe :'))
 			->add('plainPassword', 'repeated', array(
 					'type' => 'password',
             		'options' => array('translation_domain' => 'FOSUserBundle'),
             		'first_options' => array('label' => 'form.password', 'attr' => array('placeholder' => 'Saisir le mot de passe')),
             		'second_options' => array('label' => 'form.password_confirmation', 'attr' => array('placeholder' => 'Confirmation')),
             		'invalid_message' => 'fos_user.password.mismatch',
-				  ));
+				  ))
+			->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-info marginR10 marginL10')))
+            ->add('cancel', 'submit', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-danger')));
+   	  
 				  
 				  
 	}

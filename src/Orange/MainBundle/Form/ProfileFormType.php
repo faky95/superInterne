@@ -50,7 +50,9 @@ class ProfileFormType extends BaseType
 							'class'=>'Orange\MainBundle\Entity\Structure',
 							'required' => true,
 					))
-			->add('matricule', null, array('label' => 'Matricule :'));
+			->add('matricule', null, array('label' => 'Matricule :'))
+             ->add('add', 'submit', array('label' => 'Enregistrer', 'attr' => array('class' => 'btn btn-info marginR10 marginL10')))
+            ->add('cancel', 'submit', array('label' => 'Annuler', 'attr' => array('class' => 'btn btn-danger')));
     }
 
     public function configureOptions(OptionsResolver $resolver)

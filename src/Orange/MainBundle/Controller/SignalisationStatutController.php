@@ -83,7 +83,6 @@ class SignalisationStatutController extends BaseController {
 			}
 			if($valide == 'SIGN_RETOURNEE') {
 				$event = $this->get('orange_main.signalisation_event' )->createForSignalisation($signalisation);
-				//var_dump($event); exit();
 				$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_NON_EFFICACE, $event );
 				$this->get('session' )->getFlashBag ()->add('success', array (
 						'title' => 'Notification', 'body' => 'Enregistrement effectué avec succès' 

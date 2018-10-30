@@ -39,8 +39,11 @@
 				  	{{ form_widget(edit_form._token) }}
                     <div class="form-group form-actions">
                         <div class="col-lg-offset-2">
-                            <button type="submit" class="btn btn-info marginR10 marginL10">Sauvegarder</button>
-                            <button class="btn btn-danger">Annuler</button>
+						    {{ form_widget(edit_form.add) }}
+							{{ form_widget(edit_form.cancel) }}
+
+                            {# <button type="submit" class="btn btn-info marginR10 marginL10">Sauvegarder</button>
+                            <button class="btn btn-danger">Annuler</button> #}
                         </div>
                     </div><!-- End .form-group  -->
 				</form>

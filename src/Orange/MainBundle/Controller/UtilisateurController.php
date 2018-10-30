@@ -134,46 +134,51 @@ class UtilisateurController extends BaseController
         $em = $this->getDoctrine()->getManager();
         $entity=new Utilisateur;
         $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
-        if (!$entity) {
+        if (!$entity)
+        {
             throw $this->createNotFoundException('Unable to find Utilisateur entity.');
         }
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.profile.form.factory');
-       $form = $formFactory->createForm();
+        $form = $formFactory->createForm();
         $form->setData($entity);
-        if($request->isMethod("POST"))
-        {
-         
-            $form->handleRequest($request);
-           // var_dump($form->getErrorsAsString()); exit();
+         $form->handleRequest($request);
             if($form->isSubmitted() && $form->isValid())
             { 
-            
-                /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
-                $userManager = $this->get('fos_user.user_manager');
-                if($entity->getIsAdmin()){
-                    $entity->addRole('ROLE_ADMIN');
-                } else {
-                    $entity->removeRole('ROLE_ADMIN');
-                }        		
-                //$event = new FormEvent($form, $request);
-                
-               $em->persist($entity);
-                $em->flush();
-               // $userManager->updateUser($entity);
-                return $this->redirect($this->generateUrl('les_utilisateurs'));
-            }
-            else{
-                echo 'no ok';
-            }
-                
                
-           
-        }
+             /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+                $userManager = $this->get('fos_user.user_manager');
+                $dispatcher = $this->get('event_dispatcher');
+                $event = new FormEvent($form, $request);
+                if($form->get('cancel')->isClicked())
+                {
+                
+                 return $this->redirectToRoute('les_utilisateurs');
+                }
+               
+                    if($entity->getIsAdmin()){
+                        $entity->addRole('ROLE_ADMIN');
+                    } else {
+                        $entity->removeRole('ROLE_ADMIN');
+                    }        		
+                    
+                    $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
+                    $this->get('session' )->getFlashBag ()->add('success', array (
+                        'title' => 'Notification', 'body' => 'Changement effectué avec succès' 
+                    ));
        
-        
+                    $userManager->updateUser($entity);
+                    if (null === $response = $event->getResponse()) {
+                        $url = $this->generateUrl('les_utilisateurs');
+                        $response = new RedirectResponse($url);
+                    }
+                
+
+                return $response;
+            }
+            
       
-        return array('entity' => $entity, 'edit_form' => $form->createView());
+         return array('entity' => $entity, 'edit_form' => $form->createView());
     }
 
     /**
@@ -486,17 +491,32 @@ class UtilisateurController extends BaseController
         $formFactory = $this->get('fos_user.registration.form.factory');
        	$form = $formFactory->createForm();
         $form->setData($entity);
-        if($request->getMethod()=='POST')
-        {
-            $form->handleRequest($request);
-            //echo $request;
-            //var_dump($form->isValid()); exit();
-            if($form->isValid()) {
-                $em->persist($entity);
-                $em->flush();
-                $this->get('fos_user.user_manager')->UpdateUser($entity);
-                return $this->redirect($this->generateUrl('les_utilisateurs'));
+        if($form->isSubmitted() && $form->isValid())
+        { 
+            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+            $userManager = $this->get('fos_user.user_manager');
+            $dispatcher = $this->get('event_dispatcher');
+            $event = new FormEvent($form, $request);
+            if($form->get('cancel')->isClicked())
+            {
+                $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
+                $this->get('session' )->getFlashBag ()->add('success', array (
+                    'title' => 'Notification', 'body' => 'Mot de passe annulé' 
+                ));
+                return $this->redirectToRoute('les_utilisateurs');
             }
+            $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
+            $this->get('session' )->getFlashBag ()->add('success', array (
+                'title' => 'Notification', 'body' => 'Mot de passe changé avec succès' 
+            ));
+
+            $userManager->updateUser($entity);
+            //if (null === $response = $event->getResponse()) {
+                $url = $this->generateUrl('les_utilisateurs');
+                $response = new RedirectResponse($url);
+            //}
+
+            return $response;
         }
         return array('entity' => $entity, 'edit_form' => $form->createView());
 
