@@ -238,7 +238,9 @@ class Actions {
 		 
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || $this->user->hasRole('ROLE_ADMIN')) {
 			$actions .= '<a class="btn btn-default" href="%s" title="Modifier l\'utilisateur"><span class="icomoon-icon-pencil-3"></span></a>';
-			$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Modifier Password"><span class="icomoon-icon-pencil"></span></a>';
+			//$actions .= '<a class="btn btn-default actionLink" href="#myModal" modal-url="%s" data-target="#myModal" data-toggle="modal" title="Modifier Password"><span class="icomoon-icon-pencil"></span></a>';
+			$actions .= '<a class="btn btn-default" href="%s" title="Modifier Password"><span class="icomoon-icon-pencil"></span></a>';
+
 		}
 		if($this->user->hasRole('ROLE_SUPER_ADMIN') || ($this->user->hasRole('ROLE_ADMIN') && $this->user->getStructure()->getRoot()==$entity->getStructure()->getRoot())) {
 			if($entity->isEnabled()) {

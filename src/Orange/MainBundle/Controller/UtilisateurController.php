@@ -191,7 +191,7 @@ class UtilisateurController extends BaseController
         $form = $this->createForm(new UtilisateurType($entity), array(
             'action' => $this->generateUrl('edition_utilisateur', array('id' => $entity->getId())),
             'method' => 'POST',
-        ))->remove('password');
+        ));
         $form->add('submit', 'submit', array('label' => 'Update'));
         return $form;
     }
@@ -482,6 +482,8 @@ class UtilisateurController extends BaseController
      */
     public function changePasswordAction(Request $request, $id)
     {
+     
+        
         $em = $this->getDoctrine()->getManager();
         $entity = $em->getRepository('OrangeMainBundle:Utilisateur')->find($id);
         if (!$entity) {
@@ -489,11 +491,13 @@ class UtilisateurController extends BaseController
         }
         /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
         $formFactory = $this->get('fos_user.registration.form.factory');
-       	$form = $formFactory->createForm();
+           $form = $formFactory->createForm();
+       // $form=$this->createEditPassForm($entity);
         $form->setData($entity);
+        $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid())
         { 
-            /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
+         /** @var $userManager \FOS\UserBundle\Model\UserManagerInterface */
             $userManager = $this->get('fos_user.user_manager');
             $dispatcher = $this->get('event_dispatcher');
             $event = new FormEvent($form, $request);
@@ -501,7 +505,7 @@ class UtilisateurController extends BaseController
             {
                 $dispatcher->dispatch(FOSUserEvents::CHANGE_PASSWORD_SUCCESS, $event);
                 $this->get('session' )->getFlashBag ()->add('success', array (
-                    'title' => 'Notification', 'body' => 'Mot de passe annulé' 
+                    'title' => 'Notification', 'body' => 'Changement de Mot de passe annulé' 
                 ));
                 return $this->redirectToRoute('les_utilisateurs');
             }
@@ -510,17 +514,35 @@ class UtilisateurController extends BaseController
                 'title' => 'Notification', 'body' => 'Mot de passe changé avec succès' 
             ));
 
-            $userManager->updateUser($entity);
-            //if (null === $response = $event->getResponse()) {
+             $userManager->updateUser($entity);
+            if (null === $response = $event->getResponse()) {
                 $url = $this->generateUrl('les_utilisateurs');
                 $response = new RedirectResponse($url);
-            //}
+            }
+            
 
             return $response;
         }
         return array('entity' => $entity, 'edit_form' => $form->createView());
 
     }
+
+    // /**
+    // * Creates a form to edit a Utilisateur entity.
+    // * @param Utilisateur $entity The entity
+    // * @return \Symfony\Component\Form\Form The form
+    // */
+    // private function createEditPassForm(Utilisateur $entity)
+    // {
+    //       /** @var $formFactory \FOS\UserBundle\Form\Factory\FactoryInterface */
+    //     $formFactory = $this->get('fos_user.registration.form.factory');
+    //     $form = $formFactory->createForm($entity, array(
+    //         'action' => $this->generateUrl('change_password', array('id' => $entity->getId())),
+    //         'method' => 'PUT',
+    //     ));
+    //     $form->add('submit', 'submit', array('label' => 'Update'));
+    //     return $form;
+    // }
 
 
  
