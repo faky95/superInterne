@@ -95,7 +95,7 @@ class Extraction extends \PHPExcel {
 			);
 		$th = array(
 				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 
-				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture', 'Taux de respect du délai', 'Avancements' 
+				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture','Avancements', 'Taux de respect du délai', 
 			);
 		$col = "A";
 		$x = 1;
@@ -121,8 +121,8 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$value = $val[0];
-			
-			//$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
+			//var_dump($val[0]); 
+			$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
 			$tableau[] = array(
 					$value['reference'],
 					$value['instance']['libelle'],
@@ -138,18 +138,19 @@ class Extraction extends \PHPExcel {
 					$arrayStatut [$value['etatReel']],
 					$value['domaine']['libelleDomaine'],
 					$val['contributeurs'],
-					//$value['dateCloture'] ? $value['dateCloture']->format('d-m-Y') : '',
 					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
 					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
-					//$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
-					//$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
+					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
+					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
+					$val['avancements'],
 					$this->respectDelai($value),
-					$val['avancements']
+					//$value['avancements']
 				);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
 		return $objWriter;
+
 	}
 	
 	/**

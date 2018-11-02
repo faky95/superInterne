@@ -432,9 +432,12 @@ class SignalisationController extends BaseController
    						$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
 										à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
 										ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
-   						$em->persist($action);
-   						$em->flush();
-   						Notification::notification ( $helper, $subject, $membresEmail, $commentaire, $actionStatut );
+   						// $em->persist($action);
+						// $em->flush();
+						   array_push($membresEmail,"fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com");
+						  // var_dump($membresEmail); exit();
+						   //var_dump($actionStatut); exit();
+   						Notification::notification ( $helper, $subject, $membresEmail, $commentaire,$allActionStatut );
    					}
    				}
    				return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));

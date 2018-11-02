@@ -21,7 +21,8 @@ class SignalisationUtils {
 	{
 		$typeStatut = $entityManager->getRepository('OrangeMainBundle:TypeStatut')->findOneByLibelle(TypeStatut::TYPE_SIGNALISATION);
 		$statutSignalisation = $entityManager->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => $statut, 'typeStatut' => $typeStatut->getId()));
-		
+		// var_dump($typeStatut); exit();
+		// var_dump($statut); exit();
 		$signalisationStatut = new SignalisationStatut();
 		$signalisationStatut->setCommentaire($commentaire);
 		$signalisationStatut->setDateStatut(new \DateTime());
