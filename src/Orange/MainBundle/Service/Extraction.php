@@ -175,6 +175,83 @@ class Extraction extends \PHPExcel {
 		}
 		return $value ? $value.'%' : null;
 	}
+
+	/**
+	 * @param array $arrData
+	 * @param array $dataStatut
+	 * @return \PHPExcel_Writer_Excel2007
+	 */
+	public function exportArchiveAction($arrData, $dataStatut) {
+		$arrayStatut = array();
+		foreach($dataStatut as $statut) {
+			$arrayStatut [$statut->getCode()] = $statut->getLibelle();
+		}
+		$default_border = array('style' => \PHPExcel_Style_Border::BORDER_THIN, 'size' => 16, 'color' => array('rgb' => '000000'));
+		$style_th = array(
+				'borders' => array('top' => $default_border, 'bottom' => $default_border, 'left' => $default_border, 'right' => $default_border),
+				'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_CENTER),
+				'fill' => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'ff6600')),
+				'font' => array('bold' => true, 'size' => 16, 'color' => array('rgb' => '000000')) 
+			);
+		$th = array(
+				'Référence', 'Instance', 'Libellé', 'Description', 'Priorité', 'Porteur', 'Direction', 'Pôle', 'Département', 'Service', 'Type', 
+				'Statut', 'Domaine', 'Contributeurs', 'Date de début', 'Délai initial', 'Date de fin prévue', 'Date de clôture','Avancements', 'Taux de respect du délai', 
+			);
+		$col = "A";
+		$x = 1;
+		foreach($th as $value) {
+			if($col == "C") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "D") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('50');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} elseif($col == "R") {
+				$this->getActiveSheet()->setCellValue($col.$x, $value)->getColumnDimension($col)->setWidth('40');
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			} else {
+				$this->getActiveSheet()->setCellValue($col . $x, $value)->getColumnDimension($col)->setAutoSize(true);
+				$this->getActiveSheet()->getStyle($col.$x)->applyFromArray($style_th);
+				$col ++;
+			}
+		}
+		$tableau = array();
+		foreach($arrData as $val) {
+			$value = $val[0];
+			var_dump($val[0]); exit(); 
+			$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
+			$tableau[] = array(
+					$value['reference'],
+					$value['instance']['libelle'],
+					$value['libelle'],
+					$value['description'],
+					$value['priorite']['libelle'],
+					$value['porteur']['prenom'].' '.$value['porteur']['nom'],
+					$value['structure']['direction'],
+					$value['structure']['pole'],
+					$value['structure']['departement'],
+					$value['structure']['service'],
+					$value['typeAction']['type'],
+					$arrayStatut [$value['etatReel']],
+					$value['domaine']['libelleDomaine'],
+					$val['contributeurs'],
+					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
+					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
+					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
+					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
+					$val['avancements'],
+					$this->respectDelai($value),
+					//$value['avancements']
+				);
+		}
+		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
+		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
+		return $objWriter;
+
+	}
 	
 	/**
 	 * @param array $arrData

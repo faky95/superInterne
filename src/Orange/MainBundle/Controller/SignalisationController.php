@@ -408,9 +408,11 @@ class SignalisationController extends BaseController
    		$now = $now->format ('d-m-Y') . " à " . $now->format('H:i:s');
    		$helper = $this->get('orange.main.mailer');
    		if(!empty($actionId)) {
+			  
    			$actionsReload = array();
    			foreach ($actionId as $id) {
-   				$action =  $em->getRepository('OrangeMainBundle:Action')->find(intval($id['action_id']));
+				
+				   $action =  $em->getRepository('OrangeMainBundle:Action')->find(intval($id['action_id']));
    				array_push($actionsReload, $action);
    			}
    			//Here is my problem , how can i my $questions into form? ---
@@ -432,14 +434,16 @@ class SignalisationController extends BaseController
    						$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
 										à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
 										ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
-   						// $em->persist($action);
-						// $em->flush();
+   						$em->persist($action);
+						$em->flush();
 						   array_push($membresEmail,"fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com");
-						  // var_dump($membresEmail); exit();
-						   //var_dump($actionStatut); exit();
-   						Notification::notification ( $helper, $subject, $membresEmail, $commentaire,$allActionStatut );
-   					}
-   				}
+		
+   						Notification::notification ($helper, $subject, $membresEmail, $commentaire,$actionStatut );
+					   }
+					  // Notification::notification ($helper, $subject, $membresEmail, $commentaire,$actionStatut );
+
+
+				   }
    				return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));
    			}
    		} else {
