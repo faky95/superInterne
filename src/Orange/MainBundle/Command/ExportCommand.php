@@ -33,7 +33,7 @@ class ExportCommand extends BaseCommand {
 					$this->extractionSignalisation($extraction);
 					break;
 			}
-			$extraction->setEtat(1);
+			//$extraction->setEtat(1);
 			$this->getEntityManager()->persist($extraction);
 			$spool->flushQueue($transport);
 		}
@@ -92,7 +92,7 @@ class ExportCommand extends BaseCommand {
 	public function extractionSignalisation(Extraction $extraction) {
 		$statut = $this->getEntityManager()->getRepository('OrangeMainBundle:Statut')->listAllStatutSign();
 		$query = $this->getEntityManager()->createQuery($extraction->getQuery());
-		$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
+		//$query->setHint(\Doctrine\ORM\Query::HINT_FORCE_PARTIAL_LOAD, 1);
 		$query->setParameters(unserialize($extraction->getParam()));
 		$data = $this->getMapping()->getExtraction()->exportSignalisation($query->execute(), $statut->getQuery()->execute());
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);

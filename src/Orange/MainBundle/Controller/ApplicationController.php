@@ -47,14 +47,43 @@ class ApplicationController extends BaseController
 	 */
 	public function listInstanceByApplicationAction(Request $request) {
 		$em = $this->getDoctrine()->getManager();
-		$params = $request->request->all();
+		$params = $request->query->all();
 		$arrData = $em->getRepository('OrangeMainBundle:Instance')->listByApplication($params['application'], $params['email']);
 		$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une instance  ...'));
 		foreach ($arrData as $data) {
 			$output[] = array('id' => $data['id'], 'libelle' => $data['libelle']);
 		}
-		
 		return new JsonResponse($output);
+		
+	}
+
+		/**
+	 * @Route ("/list_action", name="list_action")
+	 */
+	public function listActionByApplicationAction(Request $request) {
+		$em = $this->getDoctrine()->getManager();
+		$params = $request->query->all();
+		//var_dump($params);
+		$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application']);
+		$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
+		foreach ($arrData as $data) {
+		//	print_r($data);
+			
+			$output[] = array('id' => $data['id'], 'libelle' => $data['libelle'],
+			'Reference'=>$data['reference'],
+			'Type Action'=>$data['typeAction'],
+		'date Debut'=>$data['dateDebut'],
+		'date Initial'=>$data['dateInitial'],
+		'date fin prevue'=>$data['dateFinPrevue'],
+		'EtatCourant'=>$data['etatCourant'],
+		'structure'=>$data['structure'],
+		'porteur'=>$data['porteur'],
+		
+	);
+	}
+		return new JsonResponse($output);
+	
+		
 	}
 	
 	/**

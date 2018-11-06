@@ -99,6 +99,7 @@ class SignalisationController extends BaseController
 		$query->setParameters($queryBuilder['param']);
 		$statut = $em->getRepository('OrangeMainBundle:Statut')->listAllStatutSign();
 		$data = $this->getMapping()->getExtraction()->exportSignalisation($query->execute(), $statut->getQuery()->execute());
+		//var_dump($data[0]); exit();
 		$objWriter = $this->get('orange.main.extraction')->exportSignalisation($data);
 		$filename = sprintf("Extraction_des_signalisations_du_%s.xlsx", date('d-m-Y'));
 		$objWriter->save($this->get('kernel')->getWebDir()."/upload/reporting/$filename");

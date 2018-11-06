@@ -1108,4 +1108,21 @@ class ActionRepository extends BaseRepository {
 			}
 		return $arrData;
 	}
+
+	public function listByAction($application)
+	{
+		return $this->createQueryBuilder('a')->select('a')
+		->addSelect('port AS porteur_id, s AS structure_id, type AS type_action_id')
+		->leftJoin('a.porteur','port')
+		->leftJoin('a.structure','s')
+		->leftJoin('a.typeAction','type')
+		//->innerJoin('OrangeMainBundle:Utilisateur','u')
+		->innerJoin('OrangeMainBundle:Application','p', 'WITH', 'TRIM(p.code) LIKE :application')
+		->innerJoin('a.instance', 'i')
+		->innerJoin('p.instance', 't')
+		->setParameter('application', $application)
+		->where('a.instance = t')
+		->getQuery()->getArrayResult();
+	}
+	
 }

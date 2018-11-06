@@ -221,31 +221,31 @@ class Extraction extends \PHPExcel {
 		$tableau = array();
 		foreach($arrData as $val) {
 			$value = $val[0];
-			var_dump($val[0]); exit(); 
-			$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
-			$tableau[] = array(
-					$value['reference'],
-					$value['instance']['libelle'],
-					$value['libelle'],
-					$value['description'],
-					$value['priorite']['libelle'],
-					$value['porteur']['prenom'].' '.$value['porteur']['nom'],
-					$value['structure']['direction'],
-					$value['structure']['pole'],
-					$value['structure']['departement'],
-					$value['structure']['service'],
-					$value['typeAction']['type'],
-					$arrayStatut [$value['etatReel']],
-					$value['domaine']['libelleDomaine'],
-					$val['contributeurs'],
-					$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
-					$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
-					$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
-					$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
-					$val['avancements'],
-					$this->respectDelai($value),
-					//$value['avancements']
-				);
+			//var_dump($val[0]); exit(); 
+			//$dateFin = $value['dateFinExecut'] ? $value['dateFinExecut'] : $value['dateCloture'];
+			// $tableau[] = array(
+			// 		$value['reference'],
+			// 		$value['instance']['libelle'],
+			// 		$value['libelle'],
+			// 		$value['description'],
+			// 		$value['priorite']['libelle'],
+			// 		$value['porteur']['prenom'].' '.$value['porteur']['nom'],
+			// 		$value['structure']['direction'],
+			// 		$value['structure']['pole'],
+			// 		$value['structure']['departement'],
+			// 		$value['structure']['service'],
+			// 		$value['typeAction']['type'],
+			// 		$arrayStatut [$value['etatReel']],
+			// 		$value['domaine']['libelleDomaine'],
+			// 		$val['contributeurs'],
+			// 		$value['dateDebut'] ? $value['dateDebut']->format('d-m-Y') : '',
+			// 		$value['dateInitial'] ? $value['dateInitial']->format('d-m-Y') : '',
+			// 		//$value['dateFinPrevue'] ? $value['dateFinPrevue']->format('d-m-Y') : '',
+			// 		//$dateFin ? $dateFin->format('d-m-Y') : 'En Cours',
+			// 		$val['avancements'],
+			// 		$this->respectDelai($value),
+			// 		//$value['avancements']
+			// 	);
 		}
 		$this->getActiveSheet()->fromArray($tableau, '', 'A2');
 		$objWriter = \PHPExcel_IOFactory::createWriter($this, 'Excel2007');
