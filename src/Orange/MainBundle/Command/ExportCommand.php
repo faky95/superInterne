@@ -33,7 +33,7 @@ class ExportCommand extends BaseCommand {
 					$this->extractionSignalisation($extraction);
 					break;
 			}
-			//$extraction->setEtat(1);
+			$extraction->setEtat(1);
 			$this->getEntityManager()->persist($extraction);
 			$spool->flushQueue($transport);
 		}
