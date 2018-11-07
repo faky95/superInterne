@@ -45,7 +45,7 @@ class ActionRepository extends BaseRepository {
 	 */
 	public function listArchivedForExport($criteria) {
 		return $this->listArchivedQueryBuilder($criteria)->select('partial i.{id, libelle, couleur}, partial pr.{id, couleur, libelle},
-				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial},
+				partial a.{id, libelle, reference, etatCourant, description, etatReel, dateDebut, dateFinExecut, dateInitial,dateFinPrevue,dateCloture},
 				partial d.{id, libelleDomaine}, partial ta.{id, couleur, type}, partial c.{id},
 				partial cu.{id, prenom, nom},partial p.{id, prenom, nom, structure},
 				partial av.{id, description}, partial s.{id, service, departement, pole, direction},
