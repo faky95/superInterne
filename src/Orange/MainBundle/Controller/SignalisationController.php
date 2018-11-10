@@ -404,7 +404,8 @@ class SignalisationController extends BaseController
    		$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
    		$allActionStatut = $em->getRepository("OrangeMainBundle:SignalisationStatut")->findBySignalisation($signalisation_id);
    		$actionStatut = count($allActionStatut) ? $allActionStatut[count($allActionStatut) - 1 ] : array();
-   		$membresEmail = $this->getSignalisationMembresEmail($em, $signalisation);
+		   $membresEmail = $this->getSignalisationMembresEmail($em, $signalisation);
+		  // var_dump($membresEmail); exit();
    		$now = new \DateTime ();
    		$now = $now->format ('d-m-Y') . " à " . $now->format('H:i:s');
    		$helper = $this->get('orange.main.mailer');
@@ -413,9 +414,10 @@ class SignalisationController extends BaseController
    			$actionsReload = array();
    			foreach ($actionId as $id) {
 				
-				   $action =  $em->getRepository('OrangeMainBundle:Action')->find(intval($id['action_id']));
+				$action =  $em->getRepository('OrangeMainBundle:Action')->find(intval($id['action_id']));
    				array_push($actionsReload, $action);
-   			}
+			   }
+			   
    			//Here is my problem , how can i my $questions into form? ---
    			$form = $this->createFormBuilder()
    				->add('isReload', 'collection', array('type' => new ReloadActionType(), 'allow_add' => false, 'allow_delete' => false, 'label' => false))
@@ -425,26 +427,31 @@ class SignalisationController extends BaseController
    			$form->handleRequest($request);
    			if ($form->isValid()) {
    				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::SIGNALISATION_RETRAITER, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
-   				$this->updateEntityEtat($em, Statut::SIGNALISATION_RETRAITER, $signalisation);
+				   $this->updateEntityEtat($em, Statut::SIGNALISATION_RETRAITER, $signalisation);
+				 // $email=array();
    				foreach ($actionsReload as $action) {
    					if($action->getIsReload()) {
-   						ActionUtils::changeStatutAction($em, $action, Statut::ACTION_NON_ECHUE, $this->getUser(), " Cette action a été rechargée suite à un mauvais traitement de la signalisation ");
-   						$action->setEtatCourant(Statut::ACTION_NON_ECHUE);
-   						$action->setEtatReel(Statut::ACTION_NON_ECHUE);
-   						$subject = 'Traitement de la signalisation '.$signalisation->getLibelle();
-   						$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
-										à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
-										ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
-   						$em->persist($action);
-						$em->flush();
-						   array_push($membresEmail,"fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com");
-		
-   						Notification::notification ($helper, $subject, $membresEmail, $commentaire,$actionStatut );
+						$emailPorteur=$action->getPorteur()->getEmail();
+							ActionUtils::changeStatutAction($em, $action, Statut::ACTION_NON_ECHUE, $this->getUser(), " Cette action a été rechargée suite à un mauvais traitement de la signalisation ");
+							$action->setEtatCourant(Statut::ACTION_NON_ECHUE);
+							$action->setEtatReel(Statut::ACTION_NON_ECHUE);
+							$subject = 'Traitement de la signalisation '.$signalisation->getLibelle();
+							$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
+										 à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
+										 ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
+							$em->persist($action);
+							$em->flush();
+							$membre=array_merge($membresEmail, array($emailPorteur),array("fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com"));
+							//var_dump($membre);
+   						Notification::notification ($helper, $subject, $membre, $commentaire,$actionStatut );
 					   }
-					  // Notification::notification ($helper, $subject, $membresEmail, $commentaire,$actionStatut );
 
 
 				   }
+				   //exit();
+				 
+				 
+
    				return $this->redirect($this->generateUrl('details_signalisation', array('id' =>$signalisation_id)));
    			}
    		} else {
@@ -460,17 +467,17 @@ class SignalisationController extends BaseController
    		if(!$entity) {
    			return array();
    		}
-   		$source = $entity->getSource()->getUtilisateur();
-   		array_push($membreEmail, $source->getEmail());
-   		$animateur = $em->getRepository('OrangeMainBundle:SignalisationAnimateur')->findOneBy(array('actif' => true, 'signalisation' => $entity->getid()));
-   		if($animateur) {
-   			array_push($membreEmail, $animateur->getUtilisateur()->getEmail());
-   			$structureAnimateur = $animateur->getUtilisateur()->getStructure();
-   			$managerAnimateur = $em->getRepository('OrangeMainBundle:Utilisateur')->findOneBy(array('structure' => $structureAnimateur->getid(), 'manager' => true));
-   			if($managerAnimateur) {
-   				array_push($membreEmail, $managerAnimateur->getEmail());
-   			}
-   		}
+		$source = $entity->getSource()->getUtilisateur();
+		array_push($membreEmail, $source->getEmail());
+		$animateur = $em->getRepository('OrangeMainBundle:SignalisationAnimateur')->findOneBy(array('actif' => true, 'signalisation' => $entity->getid()));  
+		if($animateur) {
+		array_push($membreEmail, $animateur->getUtilisateur()->getEmail());
+		$structureAnimateur = $animateur->getUtilisateur()->getStructure();
+		// $managerAnimateur = $em->getRepository('OrangeMainBundle:Utilisateur')->findOneBy(array('structure' => $structureAnimateur->getid(), 'manager' => true));
+		// if($managerAnimateur) {
+		// 	array_push($membreEmail, $managerAnimateur->getEmail());
+		// }
+		}
    		return $membreEmail;
    	}
    	
