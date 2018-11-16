@@ -17,9 +17,10 @@ class Notification {
 	 * @param string $commentaire
 	 * @param Action|Signalisation|Tache $entity
 	 */
-	public static function notification($helper, $subject, $membresEmail, $commentaire, $entity) {
-		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject);		
+	public static function notification($helper, $subject, $membresEmail, $commentaire, $entity,$y) {
+		$body = array ('commentaire' => $commentaire, 'entity' => $entity, 'titre'	=> $subject,'action'=>$y);		
 		$helper->Notif($membresEmail,$subject, $body);
+		//var_dump($entity);
 	}
 
 	/**

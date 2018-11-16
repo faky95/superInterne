@@ -198,7 +198,7 @@ class StructureController extends BaseController
         	if ($form->isValid()) {
         		foreach($em->getRepository('OrangeMainBundle:Structure')->findChildren($entity) as $structure) {
         			$structure->updateLibelle($structure);
-        			$em->persist($structure);
+        			$entitym->persist($structure);
         		}
         		$em->persist($entity);
         		$em->flush();

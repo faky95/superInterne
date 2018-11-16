@@ -57,7 +57,7 @@
 		        	<p id="compte_a_rebour"></p>Vous pouvez effectuer l’une des actions suivantes
 		    	</div>
 				<div class="form-group">
-					{% if entity.porteur==app.user %}
+					{% if entity.porteur.id==app.user.id %}
 					<a href="#myModal" class="actionLink" data-target="#myModal" data-toggle="modal" modal-url="{{ path('actionreport_new', {'action_id': entity.id})}}" title="Demande de report">
 						<button class="btn btn-warning">
 							<span class="icon16 icomoon-icon-exit white"></span>Demande de report

@@ -288,13 +288,10 @@ class Mailer
     	$mail = \Swift_Message::newInstance();
     	$mail->setFrom(array($this->from => $this->name))
 			->setTo($to)
-			//->setTo("fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com")
 			->setSubject($subject)
-			//->setBody('faky body')
 	    	->setBody($this->templating->render('OrangeMainBundle:Notification:notif.html.twig', array('body' => $body)))
 			->setContentType('text/html')
 			->setCharset('utf-8');
-			//var_dump($to); exit();
     	return $this->mailer->send($mail);
     }
 

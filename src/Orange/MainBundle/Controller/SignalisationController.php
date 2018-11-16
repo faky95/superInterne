@@ -403,9 +403,10 @@ class SignalisationController extends BaseController
    		$actionId = $em->getRepository('OrangeMainBundle:Signalisation')->actionSignalisationId($signalisation_id);
    		$signalisation = $em->getRepository('OrangeMainBundle:Signalisation')->find($signalisation_id);
    		$allActionStatut = $em->getRepository("OrangeMainBundle:SignalisationStatut")->findBySignalisation($signalisation_id);
-   		$actionStatut = count($allActionStatut) ? $allActionStatut[count($allActionStatut) - 1 ] : array();
-		   $membresEmail = $this->getSignalisationMembresEmail($em, $signalisation);
-		  // var_dump($membresEmail); exit();
+		   $actionStatut = count($allActionStatut) ? $allActionStatut[count($allActionStatut) - 1 ] : array();
+
+		$membresEmail = $this->getSignalisationMembresEmail($em, $signalisation);
+		   
    		$now = new \DateTime ();
    		$now = $now->format ('d-m-Y') . " à " . $now->format('H:i:s');
    		$helper = $this->get('orange.main.mailer');
@@ -428,7 +429,6 @@ class SignalisationController extends BaseController
    			if ($form->isValid()) {
    				SignalisationUtils::changeStatutSignalisation($em, $this->getUser(), Statut::SIGNALISATION_RETRAITER, $signalisation, "Cette signalisation a été reconduite suite à un mauvais traitement! Les actions mal traitées ont été rechargées !");
 				   $this->updateEntityEtat($em, Statut::SIGNALISATION_RETRAITER, $signalisation);
-				 // $email=array();
    				foreach ($actionsReload as $action) {
    					if($action->getIsReload()) {
 						$emailPorteur=$action->getPorteur()->getEmail();
@@ -438,17 +438,16 @@ class SignalisationController extends BaseController
 							$subject = 'Traitement de la signalisation '.$signalisation->getLibelle();
 							$commentaire = 'Le ' . $now . ', l\'action intitulé : ' . $action->getLibelle () . ' a été rechargé suite à un mauvais traitement de la signalisation
 										 à l\'origne de cette action. '.$action->getPorteur().' est invité à se connecter et confirmer la prise en charge de cette action,
-										 ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement de cette action rechargée';
+										 ou faire une contre proposition au besoin. L\'animateur en charge du suivi de cette action peut modifier ultérieurement cette action rechargée';
 							$em->persist($action);
 							$em->flush();
 							$membre=array_merge($membresEmail, array($emailPorteur),array("fatoukine.ndao@orange-sonatel.com","madiagne.sylla@orange-sonatel.com"));
-							//var_dump($membre);
-   						Notification::notification ($helper, $subject, $membre, $commentaire,$actionStatut );
+   						Notification::notification ($helper, $subject, $membre, $commentaire,$actionStatut,$action );
 					   }
 
 
 				   }
-				   //exit();
+				   
 				 
 				 
 
