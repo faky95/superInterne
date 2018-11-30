@@ -49,7 +49,7 @@ class SignalisationListener implements EventSubscriberInterface
         		OrangeMainEvents::SIGNALISATION_CREATE_NOUVELLE		=> 'onCreateSignalisation',
         		OrangeMainEvents::SIGNALISATION_PRISE_EN_CHARGE     => 'onSignalisationPriseEnCharge',
         		OrangeMainEvents::SIGNALISATION_NON_PRISE_EN_CHARGE => 'onSignalisationNonPriseEnCharge',
-        		OrangeMainEvents::SIGNALISATION_FIN_TRAITEMENT 		=> 'onFaitTraitement',
+        		OrangeMainEvents::SIGN_EN_REBOUCLAGE 		        => 'onCreateSignalisationRebouclage',
         		OrangeMainEvents::SIGNALISATION_EFFICACE            => 'onSignalisationEfficace',
         		OrangeMainEvents::SIGNALISATION_NON_EFFICACE        => 'onSignalisationNonEfficace',
         		OrangeMainEvents::SIGNALISATION_REFORMULATION       => 'onReformulationSignalisation'
@@ -88,6 +88,11 @@ class SignalisationListener implements EventSubscriberInterface
     
     public function onReformulationSignalisation(SignalisationEvent $event) {
     	$ext = $event->getSignalisationManager()->reformulationSignalisation($event->getSignalisation(), $this->helper);
+    	return isset($ext) ? $ext : false;
+    }
+
+    public function onCreateSignalisationRebouclage(SignalisationEvent $event) {
+    	$ext = $event->getSignalisationManager()->createSignalisationRebouclage($event->getSignalisation(), $this->helper);
     	return isset($ext) ? $ext : false;
     }
     

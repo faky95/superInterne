@@ -16,6 +16,7 @@ use Orange\QuickMakingBundle\Annotation\QMLogger;
 use Orange\MainBundle\Entity\Action;
 use Orange\MainBundle\Entity\Signalisation;
 use Orange\MainBundle\Entity\SignalisationStatut;
+use Orange\MainBundle\Utils\Notification;
 
 /**
  * ActionStatut controller.
@@ -103,13 +104,14 @@ class ActionStatutController extends BaseController
 				$em->persist($entity);
 				if($action->getSignalisation()->count() && $action->getSignalisation()->first()->isQualifiable()) {
 					$signalisation = $action->getSignalisation()->first();
+				//	var_dump($signalisation); exit();
 					$eventSignalisation = $this->get('orange_main.signalisation_event')->createForSignalisation($signalisation);
-					$signalisation->setEtatCourant(Statut::FIN_TRAITEMENT_SIGNALISATION);
+					$signalisation->setEtatCourant(Statut::SIGN_EN_REBOUCLAGE);
 					$signalisation->addSignStatut(SignalisationStatut::newInstance($this->getUser(), 
-							$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => Statut::FIN_TRAITEMENT_SIGNALISATION)), 'Toutes les actions sont soldées'
+							$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => Statut::SIGN_EN_REBOUCLAGE)), 'Toutes les actions sont soldées'
 						));
 					$em->persist($signalisation);
-					$dispatcher->dispatch(OrangeMainEvents::SIGNALISATION_FIN_TRAITEMENT, $eventSignalisation);
+					$dispatcher->dispatch(OrangeMainEvents::SIGN_EN_REBOUCLAGE, $eventSignalisation);					  
 				}
 				$em->flush();
 				$event = $this->get('orange_main.action_event')->createForAction($action);
@@ -136,34 +138,51 @@ class ActionStatutController extends BaseController
 	 * @Template()
 	 */
 	public function demandeAction(Request $request, $action_id) {
+		
 		$em   = $this->getDoctrine()->getManager();
 		$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::EVENEMENT_VALIDER);
 		$dispatcher = $this->container->get('event_dispatcher');
 		$action = $em->getRepository('OrangeMainBundle:Action')->find($action_id);
 		$entity = new ActionStatut();
 		$form = $this->createCreateForm($entity,'ActionStatut');
+		
 		if($request->getMethod() === 'POST') {
 			$form->handleRequest($request);
 			if($form->isValid()) {
+				
 				$entity->setAction($action);
 				$entity->setStatut($statut);
 				$entity->setUtilisateur($this->getUser());
-				$em->persist($entity);
+				$em->persist($entity);   
 				if ($action->getEtatReel() == 'EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE'){
 					$statut = $em->getRepository('OrangeMainBundle:Statut')->findOneByCode(Statut::EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE);
 					$action->setEtatCourant('EVENEMENT_VALIDATION_ANIMATEUR_ATTENTE');
 					$entity->setStatut($statut);
 				}
 				elseif($action->getEtatReel() === Statut::ACTION_DEMANDE_ABANDON ){
+					if($action->getSignalisation()->count()) {
+						$signalisation = $action->getSignalisation()->first();
+						$eventSignalisation = $this->get('orange_main.signalisation_event')->createForSignalisation($signalisation);
+						$signalisation->setEtatCourant(Statut::SIGN_EN_REBOUCLAGE);
+						$signalisation->addSignStatut(SignalisationStatut::newInstance($this->getUser(), 
+								$em->getRepository('OrangeMainBundle:Statut')->findOneBy(array('code' => Statut::SIGN_EN_REBOUCLAGE)), 'Toutes les actions sont soldées'
+							));
+						$em->persist($signalisation);
+						$dispatcher->dispatch(OrangeMainEvents::SIGN_EN_REBOUCLAGE, $eventSignalisation);					  
+					
+					}
 					$em->flush();
 					$event = $this->get('orange_main.action_event')->createForAction($action);
 					$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_ABANDON_ACCEPTEE, $event);
+				
 				}
+				
 				elseif($action->getEtatReel() === Statut::ACTION_DEMANDE_REPORT ){
 					$em->flush();
 					$event = $this->get('orange_main.action_event')->createForAction($action);
 					$dispatcher->dispatch(OrangeMainEvents::ACTION_DEMANDE_REPORT_ACCEPTEE, $event);
 				}
+				
 				return new JsonResponse(array('url' => $this->generateUrl('details_action', array('id' => $action_id))));
 			} else {
 				return $this->render('OrangeMainBundle:ActionStatut:demande.html.twig', array(
@@ -422,5 +441,7 @@ class ActionStatutController extends BaseController
 		}
 		return array('action' => $action, 'form' => $form->createView());
 	}
+
+
      
 }

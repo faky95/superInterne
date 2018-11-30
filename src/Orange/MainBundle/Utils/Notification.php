@@ -49,6 +49,8 @@ class Notification {
 		$helper->NotifAction($membresEmail, $cc, $subject, $body);
 	}
 
+	
+
 	/**
 	 * @param Mailer $helper
 	 * @param string $subject

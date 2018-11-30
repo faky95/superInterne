@@ -52,6 +52,19 @@ class SignalisationManager
 				.$animateur.' est prié de prendre en charge cette signalisation. ';
 		Notification::notificationSignWithCopy($helper, $subject, $destinataire, array($source->getUtilisateur()->getEmail()), $commentaire, $entity);
 	}
+
+		// signalisation rebouclage
+		public function createSignalisationRebouclage($entity , $helper) {
+			$instance = $entity->getInstance();
+			$source = $entity->getSource();
+			$destinataire = InstanceUtils::animateursEmail($this->em, $instance);
+			$animateur = $instance->getAnimateur()->count()==0
+			? $instance->getParent()->getAnimateur()->get(0)->getUtilisateur()->getNomComplet()
+			: $instance->getAnimateur()->get(0)->getUtilisateur()->getNomComplet();
+			$subject = 	   'Signalisation En Rebouclage';
+			$commentaire = 'La signalisation postée par '.$this->user->getCompletNom().' au périmétre: '.$instance->getLibelle().'est passée au statut en rebouclage . ';
+			Notification::notificationSignWithCopy($helper, $subject, $destinataire, array($source->getUtilisateur()->getEmail()), $commentaire, $entity);
+		}
 	
 	/**
 	 * fait traitement signalisation
@@ -67,7 +80,7 @@ class SignalisationManager
 		$commentaire = "La signalisation intitulée : <<" . $entity->getLibelle() . ">> vient d'être traitée. ".
 				'Toutes les actions la concernant sont soldées, '.$source->getUtilisateur()->getCompletNom().' est invité à qualifier la signalisation.';
 		Notification::notificationSignWithCopy($helper, $subject, $destinataire, $source->getUtilisateur()->getEmail(), $commentaire, $entity);
-		$this->updateEtatSignalisation($this->em, Statut::FIN_TRAITEMENT_SIGNALISATION, $entity);
+		$this->updateEtatSignalisation($this->em, Statut::SIGN_EN_REBOUCLAGE, $entity);
 	}
 	
 	//prise en charge signalisation

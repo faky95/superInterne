@@ -90,7 +90,7 @@ services:
             
     orange.main.mailer:
         class: Orange\MainBundle\Service\Mailer
-        arguments: ["@mailer", "@templating"]
+        arguments: ["@mailer", "@templating", "%kernel.debug%"]
         
     orange.validator.report:                             
         class: Orange\MainBundle\Validator\Constraints\ActionReportDateValidator   
