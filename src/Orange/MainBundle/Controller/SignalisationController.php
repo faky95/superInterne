@@ -169,7 +169,7 @@ class SignalisationController extends BaseController
 	            $em = $this->getDoctrine()->getManager();
 	            $em->persist($entity);
 	            $instance_id = $entity->getInstance()->getId();
-	            $source = $em->getRepository('OrangeMainBundle:Source')->findOneBy(array('instance'=>$instance_id, 'utilisateur'=>$this->getUser()->getId()));
+				$source = $em->getRepository('OrangeMainBundle:Source')->findOneBy(array('instance'=>$instance_id, 'utilisateur'=>$this->getUser()->getId()));
 	            $entity->setSource($source);
 	            $em->flush();
 	            SignalisationUtils::setReferenceSignalisation($em, $entity);

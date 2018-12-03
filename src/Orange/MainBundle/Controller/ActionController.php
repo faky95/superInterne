@@ -978,7 +978,23 @@ class ActionController extends BaseController
     	return $this->render('OrangeMainBundle:Action:newReporting.html.twig', array(
     					'entity' => $entity, 'form'   => $form->createView(),
     			), new \Symfony\Component\HttpFoundation\Response(null,303));
-    }
+	}
+	
+	//   /**
+    //  * Creates a new Action entity.
+    //  * @Route("/report_action", name="report_action")
+    //  * @Method({"GET"})
+    //  * @Template()
+    //  */
+	// public function test()
+	// {
+	// 	$espace = $input->getOption('espace');
+	// 	$bu = $input->getOption('bu');
+	// 	$projet = $input->getOption('projet');
+	// 	$em=$this->getDoctrine()->getManager();
+	// 	$e=$em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
+	// 	return new Response('ok');
+	// }
     
     
 }
