@@ -28,11 +28,15 @@ class PassUpdateListener
     
     public function onCheckExpired(GetResponseEvent $event)
     {
-        if (($this->security_context->getToken()) && ($this->security_context->isGranted('IS_AUTHENTICATED_FULLY'))) {
+    	//$em = $this->container->get('doctrine.orm.entity_manager');
+        if (($this->security_context->getToken()) && ($this->security_context->isGranted('IS_AUTHENTICATED_FULLY') ) ) 
+        {
             $route_name = $event->getRequest()->get('_route');
-            if($route_name != 'first_change_password' && !$this->security_context->getToken()->getUser()->getFirstChangePassword()) {
-                $response = new RedirectResponse($this->router->generate('first_change_password'));
-                $event->setResponse($response);
+            
+            if ($route_name != 'first_change_password' && !$this->security_context->getToken()->getUser()->getFirstChangePassword()) 
+            {
+                	$response = new RedirectResponse($this->router->generate('first_change_password'));
+                	$event->setResponse($response);
             }
         }
     }

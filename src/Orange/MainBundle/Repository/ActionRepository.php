@@ -226,6 +226,10 @@ class ActionRepository extends BaseRepository {
 			->orderBy('a.id', 'ASC')
 			->addOrderBy('a.dateAction', 'DESC')
 			->setParameter('date', $date);
+		if('a.etatReel'=='ACTION_DEMANDE_REPORT')
+		{
+			$queryBuilder->andWhere('a.etatReel != ACTION_DEMANDE_REPORT');
+		}
 		if($bu) {
 			$queryBuilder->andWhere('IDENTITY(s.buPrincipal) = :bu')->setParameter('bu', $bu);
 		}
