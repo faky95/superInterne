@@ -37,6 +37,7 @@ final class OrangeMainEvents
     const ACTION_VALIDATION_ANIMATEUR				= 'orange_main.action.validation.animateur';
     const ACTION_VALIDATION_MANAGER					= 'orange_main.action.validation.manager';
     const ACTION_REASSIGNATION  					= 'orange_main.action.reassignation';
+    const ACTION_UPDATE                             = 'orange_main.action.update';
 
     /**
      * The signalisation events

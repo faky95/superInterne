@@ -118,7 +118,8 @@ class Mailer
     		$mail->setBcc($this->bcc);
     	}
     	return $this->mailer->send($mail);
-    }
+	}
+	
 
     public function sendBug($to, $cc = null, $subject, $body, $chemin, $file) {
     	$mail = \Swift_Message::newInstance();

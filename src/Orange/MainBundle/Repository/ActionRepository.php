@@ -228,7 +228,7 @@ class ActionRepository extends BaseRepository {
 			->setParameter('date', $date);
 		if('a.etatReel'=='ACTION_DEMANDE_REPORT')
 		{
-			$queryBuilder->andWhere('a.etatReel != ACTION_DEMANDE_REPORT');
+			$queryBuilder->andWhere('a.etatCourant != ACTION_NON_ECHUE');
 		}
 		if($bu) {
 			$queryBuilder->andWhere('IDENTITY(s.buPrincipal) = :bu')->setParameter('bu', $bu);
@@ -1113,8 +1113,10 @@ class ActionRepository extends BaseRepository {
 		return $arrData;
 	}
 
-	public function listByAction($application)
+	public function listByAction($application,$date)
 	{
+		$time= new DateTime($date);
+		$time->modify('-10 minute');
 		return $this->createQueryBuilder('a')->select('a')
 		->addSelect('port AS porteur_id, s AS structure_id, type AS type_action_id')
 		->leftJoin('a.porteur','port')
@@ -1126,6 +1128,8 @@ class ActionRepository extends BaseRepository {
 		->innerJoin('p.instance', 't')
 		->setParameter('application', $application)
 		->where('a.instance = t')
+		->andwhere('a.dateModification >= :date')
+		->setParameter('date',$time)
 		->getQuery()->getArrayResult();
 	}
 	

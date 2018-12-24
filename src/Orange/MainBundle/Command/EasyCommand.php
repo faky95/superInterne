@@ -14,7 +14,7 @@ class EasyCommand extends BaseCommand {
 	}
 	
 	public function execute(InputInterface $input, OutputInterface $output){
-			$to = "abdouaziz.ndaw@orange-sonatel.com";
+			$to = "fatoukine.ndao@orange-sonatel.com";
 			$subject = "Test";
 			$body = "ceci est un test";
 			$this->getMailer()->sendEasy($to,$subject, $body);

@@ -436,5 +436,10 @@ class ActionManager
 		}
 		return $arrType;
 	}
+
+	public function createUpdateAction($action)
+	{
+		 $action->setDateModification( new \DateTime('now'));
+	}
 	
 }

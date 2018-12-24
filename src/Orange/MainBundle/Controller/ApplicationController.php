@@ -64,7 +64,7 @@ class ApplicationController extends BaseController
 		$em = $this->getDoctrine()->getManager();
 		$params = $request->query->all();
 		//var_dump($params);
-		$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application']);
+		$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application'],$params['date']);
 		$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
 		foreach ($arrData as $data) {
 		//	print_r($data);

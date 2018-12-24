@@ -322,7 +322,7 @@ class ActionController extends BaseController
     	if($request->getMethod()=='POST') {
     		if($form->isValid()) {
     			$em = $this->getDoctrine()->getManager();
-                $entity->setAnimateur($this->getUser());
+				$entity->setAnimateur($this->getUser());
                 if($entity->getErq()->getFile()) {
                 	$entity->getErq()->setUtilisateur($this->getUser());
                 	$entity->addDocument($entity->getErq(), $this->getMyParameter('types', array('creation')));
@@ -510,7 +510,7 @@ class ActionController extends BaseController
     	}
     	if($form->isValid()) {
 	    	$entity->setEtatCourant(Statut::ACTION_NOUVELLE);
-	    	$entity->setEtatReel(Statut::ACTION_NOUVELLE);
+			$entity->setEtatReel(Statut::ACTION_NOUVELLE);
 	    	$signalisation->setEtatCourant(Statut::TRAITEMENT_SIGNALISATION);
     		$em->persist($entity);
     		$entity->addSignalisation($signalisation);
@@ -614,7 +614,8 @@ class ActionController extends BaseController
         $form = $this->createCreateForm($entity, 'Action');
         $request = $this->get('request');
         $statut = new ActionStatut();
-        $today = new \DateTime();
+		$today = new \DateTime();
+		$dispatcher = $this->get('event_dispatcher');
         if($request->getMethod() == 'POST') {
         	$form->handleRequest($request);
         	if($form->isValid()) {
@@ -628,7 +629,9 @@ class ActionController extends BaseController
         		}
         		if($entity->getPorteur()->getId() != $porteur->getId()){
         			$this->get('orange.main.mailer')->NotifUpdatePorteur($entity->getPorteur()->getEmail(), $entity);
-        		}
+				}
+				$event = $this->get('orange_main.action_event')->createForAction($entity);
+    			$dispatcher->dispatch(OrangeMainEvents::ACTION_UPDATE, $event);
         		$em->persist($entity);
         		$em->flush();
         		return $this->redirect($this->generateUrl('details_action', array('id' => $id)));

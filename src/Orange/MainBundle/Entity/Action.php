@@ -70,6 +70,13 @@ class Action
      * @Assert\NotBlank(message="Vous devez donner une date de fin pour cette action ! ")
      */
     private $dateFinPrevue;
+
+     /**
+     * @var \DateTime
+     * @ORM\Column(name="date_modif", type="datetime", nullable=false)
+     * @Assert\NotBlank(message="Vous devez donner une date de modification de l'action ! ")
+     */
+    private $dateModification;
     
     /**
      * @ORM\OneToMany(targetEntity="ActionAvancement", mappedBy="action", cascade={"persist", "merge", "remove"})
@@ -1324,5 +1331,29 @@ class Action
     public function getComplement()
     {
         return $this->complement;
+    }
+
+    /**
+     * Get the value of dateModification
+     *
+     * @return  \DateTime
+     */ 
+    public function getDateModification()
+    {
+        return $this->dateModification;
+    }
+
+    /**
+     * Set the value of dateModification
+     *
+     * @param  \DateTime  $dateModification
+     *
+     * @return  self
+     */ 
+    public function setDateModification(\DateTime $dateModification)
+    {
+        $this->dateModification = $dateModification;
+
+        return $this;
     }
 }
