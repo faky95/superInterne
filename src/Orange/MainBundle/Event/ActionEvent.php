@@ -49,7 +49,8 @@ class ActionEvent extends UserEvent
      * @param \Orange\MainBundle\Entity\Action $action
      */
     public function createForAction($action) {
-    	$this->action = $action;
+        $this->action = $action;
+        $this->action->setDateModification( new \DateTime('now'));
     	return $this;
     }
     

@@ -208,7 +208,8 @@ class TacheStatutController extends BaseController
     	$em   = $this->getDoctrine()->getManager();
     	$tache = $em->getRepository('OrangeMainBundle:Tache')->find($tache_id);
     	$actionCyclique = $em->getRepository('OrangeMainBundle:Tache')->find($tache_id)->getActionCyclique();
-    	$action = $tache->getActionCyclique()->getAction();
+		$action = $tache->getActionCyclique()->getAction();
+		//var_dump($action->getAnimateur()->getEmail()); exit();
     	$animateurs = array();
     	foreach($action->getInstance()->getAnimateur() as $animateur) {
     		$animateurs[] = $animateur->getUtilisateur()->getEmail();
