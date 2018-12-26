@@ -27,6 +27,7 @@ class alerteDepassementCommand extends BaseCommand {
 		$actions = $em->getRepository('OrangeMainBundle:Action')->userToAlertDepassement($bu, $projet, $espace);
 		$data = $this->getMapping()->getRelance()->setEntityManager($em)->mapDataforAlertDepassement($actions);
 		$index = 0;
+		//var_dump($action); exit();
 		$mailer = $this->get('mailer');
 		$spool = $mailer->getTransport()->getSpool();
 		$transport = $this->get('swiftmailer.transport.real');

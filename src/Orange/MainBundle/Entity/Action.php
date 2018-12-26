@@ -7,6 +7,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
 
+
 /**
  * Action
  * @ORM\Table(name="action")
@@ -1356,4 +1357,11 @@ class Action
 
         return $this;
     }
+
+    // public function preUpdate(PreUpdateEventArgs $event)
+    // {
+    //     if ($event->hasChangedField('libelle')) {
+    //         $this->setDateModification( new \DateTime('now'));
+    //     }
+    // }
 }

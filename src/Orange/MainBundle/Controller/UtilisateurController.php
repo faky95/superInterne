@@ -1,4 +1,5 @@
 <?php
+
 namespace Orange\MainBundle\Controller;
 
 use FOS\UserBundle\Event\FormEvent;
@@ -9,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Orange\MainBundle\Entity\Utilisateur;
 use Orange\MainBundle\Form\UtilisateurType;
+use Orange\MainBundle\Form\ProfileFormType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -24,7 +26,6 @@ use FOS\UserBundle\FOSUserEvents;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 use FOS\UserBundle\Event\GetResponseUserEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use FOS\UserBundle\Model\UserInterface;
 
 /**
  * Utilisateur controller.

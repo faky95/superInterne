@@ -630,8 +630,8 @@ class ActionController extends BaseController
         		if($entity->getPorteur()->getId() != $porteur->getId()){
         			$this->get('orange.main.mailer')->NotifUpdatePorteur($entity->getPorteur()->getEmail(), $entity);
 				}
-				$event = $this->get('orange_main.action_event')->createForAction($entity);
-    			$dispatcher->dispatch(OrangeMainEvents::ACTION_UPDATE, $event);
+				// $event = $this->get('orange_main.action_event')->createForAction($entity);
+    			// $dispatcher->dispatch(OrangeMainEvents::ACTION_UPDATE, $event);
         		$em->persist($entity);
         		$em->flush();
         		return $this->redirect($this->generateUrl('details_action', array('id' => $id)));

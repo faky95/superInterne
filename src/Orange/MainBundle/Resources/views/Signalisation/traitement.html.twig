@@ -36,7 +36,7 @@
 				<div class="form-group">
 					<a href="{{ path('nouvelle_signalisation_action', {signalisation_id : entity.id }) }}" target="_blank" title="Ajouter des actions correctives !"><button class="btn btn-success"><span class="icon16 minia-icon-plus-2 white"></span>Actions correctives</button></a>
 				</div>
-			{% elseif statut == 'SIGN_TRAITEMENT_FIN' and ( app.user.id == entity.source.utilisateur.id ) %}
+			{% elseif statut == 'SIGN_EN_REBOUCLAGE' and ( app.user.id == entity.source.utilisateur.id ) %}
 				<div class="form-group">
 		        	<p>Fin de traitement de la signalisation. Veuillez apprécier cette signalisation.</p>
 		    	</div>
