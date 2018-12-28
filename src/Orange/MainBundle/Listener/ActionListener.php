@@ -62,8 +62,8 @@ class ActionListener implements EventSubscriberInterface
         		OrangeMainEvents::ACTION_PROPOSITION_ANIMATEUR	 	=> 'onPropositionAnimateurAction',
         		OrangeMainEvents::ACTION_VALIDATION_ANIMATEUR	 	=> 'onValidationAnimateurAction',
         		OrangeMainEvents::ACTION_VALIDATION_MANAGER	 		=> 'onValidationManagerAction',
-				OrangeMainEvents::ACTION_REASSIGNATION				=> 'onReassignationAction',
-				// OrangeMainEvents::ACTION_UPDATE						=> 'onUpdateAction'
+				OrangeMainEvents::ACTION_REASSIGNATION				=> 'onReassignationAction'
+				
         	);
     }
 
@@ -145,13 +145,4 @@ class ActionListener implements EventSubscriberInterface
     	$ext = $event->getActionManager()->validationManagerAction($event->getAction(), $this->helper);
     	return isset($ext) ? $ext : false;
 	}
-
-	/**
-	 * @param \Orange\MainBundle\Event\ActionEvent $event
-	 */
-	
-	// public function onUpdateAction($event) {
-    // 	$ext = $event->getActionManager()->createUpdateAction($event->getAction());
-    // 	return isset($ext) ? $ext : false;
-    // }
 }

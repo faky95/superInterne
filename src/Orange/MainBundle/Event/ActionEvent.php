@@ -50,7 +50,6 @@ class ActionEvent extends UserEvent
      */
     public function createForAction($action) {
         $this->action = $action;
-       // $this->action->setDateModification( new \DateTime('now'));
     	return $this;
     }
     

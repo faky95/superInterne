@@ -6,12 +6,14 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
 use Orange\MainBundle\Utils\ActionUtils;
 use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 
 /**
  * Action
  * @ORM\Table(name="action")
  * @ORM\Entity(repositoryClass="Orange\MainBundle\Repository\ActionRepository")
+ * @ORM\HasLifecycleCallbacks()
  * @ACAssert
  */
 class Action
@@ -75,7 +77,6 @@ class Action
      /**
      * @var \DateTime
      * @ORM\Column(name="date_modif", type="datetime", nullable=false)
-     * @Assert\NotBlank(message="Vous devez donner une date de modification de l'action ! ")
      */
     private $dateModification;
     
@@ -317,7 +318,8 @@ class Action
     public $actionsGeneriques;
     
 	public function __construct(){
-		$this->dateAction = new \DateTime();
+        $this->dateAction = new \DateTime('NOW');
+        $this->dateModification = new \DateTime('NOW');
 		$this->isDeleted = 0;
 		$this->isReload = false;
 		$this->contributeur = new ArrayCollection();
@@ -1357,11 +1359,14 @@ class Action
 
         return $this;
     }
+    /**
+     * @ORM\PreUpdate()
+     */
 
-    // public function preUpdate(PreUpdateEventArgs $event)
-    // {
-    //     if ($event->hasChangedField('libelle')) {
-    //         $this->setDateModification( new \DateTime('now'));
-    //     }
-    // }
+    public function preUpdate(PreUpdateEventArgs $event)
+    {
+        
+        $this->dateModification = new \DateTime('NOW');
+        
+    }
 }
