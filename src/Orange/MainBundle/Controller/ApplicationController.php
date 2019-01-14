@@ -57,34 +57,32 @@ class ApplicationController extends BaseController
 		
 	}
 
-		/**
-	 * @Route ("/list_action", name="list_action")
-	 */
-	public function listActionByApplicationAction(Request $request) {
-		$em = $this->getDoctrine()->getManager();
-		$params = $request->query->all();
-		//var_dump($params);
-		$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application'],$params['date']);
-		$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
-		foreach ($arrData as $data) {
-		//	print_r($data);
+	// /**
+	//  * @Route ("/list_action", name="list_action")
+	//  */
+	// public function listActionByApplicationAction(Request $request) {
+	// 	$em = $this->getDoctrine()->getManager();
+	// 	$params = $request->query->all();
+	// 	$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application'],$params['date']);
+	// 	$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
+	// 	foreach ($arrData as $data) {
 			
-			$output[] = array('id' => $data['id'], 'libelle' => $data['libelle'],
-			'Reference'=>$data['reference'],
-			'Type Action'=>$data['typeAction'],
-		'date Debut'=>$data['dateDebut'],
-		'date Initial'=>$data['dateInitial'],
-		'date fin prevue'=>$data['dateFinPrevue'],
-		'EtatCourant'=>$data['etatCourant'],
-		'structure'=>$data['structure'],
-		'porteur'=>$data['porteur'],
+	// 		$output[] = array('id' => $data['id'], 'libelle' => $data['libelle'],
+	// 		'Reference'=>$data['reference'],
+	// 		'Type Action'=>$data['typeAction'],
+	// 	'date Debut'=>$data['dateDebut'],
+	// 	'date Initial'=>$data['dateInitial'],
+	// 	'date fin prevue'=>$data['dateFinPrevue'],
+	// 	'EtatCourant'=>$data['etatCourant'],
+	// 	'structure'=>$data['structure'],
+	// 	'porteur'=>$data['porteur'],
 		
-	);
-	}
-		return new JsonResponse($output);
+	// );
+	// }
+	// 	return new JsonResponse($output);
 	
 		
-	}
+	// }
 	
 	/**
 	 * @Route ("/list_domaine", name="list_domaine")

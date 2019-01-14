@@ -17,6 +17,7 @@ class Calcul
 	
 	public function cumul($stats)
 	{
+		
 		$nbAbandon = 0;
 		$nbDemandeAbandon = 0;
 		$nbFaiteDelai = 0;
@@ -27,7 +28,9 @@ class Calcul
 		$nbSoldeeHorsDelais = 0;
 		$nbSoldeeDansLesDelais = 0;
 		$total = 0;
+		//exit('ok');
 		for ($i=0; $i<sizeof($stats);$i++ ){
+			
 			$nbAbandon += intval($stats[$i]['nbAbandon']);
 			$nbDemandeAbandon += intval($stats[$i]['nbDemandeAbandon']);
 			$nbFaiteDelai += intval($stats[$i]['nbFaiteDelai']);
@@ -50,6 +53,8 @@ class Calcul
 			$stats[$i]['nbSoldeeDansLesDelais'] = $nbSoldeeHorsDelais;
 			$stats[$i]['total'] =$total;
 		}
+		//var_dump($total); exit();
+		
 		return $stats;
 	}
 	

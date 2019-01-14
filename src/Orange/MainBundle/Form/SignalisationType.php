@@ -18,6 +18,7 @@ class SignalisationType extends AbstractType
         $builder->add('libelle',null,array('label'=>'Libellé :'))
             ->add('description',null,array('label'=>'Description :'))
             ->add('site',null,array('label'=>'Site :'))
+            ->add('source', null, array('label'=>'source'))
             ->add('instance', null, array(
             		'label' => 'Périmètre :', 'empty_value' => 'Choisir le périmètre ...',
             		'query_builder' => function(InstanceRepository $er ) {

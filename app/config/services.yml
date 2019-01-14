@@ -276,3 +276,25 @@ services:
     orange.main.query:
         class: Orange\MainBundle\Service\Query
         arguments: ["@service_container"]
+
+    # Token  
+    # auth_token_user_provider:
+    #     class: Orange\MainBundle\Security\AuthTokenUserProvider
+    #     arguments: ["@auth_token_repository", "@utilisateur_repository"]
+    #     public:    false
+
+    # auth_token_repository:
+    #     class:   Doctrine\ORM\EntityManager
+    #     factory: ["@doctrine.orm.entity_manager", "getRepository"]
+    #     arguments: ["Orange\MainBundle:AuthToken"]
+
+    # utilisateur_repository:
+    #     class:   Doctrine\ORM\EntityManager
+    #     factory: ["@doctrine.orm.entity_manager", "getRepository"]
+    #     arguments: ["Orange\MainBundle:Utilisateur"]
+
+    # auth_token_authenticator:
+    #     class:     Orange\MainBundle\Security\AuthTokenAuthenticator
+    #     arguments: ["@security.http_utils"]
+    #     public:    false
+  

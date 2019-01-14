@@ -18,3 +18,7 @@ fos_user_register:
 NelmioApiDoc:
     resource: "@NelmioApiDocBundle/Resources/config/routing.yml"
     prefix:   /api/doc
+
+auth-tokens:
+    type:     rest
+    resource: Orange\MainBundle\Controller\AuthTokenController

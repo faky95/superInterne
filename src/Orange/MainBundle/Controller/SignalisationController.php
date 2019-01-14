@@ -280,8 +280,7 @@ class SignalisationController extends BaseController
     		if ($form->isValid()) {
     			$em->persist($entity);
     			$em->flush();
-    			return $this->redirect($this->generateUrl('edition_signalisation', array('id' => $id)));
-    		}
+				return $this->redirect($this->generateUrl('les_signalisations'));    		}
     	}
     	return array('entity' => $entity, 'edit_form' => $form->createView());
     }

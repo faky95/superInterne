@@ -116,7 +116,10 @@ class Builder extends ContainerAware
     	$menu['Utilisateur']->addChild('import_utilisateur', array('route' =>'chargement_utilisateur', 'label' => 'Importer des utilisateurs', 'attributes' => array('class' => 'icomoon-icon-download')));
     	$menu['Utilisateur']->addChild('list_utilisateur', array('route' =>'les_utilisateurs', 'label' => 'Liste des utilisateurs', 'attributes' => array('class' => 'icomoon-icon-list')));
     	$menu['Utilisateur']->addChild('list_groupe', array('route' =>'les_groupe', 'label' => 'Liste des groupes', 'attributes' => array('class' => 'icomoon-icon-people')));
-    	$menu['Utilisateur']->setChildrenAttribute('class', 'sub');
+		$menu['Utilisateur']->setChildrenAttribute('class', 'sub');
+
+		$menu->addChild('Statistique', array('route' => 'vue_statique', 'label' => 'Statistiques', 'attributes' => array('class' => 'icomoon-icon-stats')));
+    	
         
         return $menu;
     }
@@ -185,10 +188,8 @@ class Builder extends ContainerAware
     {
     	$this->addActionMenu($menu, $user);
     	$this->cheftProjetMenu($menu, $user);
-    	$menu->addChild('Statistique', array('uri' => '#', 'label' => 'Statistiques', 'attributes' => array('class' => 'icomoon-icon-stats')));
-    	$menu['Statistique']->addChild('vuestat', array('route' =>'vue_statique', 'label' => 'Vue Statique', 'attributes' => array('class' => 'icomoon-icon-stats-up')));
-    	$menu['Statistique']->addChild('vueevo', array('route' =>'vue_evolutive', 'label' => 'Vue Evolutive', 'attributes' => array('class' => 'icomoon-icon-stats-up')));
-    	$menu['Statistique']->setChildrenAttribute('class', 'sub');
+		$menu->addChild('Statistique', array('route' => 'vue_statique', 'label' => 'Statistiques', 'attributes' => array('class' => 'icomoon-icon-stats')));
+
     	return $menu;
     }
     

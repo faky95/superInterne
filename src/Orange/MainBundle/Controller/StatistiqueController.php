@@ -405,11 +405,13 @@ class StatistiqueController extends BaseController
     		$data = $this->get('orange.main.calcul')->stats($bu, $req);
     		$stats = $this->getMapping()->getReporting()->setEntityManager($this->getDoctrine()->getManager())->mappingDataStatsEvo($data, 'semaine');
     		$graphe=$this->createGrapheEvo($stats);
-    	}
+		}
+		//var_dump($stats); exit();
     	return array(
     			'form'=>$form->createView(), 'role'=>$role, 'stats'=>$stats, 'graphe'=>$graphe, 'statut'=>$this->getStatus(), 
     			'nbTaux'=>$this->getNombreTaux(), 'semaines'=>$this->getSemaines()
-    		);
+			);
+			
     }
     
     public function mapIds($data) {
@@ -667,12 +669,12 @@ class StatistiqueController extends BaseController
     		case 'instance':
     			$req=$rep->getStatistiqueEvolutiveByInstance($criteria)->getQuery()->getArrayResult();
     			$data = $this->get('orange.main.calcul')->stats($bu, $req);
-    			$stats = $reportingMapping->mappingDataStatsCroise($data, 'instance', 'semaine', $params, $semaines);
+    			$stats = $reportingMapping->mappingDataStatsEvo($data, 'instance', 'semaine', $params, $semaines);
     		break;
     		case 'structure':
     			$req=$rep->getStatistiqueEvolutiveByStructure($criteria);
     			$data = $this->get('orange.main.calcul')->stats($bu, $req);
-    			$stats = $reportingMapping->mappingDataStatsCroise($data, $type, 'semaine', $params, $semaines);
+    			$stats = $reportingMapping->mappingDataStatsEvo($data, $type, 'semaine', $params, $semaines);
     		break;
     	}
     	return $stats;
