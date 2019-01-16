@@ -230,7 +230,7 @@ class SignalisationController extends BaseController
      */
     public function editAction($id) {
         $em = $this->getDoctrine()->getManager();
-        $entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
+		$entity = $em->getRepository('OrangeMainBundle:Signalisation')->find($id);
         if(!$entity) {
     		$this->addFlash('error', "Impossible de faire cette opération, cette signalisation n'est pas reconnue");
     		return $this->redirect($this->generateUrl('les_signalisations'));
@@ -274,16 +274,18 @@ class SignalisationController extends BaseController
     		));
     	$request = $this->get('request');
     	$today = new \DateTime();
-    	$today = $today->format('Y-m-d');
+		$today = $today->format('Y-m-d');
+		$form->handleRequest($request);
     	if ($request->getMethod() == 'POST') {
-    		$form->handleRequest($request);
     		if ($form->isValid()) {
     			$em->persist($entity);
     			$em->flush();
-				return $this->redirect($this->generateUrl('les_signalisations'));    		}
+				return $this->redirect($this->generateUrl('les_signalisations'));    		
+			}
     	}
     	return array('entity' => $entity, 'edit_form' => $form->createView());
-    }
+	}
+
     
 	/**
      * Deletes a Signalisation entity.

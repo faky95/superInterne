@@ -20,7 +20,6 @@
 						<div class="form-group">
 							{{ form_widget(edit_form.libelle, {'attr': {'class': 'form-control'}}) }}
 							{{ form_widget(edit_form.instance,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
-							{{ form_widget(edit_form.source,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
 
 						</div>
 						<div class="form-group">
@@ -30,9 +29,12 @@
 						<div class="form-group">
 		                	{{ form_widget(edit_form.dateConstat) }}
 		                 	{{ form_widget(edit_form.constatateur, {'attr': {'class': 'select2 form-control', 'style' : 'width: 100%'}}) }}
+							 
 		                </div>
                         <div class="form-group">
                             {{ form_widget(edit_form.site, {'attr': {'class': 'form-control'}}) }}
+							{{ form_widget(edit_form.source,  {'attr': {'class': 'select form-control', 'style' : 'width: 100%'}}) }}
+
                         </div>
 		               	{{ form_row(edit_form.description) }}
 		               	{{ form_widget(edit_form._token) }}

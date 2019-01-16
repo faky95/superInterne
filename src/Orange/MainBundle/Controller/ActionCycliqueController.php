@@ -72,9 +72,9 @@ class ActionCycliqueController extends BaseController
 		$queryBuilder = $em->getRepository('OrangeMainBundle:ActionCyclique')->filter($criteria);
 		$queryBuilderExport = $em->getRepository('OrangeMainBundle:ActionCyclique')->filterForExport($criteria);
 		$qbOccurence = $em->getRepository('OrangeMainBundle:Tache')->filterForExport($criteria);
-		// $this->get('session')->set('occurence', array(
-		// 		'query' => $qbOccurence->getDql(), 'param' => $qbOccurence->getParameters(), 'totalNumber' => $this->getLengthResults($qbOccurence, 'id')
-		// 	));
+		$this->get('session')->set('occurence', array(
+				'query' => $qbOccurence->getDql(), 'param' => $qbOccurence->getParameters(), 'totalNumber' => $this->getLengthResults($qbOccurence, 'id')
+			));
 		$this->get('session')->set('data', array('query' => $queryBuilderExport->getDql(), 'param' => $queryBuilderExport->getParameters()));
 		return $this->paginate($request, $queryBuilder);
 	}
