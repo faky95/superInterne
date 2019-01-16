@@ -147,6 +147,12 @@ class ActionCycliqueController extends BaseController
 		if (!$entity) {
 			throw $this->createNotFoundException('Unable to find ActionCyclique entity.');
 		}
+		$finTache=end($taches);
+		$action=$finTache->getActionCyclique()->getAction();
+		$action->setEtatCourant($finTache->getEtatCourant());
+		$action->setEtatReel($finTache->getEtatCourant());
+		$em->persist($action);
+		$em->flush();
 		return array('entity' => $entity, 'taches' => $taches);
 	}
 

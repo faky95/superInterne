@@ -78,10 +78,11 @@
 					            </thead>
 					            <tbody>
 						            {% for tache in taches %}
+				
 					            		{% set actionTacheKey  = tache.tacheStatut|length - 1 %}
 										{% set statutTacheCode =  tache.etatCourant %}
 						            	{% set tacheStatutKey  = tache.tacheStatut|length - 1 %}
-{#  									{% set statut =  tache.tacheStatut[tacheStatutKey].statut.code %}#}
+ 									{# {% set statut =  tache.tacheStatut[tacheStatutKey].statut.code %} #}
 										
 										{% if statutTacheCode == 'ACTION_ECHUE_NON_SOLDEE' %}
 											{% set color = '#FDF1E9' %}
