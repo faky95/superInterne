@@ -453,6 +453,7 @@ class ActionRepository extends BaseRepository {
 	 * @return QueryBuilder
 	 */
 	public function filter() {
+		//exit('oky');
 		$queryBuilder = $this->createQueryBuilder('a')
 			->innerJoin('a.instance', 'insta')
 			->leftJoin('insta.espace', 'espa')
@@ -1132,5 +1133,6 @@ class ActionRepository extends BaseRepository {
 		->setParameter('date',$time)
 		->getQuery()->getArrayResult();
 	}
+
 	
 }

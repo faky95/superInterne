@@ -57,32 +57,66 @@ class ApplicationController extends BaseController
 		
 	}
 
-	// /**
-	//  * @Route ("/list_action", name="list_action")
-	//  */
-	// public function listActionByApplicationAction(Request $request) {
-	// 	$em = $this->getDoctrine()->getManager();
-	// 	$params = $request->query->all();
-	// 	$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($params['application'],$params['date']);
-	// 	$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
-	// 	foreach ($arrData as $data) {
-			
-	// 		$output[] = array('id' => $data['id'], 'libelle' => $data['libelle'],
-	// 		'Reference'=>$data['reference'],
-	// 		'Type Action'=>$data['typeAction'],
-	// 	'date Debut'=>$data['dateDebut'],
-	// 	'date Initial'=>$data['dateInitial'],
-	// 	'date fin prevue'=>$data['dateFinPrevue'],
-	// 	'EtatCourant'=>$data['etatCourant'],
-	// 	'structure'=>$data['structure'],
-	// 	'porteur'=>$data['porteur'],
+	/**
+	 * @Route ("/list_action", name="list_action")
+	 */
+	public function listActionByApplicationAction(Request $request) {
+		$em = $this->getDoctrine()->getManager();
+		$params = $request->query->all();
 		
-	// );
-	// }
-	// 	return new JsonResponse($output);
+		if(isset($params['code']) && isset($params['date']) && isset($params['signature']))
+		{	
+			$code=$params['code'];
+			$signature=$params['signature'];
+			$app=$params['application'];
+			$date=$params['date'];
+			$codeValid = "SUPER-RADAR";
+			if($code==$codeValid){
+				$cle_secrete = "9817A87D787C78FEB7878EF87A7877CB";
+				$cle_bin = @pack('H*', $cle_secrete);
+				$algo = "SHA512";
+				$message = "cle_secrete=$cle_secrete";
+				$message .= "&date=$date";
+				$message .= "&code=$codeValid";
+				$signatureValide = strtoupper(hash_hmac(strtolower($algo), $message, $cle_bin));
+
+				if($signature==$signatureValide)
+				{
+					$arrData = $em->getRepository('OrangeMainBundle:Action')->listByAction($app,$date);
+					$output =  array(0 => array('id' => null, 'libelle' => 'Choisir une application ...'));
+					foreach ($arrData as $data) {
+						
+						$output[] = array('id' => $data['id'], 'libelle' => $data['libelle'],
+						'Reference'=>$data['reference'],
+						'Type Action'=>$data['typeAction'],
+					'date Debut'=>$data['dateDebut'],
+					'date Initial'=>$data['dateInitial'],
+					'date fin prevue'=>$data['dateFinPrevue'],
+					'EtatCourant'=>$data['etatCourant'],
+					'structure'=>$data['structure'],
+					'porteur'=>$data['porteur'],
+					
+					);
+					}
+				}
+			
+		
+			}
+			else{
+				$output = array("CODE" =>"CODE INVALID","MESSAGE" => "CODE INVALID");
+	
+			}	
+	
+		}
+		else{
+			$output = array("CODE" =>"ERROR SECURITY PARAMETERS","MESSAGE" => "Paramètres de sécurité manquants!!");
+
+		}		
+	
+		return new JsonResponse($output);
 	
 		
-	// }
+	}
 	
 	/**
 	 * @Route ("/list_domaine", name="list_domaine")

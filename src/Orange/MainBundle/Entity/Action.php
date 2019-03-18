@@ -9,6 +9,8 @@ use Orange\MainBundle\Validator\Constraints\ActionDate as ACAssert;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 
+
+
 /**
  * Action
  * @ORM\Table(name="action")
@@ -1367,6 +1369,10 @@ class Action
     {
         
         $this->dateModification = new \DateTime('NOW');
+     
         
     }
+
+    
+
 }

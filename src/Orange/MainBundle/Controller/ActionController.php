@@ -30,6 +30,7 @@ use Orange\MainBundle\OrangeMainForms;
 use Orange\MainBundle\Entity\Projet;
 use Orange\MainBundle\Entity\Chantier;
 use Orange\MainBundle\Entity\Extraction;
+use Orange\MainBundle\Entity\Tache;
 
 /**
  * Action controller.
@@ -80,6 +81,7 @@ class ActionController extends BaseController
 		$espace		= $espace_id ? $em->getRepository('OrangeMainBundle:Espace')->find($espace_id) : null;
 		$projet		= $projet_id ? $em->getRepository('OrangeMainBundle:Projet')->find($projet_id) : null;
 		$chantier	= $chantier_id ? $em->getRepository('OrangeMainBundle:Chantier')->find($chantier_id) : null;
+	
 		return array(
 				'form' => $form->createView(), 'code' => $code, 'code_statut' => $code_statut, 'instance_id' => $instance_id, 
 				'structure_id' => $structure_id, 'espace'=> $espace, 'projet'=> $projet, 'chantier'=> $chantier

@@ -2,6 +2,9 @@
 namespace Orange\MainBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Orange\MainBundle\Entity\Action;
+
+
 
 /**
  * Tache
@@ -75,6 +78,12 @@ class Tache
      * @ORM\Column(name="etat_courant", type="string", length=255, nullable=true)
      */
     private $etatCourant;
+
+     /**
+     * @var integer
+     * @ORM\Column(name="numero_tache", type="integer", nullable=false)
+     */
+    private $numeroTache;
    
     /**
      * Constructor
@@ -278,6 +287,16 @@ class Tache
     	return $this->document;
     }
 
+       /**
+     * Get etatCourant
+     *
+     * @return string 
+     */
+    public function getEtatCourant()
+    {
+        return $this->etatCourant;
+    }
+
     /**
      * Set etatCourant
      *
@@ -287,17 +306,31 @@ class Tache
     public function setEtatCourant($etatCourant)
     {
         $this->etatCourant = $etatCourant;
-
         return $this;
     }
 
+
     /**
-     * Get etatCourant
+     * Get the value of numeroTache
      *
-     * @return string 
-     */
-    public function getEtatCourant()
+     * @return  integer
+     */ 
+    public function getNumeroTache()
     {
-        return $this->etatCourant;
+        return $this->numeroTache;
+    }
+
+    /**
+     * Set the value of numeroTache
+     *
+     * @param  integer  $numeroTache
+     *
+     * @return  self
+     */ 
+    public function setNumeroTache($numeroTache)
+    {
+        $this->numeroTache = $numeroTache;
+
+        return $this;
     }
 }

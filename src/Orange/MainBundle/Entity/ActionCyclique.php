@@ -171,7 +171,8 @@ class ActionCyclique
     	}
     	$tache->setDateDebut(new \DateTime($dateDebut));
     	$tache->setDateInitial(new \DateTime($dateInitial));
-    	$tache->setDateFin(new \DateTime($dateFin));
+        $tache->setDateFin(new \DateTime($dateFin));
+       // $tache->setNumeroTache($this->occurence);
     	if(!isset($dateInitial) || !isset($dateDebut) || $this->action->getDateDebut() > $tache->getDateDebut()) {
     		return null;
     	}
